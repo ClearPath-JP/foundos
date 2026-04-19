@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import AnimatedIntro from "@/components/AnimatedIntro";
 
-const CAL_LINK = "https://cal.com";
+const CAL_LINK = "https://cal.com/jp-potesta/strategy-call";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
