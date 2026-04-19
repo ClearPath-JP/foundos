@@ -535,9 +535,15 @@ function Footer() {
           </a>
         </div>
 
-        <p className="text-xs" style={{ color: "#62666d" }}>
-          foundos.ai
-        </p>
+        <a
+          href="mailto:hello@foundos.ai"
+          className="text-xs transition-colors"
+          style={{ color: "#62666d" }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#f7f8f8")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "#62666d")}
+        >
+          hello@foundos.ai
+        </a>
       </div>
     </footer>
   );
