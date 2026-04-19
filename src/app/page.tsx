@@ -1,65 +1,599 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useCallback } from "react";
+import { motion } from "framer-motion";
+import AnimatedIntro from "@/components/AnimatedIntro";
+
+const CAL_LINK = "https://cal.com";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: i * 0.1, ease: [0, 0, 0.2, 1] as const },
+  }),
+};
+
+// ─── Cube Logo (inline, small) ─────────────────────────────────
+function CubeLogo({ size = 32 }: { size?: number }) {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <svg
+      width={size}
+      height={size}
+      viewBox="200 180 680 600"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M540 240 L780 380 L540 520 L300 380 Z" fill="#fff" opacity="0.95" />
+      <path d="M300 380 L540 520 L540 760 L300 620 Z" fill="#fff" opacity="0.55" />
+      <path d="M780 380 L540 520 L540 760 L780 620 Z" fill="#fff" opacity="0.3" />
+    </svg>
+  );
+}
+
+// ─── Section wrapper ────────────────────────────────────────────
+function Section({
+  id,
+  children,
+  className = "",
+}: {
+  id?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section
+      id={id}
+      className={`px-6 py-24 sm:py-32 ${className}`}
+    >
+      <div className="mx-auto max-w-5xl">{children}</div>
+    </section>
+  );
+}
+
+// ─── Nav ────────────────────────────────────────────────────────
+function Nav() {
+  return (
+    <motion.nav
+      className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 sm:px-10"
+      style={{
+        background: "rgba(10, 10, 10, 0.8)",
+        backdropFilter: "blur(12px)",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+      }}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.2 }}
+    >
+      <a href="#" className="flex items-center gap-2">
+        <CubeLogo size={24} />
+        <span className="text-sm font-semibold tracking-[0.15em] text-foreground">
+          FOUNDOS
+        </span>
+      </a>
+
+      <div className="flex items-center gap-6">
+        <a
+          href="#products"
+          className="hidden text-sm sm:block"
+          style={{ color: "#8a8f98" }}
+        >
+          Products
+        </a>
+        <a
+          href="#services"
+          className="hidden text-sm sm:block"
+          style={{ color: "#8a8f98" }}
+        >
+          Services
+        </a>
+        <a
+          href={CAL_LINK}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-md px-4 py-2 text-sm font-medium text-white transition-colors"
+          style={{ background: "#ffffff", color: "#0a0a0a" }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.background = "rgba(255,255,255,0.85)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.background = "#ffffff")
+          }
+        >
+          Book a Call
+        </a>
+      </div>
+    </motion.nav>
+  );
+}
+
+// ─── Hero ───────────────────────────────────────────────────────
+function Hero() {
+  return (
+    <Section className="pt-40 sm:pt-52 pb-20 text-center">
+      <motion.p
+        className="mb-6 text-sm font-medium tracking-[0.3em] uppercase"
+        style={{ color: "#62666d" }}
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={0}
+      >
+        Software for operators
+      </motion.p>
+
+      <motion.h1
+        className="mx-auto max-w-3xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl"
+        style={{ color: "#f7f8f8", letterSpacing: "-0.03em" }}
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={1}
+      >
+        We build the system that runs your business.
+      </motion.h1>
+
+      <motion.p
+        className="mx-auto mt-6 max-w-xl text-lg leading-relaxed"
+        style={{ color: "#8a8f98" }}
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={2}
+      >
+        Custom software, apps, and AI automations — designed for local businesses
+        that are ready to scale.
+      </motion.p>
+
+      <motion.div
+        className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={3}
+      >
+        <a
+          href={CAL_LINK}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-md px-8 py-3.5 text-sm font-semibold transition-colors"
+          style={{ background: "#ffffff", color: "#0a0a0a" }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.background = "rgba(255,255,255,0.85)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.background = "#ffffff")
+          }
+        >
+          Book a Free Strategy Call
+        </a>
+        <a
+          href="#products"
+          className="rounded-md border px-8 py-3.5 text-sm font-medium transition-colors"
+          style={{
+            borderColor: "rgba(255,255,255,0.15)",
+            color: "#d0d6e0",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)")
+          }
+        >
+          See What We Build
+        </a>
+      </motion.div>
+    </Section>
+  );
+}
+
+// ─── Products ───────────────────────────────────────────────────
+function Products() {
+  const products = [
+    {
+      name: "Sensei App",
+      tag: "Available Now",
+      tagColor: "#22c55e",
+      price: "$99/mo",
+      priceNote: "Founding member price",
+      description:
+        "The operating system for martial arts coaches. Video review, client management, billing, and AI-powered feedback — all in one place.",
+      features: [
+        "Video upload + AI analysis",
+        "Client portal & scheduling",
+        "Built-in billing (Stripe)",
+        "White-label ready",
+      ],
+    },
+    {
+      name: "More Products",
+      tag: "Coming Soon",
+      tagColor: "#62666d",
+      price: null,
+      priceNote: null,
+      description:
+        "Industry-specific operating systems for HVAC, salons, restaurants, and more. Each one built from the ground up for how your business actually works.",
+      features: [
+        "Job dispatch & routing",
+        "Customer lifecycle tracking",
+        "Automated follow-ups",
+        "Revenue dashboards",
+      ],
+    },
+  ];
+
+  return (
+    <Section id="products">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={0}
+        className="mb-12"
+      >
+        <p
+          className="mb-3 text-sm font-medium tracking-[0.3em] uppercase"
+          style={{ color: "#62666d" }}
+        >
+          Products
+        </p>
+        <h2
+          className="text-3xl font-semibold tracking-tight sm:text-4xl"
+          style={{ color: "#f7f8f8", letterSpacing: "-0.02em" }}
+        >
+          Software that works like you do.
+        </h2>
+      </motion.div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {products.map((p, i) => (
+          <motion.div
+            key={p.name}
+            className="group rounded-xl border p-8 transition-colors"
+            style={{
+              borderColor: "rgba(255,255,255,0.08)",
+              background: "rgba(255,255,255,0.02)",
+            }}
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={i + 1}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")
+            }
+          >
+            <div className="mb-4 flex items-center gap-3">
+              <h3
+                className="text-xl font-semibold"
+                style={{ color: "#f7f8f8" }}
+              >
+                {p.name}
+              </h3>
+              <span
+                className="rounded-full px-3 py-0.5 text-xs font-medium"
+                style={{
+                  background: `${p.tagColor}15`,
+                  color: p.tagColor,
+                  border: `1px solid ${p.tagColor}30`,
+                }}
+              >
+                {p.tag}
+              </span>
+            </div>
+
+            {p.price && (
+              <div className="mb-4">
+                <span
+                  className="text-3xl font-bold"
+                  style={{ color: "#f7f8f8" }}
+                >
+                  {p.price}
+                </span>
+                {p.priceNote && (
+                  <span className="ml-2 text-sm" style={{ color: "#62666d" }}>
+                    {p.priceNote}
+                  </span>
+                )}
+              </div>
+            )}
+
+            <p className="mb-6 leading-relaxed" style={{ color: "#8a8f98" }}>
+              {p.description}
+            </p>
+
+            <ul className="space-y-2">
+              {p.features.map((f) => (
+                <li
+                  key={f}
+                  className="flex items-center gap-2 text-sm"
+                  style={{ color: "#d0d6e0" }}
+                >
+                  <span style={{ color: "#62666d" }}>&#x2014;</span>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+// ─── Services ───────────────────────────────────────────────────
+function Services() {
+  const services = [
+    {
+      title: "Custom Websites",
+      price: "From $1,500",
+      description:
+        "Fast, modern sites built with Next.js. Designed to convert visitors into customers.",
+      details: "2 weeks to launch",
+    },
+    {
+      title: "iOS & Mobile Apps",
+      price: "From $3,000",
+      description:
+        "Native-quality apps built with React Native. From concept to App Store in weeks, not months.",
+      details: "4-8 weeks to launch",
+    },
+    {
+      title: "Automations & AI Agents",
+      price: "Custom",
+      description:
+        "Workflows, chatbots, and AI agents that handle the repetitive work so you don't have to.",
+      details: "Ongoing partnership",
+    },
+  ];
+
+  return (
+    <Section id="services">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={0}
+        className="mb-12"
+      >
+        <p
+          className="mb-3 text-sm font-medium tracking-[0.3em] uppercase"
+          style={{ color: "#62666d" }}
+        >
+          Services
+        </p>
+        <h2
+          className="text-3xl font-semibold tracking-tight sm:text-4xl"
+          style={{ color: "#f7f8f8", letterSpacing: "-0.02em" }}
+        >
+          Everything you need to go digital.
+        </h2>
+      </motion.div>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        {services.map((s, i) => (
+          <motion.div
+            key={s.title}
+            className="rounded-xl border p-8 transition-colors"
+            style={{
+              borderColor: "rgba(255,255,255,0.08)",
+              background: "rgba(255,255,255,0.02)",
+            }}
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={i + 1}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")
+            }
+          >
+            <h3
+              className="mb-1 text-lg font-semibold"
+              style={{ color: "#f7f8f8" }}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              {s.title}
+            </h3>
+            <p
+              className="mb-4 text-sm font-medium"
+              style={{ color: "#d0d6e0" }}
             >
-              Learning
-            </a>{" "}
-            center.
+              {s.price}
+            </p>
+            <p
+              className="mb-6 text-sm leading-relaxed"
+              style={{ color: "#8a8f98" }}
+            >
+              {s.description}
+            </p>
+            <p className="text-xs" style={{ color: "#62666d" }}>
+              {s.details}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+// ─── Founder ────────────────────────────────────────────────────
+function Founder() {
+  return (
+    <Section id="founder">
+      <motion.div
+        className="flex flex-col items-center gap-8 text-center md:flex-row md:text-left"
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={0}
+      >
+        {/* Photo placeholder */}
+        <div
+          className="flex h-28 w-28 flex-shrink-0 items-center justify-center rounded-full"
+          style={{
+            background: "rgba(255,255,255,0.05)",
+            border: "1px solid rgba(255,255,255,0.1)",
+          }}
+        >
+          <span className="text-3xl font-bold" style={{ color: "#62666d" }}>
+            JP
+          </span>
+        </div>
+
+        <div>
+          <h3
+            className="mb-1 text-xl font-semibold"
+            style={{ color: "#f7f8f8" }}
+          >
+            JP Potesta
+          </h3>
+          <p
+            className="mb-3 text-sm font-medium"
+            style={{ color: "#62666d" }}
+          >
+            Founder, FoundOS
+          </p>
+          <p
+            className="max-w-lg text-base leading-relaxed"
+            style={{ color: "#8a8f98" }}
+          >
+            Business architect for local operators. I build custom software that
+            goes live in two weeks — not two quarters. Fighter, builder, operator.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+      </motion.div>
+    </Section>
+  );
+}
+
+// ─── Footer ─────────────────────────────────────────────────────
+function Footer() {
+  return (
+    <footer
+      className="border-t px-6 py-12"
+      style={{ borderColor: "rgba(255,255,255,0.05)" }}
+    >
+      <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 sm:flex-row sm:justify-between">
+        <div className="flex items-center gap-2">
+          <CubeLogo size={20} />
+          <span
+            className="text-sm font-semibold tracking-[0.15em]"
+            style={{ color: "#f7f8f8" }}
+          >
+            FOUNDOS
+          </span>
+        </div>
+
+        <div className="flex items-center gap-6">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
+            className="text-sm transition-colors"
+            style={{ color: "#62666d" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#f7f8f8")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#62666d")}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+            Instagram
           </a>
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href="https://tiktok.com"
             target="_blank"
             rel="noopener noreferrer"
+            className="text-sm transition-colors"
+            style={{ color: "#62666d" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#f7f8f8")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#62666d")}
           >
-            Documentation
+            TikTok
+          </a>
+          <a
+            href="https://linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm transition-colors"
+            style={{ color: "#62666d" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#f7f8f8")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#62666d")}
+          >
+            LinkedIn
           </a>
         </div>
-      </main>
-    </div>
+
+        <p className="text-xs" style={{ color: "#62666d" }}>
+          foundos.ai
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+// ─── Page ───────────────────────────────────────────────────────
+export default function Home() {
+  const [showIntro, setShowIntro] = useState(true);
+
+  const handleIntroComplete = useCallback(() => {
+    setShowIntro(false);
+  }, []);
+
+  return (
+    <>
+      {showIntro && <AnimatedIntro onComplete={handleIntroComplete} />}
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: showIntro ? 0 : 1 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+      >
+        <Nav />
+        <main>
+          <Hero />
+
+          {/* Divider */}
+          <div className="mx-auto max-w-5xl px-6">
+            <div
+              className="h-px w-full"
+              style={{ background: "rgba(255,255,255,0.05)" }}
+            />
+          </div>
+
+          <Products />
+
+          <div className="mx-auto max-w-5xl px-6">
+            <div
+              className="h-px w-full"
+              style={{ background: "rgba(255,255,255,0.05)" }}
+            />
+          </div>
+
+          <Services />
+
+          <div className="mx-auto max-w-5xl px-6">
+            <div
+              className="h-px w-full"
+              style={{ background: "rgba(255,255,255,0.05)" }}
+            />
+          </div>
+
+          <Founder />
+        </main>
+        <Footer />
+      </motion.div>
+    </>
   );
 }
