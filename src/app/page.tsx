@@ -662,6 +662,175 @@ function Founder() {
   );
 }
 
+// ─── Why It Works ──────────────────────────────────────────────
+function WhyItWorks() {
+  const points = [
+    {
+      title: "More clients find you",
+      description:
+        "A real website with SEO means people searching for your service actually find you -- not your competitor down the street.",
+      stat: "97%",
+      statLabel: "of consumers search online for local businesses",
+    },
+    {
+      title: "You stop losing leads",
+      description:
+        "Automated follow-ups, email sequences, and instant responses mean no lead falls through the cracks. Every inquiry gets answered.",
+      stat: "5x",
+      statLabel: "more conversions with automated follow-up",
+    },
+    {
+      title: "Your brand looks legit",
+      description:
+        "A professional site and branded app tell clients you're serious. First impressions close deals -- your online presence is your storefront.",
+      stat: "75%",
+      statLabel: "of people judge credibility by website design",
+    },
+    {
+      title: "You get hours back",
+      description:
+        "Stop manually booking, invoicing, and chasing payments. Automations handle the admin so you can focus on coaching, training, and serving clients.",
+      stat: "10+",
+      statLabel: "hours saved per week with automation",
+    },
+  ];
+
+  return (
+    <Section id="results">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={0}
+        className="mb-12"
+      >
+        <p
+          className="mb-3 text-sm font-medium tracking-[0.3em] uppercase"
+          style={{ color: "#62666d" }}
+        >
+          Results
+        </p>
+        <h2
+          className="text-3xl font-semibold tracking-tight sm:text-4xl"
+          style={{ color: "#f7f8f8", letterSpacing: "-0.02em" }}
+        >
+          This isn&apos;t just a website. It&apos;s a growth engine.
+        </h2>
+        <p
+          className="mt-4 max-w-2xl text-base leading-relaxed"
+          style={{ color: "#8a8f98" }}
+        >
+          Everything we build is designed to do one thing: help your business make
+          more money. Custom to your brand, built around how you actually work.
+        </p>
+      </motion.div>
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        {points.map((point, i) => (
+          <motion.div
+            key={point.title}
+            className="rounded-xl border p-8 transition-colors"
+            style={{
+              borderColor: "rgba(255,255,255,0.08)",
+              background: "rgba(255,255,255,0.02)",
+            }}
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={i + 1}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")
+            }
+          >
+            <div className="mb-4 flex items-baseline gap-3">
+              <span
+                className="text-3xl font-bold"
+                style={{ color: "#f7f8f8" }}
+              >
+                {point.stat}
+              </span>
+              <span className="text-xs" style={{ color: "#62666d" }}>
+                {point.statLabel}
+              </span>
+            </div>
+            <h3
+              className="mb-2 text-lg font-semibold"
+              style={{ color: "#f7f8f8" }}
+            >
+              {point.title}
+            </h3>
+            <p
+              className="text-sm leading-relaxed"
+              style={{ color: "#8a8f98" }}
+            >
+              {point.description}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+// ─── Partnership ───────────────────────────────────────────────
+function Partnership() {
+  return (
+    <Section>
+      <motion.div
+        className="rounded-2xl border p-10 sm:p-14 text-center"
+        style={{
+          borderColor: "rgba(255,255,255,0.08)",
+          background: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)",
+        }}
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={0}
+      >
+        <h2
+          className="mx-auto max-w-2xl text-2xl font-semibold leading-snug tracking-tight sm:text-3xl"
+          style={{ color: "#f7f8f8", letterSpacing: "-0.02em" }}
+        >
+          When you grow, I grow. That&apos;s the deal.
+        </h2>
+        <p
+          className="mx-auto mt-5 max-w-xl text-base leading-relaxed"
+          style={{ color: "#8a8f98" }}
+        >
+          I&apos;m not a faceless agency that disappears after launch. I work with you
+          long-term. I learn your business, your clients, your goals. Everything I
+          build is customized to your brand -- your colors, your voice, your way of
+          doing things. When your business makes more money, that&apos;s my success too.
+        </p>
+        <div
+          className="mx-auto mt-8 grid max-w-lg gap-6 sm:grid-cols-3"
+        >
+          {[
+            { label: "Your brand", detail: "Custom design, your colors, your identity" },
+            { label: "Your pace", detail: "We move at the speed that works for you" },
+            { label: "Your partner", detail: "Direct access to me, not a support ticket" },
+          ].map((item) => (
+            <div key={item.label}>
+              <p className="text-sm font-semibold" style={{ color: "#f7f8f8" }}>
+                {item.label}
+              </p>
+              <p className="mt-1 text-xs leading-relaxed" style={{ color: "#62666d" }}>
+                {item.detail}
+              </p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </Section>
+  );
+}
+
 // ─── Packages ──────────────────────────────────────────────────
 function Packages() {
   const packages = [
@@ -861,17 +1030,52 @@ function Packages() {
         ))}
       </div>
 
-      <motion.p
-        className="mt-8 text-center text-sm"
-        style={{ color: "#62666d" }}
+      {/* Payment info */}
+      <motion.div
+        className="mt-12 rounded-xl border p-8 sm:p-10"
+        style={{
+          borderColor: "rgba(255,255,255,0.08)",
+          background: "rgba(255,255,255,0.02)",
+        }}
         variants={fadeUp}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
         custom={4}
       >
-        All packages include a free strategy call. Payment plans available.
-      </motion.p>
+        <h3 className="mb-4 text-lg font-semibold" style={{ color: "#f7f8f8" }}>
+          Flexible payment options
+        </h3>
+        <div className="grid gap-6 sm:grid-cols-3">
+          <div>
+            <p className="mb-1 text-sm font-medium" style={{ color: "#d0d6e0" }}>
+              Pay in full
+            </p>
+            <p className="text-xs leading-relaxed" style={{ color: "#62666d" }}>
+              Full payment upfront. Work starts immediately. Best price.
+            </p>
+          </div>
+          <div>
+            <p className="mb-1 text-sm font-medium" style={{ color: "#d0d6e0" }}>
+              50/50 split
+            </p>
+            <p className="text-xs leading-relaxed" style={{ color: "#62666d" }}>
+              50% to start, 50% on delivery. Most popular option.
+            </p>
+          </div>
+          <div>
+            <p className="mb-1 text-sm font-medium" style={{ color: "#d0d6e0" }}>
+              Monthly plan
+            </p>
+            <p className="text-xs leading-relaxed" style={{ color: "#62666d" }}>
+              Split into 3-4 monthly payments. Available on Growth and Full Build.
+            </p>
+          </div>
+        </div>
+        <p className="mt-6 text-xs" style={{ color: "#62666d" }}>
+          We accept bank transfer, Zelle, Venmo, and card payments. All packages include a free strategy call before you commit.
+        </p>
+      </motion.div>
     </Section>
   );
 }
@@ -983,6 +1187,17 @@ export default function Home() {
           </div>
 
           <Services />
+
+          <div className="mx-auto max-w-5xl px-6">
+            <div
+              className="h-px w-full"
+              style={{ background: "rgba(255,255,255,0.05)" }}
+            />
+          </div>
+
+          <WhyItWorks />
+
+          <Partnership />
 
           <div className="mx-auto max-w-5xl px-6">
             <div
