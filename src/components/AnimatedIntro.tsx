@@ -2,20 +2,32 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import Lottie from "lottie-react";
+import cubeAnimation from "../../public/cube-intro.json";
 
 export default function AnimatedIntro({
   onComplete,
 }: {
   onComplete: () => void;
 }) {
-  const [phase, setPhase] = useState<"cube" | "done">("cube");
+  const [phase, setPhase] = useState<"build" | "reveal" | "done">("build");
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // Phase 1: Cube builds (Lottie plays ~1s loop x2)
+    const revealTimer = setTimeout(() => {
+      setPhase("reveal");
+    }, 2000);
+
+    // Phase 2: Text reveals, then fade out
+    const doneTimer = setTimeout(() => {
       setPhase("done");
       setTimeout(onComplete, 600);
-    }, 3200);
-    return () => clearTimeout(timer);
+    }, 3800);
+
+    return () => {
+      clearTimeout(revealTimer);
+      clearTimeout(doneTimer);
+    };
   }, [onComplete]);
 
   return (
@@ -27,56 +39,50 @@ export default function AnimatedIntro({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
         >
-          {/* Cube */}
+          {/* Subtle radial glow behind cube */}
+          <motion.div
+            className="absolute"
+            style={{
+              width: 400,
+              height: 400,
+              background:
+                "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%)",
+              pointerEvents: "none",
+            }}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+          />
+
+          {/* Lottie cube animation */}
           <motion.div
             className="relative"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{
+              scale: phase === "reveal" ? 0.9 : 1,
+              opacity: 1,
+              y: phase === "reveal" ? -10 : 0,
+            }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <svg
-              width="160"
-              height="160"
-              viewBox="200 180 680 600"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* Top face */}
-              <motion.path
-                d="M540 240 L780 380 L540 520 L300 380 Z"
-                fill="#ffffff"
-                initial={{ opacity: 0, y: -30 }}
-                animate={{ opacity: 0.95, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              />
-              {/* Left face */}
-              <motion.path
-                d="M300 380 L540 520 L540 760 L300 620 Z"
-                fill="#ffffff"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 0.55, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              />
-              {/* Right face */}
-              <motion.path
-                d="M780 380 L540 520 L540 760 L780 620 Z"
-                fill="#ffffff"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 0.3, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-              />
-            </svg>
-
-            {/* Glare sweep over cube */}
-            <div className="cube-glare" />
+            <Lottie
+              animationData={cubeAnimation}
+              loop={true}
+              autoplay={true}
+              style={{ width: 200, height: 200 }}
+            />
           </motion.div>
 
-          {/* FoundOS text with shine */}
+          {/* FOUNDOS text */}
           <motion.h1
-            className="text-shine mt-8 text-4xl font-bold tracking-[0.3em] sm:text-5xl"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.2 }}
+            className="text-shine mt-6 text-4xl font-bold tracking-[0.3em] sm:text-5xl"
+            initial={{ opacity: 0, y: 16, letterSpacing: "0.6em" }}
+            animate={{
+              opacity: phase === "reveal" ? 1 : 0,
+              y: phase === "reveal" ? 0 : 16,
+              letterSpacing: phase === "reveal" ? "0.3em" : "0.6em",
+            }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             FOUNDOS
           </motion.h1>
@@ -86,11 +92,24 @@ export default function AnimatedIntro({
             className="mt-3 text-sm tracking-[0.5em] uppercase"
             style={{ color: "#62666d" }}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 1.8 }}
+            animate={{ opacity: phase === "reveal" ? 1 : 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
           >
             Build &middot; Automate &middot; Scale
           </motion.p>
+
+          {/* Bottom line accent */}
+          <motion.div
+            className="absolute bottom-16"
+            style={{
+              height: 1,
+              background:
+                "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
+            }}
+            initial={{ width: 0 }}
+            animate={{ width: phase === "reveal" ? 200 : 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          />
         </motion.div>
       )}
     </AnimatePresence>
