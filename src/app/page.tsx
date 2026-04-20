@@ -89,6 +89,13 @@ function Nav() {
           Services
         </a>
         <a
+          href="#packages"
+          className="hidden text-sm sm:block"
+          style={{ color: "#8a8f98" }}
+        >
+          Packages
+        </a>
+        <a
           href={CAL_LINK}
           target="_blank"
           rel="noopener noreferrer"
@@ -655,6 +662,220 @@ function Founder() {
   );
 }
 
+// ─── Packages ──────────────────────────────────────────────────
+function Packages() {
+  const packages = [
+    {
+      name: "Launch",
+      price: "$1,500",
+      description: "Get online fast. Perfect for businesses with no web presence yet.",
+      includes: [
+        "Custom 3-5 page website",
+        "Mobile responsive",
+        "Contact form + Google Maps",
+        "Basic SEO setup",
+        "1 month free maintenance",
+      ],
+      cta: "Most Popular",
+      highlight: false,
+    },
+    {
+      name: "Growth",
+      price: "$3,500",
+      priceNote: "Save $500",
+      description: "Website + lead generation + automations. Built to bring in new clients on autopilot.",
+      includes: [
+        "Everything in Launch",
+        "Lead capture landing page",
+        "Automated email follow-ups",
+        "Google review request automation",
+        "Missed client follow-up system",
+        "3 months free maintenance",
+      ],
+      cta: "Best Value",
+      highlight: true,
+    },
+    {
+      name: "Full Build",
+      price: "$8,000+",
+      priceNote: "Save $1,500+",
+      description: "The complete digital system. Website, mobile app, automations, and ongoing support.",
+      includes: [
+        "Everything in Growth",
+        "Branded iOS & Android app",
+        "Client booking + payments",
+        "Push notifications",
+        "AI chatbot for your site",
+        "6 months free maintenance",
+        "Priority support",
+      ],
+      cta: "For Serious Operators",
+      highlight: false,
+    },
+  ];
+
+  return (
+    <Section id="packages">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={0}
+        className="mb-12"
+      >
+        <p
+          className="mb-3 text-sm font-medium tracking-[0.3em] uppercase"
+          style={{ color: "#62666d" }}
+        >
+          Packages
+        </p>
+        <h2
+          className="text-3xl font-semibold tracking-tight sm:text-4xl"
+          style={{ color: "#f7f8f8", letterSpacing: "-0.02em" }}
+        >
+          Pick a package. Save money. Ship faster.
+        </h2>
+        <p
+          className="mt-4 max-w-2xl text-base leading-relaxed"
+          style={{ color: "#8a8f98" }}
+        >
+          Bundle services together and get more for less. Every package includes
+          a strategy call, custom design, and hands-on support from start to finish.
+        </p>
+      </motion.div>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        {packages.map((pkg, i) => (
+          <motion.div
+            key={pkg.name}
+            className="relative flex flex-col rounded-xl border p-8 transition-colors"
+            style={{
+              borderColor: pkg.highlight
+                ? "rgba(255,255,255,0.2)"
+                : "rgba(255,255,255,0.08)",
+              background: pkg.highlight
+                ? "rgba(255,255,255,0.04)"
+                : "rgba(255,255,255,0.02)",
+            }}
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={i + 1}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.borderColor = pkg.highlight
+                ? "rgba(255,255,255,0.2)"
+                : "rgba(255,255,255,0.08)")
+            }
+          >
+            {/* Badge */}
+            <span
+              className="mb-5 inline-block self-start rounded-full px-3 py-1 text-xs font-medium"
+              style={{
+                background: pkg.highlight
+                  ? "rgba(255,255,255,0.1)"
+                  : "rgba(255,255,255,0.05)",
+                color: pkg.highlight ? "#f7f8f8" : "#8a8f98",
+                border: `1px solid ${pkg.highlight ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.08)"}`,
+              }}
+            >
+              {pkg.cta}
+            </span>
+
+            <h3
+              className="mb-1 text-xl font-semibold"
+              style={{ color: "#f7f8f8" }}
+            >
+              {pkg.name}
+            </h3>
+
+            <div className="mb-4 flex items-baseline gap-2">
+              <span
+                className="text-3xl font-bold"
+                style={{ color: "#f7f8f8" }}
+              >
+                {pkg.price}
+              </span>
+              {pkg.priceNote && (
+                <span className="text-sm font-medium" style={{ color: "#22c55e" }}>
+                  {pkg.priceNote}
+                </span>
+              )}
+            </div>
+
+            <p
+              className="mb-6 text-sm leading-relaxed"
+              style={{ color: "#8a8f98" }}
+            >
+              {pkg.description}
+            </p>
+
+            <ul className="mb-8 flex-1 space-y-2.5">
+              {pkg.includes.map((item) => (
+                <li
+                  key={item}
+                  className="flex items-start gap-2 text-sm"
+                  style={{ color: "#d0d6e0" }}
+                >
+                  <span
+                    className="mt-1 block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                    style={{ background: pkg.highlight ? "#f7f8f8" : "#62666d" }}
+                  />
+                  {item}
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href={CAL_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block rounded-md py-3 text-center text-sm font-semibold transition-colors"
+              style={{
+                background: pkg.highlight ? "#ffffff" : "transparent",
+                color: pkg.highlight ? "#0a0a0a" : "#d0d6e0",
+                border: pkg.highlight ? "none" : "1px solid rgba(255,255,255,0.15)",
+              }}
+              onMouseEnter={(e) => {
+                if (pkg.highlight) {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.85)";
+                } else {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (pkg.highlight) {
+                  e.currentTarget.style.background = "#ffffff";
+                } else {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+                }
+              }}
+            >
+              Get Started
+            </a>
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.p
+        className="mt-8 text-center text-sm"
+        style={{ color: "#62666d" }}
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={4}
+      >
+        All packages include a free strategy call. Payment plans available.
+      </motion.p>
+    </Section>
+  );
+}
+
 // ─── Footer ─────────────────────────────────────────────────────
 function Footer() {
   return (
@@ -762,6 +983,15 @@ export default function Home() {
           </div>
 
           <Services />
+
+          <div className="mx-auto max-w-5xl px-6">
+            <div
+              className="h-px w-full"
+              style={{ background: "rgba(255,255,255,0.05)" }}
+            />
+          </div>
+
+          <Packages />
 
           <div className="mx-auto max-w-5xl px-6">
             <div
