@@ -91,3 +91,162 @@ body {
 ::selection {
   background: rgba(255, 255, 255, 0.15);
 }
+
+/* ─── Floating particles ─────────────────────────────────────── */
+.particles-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffffff;
+  animation: particle-float ease-in-out infinite;
+}
+
+@keyframes particle-float {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-40px) translateX(15px);
+  }
+  90% {
+    opacity: 1;
+  }
+}
+
+/* ─── Glitch text effect ──────────────────────────────────────── */
+.glitch-wrapper {
+  position: relative;
+  z-index: 10;
+  margin-top: 1rem;
+}
+
+.glitch-text {
+  position: relative;
+  color: #f7f8f8;
+}
+
+.glitch-active {
+  animation: glitch-skew 4s infinite linear alternate-reverse;
+}
+
+.glitch-active::before,
+.glitch-active::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+}
+
+.glitch-active::before {
+  color: #f7f8f8;
+  animation: glitch-left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  text-shadow: -2px 0 rgba(255, 255, 255, 0.15);
+}
+
+.glitch-active::after {
+  color: #f7f8f8;
+  animation: glitch-right 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  text-shadow: 2px 0 rgba(255, 255, 255, 0.1);
+}
+
+@keyframes glitch-left {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-3px, 1px);
+  }
+  40% {
+    transform: translate(-1px, -1px);
+  }
+  60% {
+    transform: translate(2px, 1px);
+  }
+  80% {
+    transform: translate(1px, -1px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes glitch-right {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(2px, -1px);
+  }
+  40% {
+    transform: translate(1px, 1px);
+  }
+  60% {
+    transform: translate(-2px, -1px);
+  }
+  80% {
+    transform: translate(-1px, 1px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes glitch-skew {
+  0% {
+    transform: skew(0deg);
+  }
+  2% {
+    transform: skew(0.4deg);
+  }
+  4% {
+    transform: skew(0deg);
+  }
+  48% {
+    transform: skew(0deg);
+  }
+  50% {
+    transform: skew(-0.3deg);
+  }
+  52% {
+    transform: skew(0deg);
+  }
+  100% {
+    transform: skew(0deg);
+  }
+}
+
+/* ─── Cursor parallax container ───────────────────────────────── */
+.cursor-parallax {
+  transition: transform 0.15s ease-out;
+}
+
+/* ─── Scroll reveal ──────────────────────────────────────────── */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

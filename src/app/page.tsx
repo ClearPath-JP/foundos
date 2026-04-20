@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import AnimatedIntro from "@/components/AnimatedIntro";
 
 const CAL_LINK = "https://cal.com/foundos.ai/strategy-call";
@@ -115,13 +115,66 @@ function Nav() {
   );
 }
 
+// ─── Cursor parallax hook ──────────────────────────────────────
+function useCursorParallax(strength: number = 20) {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const x = useTransform(mouseX, [-1, 1], [-strength, strength]);
+  const y = useTransform(mouseY, [-1, 1], [-strength, strength]);
+
+  useEffect(() => {
+    function handleMouse(e: MouseEvent) {
+      const nx = (e.clientX / window.innerWidth) * 2 - 1;
+      const ny = (e.clientY / window.innerHeight) * 2 - 1;
+      mouseX.set(nx);
+      mouseY.set(ny);
+    }
+    window.addEventListener("mousemove", handleMouse);
+    return () => window.removeEventListener("mousemove", handleMouse);
+  }, [mouseX, mouseY]);
+
+  return { x, y };
+}
+
 // ─── Hero ───────────────────────────────────────────────────────
 function Hero() {
+  const parallaxSlow = useCursorParallax(12);
+  const parallaxFast = useCursorParallax(25);
+
   return (
-    <Section className="pt-40 sm:pt-52 pb-20 text-center">
+    <Section className="pt-40 sm:pt-52 pb-20 text-center relative overflow-hidden">
+      {/* Background grid lines (subtle) */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        aria-hidden
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)
+          `,
+          backgroundSize: "60px 60px",
+          maskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, black 20%, transparent 70%)",
+          WebkitMaskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, black 20%, transparent 70%)",
+        }}
+      />
+
+      {/* Floating glow orb that follows cursor */}
+      <motion.div
+        className="absolute pointer-events-none"
+        style={{
+          width: 600,
+          height: 600,
+          background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%)",
+          x: parallaxFast.x,
+          y: parallaxFast.y,
+          left: "calc(50% - 300px)",
+          top: "calc(50% - 300px)",
+        }}
+      />
+
       <motion.p
-        className="mb-6 text-sm font-medium tracking-[0.3em] uppercase"
-        style={{ color: "#62666d" }}
+        className="mb-6 text-sm font-medium tracking-[0.3em] uppercase relative z-10"
+        style={{ color: "#62666d", x: parallaxSlow.x, y: parallaxSlow.y }}
         variants={fadeUp}
         initial="hidden"
         whileInView="visible"
@@ -132,7 +185,7 @@ function Hero() {
       </motion.p>
 
       <motion.h1
-        className="mx-auto max-w-3xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl"
+        className="mx-auto max-w-3xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl relative z-10"
         style={{ color: "#f7f8f8", letterSpacing: "-0.03em" }}
         variants={fadeUp}
         initial="hidden"
@@ -144,8 +197,8 @@ function Hero() {
       </motion.h1>
 
       <motion.p
-        className="mx-auto mt-6 max-w-xl text-lg leading-relaxed"
-        style={{ color: "#8a8f98" }}
+        className="mx-auto mt-6 max-w-xl text-lg leading-relaxed relative z-10"
+        style={{ color: "#8a8f98", x: parallaxSlow.x }}
         variants={fadeUp}
         initial="hidden"
         whileInView="visible"
@@ -157,7 +210,7 @@ function Hero() {
       </motion.p>
 
       <motion.div
-        className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
+        className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center relative z-10"
         variants={fadeUp}
         initial="hidden"
         whileInView="visible"
@@ -168,30 +221,34 @@ function Hero() {
           href={CAL_LINK}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-md px-8 py-3.5 text-sm font-semibold transition-colors"
+          className="hero-cta-primary rounded-md px-8 py-3.5 text-sm font-semibold transition-all duration-200"
           style={{ background: "#ffffff", color: "#0a0a0a" }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.background = "rgba(255,255,255,0.85)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.background = "#ffffff")
-          }
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(255,255,255,0.9)";
+            e.currentTarget.style.boxShadow = "0 0 30px rgba(255,255,255,0.15)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "#ffffff";
+            e.currentTarget.style.boxShadow = "none";
+          }}
         >
           Book a Free Strategy Call
         </a>
         <a
           href="#products"
-          className="rounded-md border px-8 py-3.5 text-sm font-medium transition-colors"
+          className="rounded-md border px-8 py-3.5 text-sm font-medium transition-all duration-200"
           style={{
             borderColor: "rgba(255,255,255,0.15)",
             color: "#d0d6e0",
           }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)")
-          }
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)";
+            e.currentTarget.style.boxShadow = "0 0 20px rgba(255,255,255,0.05)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
         >
           See What We Build
         </a>
