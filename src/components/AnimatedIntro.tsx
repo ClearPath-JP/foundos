@@ -176,17 +176,17 @@ export default function AnimatedIntro({
   );
 
   useEffect(() => {
-    // Phase 1: Cube builds with particles (0-1.8s)
-    const revealTimer = setTimeout(() => setPhase("reveal"), 1800);
+    // Phase 1: Cube builds with particles (0-1.2s)
+    const revealTimer = setTimeout(() => setPhase("reveal"), 1200);
 
-    // Phase 2: Glitch text + cycling words (1.8-3.2s)
-    const servicesTimer = setTimeout(() => setPhase("services"), 3200);
+    // Phase 2: Glitch text + cycling words (1.2-2.2s)
+    const servicesTimer = setTimeout(() => setPhase("services"), 2200);
 
-    // Phase 3: Lines draw to services (3.2-5s)
+    // Phase 3: Lines draw to services (2.2-2.8s)
     const doneTimer = setTimeout(() => {
       setPhase("done");
-      setTimeout(onComplete, 600);
-    }, 5200);
+      setTimeout(onComplete, 500);
+    }, 2800);
 
     return () => {
       clearTimeout(revealTimer);

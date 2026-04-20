@@ -10,8 +10,30 @@
   --color-surface-elevated: #191a1b;
   --color-border: rgba(255, 255, 255, 0.08);
   --color-border-subtle: rgba(255, 255, 255, 0.05);
+  --color-accent: #dc2626;
   --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
+}
+
+/* Red accent keyword */
+.accent {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* Large statement sections */
+.story-statement {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: #f7f8f8;
+}
+
+.story-body {
+  font-size: clamp(16px, 1.8vw, 20px);
+  line-height: 1.7;
+  color: #8a8f98;
 }
 
 html {
