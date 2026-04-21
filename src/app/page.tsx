@@ -259,13 +259,13 @@ function About() {
               Book a Call
             </a>
             <a
-              href="sms:4044363393"
+              href="mailto:hello@foundos.ai"
               className="rounded-md border px-6 py-3 text-sm font-medium transition-all duration-200"
               style={{ borderColor: "rgba(255,255,255,0.1)", color: "#8a8f98" }}
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)")}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
             >
-              Text me — 404-436-3393
+              hello@foundos.ai
             </a>
           </div>
         </div>
@@ -398,13 +398,13 @@ function Portfolio() {
             </p>
           </div>
           <a
-            href="sms:4044363393"
+            href="mailto:hello@foundos.ai"
             className="rounded-md border px-5 py-2.5 text-sm font-medium transition-all duration-200 flex-shrink-0"
             style={{ borderColor: "rgba(255,255,255,0.2)", color: "#f7f8f8" }}
             onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)")}
             onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
           >
-            Text me
+            Email me
           </a>
         </div>
       </motion.div>
@@ -824,13 +824,13 @@ export default function Home() {
         <main>
           <Hero />
           <Divider />
-          <About />
-          <Divider />
           <Portfolio />
           <Divider />
           <Services />
           <Divider />
           <Packages />
+          <Divider />
+          <About />
           <Divider />
           <FinalCta />
         </main>

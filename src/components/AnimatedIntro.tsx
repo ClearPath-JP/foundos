@@ -1,15 +1,20 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import gsap from "gsap";
+import { SplitText } from "gsap/SplitText";
+import { useGSAP } from "@gsap/react";
 import Lottie from "lottie-react";
 import cubeAnimation from "../../public/cube-intro.json";
+
+gsap.registerPlugin(SplitText);
 
 // ─── Floating particles ────────────────────────────────────────
 function Particles() {
   return (
     <div className="particles-container" aria-hidden>
-      {Array.from({ length: 40 }).map((_, i) => (
+      {Array.from({ length: 50 }).map((_, i) => (
         <div
           key={i}
           className="particle"
@@ -18,32 +23,13 @@ function Particles() {
             top: `${Math.random() * 100}%`,
             width: `${1 + Math.random() * 2}px`,
             height: `${1 + Math.random() * 2}px`,
-            animationDelay: `${Math.random() * 4}s`,
-            animationDuration: `${3 + Math.random() * 4}s`,
-            opacity: 0.1 + Math.random() * 0.3,
+            animationDelay: `${Math.random() * 5}s`,
+            animationDuration: `${4 + Math.random() * 5}s`,
+            opacity: 0.08 + Math.random() * 0.2,
           }}
         />
       ))}
     </div>
-  );
-}
-
-// ─── Glitch text component ─────────────────────────────────────
-function GlitchText({ text, show }: { text: string; show: boolean }) {
-  return (
-    <motion.div
-      className="glitch-wrapper"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: show ? 1 : 0 }}
-      transition={{ duration: 0.1 }}
-    >
-      <h1
-        className={`glitch-text text-4xl font-bold tracking-[0.3em] sm:text-5xl ${show ? "glitch-active" : ""}`}
-        data-text={text}
-      >
-        {text}
-      </h1>
-    </motion.div>
   );
 }
 
@@ -55,7 +41,7 @@ function ConnectionLines({ show }: { show: boolean }) {
       width="400"
       height="200"
       viewBox="0 0 400 200"
-      style={{ top: "55%", left: "50%", transform: "translateX(-50%)" }}
+      style={{ top: "60%", left: "50%", transform: "translateX(-50%)" }}
     >
       {/* Left line */}
       <motion.line
@@ -137,31 +123,111 @@ function CyclingText({ show }: { show: boolean }) {
     if (!show) return;
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % words.length);
-    }, 600);
+    }, 700);
     return () => clearInterval(interval);
   }, [show, words.length]);
 
   return (
     <motion.div
-      className="mt-3 h-6 overflow-hidden"
+      className="mt-4 h-6 overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: show ? 1 : 0 }}
-      transition={{ duration: 0.3, delay: 0.5 }}
+      transition={{ duration: 0.3, delay: 0.3 }}
     >
       <AnimatePresence mode="wait">
         <motion.p
           key={words[index]}
           className="text-sm tracking-[0.4em] uppercase"
           style={{ color: "#62666d" }}
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.2 }}
+          exit={{ opacity: 0, y: -14 }}
+          transition={{ duration: 0.25 }}
         >
           {words[index]}
         </motion.p>
       </AnimatePresence>
     </motion.div>
+  );
+}
+
+// ─── GSAP text reveal ──────────────────────────────────────────
+function TextReveal({ show }: { show: boolean }) {
+  const textRef = useRef<HTMLHeadingElement>(null);
+  const splitRef = useRef<SplitText | null>(null);
+  const hasAnimated = useRef(false);
+
+  useGSAP(() => {
+    if (!show || !textRef.current || hasAnimated.current) return;
+    hasAnimated.current = true;
+
+    // Split into characters with mask for clip reveal
+    splitRef.current = SplitText.create(textRef.current, {
+      type: "chars",
+      mask: "chars",
+    });
+
+    // Animate each character sliding up from behind its mask
+    gsap.from(splitRef.current.chars, {
+      y: "100%",
+      duration: 0.7,
+      ease: "power3.out",
+      stagger: { each: 0.04, from: "center" },
+    });
+
+    // Horizontal line sweep under the text
+    gsap.fromTo(
+      ".intro-underline",
+      { scaleX: 0 },
+      {
+        scaleX: 1,
+        duration: 0.8,
+        delay: 0.5,
+        ease: "power2.out",
+      }
+    );
+  }, [show]);
+
+  return (
+    <div className="relative z-10 mt-2 flex flex-col items-center">
+      <h1
+        ref={textRef}
+        className="text-4xl font-bold tracking-[0.25em] sm:text-5xl md:text-6xl"
+        style={{
+          color: "#f7f8f8",
+          visibility: show ? "visible" : "hidden",
+        }}
+      >
+        FOUNDOS
+      </h1>
+      {/* Underline sweep */}
+      <div
+        className="intro-underline mt-3"
+        style={{
+          width: "120%",
+          maxWidth: 360,
+          height: 1,
+          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)",
+          transformOrigin: "center",
+          transform: "scaleX(0)",
+        }}
+      />
+    </div>
+  );
+}
+
+// ─── Tagline fade ──────────────────────────────────────────────
+function Tagline({ show }: { show: boolean }) {
+  return (
+    <motion.p
+      className="mt-5 text-xs tracking-[0.5em] uppercase"
+      style={{ color: "#62666d" }}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: show ? 0.7 : 0, y: show ? 0 : 8 }}
+      transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
+    >
+      Build &middot; Automate &middot; Scale
+    </motion.p>
   );
 }
 
@@ -176,17 +242,17 @@ export default function AnimatedIntro({
   );
 
   useEffect(() => {
-    // Phase 1: Cube builds with particles (0-1.2s)
-    const revealTimer = setTimeout(() => setPhase("reveal"), 1200);
+    // Phase 1: Cube builds with particles (0-1.8s) — longer to breathe
+    const revealTimer = setTimeout(() => setPhase("reveal"), 1800);
 
-    // Phase 2: Glitch text + cycling words (1.2-2.2s)
-    const servicesTimer = setTimeout(() => setPhase("services"), 2200);
+    // Phase 2: Text reveal + tagline + cycling words (1.8-3.6s)
+    const servicesTimer = setTimeout(() => setPhase("services"), 3600);
 
-    // Phase 3: Lines draw to services (2.2-2.8s)
+    // Phase 3: Lines draw to services (3.6-5.0s)
     const doneTimer = setTimeout(() => {
       setPhase("done");
-      setTimeout(onComplete, 500);
-    }, 2800);
+      setTimeout(onComplete, 600);
+    }, 5000);
 
     return () => {
       clearTimeout(revealTimer);
@@ -201,54 +267,61 @@ export default function AnimatedIntro({
         <motion.div
           className="fixed inset-0 z-50 flex flex-col items-center justify-center"
           style={{ background: "#0a0a0a" }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
+          exit={{ opacity: 0, scale: 1.02 }}
+          transition={{ duration: 0.7, ease: "easeInOut" }}
         >
           {/* Particle background */}
           <Particles />
 
-          {/* Radial glow */}
+          {/* Radial glow — grows with phase */}
           <motion.div
             className="absolute"
             style={{
-              width: 500,
-              height: 500,
+              width: 600,
+              height: 600,
               background:
                 "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 60%)",
               pointerEvents: "none",
             }}
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 2, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: 0.4 }}
+            animate={{
+              opacity: phase === "build" ? 0.6 : 1,
+              scale: phase === "build" ? 0.7 : 1,
+            }}
+            transition={{ duration: 2.5, ease: "easeOut" }}
           />
 
           {/* Lottie cube */}
           <motion.div
             className="relative z-10"
-            initial={{ scale: 0.6, opacity: 0 }}
+            initial={{ scale: 0.5, opacity: 0 }}
             animate={{
-              scale: phase === "build" ? 1 : 0.85,
+              scale: phase === "build" ? 1 : 0.75,
               opacity: 1,
-              y: phase !== "build" ? -20 : 0,
+              y: phase !== "build" ? -30 : 0,
             }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{
+              duration: 1,
+              ease: [0.16, 1, 0.3, 1],
+              scale: { type: "spring", stiffness: 100, damping: 15 },
+            }}
           >
             <Lottie
               animationData={cubeAnimation}
               loop
               autoplay
-              style={{ width: 180, height: 180 }}
+              style={{ width: 200, height: 200 }}
             />
           </motion.div>
 
-          {/* Glitch FOUNDOS */}
-          <GlitchText
-            text="FOUNDOS"
-            show={phase === "reveal" || phase === "services"}
-          />
+          {/* GSAP SplitText character reveal */}
+          <TextReveal show={phase === "reveal" || phase === "services"} />
+
+          {/* Tagline */}
+          <Tagline show={phase === "reveal" || phase === "services"} />
 
           {/* Cycling "for X" text */}
-          <CyclingText show={phase === "reveal" || phase === "services"} />
+          <CyclingText show={phase === "services"} />
 
           {/* Service connection lines */}
           <ConnectionLines show={phase === "services"} />
@@ -263,9 +336,9 @@ export default function AnimatedIntro({
             }}
             initial={{ width: 0 }}
             animate={{
-              width: phase !== "build" ? 240 : 0,
+              width: phase !== "build" ? 280 : 0,
             }}
-            transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+            transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
           />
         </motion.div>
       )}
