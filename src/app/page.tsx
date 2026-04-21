@@ -86,6 +86,7 @@ function Nav() {
       </a>
       <div className="flex items-center gap-6">
         <a href="#services" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Services</a>
+        <a href="#work" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Work</a>
         <a href="#packages" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Packages</a>
         <a href="#about" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>About</a>
         <a
@@ -331,6 +332,80 @@ function Proof() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   CHAPTER 4.5 — THE WORK (Portfolio)
+   ═══════════════════════════════════════════════════════════════ */
+
+function Portfolio() {
+  const projects = [
+    { src: "/portfolio/login-final.png", label: "Branded Login Experience" },
+    { src: "/portfolio/coach-schedule.png", label: "Coach Schedule & Calendar" },
+    { src: "/portfolio/coach-clients.png", label: "Client Management Dashboard" },
+    { src: "/portfolio/coach-payments.png", label: "Payment & Revenue Tracking" },
+  ];
+
+  return (
+    <Section id="work">
+      <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-12">
+        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#dc2626" }}>
+          Recent work
+        </p>
+        <h2 className="story-statement">
+          Built. <R>Shipped.</R> Running.
+        </h2>
+        <p className="mt-4 max-w-2xl story-body">
+          Sensei App — a full coaching platform built for a <R>martial arts coach</R> who needed
+          client management, scheduling, payments, and messaging in <R>one place</R>.
+        </p>
+      </motion.div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        {projects.map((p, i) => (
+          <motion.div
+            key={p.label}
+            className="group relative overflow-hidden rounded-xl border"
+            style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
+          >
+            <div className="relative aspect-video overflow-hidden">
+              <img
+                src={p.src}
+                alt={p.label}
+                className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div className="absolute inset-0" style={{
+                background: "linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 50%)",
+              }} />
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-4">
+              <p className="text-sm font-medium" style={{ color: "#f7f8f8" }}>{p.label}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.div
+        className="mt-8 text-center"
+        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={5}
+      >
+        <p className="text-sm" style={{ color: "#62666d" }}>
+          Want something like this for your business?
+        </p>
+        <a
+          href={CAL_LINK} target="_blank" rel="noopener noreferrer"
+          className="mt-4 inline-block rounded-md px-6 py-3 text-sm font-semibold transition-all duration-200"
+          style={{ background: "#dc2626", color: "#ffffff" }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "#b91c1c"; e.currentTarget.style.boxShadow = "0 0 30px rgba(220,38,38,0.3)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "#dc2626"; e.currentTarget.style.boxShadow = "none"; }}
+        >
+          Book a Free Strategy Call
+        </a>
+      </motion.div>
+    </Section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
    CHAPTER 5 — THE DEAL (Partnership + Packages)
    ═══════════════════════════════════════════════════════════════ */
 
@@ -371,6 +446,7 @@ function Packages() {
     {
       name: "Launch",
       price: "$1,500",
+      monthly: "$750/mo \u00d7 2",
       description: "Get online fast. Perfect if you have no web presence yet.",
       includes: ["Custom 3-5 page website", "Mobile responsive", "Contact form + Google Maps", "Basic SEO setup", "1 month free maintenance"],
       cta: "Most Popular",
@@ -379,6 +455,7 @@ function Packages() {
     {
       name: "Growth",
       price: "$3,500",
+      monthly: "$875/mo \u00d7 4",
       priceNote: "Save $500",
       description: "Website + lead gen + automations. Built to bring in new clients on autopilot.",
       includes: ["Everything in Launch", "Lead capture landing page", "Automated email follow-ups", "Google review automation", "Missed client follow-ups", "3 months free maintenance"],
@@ -388,6 +465,7 @@ function Packages() {
     {
       name: "Full Build",
       price: "$8,000+",
+      monthly: "From $2,000/mo \u00d7 4",
       priceNote: "Save $1,500+",
       description: "The complete digital system. Website, app, automations, ongoing support.",
       includes: ["Everything in Growth", "Branded iOS & Android app", "Client booking + payments", "Push notifications", "AI chatbot for your site", "6 months free maintenance", "Priority support"],
@@ -426,10 +504,15 @@ function Packages() {
               {pkg.cta}
             </span>
             <h3 className="mb-1 text-xl font-semibold" style={{ color: "#f7f8f8" }}>{pkg.name}</h3>
-            <div className="mb-4 flex items-baseline gap-2">
+            <div className="mb-1 flex items-baseline gap-2">
               <span className="text-3xl font-bold" style={{ color: "#f7f8f8" }}>{pkg.price}</span>
               {pkg.priceNote && <span className="text-sm font-medium" style={{ color: "#dc2626" }}>{pkg.priceNote}</span>}
             </div>
+            {pkg.monthly && (
+              <p className="mb-3 text-sm font-medium" style={{ color: "#62666d" }}>
+                or <span style={{ color: "#8a8f98" }}>{pkg.monthly}</span>
+              </p>
+            )}
             <p className="mb-6 text-sm leading-relaxed" style={{ color: "#8a8f98" }}>{pkg.description}</p>
             <ul className="mb-8 flex-1 space-y-2.5">
               {pkg.includes.map((item) => (
@@ -582,8 +665,12 @@ function Footer() {
           <span className="text-sm font-semibold tracking-[0.15em]" style={{ color: "#f7f8f8" }}>FOUNDOS</span>
         </div>
         <div className="flex items-center gap-6">
-          {["Instagram", "TikTok", "LinkedIn"].map((name) => (
-            <a key={name} href={`https://${name.toLowerCase()}.com`} target="_blank" rel="noopener noreferrer"
+          {[
+            { name: "Instagram", url: "https://instagram.com/foundos.ai" },
+            { name: "TikTok", url: "https://tiktok.com/@foundos.ai" },
+            { name: "LinkedIn", url: "https://linkedin.com/in/jppotesta" },
+          ].map(({ name, url }) => (
+            <a key={name} href={url} target="_blank" rel="noopener noreferrer"
               className="text-sm transition-colors" style={{ color: "#62666d" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "#dc2626")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "#62666d")}
@@ -632,6 +719,10 @@ export default function Home() {
 
           {/* Ch.4: The Proof */}
           <Proof />
+          <Divider />
+
+          {/* Ch.4.5: The Work */}
+          <Portfolio />
 
           {/* Ch.5: The Deal */}
           <Partnership />
