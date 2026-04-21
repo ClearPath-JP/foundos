@@ -86,8 +86,9 @@ function Nav() {
         <span className="text-sm font-semibold tracking-[0.15em] text-foreground">FOUNDOS</span>
       </a>
       <div className="flex items-center gap-6">
-        <a href="#work" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Work</a>
         <a href="#services" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Services</a>
+        <a href="#products" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Products</a>
+        <a href="#work" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Work</a>
         <a href="#pricing" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Pricing</a>
         <a href="#about" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>About</a>
         <a
@@ -168,13 +169,13 @@ function Hero() {
           Book a Free Strategy Call
         </a>
         <a
-          href="#work"
+          href="#services"
           className="rounded-md border px-8 py-3.5 text-sm font-medium transition-all duration-200"
           style={{ borderColor: "rgba(255,255,255,0.1)", color: "#8a8f98" }}
           onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)")}
           onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
         >
-          See My Work
+          See What I Do
         </a>
       </motion.div>
     </Section>
@@ -278,7 +279,7 @@ function About() {
    PORTFOLIO — Case study format. Easy to add new projects.
    ═══════════════════════════════════════════════════════════════ */
 
-function Portfolio() {
+function Products() {
   const screenshots = [
     { src: "/portfolio/login-final.png", label: "Branded Login Experience" },
     { src: "/portfolio/coach-schedule.png", label: "Coach Schedule & Calendar" },
@@ -294,16 +295,17 @@ function Portfolio() {
   ];
 
   return (
-    <Section id="work">
+    <Section id="products">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-12">
         <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#62666d" }}>
-          Portfolio
+          Products
         </p>
         <h2 className="story-statement">
-          Real work. <A>Real results.</A>
+          I don&apos;t just build for clients. <A>I build my own.</A>
         </h2>
         <p className="mt-4 max-w-2xl story-body">
-          I don&apos;t show mockups. Everything here is <A>built, shipped, and running</A>.
+          Sensei App is a full SaaS platform I designed, built, and shipped solo —
+          proof that I can architect and maintain <A>complex systems</A>.
         </p>
       </motion.div>
 
@@ -319,7 +321,7 @@ function Portfolio() {
             <div className="flex-1">
               <span className="inline-block rounded-full border px-3 py-1 text-xs font-medium mb-4"
                 style={{ borderColor: "rgba(255,255,255,0.15)", color: "#8a8f98" }}>
-                Case Study
+                SaaS Product
               </span>
               <h3 className="text-2xl font-semibold mb-1" style={{ color: "#f7f8f8" }}>
                 Sensei App
@@ -405,6 +407,145 @@ function Portfolio() {
             onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
           >
             Email me
+          </a>
+        </div>
+      </motion.div>
+
+    </Section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PORTFOLIO — Client work. Real projects for real people.
+   ═══════════════════════════════════════════════════════════════ */
+
+function Portfolio() {
+  const screenshots = [
+    { src: "/portfolio/framelock-hero.png", label: "Hero Carousel" },
+    { src: "/portfolio/framelock-gallery.png", label: "Masonry Gallery" },
+    { src: "/portfolio/framelock-pricing.png", label: "Services & Pricing" },
+    { src: "/portfolio/framelock-mobile.png", label: "Mobile Experience" },
+  ];
+
+  const buildStats = [
+    { value: "33", label: "Photos loaded" },
+    { value: "3", label: "Pricing tiers" },
+    { value: "<2 wks", label: "Build time" },
+    { value: "Live", label: "In production" },
+  ];
+
+  return (
+    <Section id="work">
+      <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-12">
+        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#62666d" }}>
+          Portfolio
+        </p>
+        <h2 className="story-statement">
+          Real work. <A>Real clients.</A>
+        </h2>
+        <p className="mt-4 max-w-2xl story-body">
+          Every project ships. Here&apos;s what I&apos;ve built for people who trusted me with their business.
+        </p>
+      </motion.div>
+
+      {/* ─── FRAMELOCK Case Study ─────────────────────────── */}
+      <motion.div
+        className="rounded-2xl border overflow-hidden"
+        style={{ borderColor: "rgba(255,255,255,0.1)", background: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.005) 100%)" }}
+        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+      >
+        {/* Case study header */}
+        <div className="p-8 sm:p-10">
+          <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+            <div className="flex-1">
+              <span className="inline-block rounded-full border px-3 py-1 text-xs font-medium mb-4"
+                style={{ borderColor: "rgba(255,255,255,0.15)", color: "#8a8f98" }}>
+                Client Project
+              </span>
+              <h3 className="text-2xl font-semibold mb-1" style={{ color: "#f7f8f8" }}>
+                FRAMELOCK
+              </h3>
+              <p className="text-sm font-medium mb-5" style={{ color: "#62666d" }}>
+                Photography portfolio for a car photographer in Atlanta
+              </p>
+              <p className="text-sm leading-relaxed mb-6 max-w-xl" style={{ color: "#8a8f98" }}>
+                Andy shoots cars and sports around Atlanta — meets, exotics, night games. He needed a site that
+                matched the energy of his work. I built him a <A>dark, cinematic portfolio</A> with a film-inspired
+                design, masonry gallery with category filters, and pricing tiers that let clients book on the spot.
+              </p>
+              <ul className="space-y-2.5">
+                {[
+                  "Dark cinematic theme with amber accent",
+                  "Film strip hero carousel with 33 real photos",
+                  "Category-filtered masonry gallery",
+                  "3-tier pricing with booking integration",
+                  "Fully responsive — optimized for every screen",
+                  "Smooth Framer Motion page transitions",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm" style={{ color: "#d0d6e0" }}>
+                    <span className="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: "#f7f8f8" }} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Build stats */}
+            <div className="flex-shrink-0">
+              <div className="grid grid-cols-2 gap-6">
+                {buildStats.map((s) => (
+                  <div key={s.label} className="text-center md:text-right">
+                    <span className="text-3xl font-bold block" style={{ color: "#f7f8f8" }}>{s.value}</span>
+                    <span className="text-xs" style={{ color: "#62666d" }}>{s.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Screenshot grid */}
+        <div className="grid gap-px sm:grid-cols-2" style={{ background: "rgba(255,255,255,0.05)" }}>
+          {screenshots.map((p) => (
+            <div key={p.label} className="group relative overflow-hidden" style={{ background: "#0a0a0a" }}>
+              <div className="relative aspect-video overflow-hidden">
+                <img
+                  src={p.src}
+                  alt={p.label}
+                  className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0" style={{
+                  background: "linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 50%)",
+                }} />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <p className="text-sm font-medium" style={{ color: "#f7f8f8" }}>{p.label}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* See it live */}
+        <div className="p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+          <div>
+            <p className="text-sm font-medium" style={{ color: "#d0d6e0" }}>
+              Built for Andy — a car photographer in Atlanta.
+            </p>
+            <p className="text-xs mt-1" style={{ color: "#62666d" }}>
+              Next.js 16 &middot; Tailwind v4 &middot; Framer Motion &middot; Vercel
+            </p>
+          </div>
+          <a
+            href="https://shutter-city.vercel.app"
+            target="_blank" rel="noopener noreferrer"
+            className="rounded-md border px-5 py-2.5 text-sm font-medium transition-all duration-200 flex-shrink-0"
+            style={{ borderColor: "rgba(255,255,255,0.2)", color: "#f7f8f8" }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
+          >
+            See it live &rarr;
           </a>
         </div>
       </motion.div>
@@ -824,9 +965,11 @@ export default function Home() {
         <main>
           <Hero />
           <Divider />
-          <Portfolio />
-          <Divider />
           <Services />
+          <Divider />
+          <Products />
+          <Divider />
+          <Portfolio />
           <Divider />
           <Packages />
           <Divider />
