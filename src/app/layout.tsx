@@ -14,13 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FoundOS — We build the system that runs your business",
+  title: "FoundOS — Custom websites, apps, and automations for local businesses",
   description:
-    "Custom software, apps, and AI automations for local businesses. From $1,500. Live in 2 weeks.",
+    "I sit down with you, understand your business, and build exactly what you need. Custom websites, apps, and AI automations. Relationship first, tech second.",
   openGraph: {
     title: "FoundOS",
     description:
-      "We build the system that runs your business. Custom software, apps, and automations.",
+      "Custom websites, apps, and automations built around your business. Not a template. Not an agency. A builder in your corner.",
     url: "https://foundos.ai",
     siteName: "FoundOS",
     type: "website",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "FoundOS",
     description:
-      "We build the system that runs your business. Custom software, apps, and automations.",
+      "Custom websites, apps, and automations built around your business. Relationship first, tech second.",
   },
 };
 

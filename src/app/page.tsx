@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
+import Image from "next/image";
 import AnimatedIntro from "@/components/AnimatedIntro";
 
 const CAL_LINK = "https://cal.com/foundos.ai/strategy-call";
@@ -17,7 +18,7 @@ const fadeUp = {
   }),
 };
 
-function R({ children }: { children: React.ReactNode }) {
+function A({ children }: { children: React.ReactNode }) {
   return <span className="accent">{children}</span>;
 }
 
@@ -68,7 +69,7 @@ function useCursorParallax(strength: number = 20) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CHAPTER 1 — HOOK
+   NAV
    ═══════════════════════════════════════════════════════════════ */
 
 function Nav() {
@@ -85,16 +86,16 @@ function Nav() {
         <span className="text-sm font-semibold tracking-[0.15em] text-foreground">FOUNDOS</span>
       </a>
       <div className="flex items-center gap-6">
+        <a href="#problem" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>The Problem</a>
         <a href="#services" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Services</a>
-        <a href="#work" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Work</a>
         <a href="#packages" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Packages</a>
         <a href="#about" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>About</a>
         <a
           href={CAL_LINK} target="_blank" rel="noopener noreferrer"
-          className="rounded-md px-4 py-2 text-sm font-medium transition-colors"
-          style={{ background: "#dc2626", color: "#ffffff" }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "#b91c1c")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "#dc2626")}
+          className="rounded-md border px-4 py-2 text-sm font-medium transition-all duration-200"
+          style={{ borderColor: "rgba(255,255,255,0.25)", color: "#f7f8f8", background: "transparent" }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.6)"; e.currentTarget.style.boxShadow = "0 0 15px rgba(255,255,255,0.08)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; e.currentTarget.style.boxShadow = "none"; }}
         >
           Book a Call
         </a>
@@ -102,6 +103,11 @@ function Nav() {
     </motion.nav>
   );
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   CHAPTER 1 — HERO
+   Cut through the noise. Relationship first.
+   ═══════════════════════════════════════════════════════════════ */
 
 function Hero() {
   const parallax = useCursorParallax(15);
@@ -116,27 +122,28 @@ function Hero() {
         WebkitMaskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, black 20%, transparent 70%)",
       }} />
 
-      {/* Cursor glow */}
+      {/* Cursor glow — white, not red */}
       <motion.div className="absolute pointer-events-none" style={{
         width: 600, height: 600,
-        background: "radial-gradient(circle, rgba(220,38,38,0.04) 0%, transparent 60%)",
+        background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%)",
         x: parallax.x, y: parallax.y,
         left: "calc(50% - 300px)", top: "calc(50% - 300px)",
       }} />
 
       <motion.p
         className="mb-6 text-sm font-medium tracking-[0.3em] uppercase relative z-10"
-        style={{ color: "#dc2626" }}
+        style={{ color: "#8a8f98" }}
         variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
       >
-        Your business deserves better
+        Cut through the noise
       </motion.p>
 
       <motion.h1
         className="story-statement mx-auto max-w-4xl relative z-10"
         variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
       >
-        We build the <R>system</R> that runs your business.
+        Everyone&apos;s talking about AI.<br />
+        Nobody&apos;s <A>sitting down with you</A>.
       </motion.h1>
 
       <motion.p
@@ -144,8 +151,9 @@ function Hero() {
         style={{ color: "#8a8f98" }}
         variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
       >
-        Custom websites, apps, and <R>AI automations</R> — designed for local businesses
-        ready to <R>scale</R>.
+        I&apos;m not an agency. I&apos;m a person who builds <A>custom websites</A>,
+        apps, and automations for your business — after I actually understand it.
+        <A> Relationship first</A>, tech second.
       </motion.p>
 
       <motion.div
@@ -154,19 +162,19 @@ function Hero() {
       >
         <a
           href={CAL_LINK} target="_blank" rel="noopener noreferrer"
-          className="rounded-md px-8 py-3.5 text-sm font-semibold transition-all duration-200"
-          style={{ background: "#dc2626", color: "#ffffff" }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = "#b91c1c"; e.currentTarget.style.boxShadow = "0 0 30px rgba(220,38,38,0.3)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = "#dc2626"; e.currentTarget.style.boxShadow = "none"; }}
+          className="rounded-md border px-8 py-3.5 text-sm font-semibold transition-all duration-200"
+          style={{ borderColor: "rgba(255,255,255,0.3)", color: "#f7f8f8", background: "transparent" }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "#f7f8f8"; e.currentTarget.style.color = "#0a0a0a"; e.currentTarget.style.borderColor = "#f7f8f8"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#f7f8f8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; }}
         >
           Book a Free Strategy Call
         </a>
         <a
           href="#problem"
           className="rounded-md border px-8 py-3.5 text-sm font-medium transition-all duration-200"
-          style={{ borderColor: "rgba(255,255,255,0.15)", color: "#d0d6e0" }}
-          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)")}
-          onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)")}
+          style={{ borderColor: "rgba(255,255,255,0.1)", color: "#8a8f98" }}
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)")}
+          onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
         >
           See How It Works
         </a>
@@ -177,6 +185,7 @@ function Hero() {
 
 /* ═══════════════════════════════════════════════════════════════
    CHAPTER 2 — THE PROBLEM
+   Not about missing a website. About overwhelm.
    ═══════════════════════════════════════════════════════════════ */
 
 function Problem() {
@@ -187,8 +196,8 @@ function Problem() {
         variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
       >
         <h2 className="story-statement mx-auto max-w-3xl">
-          Your competitor has a website.<br />
-          <R>You don&apos;t.</R>
+          The problem isn&apos;t your business.<br />
+          It&apos;s the <A>noise around it</A>.
         </h2>
       </motion.div>
 
@@ -197,15 +206,18 @@ function Problem() {
         variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
       >
         <p className="story-body text-center">
-          You&apos;re running your business from your <R>phone</R>. Clients in your DMs.
-          Schedule in your head. Payments on Venmo. Reviews you never asked for.
+          Every day there&apos;s a new AI tool, a new platform, someone telling you
+          that you need to <A>upgrade everything</A>. You don&apos;t know who to trust.
+          You don&apos;t know where to start. And everyone selling you something has
+          their own agenda.
         </p>
         <p className="story-body text-center">
-          You&apos;re juggling <R>5 different apps</R> and spending more time on
-          admin than on the work you actually <R>love</R>.
+          You don&apos;t need more tools. You don&apos;t need a 47-page proposal from
+          an agency that&apos;s never met you. You need someone who actually
+          <A> understands your business</A> and builds exactly what makes sense.
         </p>
         <p className="story-body text-center" style={{ color: "#d0d6e0", fontWeight: 500 }}>
-          It doesn&apos;t have to be like that.
+          Custom. Not cookie-cutter. Built by a person, not a template.
         </p>
       </motion.div>
     </Section>
@@ -214,52 +226,46 @@ function Problem() {
 
 /* ═══════════════════════════════════════════════════════════════
    CHAPTER 3 — THE SOLUTION
+   Reframed: I sit down with you.
    ═══════════════════════════════════════════════════════════════ */
 
 function Solution() {
   const services = [
     {
       title: "Custom Websites",
-      price: "From $1,500",
-      time: "2-3 weeks",
-      description: "Fast, mobile-first sites built to make your business look as good online as it is in person.",
-      features: ["3-5 page responsive site", "Contact forms & booking", "Google Maps & reviews", "SEO from day one"],
+      description: "We start by talking about your business, your clients, what makes you different. Then I build a site that actually reflects who you are and helps people find you.",
+      features: ["Designed around your brand", "Fast, mobile-first", "Contact forms and booking built in", "SEO so people actually find you"],
     },
     {
       title: "Branded Mobile Apps",
-      price: "From $5,000",
-      time: "4-8 weeks",
-      description: "Your own app on the App Store. Booking, schedules, push notifications — all your brand.",
-      features: ["iOS & Android", "Client portal & booking", "Push notifications", "Payment processing"],
+      description: "Your own app, your logo, your colors. Clients book, pay, and stay connected through something that feels like yours — not someone else's platform.",
+      features: ["iOS and Android", "Client portal and booking", "Push notifications", "Payment processing"],
     },
     {
       title: "Lead Generation",
-      price: "From $500",
-      time: "1-2 weeks",
-      description: "Landing pages and automated follow-ups that turn visitors into paying clients on autopilot.",
-      features: ["High-converting landing page", "Email capture & lead magnets", "Automated follow-up emails", "Analytics & tracking"],
+      description: "Most business owners lose leads because nobody follows up fast enough. I build landing pages and automated sequences that turn visitors into clients while you sleep.",
+      features: ["High-converting landing pages", "Email capture and follow-up", "Automated outreach sequences", "Analytics so you see what's working"],
     },
     {
-      title: "AI Agents & Automations",
-      price: "From $1,000",
-      time: "Ongoing",
-      description: "AI chatbots, review requests, payment reminders — systems that run while you sleep.",
-      features: ["Website chatbot", "Automated review requests", "Payment reminders", "Client follow-ups"],
+      title: "AI Agents and Automations",
+      description: "The stuff you do every day that eats your time — review requests, payment reminders, client follow-ups. I automate it so you can focus on the actual work.",
+      features: ["Smart chatbots for your site", "Automated review collection", "Payment and booking reminders", "Client follow-up sequences"],
     },
   ];
 
   return (
     <Section id="services">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-6">
-        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#dc2626" }}>
-          What we build
+        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#62666d" }}>
+          How I work
         </p>
         <h2 className="story-statement">
-          One partner. <R>Everything</R> you need.
+          I sit down with you first. <A>Then I build</A>.
         </h2>
         <p className="mt-4 max-w-2xl story-body">
-          From your <R>first website</R> to AI-powered automations — we handle it all
-          so you can focus on what you do best.
+          No templates. No one-size-fits-all packages sold over email.
+          I learn your business, understand your clients, and build something
+          that <A>actually makes sense</A> for where you are right now.
         </p>
       </motion.div>
 
@@ -267,25 +273,22 @@ function Solution() {
         {services.map((s, i) => (
           <motion.div
             key={s.title}
-            className="rounded-xl border p-8 transition-colors"
+            className="rounded-xl border p-8 transition-all duration-200"
             style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(220,38,38,0.3)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; e.currentTarget.style.boxShadow = "0 0 20px rgba(255,255,255,0.03)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.boxShadow = "none"; }}
           >
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold" style={{ color: "#f7f8f8" }}>{s.title}</h3>
-              <span className="text-sm font-semibold" style={{ color: "#dc2626" }}>{s.price}</span>
-            </div>
+            <h3 className="mb-3 text-lg font-semibold" style={{ color: "#f7f8f8" }}>{s.title}</h3>
             <p className="mb-5 text-sm leading-relaxed" style={{ color: "#8a8f98" }}>{s.description}</p>
-            <ul className="mb-4 space-y-2">
+            <ul className="space-y-2">
               {s.features.map((f) => (
                 <li key={f} className="flex items-center gap-2 text-sm" style={{ color: "#d0d6e0" }}>
-                  <span style={{ color: "#dc2626" }}>&#x2014;</span> {f}
+                  <span className="block h-1 w-1 flex-shrink-0 rounded-full" style={{ background: "#62666d" }} />
+                  {f}
                 </li>
               ))}
             </ul>
-            <p className="text-xs font-medium" style={{ color: "#62666d" }}>{s.time}</p>
           </motion.div>
         ))}
       </div>
@@ -294,7 +297,7 @@ function Solution() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CHAPTER 4 — THE PROOF
+   CHAPTER 4 — SOCIAL PROOF (stats)
    ═══════════════════════════════════════════════════════════════ */
 
 function Proof() {
@@ -309,7 +312,7 @@ function Proof() {
     <Section>
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-12 text-center">
         <h2 className="story-statement">
-          The numbers <R>don&apos;t lie</R>.
+          The numbers <A>speak for themselves</A>.
         </h2>
       </motion.div>
 
@@ -317,13 +320,15 @@ function Proof() {
         {stats.map((s, i) => (
           <motion.div
             key={s.stat}
-            className="rounded-xl border p-8"
+            className="rounded-xl border p-8 transition-all duration-200"
             style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
           >
-            <span className="text-5xl font-bold" style={{ color: "#dc2626" }}>{s.stat}</span>
+            <span className="text-5xl font-bold" style={{ color: "#f7f8f8" }}>{s.stat}</span>
             <p className="mt-1 text-xs" style={{ color: "#62666d" }}>{s.label}</p>
-            <p className="mt-4 text-base font-semibold" style={{ color: "#f7f8f8" }}>{s.headline}</p>
+            <p className="mt-4 text-base font-semibold" style={{ color: "#d0d6e0" }}>{s.headline}</p>
           </motion.div>
         ))}
       </div>
@@ -332,7 +337,7 @@ function Proof() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CHAPTER 4.5 — THE WORK (Portfolio)
+   CHAPTER 5 — THE WORK (Portfolio)
    ═══════════════════════════════════════════════════════════════ */
 
 function Portfolio() {
@@ -346,15 +351,16 @@ function Portfolio() {
   return (
     <Section id="work">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-12">
-        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#dc2626" }}>
+        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#62666d" }}>
           Recent work
         </p>
         <h2 className="story-statement">
-          Built. <R>Shipped.</R> Running.
+          Built. <A>Shipped.</A> Running.
         </h2>
         <p className="mt-4 max-w-2xl story-body">
-          Sensei App — a full coaching platform built for a <R>martial arts coach</R> who needed
-          client management, scheduling, payments, and messaging in <R>one place</R>.
+          Sensei App — a full coaching platform I built for a martial arts coach
+          who needed client management, scheduling, payments, and messaging in
+          <A> one place</A>. No templates. Designed around his workflow.
         </p>
       </motion.div>
 
@@ -362,9 +368,11 @@ function Portfolio() {
         {projects.map((p, i) => (
           <motion.div
             key={p.label}
-            className="group relative overflow-hidden rounded-xl border"
+            className="group relative overflow-hidden rounded-xl border transition-all duration-200"
             style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
           >
             <div className="relative aspect-video overflow-hidden">
               <img
@@ -393,12 +401,12 @@ function Portfolio() {
         </p>
         <a
           href={CAL_LINK} target="_blank" rel="noopener noreferrer"
-          className="mt-4 inline-block rounded-md px-6 py-3 text-sm font-semibold transition-all duration-200"
-          style={{ background: "#dc2626", color: "#ffffff" }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = "#b91c1c"; e.currentTarget.style.boxShadow = "0 0 30px rgba(220,38,38,0.3)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = "#dc2626"; e.currentTarget.style.boxShadow = "none"; }}
+          className="mt-4 inline-block rounded-md border px-6 py-3 text-sm font-semibold transition-all duration-200"
+          style={{ borderColor: "rgba(255,255,255,0.25)", color: "#f7f8f8" }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "#f7f8f8"; e.currentTarget.style.color = "#0a0a0a"; e.currentTarget.style.borderColor = "#f7f8f8"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#f7f8f8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
         >
-          Book a Free Strategy Call
+          Let&apos;s Talk About Yours
         </a>
       </motion.div>
     </Section>
@@ -406,7 +414,8 @@ function Portfolio() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CHAPTER 5 — THE DEAL (Partnership + Packages)
+   CHAPTER 6 — PARTNERSHIP
+   Stronger. Not a freelancer. Not an agency.
    ═══════════════════════════════════════════════════════════════ */
 
 function Partnership() {
@@ -414,21 +423,23 @@ function Partnership() {
     <Section>
       <motion.div
         className="rounded-2xl border p-10 sm:p-14 text-center"
-        style={{ borderColor: "rgba(220,38,38,0.15)", background: "linear-gradient(135deg, rgba(220,38,38,0.03) 0%, rgba(255,255,255,0.01) 100%)" }}
+        style={{ borderColor: "rgba(255,255,255,0.1)", background: "linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%)" }}
         variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
       >
-        <h2 className="story-statement mx-auto max-w-2xl">
-          When you grow, <R>I grow</R>.<br />That&apos;s the deal.
+        <h2 className="story-statement mx-auto max-w-3xl">
+          I&apos;m not a freelancer who disappears.<br />
+          I&apos;m not an agency that sends you a <A>ticket number</A>.
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed" style={{ color: "#8a8f98" }}>
-          I&apos;m not a faceless agency. I work with you <R>long-term</R>. Everything
-          is customized to <R>your brand</R> — your colors, your voice, your way.
+          I&apos;m your builder. You tell me what your business needs, I make it real.
+          When things change, we adapt together. When you grow, <A>I grow with you</A>.
+          That&apos;s how this works.
         </p>
-        <div className="mx-auto mt-8 grid max-w-lg gap-6 sm:grid-cols-3">
+        <div className="mx-auto mt-10 grid max-w-xl gap-8 sm:grid-cols-3">
           {[
-            { label: "Your brand", detail: "Custom design, your identity" },
-            { label: "Your pace", detail: "We move when you're ready" },
-            { label: "Your partner", detail: "Direct access, not a ticket" },
+            { label: "Your brand", detail: "Everything custom to your identity, your colors, your voice" },
+            { label: "Your pace", detail: "We move when you're ready, no pressure, no corporate timelines" },
+            { label: "Direct access", detail: "You text me. I respond. No support tickets, no gatekeepers" },
           ].map((item) => (
             <div key={item.label}>
               <p className="text-sm font-semibold" style={{ color: "#f7f8f8" }}>{item.label}</p>
@@ -441,23 +452,25 @@ function Partnership() {
   );
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   CHAPTER 7 — PACKAGES
+   Clean pricing + detailed How It Works below
+   ═══════════════════════════════════════════════════════════════ */
+
 function Packages() {
   const packages = [
     {
       name: "Launch",
       price: "$1,500",
-      monthly: "$750/mo \u00d7 2",
-      description: "Get online fast. Perfect if you have no web presence yet.",
-      includes: ["Custom 3-5 page website", "Mobile responsive", "Contact form + Google Maps", "Basic SEO setup", "1 month free maintenance"],
+      description: "Get online fast. A real website that represents your business, not a template with your name on it.",
+      includes: ["Custom 3-5 page website", "Mobile responsive design", "Contact form + Google Maps", "Basic SEO setup", "1 month free maintenance"],
       cta: "Most Popular",
       highlight: false,
     },
     {
       name: "Growth",
       price: "$3,500",
-      monthly: "$875/mo \u00d7 4",
-      priceNote: "Save $500",
-      description: "Website + lead gen + automations. Built to bring in new clients on autopilot.",
+      description: "Website + lead generation + automations. Built to bring in new clients on autopilot while you focus on the work.",
       includes: ["Everything in Launch", "Lead capture landing page", "Automated email follow-ups", "Google review automation", "Missed client follow-ups", "3 months free maintenance"],
       cta: "Best Value",
       highlight: true,
@@ -465,9 +478,7 @@ function Packages() {
     {
       name: "Full Build",
       price: "$8,000+",
-      monthly: "From $2,000/mo \u00d7 4",
-      priceNote: "Save $1,500+",
-      description: "The complete digital system. Website, app, automations, ongoing support.",
+      description: "The complete digital system. Website, app, automations, ongoing support. For when you're ready to go all in.",
       includes: ["Everything in Growth", "Branded iOS & Android app", "Client booking + payments", "Push notifications", "AI chatbot for your site", "6 months free maintenance", "Priority support"],
       cta: "For Serious Operators",
       highlight: false,
@@ -477,99 +488,194 @@ function Packages() {
   return (
     <Section id="packages">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-12 text-center">
-        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#dc2626" }}>Packages</p>
+        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#62666d" }}>Packages</p>
         <h2 className="story-statement">
-          Pick a package. <R>Ship faster.</R>
+          Transparent pricing. <A>No surprises</A>.
         </h2>
+        <p className="mx-auto mt-4 max-w-lg story-body text-center">
+          Every package starts with a free strategy call. You don&apos;t pay anything until
+          we both agree on what makes sense.
+        </p>
       </motion.div>
 
       <div className="grid gap-6 md:grid-cols-3">
         {packages.map((pkg, i) => (
           <motion.div
             key={pkg.name}
-            className="relative flex flex-col rounded-xl border p-8 transition-colors"
+            className="relative flex flex-col rounded-xl border p-8 transition-all duration-200"
             style={{
-              borderColor: pkg.highlight ? "rgba(220,38,38,0.3)" : "rgba(255,255,255,0.08)",
-              background: pkg.highlight ? "rgba(220,38,38,0.04)" : "rgba(255,255,255,0.02)",
+              borderColor: pkg.highlight ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.08)",
+              background: pkg.highlight ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.02)",
             }}
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(220,38,38,0.4)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = pkg.highlight ? "rgba(220,38,38,0.3)" : "rgba(255,255,255,0.08)")}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; e.currentTarget.style.boxShadow = "0 0 20px rgba(255,255,255,0.04)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = pkg.highlight ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.08)"; e.currentTarget.style.boxShadow = "none"; }}
           >
             <span className="mb-5 inline-block self-start rounded-full px-3 py-1 text-xs font-medium" style={{
-              background: pkg.highlight ? "rgba(220,38,38,0.15)" : "rgba(255,255,255,0.05)",
-              color: pkg.highlight ? "#dc2626" : "#8a8f98",
-              border: `1px solid ${pkg.highlight ? "rgba(220,38,38,0.3)" : "rgba(255,255,255,0.08)"}`,
+              background: pkg.highlight ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.05)",
+              color: pkg.highlight ? "#f7f8f8" : "#8a8f98",
+              border: `1px solid ${pkg.highlight ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.08)"}`,
             }}>
               {pkg.cta}
             </span>
             <h3 className="mb-1 text-xl font-semibold" style={{ color: "#f7f8f8" }}>{pkg.name}</h3>
-            <div className="mb-1 flex items-baseline gap-2">
-              <span className="text-3xl font-bold" style={{ color: "#f7f8f8" }}>{pkg.price}</span>
-              {pkg.priceNote && <span className="text-sm font-medium" style={{ color: "#dc2626" }}>{pkg.priceNote}</span>}
-            </div>
-            {pkg.monthly && (
-              <p className="mb-3 text-sm font-medium" style={{ color: "#62666d" }}>
-                or <span style={{ color: "#8a8f98" }}>{pkg.monthly}</span>
-              </p>
-            )}
+            <span className="text-3xl font-bold mb-3" style={{ color: "#f7f8f8" }}>{pkg.price}</span>
             <p className="mb-6 text-sm leading-relaxed" style={{ color: "#8a8f98" }}>{pkg.description}</p>
             <ul className="mb-8 flex-1 space-y-2.5">
               {pkg.includes.map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm" style={{ color: "#d0d6e0" }}>
-                  <span className="mt-1 block h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: pkg.highlight ? "#dc2626" : "#62666d" }} />
+                  <span className="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: pkg.highlight ? "#f7f8f8" : "#62666d" }} />
                   {item}
                 </li>
               ))}
             </ul>
             <a
               href={CAL_LINK} target="_blank" rel="noopener noreferrer"
-              className="block rounded-md py-3 text-center text-sm font-semibold transition-colors"
+              className="block rounded-md py-3 text-center text-sm font-semibold transition-all duration-200"
               style={{
-                background: pkg.highlight ? "#dc2626" : "transparent",
-                color: pkg.highlight ? "#ffffff" : "#d0d6e0",
-                border: pkg.highlight ? "none" : "1px solid rgba(255,255,255,0.15)",
+                background: pkg.highlight ? "#f7f8f8" : "transparent",
+                color: pkg.highlight ? "#0a0a0a" : "#d0d6e0",
+                border: pkg.highlight ? "1px solid #f7f8f8" : "1px solid rgba(255,255,255,0.15)",
               }}
               onMouseEnter={(e) => {
-                if (pkg.highlight) e.currentTarget.style.background = "#b91c1c";
-                else e.currentTarget.style.borderColor = "rgba(220,38,38,0.3)";
+                if (pkg.highlight) { e.currentTarget.style.boxShadow = "0 0 20px rgba(255,255,255,0.15)"; }
+                else { e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)"; }
               }}
               onMouseLeave={(e) => {
-                if (pkg.highlight) e.currentTarget.style.background = "#dc2626";
-                else e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+                if (pkg.highlight) { e.currentTarget.style.boxShadow = "none"; }
+                else { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; }
               }}
             >
-              Get Started
+              Book a Call
             </a>
           </motion.div>
         ))}
       </div>
 
-      {/* Payment options */}
+      {/* ─── How It Works ──────────────────────────────────────── */}
       <motion.div
-        className="mt-12 rounded-xl border p-8 sm:p-10"
+        className="mt-16 rounded-xl border p-8 sm:p-12"
         style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}
         variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={4}
       >
-        <h3 className="mb-4 text-lg font-semibold" style={{ color: "#f7f8f8" }}>
-          Flexible <R>payment options</R>
+        <h3 className="mb-2 text-xl font-semibold" style={{ color: "#f7f8f8" }}>
+          How it <A>actually works</A>
         </h3>
-        <div className="grid gap-6 sm:grid-cols-3">
-          <div>
-            <p className="mb-1 text-sm font-medium" style={{ color: "#d0d6e0" }}>Pay in full</p>
-            <p className="text-xs leading-relaxed" style={{ color: "#62666d" }}>Full payment upfront. Work starts immediately. <R>Best price.</R></p>
-          </div>
-          <div>
-            <p className="mb-1 text-sm font-medium" style={{ color: "#d0d6e0" }}>50/50 split</p>
-            <p className="text-xs leading-relaxed" style={{ color: "#62666d" }}>50% to start, 50% on delivery. <R>Most popular.</R></p>
-          </div>
-          <div>
-            <p className="mb-1 text-sm font-medium" style={{ color: "#d0d6e0" }}>Monthly plan</p>
-            <p className="text-xs leading-relaxed" style={{ color: "#62666d" }}>Split into <R>3-4 monthly payments</R>. Available on Growth and Full Build.</p>
+        <p className="mb-10 text-sm leading-relaxed" style={{ color: "#8a8f98" }}>
+          From first call to launch day — here&apos;s what the process looks like.
+        </p>
+
+        {/* Timeline */}
+        <div className="space-y-10">
+          {[
+            {
+              week: "Before you pay anything",
+              title: "Free strategy call",
+              body: "We hop on a call. You tell me about your business, your clients, what's working and what's not. I'll tell you honestly what I think you need — and if we're a good fit. No pressure, no sales pitch.",
+            },
+            {
+              week: "Week 1",
+              title: "Strategy + design",
+              body: "I map out the structure, create mockups, and get your feedback. Nothing gets built until you're happy with the direction. We go back and forth until it feels right.",
+            },
+            {
+              week: "Week 2",
+              title: "Build",
+              body: "I build everything out. You get progress updates along the way. If something needs to change, we change it. This is collaborative, not a black box.",
+            },
+            {
+              week: "Week 3",
+              title: "Review + launch",
+              body: "Final review together. We make sure everything works, looks great on every device, and matches your brand. Then we go live.",
+            },
+            {
+              week: "After launch",
+              title: "Ongoing support",
+              body: "I don't disappear. Every package includes free maintenance. If something breaks or you want changes, you text me directly.",
+            },
+          ].map((step, idx) => (
+            <div key={step.week} className="flex gap-6">
+              <div className="flex flex-col items-center">
+                <div className="glow-dot h-3 w-3 flex-shrink-0 rounded-full" style={{ background: "#f7f8f8" }} />
+                {idx < 4 && <div className="mt-1 w-px flex-1" style={{ background: "rgba(255,255,255,0.08)" }} />}
+              </div>
+              <div className="pb-2">
+                <p className="text-xs font-medium tracking-[0.15em] uppercase" style={{ color: "#62666d" }}>{step.week}</p>
+                <p className="mt-1 text-base font-semibold" style={{ color: "#f7f8f8" }}>{step.title}</p>
+                <p className="mt-2 text-sm leading-relaxed max-w-lg" style={{ color: "#8a8f98" }}>{step.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Expected timelines by package */}
+        <div className="mt-12 pt-8" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+          <h4 className="mb-6 text-sm font-semibold tracking-[0.1em] uppercase" style={{ color: "#62666d" }}>
+            Expected timelines
+          </h4>
+          <div className="grid gap-6 sm:grid-cols-3">
+            <div>
+              <p className="text-sm font-semibold" style={{ color: "#f7f8f8" }}>Launch</p>
+              <p className="mt-1 text-sm" style={{ color: "#8a8f98" }}>2-3 weeks from kickoff to live</p>
+            </div>
+            <div>
+              <p className="text-sm font-semibold" style={{ color: "#f7f8f8" }}>Growth</p>
+              <p className="mt-1 text-sm" style={{ color: "#8a8f98" }}>3-5 weeks including automations</p>
+            </div>
+            <div>
+              <p className="text-sm font-semibold" style={{ color: "#f7f8f8" }}>Full Build</p>
+              <p className="mt-1 text-sm" style={{ color: "#8a8f98" }}>6-10 weeks for website + app + systems</p>
+            </div>
           </div>
         </div>
+      </motion.div>
+
+      {/* ─── Payment options ───────────────────────────────────── */}
+      <motion.div
+        className="mt-6 rounded-xl border p-8 sm:p-12"
+        style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}
+        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={5}
+      >
+        <h3 className="mb-2 text-xl font-semibold" style={{ color: "#f7f8f8" }}>
+          Flexible <A>payment options</A>
+        </h3>
+        <p className="mb-8 text-sm leading-relaxed" style={{ color: "#8a8f98" }}>
+          I want to make this work for your budget. Here&apos;s how you can pay.
+        </p>
+        <div className="grid gap-8 sm:grid-cols-3">
+          <div className="rounded-lg border p-6" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.01)" }}>
+            <p className="mb-2 text-sm font-semibold" style={{ color: "#f7f8f8" }}>Pay in full</p>
+            <p className="text-xs leading-relaxed" style={{ color: "#8a8f98" }}>
+              Full payment upfront. Work starts immediately. Fastest turnaround.
+            </p>
+          </div>
+          <div className="rounded-lg border p-6" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.01)" }}>
+            <p className="mb-2 text-sm font-semibold" style={{ color: "#f7f8f8" }}>50/50 split</p>
+            <p className="text-xs leading-relaxed" style={{ color: "#8a8f98" }}>
+              50% to start, 50% on delivery. The most popular option.
+            </p>
+          </div>
+          <div className="rounded-lg border p-6" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.01)" }}>
+            <p className="mb-2 text-sm font-semibold" style={{ color: "#f7f8f8" }}>Monthly installments</p>
+            <p className="text-xs leading-relaxed" style={{ color: "#8a8f98" }}>
+              Split into 3-4 monthly payments. Available on Growth and Full Build packages.
+            </p>
+          </div>
+        </div>
+        <div className="mt-8 flex flex-wrap gap-4">
+          {["Zelle", "Venmo", "Card", "Bank transfer"].map((method) => (
+            <span
+              key={method}
+              className="rounded-full border px-4 py-1.5 text-xs font-medium"
+              style={{ borderColor: "rgba(255,255,255,0.1)", color: "#8a8f98" }}
+            >
+              {method}
+            </span>
+          ))}
+        </div>
         <p className="mt-6 text-xs" style={{ color: "#62666d" }}>
-          We accept bank transfer, Zelle, Venmo, and card. All packages include a <R>free strategy call</R> before you commit.
+          Every engagement starts with a <A>free strategy call</A>. You don&apos;t commit anything until we both
+          agree on the plan, the price, and the timeline.
         </p>
       </motion.div>
     </Section>
@@ -577,7 +683,8 @@ function Packages() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CHAPTER 6 — THE HUMAN
+   CHAPTER 8 — ABOUT (The Human)
+   Real photo, real story.
    ═══════════════════════════════════════════════════════════════ */
 
 function About() {
@@ -587,32 +694,49 @@ function About() {
         className="flex flex-col gap-10 md:flex-row md:items-start"
         variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
       >
-        <div className="flex h-36 w-36 flex-shrink-0 items-center justify-center rounded-2xl" style={{
-          background: "rgba(220,38,38,0.08)", border: "1px solid rgba(220,38,38,0.2)",
-        }}>
-          <span className="text-4xl font-bold" style={{ color: "#dc2626" }}>JP</span>
+        <div className="flex-shrink-0">
+          <div className="relative h-44 w-44 overflow-hidden rounded-2xl" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
+            <Image
+              src="/josh.jpg"
+              alt="Josh Potesta"
+              fill
+              className="object-cover"
+              sizes="176px"
+              priority={false}
+            />
+          </div>
         </div>
 
         <div className="flex-1">
-          <h3 className="mb-1 text-xl font-semibold" style={{ color: "#f7f8f8" }}>JP Potesta</h3>
-          <p className="mb-5 text-sm font-medium" style={{ color: "#dc2626" }}>
-            Founder &amp; Builder &middot; Atlanta, GA &middot; 19
+          <h3 className="mb-1 text-xl font-semibold" style={{ color: "#f7f8f8" }}>Josh Potesta</h3>
+          <p className="mb-5 text-sm font-medium" style={{ color: "#8a8f98" }}>
+            Founder & Builder &middot; Atlanta, GA &middot; 19
           </p>
 
-          <p className="max-w-xl text-base leading-relaxed" style={{ color: "#8a8f98" }}>
-            I come from <R>martial arts and coaching</R>. I&apos;ve seen firsthand how
-            small business owners are stuck juggling apps, losing clients, and
-            spending time on admin instead of the work they love. I build
-            <R> exactly what you need</R> — no templates, no cookie-cutter solutions.
-            I ship it, I make sure it works, and I stick around.
-          </p>
+          <div className="max-w-xl space-y-4">
+            <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
+              I came from <A>martial arts and coaching</A>. I spent years in that world — training,
+              teaching, watching coaches run their entire business from their phone. Notes in one app,
+              schedule in another, payments on Venmo, no website.
+            </p>
+            <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
+              I started building tools for coaches because I saw the gap. Then I realized it wasn&apos;t just coaches.
+              It&apos;s barbers, dog trainers, landscapers, personal trainers — <A>small business owners everywhere</A> getting
+              left behind while everyone talks about AI and digital transformation.
+            </p>
+            <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
+              So that&apos;s what I do now. I build for people who need someone
+              <A> in their corner</A>. Not a sales pitch. Not a proposal. A real conversation,
+              then real work that actually helps your business grow.
+            </p>
+          </div>
 
           <a
             href={CAL_LINK} target="_blank" rel="noopener noreferrer"
-            className="mt-8 inline-block rounded-md px-8 py-3.5 text-sm font-semibold transition-all duration-200"
-            style={{ background: "#dc2626", color: "#ffffff" }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "#b91c1c"; e.currentTarget.style.boxShadow = "0 0 30px rgba(220,38,38,0.3)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "#dc2626"; e.currentTarget.style.boxShadow = "none"; }}
+            className="mt-8 inline-block rounded-md border px-8 py-3.5 text-sm font-semibold transition-all duration-200"
+            style={{ borderColor: "rgba(255,255,255,0.25)", color: "#f7f8f8" }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "#f7f8f8"; e.currentTarget.style.color = "#0a0a0a"; e.currentTarget.style.borderColor = "#f7f8f8"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#f7f8f8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
           >
             Let&apos;s Talk About Your Business
           </a>
@@ -623,7 +747,8 @@ function About() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CHAPTER 7 — FINAL CTA
+   CHAPTER 9 — FINAL CTA
+   Human. Warm. "Let's build something together."
    ═══════════════════════════════════════════════════════════════ */
 
 function FinalCta() {
@@ -634,18 +759,18 @@ function FinalCta() {
         variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
       >
         <h2 className="story-statement mx-auto max-w-2xl">
-          Ready to stop <R>losing clients</R> to businesses with better tech?
+          Let&apos;s build <A>something together</A>.
         </h2>
         <p className="mx-auto mt-6 max-w-md text-base leading-relaxed" style={{ color: "#8a8f98" }}>
-          Book a <R>free</R> strategy call. No pressure. We&apos;ll figure out exactly what
-          your business needs and give you a clear plan.
+          Book a call and tell me about your business. No pressure, no commitment.
+          Just a conversation about what you need and whether I can help.
         </p>
         <a
           href={CAL_LINK} target="_blank" rel="noopener noreferrer"
-          className="mt-10 inline-block rounded-md px-10 py-4 text-base font-semibold transition-all duration-200"
-          style={{ background: "#dc2626", color: "#ffffff" }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = "#b91c1c"; e.currentTarget.style.boxShadow = "0 0 40px rgba(220,38,38,0.3)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = "#dc2626"; e.currentTarget.style.boxShadow = "none"; }}
+          className="mt-10 inline-block rounded-md border px-10 py-4 text-base font-semibold transition-all duration-200"
+          style={{ borderColor: "rgba(255,255,255,0.3)", color: "#f7f8f8" }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "#f7f8f8"; e.currentTarget.style.color = "#0a0a0a"; e.currentTarget.style.borderColor = "#f7f8f8"; e.currentTarget.style.boxShadow = "0 0 30px rgba(255,255,255,0.1)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#f7f8f8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; e.currentTarget.style.boxShadow = "none"; }}
         >
           Book Your Free Strategy Call
         </a>
@@ -672,7 +797,7 @@ function Footer() {
           ].map(({ name, url }) => (
             <a key={name} href={url} target="_blank" rel="noopener noreferrer"
               className="text-sm transition-colors" style={{ color: "#62666d" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#dc2626")}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#f7f8f8")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "#62666d")}
             >{name}</a>
           ))}
@@ -687,7 +812,7 @@ function Footer() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   PAGE — The Scrolling Story
+   PAGE
    ═══════════════════════════════════════════════════════════════ */
 
 export default function Home() {
@@ -705,36 +830,21 @@ export default function Home() {
       >
         <Nav />
         <main>
-          {/* Ch.1: Hook */}
           <Hero />
           <Divider />
-
-          {/* Ch.2: The Problem */}
           <Problem />
           <Divider />
-
-          {/* Ch.3: The Solution */}
           <Solution />
           <Divider />
-
-          {/* Ch.4: The Proof */}
           <Proof />
           <Divider />
-
-          {/* Ch.4.5: The Work */}
           <Portfolio />
-
-          {/* Ch.5: The Deal */}
           <Partnership />
           <Divider />
           <Packages />
           <Divider />
-
-          {/* Ch.6: The Human */}
           <About />
           <Divider />
-
-          {/* Ch.7: Final CTA */}
           <FinalCta />
         </main>
         <Footer />

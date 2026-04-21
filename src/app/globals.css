@@ -10,15 +10,48 @@
   --color-surface-elevated: #191a1b;
   --color-border: rgba(255, 255, 255, 0.08);
   --color-border-subtle: rgba(255, 255, 255, 0.05);
-  --color-accent: #dc2626;
   --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
 }
 
-/* Red accent keyword */
+/* ─── Animated underline accent ─────────────────────────────── */
 .accent {
-  color: #dc2626;
+  color: #f7f8f8;
   font-weight: 600;
+  position: relative;
+  display: inline;
+}
+
+.accent::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.3));
+  animation: underline-sweep 1.8s ease-out forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes underline-sweep {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+/* Re-trigger sweep on scroll reveal */
+.scroll-reveal.visible .accent::after,
+[data-inview="true"] .accent::after {
+  animation: underline-sweep 1.8s ease-out forwards;
 }
 
 /* Large statement sections */
@@ -271,4 +304,18 @@ body {
 .scroll-reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ─── Subtle glow pulse for timeline dots ────────────────────── */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+  }
+}
+
+.glow-dot {
+  animation: glow-pulse 3s ease-in-out infinite;
 }
