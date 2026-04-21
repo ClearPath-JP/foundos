@@ -341,6 +341,9 @@ function Proof() {
    ═══════════════════════════════════════════════════════════════ */
 
 function Portfolio() {
+  {/* TODO: Screenshots currently have yellow accent colors — need to re-capture
+      with red accent theme (matching the login page) and replace these images.
+      Files to update: login-final.png, coach-schedule.png, coach-clients.png, coach-payments.png */}
   const projects = [
     { src: "/portfolio/login-final.png", label: "Branded Login Experience" },
     { src: "/portfolio/coach-schedule.png", label: "Coach Schedule & Calendar" },
@@ -358,23 +361,79 @@ function Portfolio() {
           Built. <A>Shipped.</A> Running.
         </h2>
         <p className="mt-4 max-w-2xl story-body">
-          Sensei App — a full coaching platform I built for a martial arts coach
-          who needed client management, scheduling, payments, and messaging in
-          <A> one place</A>. No templates. Designed around his workflow.
+          Sensei App — a coaching platform built specifically for solo martial arts and fitness coaches.
+          Not a template. Not a generic CRM. A full operating system designed around how coaches
+          actually work: <A>one coach, their clients, everything in one place</A>.
         </p>
       </motion.div>
 
+      {/* ─── Sensei App product pitch ─────────────────────────── */}
+      <motion.div
+        className="mb-10 rounded-xl border p-8 sm:p-10"
+        style={{ borderColor: "rgba(255,255,255,0.1)", background: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.005) 100%)" }}
+        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+      >
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+          <div className="flex-1 max-w-xl">
+            <h3 className="text-xl font-semibold mb-1" style={{ color: "#f7f8f8" }}>
+              Sensei App
+            </h3>
+            <p className="text-sm font-medium mb-4" style={{ color: "#62666d" }}>
+              The coaching OS for independent trainers
+            </p>
+            <p className="text-sm leading-relaxed mb-5" style={{ color: "#8a8f98" }}>
+              If you&apos;re a solo coach running things from your phone — juggling notes in one app,
+              scheduling in another, taking payments on Venmo — Sensei App replaces all of it.
+              Your own <A>branded login</A>, your clients, your schedule, your payments, your messages.
+              One place. Built for how you actually work.
+            </p>
+            <ul className="space-y-2.5 mb-6">
+              {[
+                "Your own branded coach portal — your name, your identity",
+                "Client tracking with progress, notes, and session history",
+                "Built-in scheduling and attendance",
+                "Payments and revenue tracking through Stripe",
+                "Direct coach-to-client messaging",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm" style={{ color: "#d0d6e0" }}>
+                  <span className="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: "#f7f8f8" }} />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex flex-col items-center md:items-end text-center md:text-right flex-shrink-0">
+            <span className="text-3xl font-bold" style={{ color: "#f7f8f8" }}>$99</span>
+            <span className="text-sm" style={{ color: "#62666d" }}>/month</span>
+            <p className="mt-4 text-sm leading-relaxed max-w-xs" style={{ color: "#8a8f98" }}>
+              If you&apos;re a coach and this interests you, text me directly:
+            </p>
+            <a
+              href="sms:4044363393"
+              className="mt-3 inline-block rounded-md border px-6 py-3 text-sm font-semibold transition-all duration-200"
+              style={{ borderColor: "rgba(255,255,255,0.25)", color: "#f7f8f8" }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "#f7f8f8"; e.currentTarget.style.color = "#0a0a0a"; e.currentTarget.style.borderColor = "#f7f8f8"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#f7f8f8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
+            >
+              404-436-3393
+            </a>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ─── Portfolio screenshots ────────────────────────────── */}
       <div className="grid gap-4 sm:grid-cols-2">
         {projects.map((p, i) => (
           <motion.div
             key={p.label}
             className="group relative overflow-hidden rounded-xl border transition-all duration-200"
             style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}
-            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
             onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
             onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
           >
             <div className="relative aspect-video overflow-hidden">
+              {/* TODO: Re-capture these screenshots with red accent theme to match login page */}
               <img
                 src={p.src}
                 alt={p.label}
@@ -394,7 +453,7 @@ function Portfolio() {
 
       <motion.div
         className="mt-8 text-center"
-        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={5}
+        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={7}
       >
         <p className="text-sm" style={{ color: "#62666d" }}>
           Want something like this for your business?
@@ -639,10 +698,15 @@ function Packages() {
         <h3 className="mb-2 text-xl font-semibold" style={{ color: "#f7f8f8" }}>
           Flexible <A>payment options</A>
         </h3>
-        <p className="mb-8 text-sm leading-relaxed" style={{ color: "#8a8f98" }}>
-          I want to make this work for your budget. Here&apos;s how you can pay.
+        <p className="mb-3 text-sm leading-relaxed" style={{ color: "#8a8f98" }}>
+          I want to make this work for your budget — not the other way around.
         </p>
-        <div className="grid gap-8 sm:grid-cols-3">
+        <p className="mb-8 text-base leading-relaxed" style={{ color: "#d0d6e0" }}>
+          We work with your budget. Need to spread $3,500 over 6 months? We can do that.
+          $1,500 over 3 months? Done. You tell me what works and we&apos;ll figure out a plan.
+          <A> Zero pressure. Maximum flexibility.</A>
+        </p>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-lg border p-6" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.01)" }}>
             <p className="mb-2 text-sm font-semibold" style={{ color: "#f7f8f8" }}>Pay in full</p>
             <p className="text-xs leading-relaxed" style={{ color: "#8a8f98" }}>
@@ -658,12 +722,20 @@ function Packages() {
           <div className="rounded-lg border p-6" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.01)" }}>
             <p className="mb-2 text-sm font-semibold" style={{ color: "#f7f8f8" }}>Monthly installments</p>
             <p className="text-xs leading-relaxed" style={{ color: "#8a8f98" }}>
-              Split into 3-4 monthly payments. Available on Growth and Full Build packages.
+              X amount for X months until it&apos;s paid off. We match your cash flow.
+              Available on all packages — just tell me what you can do per month.
+            </p>
+          </div>
+          <div className="rounded-lg border p-6" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.01)" }}>
+            <p className="mb-2 text-sm font-semibold" style={{ color: "#f7f8f8" }}>Custom plan</p>
+            <p className="text-xs leading-relaxed" style={{ color: "#8a8f98" }}>
+              None of these fit? Let&apos;s talk. I&apos;d rather work something out than lose
+              a good client over payment structure.
             </p>
           </div>
         </div>
         <div className="mt-8 flex flex-wrap gap-4">
-          {["Zelle", "Venmo", "Card", "Bank transfer"].map((method) => (
+          {["Stripe", "Zelle", "Venmo", "Card", "Bank transfer"].map((method) => (
             <span
               key={method}
               className="rounded-full border px-4 py-1.5 text-xs font-medium"
@@ -673,9 +745,10 @@ function Packages() {
             </span>
           ))}
         </div>
-        <p className="mt-6 text-xs" style={{ color: "#62666d" }}>
-          Every engagement starts with a <A>free strategy call</A>. You don&apos;t commit anything until we both
-          agree on the plan, the price, and the timeline.
+        <p className="mt-6 text-sm leading-relaxed" style={{ color: "#62666d" }}>
+          Every engagement starts with a <A>free strategy call</A> before you commit anything. You don&apos;t
+          pay a dollar until we both agree on the plan, the price, and the timeline. No deposits to
+          &quot;hold your spot.&quot; No pressure. Just a conversation.
         </p>
       </motion.div>
     </Section>
@@ -715,17 +788,22 @@ function About() {
 
           <div className="max-w-xl space-y-4">
             <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
-              I came from <A>martial arts and coaching</A>. I spent years in that world — training,
-              teaching, watching coaches run their entire business from their phone. Notes in one app,
-              schedule in another, payments on Venmo, no website.
+              I&apos;m 19 years old and I&apos;ve spent the last <A>6 years in martial arts</A> — training,
+              teaching, watching coaches run their entire business from their phone with notes in one app,
+              schedule in another, and payments on Venmo. I lived in that world. I know what it&apos;s like.
             </p>
             <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
-              I started building tools for coaches because I saw the gap. Then I realized it wasn&apos;t just coaches.
+              I started building tools for coaches because I saw the gap firsthand. Then I realized it wasn&apos;t just coaches.
               It&apos;s barbers, dog trainers, landscapers, personal trainers — <A>small business owners everywhere</A> getting
               left behind while everyone talks about AI and digital transformation.
             </p>
             <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
-              So that&apos;s what I do now. I build for people who need someone
+              When I work with someone, I genuinely care about their success. I want to see them grow. I want
+              to <A>make them happy</A> — that&apos;s my priority. Not just delivering a project and disappearing.
+              I stick around because I&apos;m invested in the people I build for.
+            </p>
+            <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
+              That&apos;s what I do now. I build for people who need someone
               <A> in their corner</A>. Not a sales pitch. Not a proposal. A real conversation,
               then real work that actually helps your business grow.
             </p>

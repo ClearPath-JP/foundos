@@ -14,12 +14,25 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* ─── Animated underline accent ─────────────────────────────── */
+/* ─── Animated underline accent + shimmer glow ─────────────── */
 .accent {
   color: #f7f8f8;
   font-weight: 600;
   position: relative;
   display: inline;
+  background: linear-gradient(
+    120deg,
+    #f7f8f8 0%,
+    #f7f8f8 40%,
+    #ffffff 50%,
+    #f7f8f8 60%,
+    #f7f8f8 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: accent-shimmer 4s ease-in-out infinite;
 }
 
 .accent::after {
@@ -32,6 +45,21 @@
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.3));
   animation: underline-sweep 1.8s ease-out forwards;
   animation-delay: 0.3s;
+}
+
+@keyframes accent-shimmer {
+  0% {
+    background-position: 200% center;
+    text-shadow: 0 0 0px transparent;
+  }
+  50% {
+    background-position: -200% center;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+  }
+  100% {
+    background-position: 200% center;
+    text-shadow: 0 0 0px transparent;
+  }
 }
 
 @keyframes underline-sweep {
