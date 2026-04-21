@@ -253,12 +253,39 @@ function Hero() {
    PROOF BAR — quick trust before they scroll
    ═══════════════════════════════════════════════════════════════ */
 
+function AnimatedNumber({ value, suffix = "" }: { value: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  return (
+    <motion.span
+      className="text-3xl font-bold block tabular-nums" style={{ color: "#f7f8f8" }}
+      onViewportEnter={() => {
+        if (hasAnimated) return;
+        setHasAnimated(true);
+        const duration = 1200;
+        const steps = 30;
+        const increment = value / steps;
+        let current = 0;
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= value) { setCount(value); clearInterval(timer); }
+          else { setCount(Math.floor(current)); }
+        }, duration / steps);
+      }}
+      viewport={{ once: true }}
+    >
+      {count}{suffix}
+    </motion.span>
+  );
+}
+
 function ProofBar() {
   const stats = [
-    { value: "2", label: "Products shipped" },
-    { value: "150+", label: "Endpoints built" },
-    { value: "<3 wks", label: "Avg delivery" },
-    { value: "100%", label: "Completion rate" },
+    { value: 2, suffix: "", label: "Products shipped" },
+    { value: 150, suffix: "+", label: "Endpoints built" },
+    { value: 3, suffix: " wks", label: "Avg delivery", prefix: "<" },
+    { value: 100, suffix: "%", label: "Completion rate" },
   ];
 
   return (
@@ -270,7 +297,9 @@ function ProofBar() {
             className="text-center"
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i}
           >
-            <span className="text-3xl font-bold block" style={{ color: "#f7f8f8" }}>{s.value}</span>
+            <span className="text-3xl font-bold block tabular-nums" style={{ color: "#f7f8f8" }}>
+              {"prefix" in s && s.prefix}{<AnimatedNumber value={s.value} suffix={s.suffix} />}
+            </span>
             <span className="text-xs mt-1 block" style={{ color: "#62666d" }}>{s.label}</span>
           </motion.div>
         ))}
@@ -283,24 +312,39 @@ function ProofBar() {
    SERVICES — stacked rows, scannable
    ═══════════════════════════════════════════════════════════════ */
 
+function ServiceIcon({ type }: { type: string }) {
+  const props = { width: 28, height: 28, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  switch (type) {
+    case "web": return <svg {...props}><rect x="3" y="3" width="18" height="18" rx="3" /><path d="M3 9h18" /><circle cx="6.5" cy="6" r=".5" fill="currentColor" /><circle cx="9" cy="6" r=".5" fill="currentColor" /></svg>;
+    case "app": return <svg {...props}><rect x="6" y="2" width="12" height="20" rx="3" /><path d="M10 18h4" /></svg>;
+    case "lead": return <svg {...props}><path d="M3 20l4-4m0 0l4 4m-4-4V4" /><path d="M14 4l3 3 3-3" /><path d="M17 7v6" /><circle cx="17" cy="17" r="3" /></svg>;
+    case "ai": return <svg {...props}><path d="M12 2v4m0 12v4M2 12h4m12 0h4" /><circle cx="12" cy="12" r="4" /><path d="M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" /></svg>;
+    default: return null;
+  }
+}
+
 function Services() {
   const services = [
     {
+      icon: "web",
       title: "Custom Websites",
       description: "A site designed around your brand, not dragged from a template library.",
       features: ["Mobile-first design", "SEO built in", "Booking integration", "Contact forms"],
     },
     {
+      icon: "app",
       title: "Branded Mobile Apps",
       description: "Your own app with your logo and colors — clients book, pay, and connect through it.",
       features: ["iOS & Android", "Client portal", "Push notifications", "Payment processing"],
     },
     {
+      icon: "lead",
       title: "Lead Generation",
       description: "Landing pages and automated sequences that turn visitors into clients while you sleep.",
       features: ["High-converting pages", "Email capture", "Automated follow-ups", "Analytics dashboard"],
     },
     {
+      icon: "ai",
       title: "AI Agents & Automations",
       description: "The stuff that eats your time — review requests, reminders, follow-ups — handled automatically.",
       features: ["Smart chatbots", "Review collection", "Payment reminders", "Client follow-ups"],
@@ -322,15 +366,24 @@ function Services() {
         {services.map((s, i) => (
           <motion.div
             key={s.title}
-            className="py-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            className="group py-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between transition-colors duration-300"
             style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
           >
-            <div className="sm:flex-1">
-              <h3 className="text-xl font-semibold mb-2" style={{ color: "#f7f8f8" }}>{s.title}</h3>
-              <p className="text-sm leading-relaxed max-w-md" style={{ color: "#8a8f98" }}>{s.description}</p>
+            <div className="flex gap-4 sm:flex-1">
+              <div className="flex-shrink-0 mt-0.5 transition-colors duration-300" style={{ color: "#62666d" }}
+                onMouseEnter={() => {}}
+              >
+                <div className="group-hover:text-white transition-colors duration-300">
+                  <ServiceIcon type={s.icon} />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2" style={{ color: "#f7f8f8" }}>{s.title}</h3>
+                <p className="text-sm leading-relaxed max-w-md" style={{ color: "#8a8f98" }}>{s.description}</p>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 sm:w-64 sm:flex-shrink-0 sm:justify-end">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 sm:w-64 sm:flex-shrink-0 sm:justify-end pl-11 sm:pl-0">
               {s.features.map((f) => (
                 <span key={f} className="text-sm" style={{ color: "#62666d" }}>{f}</span>
               ))}
@@ -954,8 +1007,14 @@ export default function Home() {
         animate={{ opacity: showIntro ? 0 : 1 }}
         transition={{ duration: 0.6, delay: 0.1 }}
       >
+        {/* Ambient background glow */}
+        <div className="fixed inset-0 pointer-events-none z-0" aria-hidden>
+          <div className="ambient-orb ambient-orb-1" />
+          <div className="ambient-orb ambient-orb-2" />
+        </div>
+
         <Nav />
-        <main>
+        <main className="relative z-10">
           <Hero />
           <ProofBar />
           <Divider />
