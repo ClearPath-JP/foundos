@@ -86,9 +86,9 @@ function Nav() {
         <span className="text-sm font-semibold tracking-[0.15em] text-foreground">FOUNDOS</span>
       </a>
       <div className="flex items-center gap-6">
-        <a href="#problem" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>The Problem</a>
+        <a href="#work" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Work</a>
         <a href="#services" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Services</a>
-        <a href="#packages" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Packages</a>
+        <a href="#pricing" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>Pricing</a>
         <a href="#about" className="hidden text-sm sm:block" style={{ color: "#8a8f98" }}>About</a>
         <a
           href={CAL_LINK} target="_blank" rel="noopener noreferrer"
@@ -105,8 +105,7 @@ function Nav() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CHAPTER 1 — HERO
-   Cut through the noise. Relationship first.
+   HERO
    ═══════════════════════════════════════════════════════════════ */
 
 function Hero() {
@@ -122,7 +121,7 @@ function Hero() {
         WebkitMaskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, black 20%, transparent 70%)",
       }} />
 
-      {/* Cursor glow — white, not red */}
+      {/* Cursor glow */}
       <motion.div className="absolute pointer-events-none" style={{
         width: 600, height: 600,
         background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%)",
@@ -153,7 +152,6 @@ function Hero() {
       >
         I&apos;m not an agency. I&apos;m a person who builds <A>custom websites</A>,
         apps, and automations for your business — after I actually understand it.
-        <A> Relationship first</A>, tech second.
       </motion.p>
 
       <motion.div
@@ -170,13 +168,13 @@ function Hero() {
           Book a Free Strategy Call
         </a>
         <a
-          href="#problem"
+          href="#work"
           className="rounded-md border px-8 py-3.5 text-sm font-medium transition-all duration-200"
           style={{ borderColor: "rgba(255,255,255,0.1)", color: "#8a8f98" }}
           onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)")}
           onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
         >
-          See How It Works
+          See My Work
         </a>
       </motion.div>
     </Section>
@@ -184,52 +182,260 @@ function Hero() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CHAPTER 2 — THE PROBLEM
-   Not about missing a website. About overwhelm.
+   ABOUT — Moved up. Real person connection first.
    ═══════════════════════════════════════════════════════════════ */
 
-function Problem() {
+function About() {
   return (
-    <Section id="problem" className="py-32 sm:py-40">
+    <Section id="about">
       <motion.div
-        className="text-center"
+        className="flex flex-col gap-10 md:flex-row md:items-start"
         variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
       >
-        <h2 className="story-statement mx-auto max-w-3xl">
-          The problem isn&apos;t your business.<br />
-          It&apos;s the <A>noise around it</A>.
-        </h2>
-      </motion.div>
+        <div className="flex-shrink-0">
+          <div className="relative h-48 w-48 overflow-hidden rounded-2xl" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
+            <Image
+              src="/josh.jpg"
+              alt="Josh Potesta"
+              fill
+              className="object-cover"
+              sizes="192px"
+              priority={false}
+            />
+          </div>
+        </div>
 
-      <motion.div
-        className="mx-auto mt-16 max-w-2xl space-y-8"
-        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-      >
-        <p className="story-body text-center">
-          Every day there&apos;s a new AI tool, a new platform, someone telling you
-          that you need to <A>upgrade everything</A>. You don&apos;t know who to trust.
-          You don&apos;t know where to start. And everyone selling you something has
-          their own agenda.
-        </p>
-        <p className="story-body text-center">
-          You don&apos;t need more tools. You don&apos;t need a 47-page proposal from
-          an agency that&apos;s never met you. You need someone who actually
-          <A> understands your business</A> and builds exactly what makes sense.
-        </p>
-        <p className="story-body text-center" style={{ color: "#d0d6e0", fontWeight: 500 }}>
-          Custom. Not cookie-cutter. Built by a person, not a template.
-        </p>
+        <div className="flex-1">
+          <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#62666d" }}>
+            The person behind the code
+          </p>
+          <h2 className="story-statement mb-2">
+            I&apos;m Josh. <A>I build things</A>.
+          </h2>
+          <p className="mb-5 text-sm font-medium" style={{ color: "#8a8f98" }}>
+            Founder &amp; Builder &middot; Atlanta, GA &middot; 19
+          </p>
+
+          <div className="max-w-xl space-y-4">
+            <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
+              I&apos;ve spent the last <A>6 years in martial arts</A> — training,
+              teaching, watching coaches run their entire business from their phone with notes in one app,
+              schedule in another, and payments on Venmo. I lived in that world. I know what it&apos;s like.
+            </p>
+            <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
+              I started building tools for coaches because I saw the gap firsthand. Then I realized it wasn&apos;t just coaches.
+              It&apos;s barbers, dog trainers, landscapers, personal trainers — <A>small business owners everywhere</A> getting
+              left behind while everyone talks about AI and digital transformation.
+            </p>
+            <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
+              I&apos;m not a freelancer who disappears. I&apos;m not an agency that sends you a ticket number.
+              When I work with someone, I genuinely care about their success. You text me. I respond.
+              <A> No support tickets. No gatekeepers.</A>
+            </p>
+          </div>
+
+          {/* Direct access */}
+          <div className="mt-8 grid grid-cols-3 gap-6 max-w-md">
+            {[
+              { label: "Your brand", detail: "Everything custom to your identity" },
+              { label: "Your pace", detail: "No pressure, no corporate timelines" },
+              { label: "Direct access", detail: "You text me. I respond." },
+            ].map((item) => (
+              <div key={item.label}>
+                <p className="text-sm font-semibold" style={{ color: "#f7f8f8" }}>{item.label}</p>
+                <p className="mt-1 text-xs leading-relaxed" style={{ color: "#62666d" }}>{item.detail}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-4">
+            <a
+              href={CAL_LINK} target="_blank" rel="noopener noreferrer"
+              className="rounded-md border px-6 py-3 text-sm font-semibold transition-all duration-200"
+              style={{ borderColor: "rgba(255,255,255,0.25)", color: "#f7f8f8" }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "#f7f8f8"; e.currentTarget.style.color = "#0a0a0a"; e.currentTarget.style.borderColor = "#f7f8f8"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#f7f8f8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
+            >
+              Book a Call
+            </a>
+            <a
+              href="sms:4044363393"
+              className="rounded-md border px-6 py-3 text-sm font-medium transition-all duration-200"
+              style={{ borderColor: "rgba(255,255,255,0.1)", color: "#8a8f98" }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
+            >
+              Text me — 404-436-3393
+            </a>
+          </div>
+        </div>
       </motion.div>
     </Section>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CHAPTER 3 — THE SOLUTION
-   Reframed: I sit down with you.
+   PORTFOLIO — Case study format. Easy to add new projects.
    ═══════════════════════════════════════════════════════════════ */
 
-function Solution() {
+function Portfolio() {
+  const screenshots = [
+    { src: "/portfolio/login-final.png", label: "Branded Login Experience" },
+    { src: "/portfolio/coach-schedule.png", label: "Coach Schedule & Calendar" },
+    { src: "/portfolio/coach-clients.png", label: "Client Management Dashboard" },
+    { src: "/portfolio/coach-payments.png", label: "Payment & Revenue Tracking" },
+  ];
+
+  const buildStats = [
+    { value: "46", label: "Database tables" },
+    { value: "150+", label: "API endpoints" },
+    { value: "1", label: "Person built it" },
+    { value: "Live", label: "In production" },
+  ];
+
+  return (
+    <Section id="work">
+      <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-12">
+        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#62666d" }}>
+          Portfolio
+        </p>
+        <h2 className="story-statement">
+          Real work. <A>Real results.</A>
+        </h2>
+        <p className="mt-4 max-w-2xl story-body">
+          I don&apos;t show mockups. Everything here is <A>built, shipped, and running</A>.
+        </p>
+      </motion.div>
+
+      {/* ─── Sensei App Case Study ─────────────────────────── */}
+      <motion.div
+        className="rounded-2xl border overflow-hidden"
+        style={{ borderColor: "rgba(255,255,255,0.1)", background: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.005) 100%)" }}
+        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+      >
+        {/* Case study header */}
+        <div className="p-8 sm:p-10">
+          <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+            <div className="flex-1">
+              <span className="inline-block rounded-full border px-3 py-1 text-xs font-medium mb-4"
+                style={{ borderColor: "rgba(255,255,255,0.15)", color: "#8a8f98" }}>
+                Case Study
+              </span>
+              <h3 className="text-2xl font-semibold mb-1" style={{ color: "#f7f8f8" }}>
+                Sensei App
+              </h3>
+              <p className="text-sm font-medium mb-5" style={{ color: "#62666d" }}>
+                Full SaaS platform for independent coaches
+              </p>
+              <p className="text-sm leading-relaxed mb-6 max-w-xl" style={{ color: "#8a8f98" }}>
+                Solo martial arts and fitness coaches were running their entire business across 5 different apps.
+                Notes here, schedule there, payments on Venmo, messages on Instagram. I built <A>one system</A> that
+                replaces all of it — their own branded portal with clients, scheduling, payments, and messaging
+                in one place.
+              </p>
+              <ul className="space-y-2.5">
+                {[
+                  "Branded coach portal — their name, their identity",
+                  "Client tracking with progress, notes, and session history",
+                  "Built-in scheduling and attendance",
+                  "Stripe payment processing and revenue tracking",
+                  "Direct coach-to-client messaging",
+                  "Admin dashboard for platform management",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm" style={{ color: "#d0d6e0" }}>
+                    <span className="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: "#f7f8f8" }} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Build stats */}
+            <div className="flex-shrink-0">
+              <div className="grid grid-cols-2 gap-6">
+                {buildStats.map((s) => (
+                  <div key={s.label} className="text-center md:text-right">
+                    <span className="text-3xl font-bold block" style={{ color: "#f7f8f8" }}>{s.value}</span>
+                    <span className="text-xs" style={{ color: "#62666d" }}>{s.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Screenshot grid */}
+        <div className="grid gap-px sm:grid-cols-2" style={{ background: "rgba(255,255,255,0.05)" }}>
+          {screenshots.map((p) => (
+            <div key={p.label} className="group relative overflow-hidden" style={{ background: "#0a0a0a" }}>
+              <div className="relative aspect-video overflow-hidden">
+                <img
+                  src={p.src}
+                  alt={p.label}
+                  className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0" style={{
+                  background: "linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 50%)",
+                }} />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <p className="text-sm font-medium" style={{ color: "#f7f8f8" }}>{p.label}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Coach pitch — subtle callout at bottom */}
+        <div className="p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+          <div>
+            <p className="text-sm font-medium" style={{ color: "#d0d6e0" }}>
+              Are you a coach? Sensei App is available now — <A>$99/month</A>.
+            </p>
+            <p className="text-xs mt-1" style={{ color: "#62666d" }}>
+              Your own branded platform. Set up in a week.
+            </p>
+          </div>
+          <a
+            href="sms:4044363393"
+            className="rounded-md border px-5 py-2.5 text-sm font-medium transition-all duration-200 flex-shrink-0"
+            style={{ borderColor: "rgba(255,255,255,0.2)", color: "#f7f8f8" }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
+          >
+            Text me
+          </a>
+        </div>
+      </motion.div>
+
+      {/* CTA under portfolio */}
+      <motion.div
+        className="mt-10 text-center"
+        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={3}
+      >
+        <p className="text-sm" style={{ color: "#62666d" }}>
+          Want something like this for your business?
+        </p>
+        <a
+          href={CAL_LINK} target="_blank" rel="noopener noreferrer"
+          className="mt-4 inline-block rounded-md border px-6 py-3 text-sm font-semibold transition-all duration-200"
+          style={{ borderColor: "rgba(255,255,255,0.25)", color: "#f7f8f8" }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "#f7f8f8"; e.currentTarget.style.color = "#0a0a0a"; e.currentTarget.style.borderColor = "#f7f8f8"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#f7f8f8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
+        >
+          Let&apos;s Talk About Yours
+        </a>
+      </motion.div>
+    </Section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SERVICES
+   ═══════════════════════════════════════════════════════════════ */
+
+function Services() {
   const services = [
     {
       title: "Custom Websites",
@@ -247,7 +453,7 @@ function Solution() {
       features: ["High-converting landing pages", "Email capture and follow-up", "Automated outreach sequences", "Analytics so you see what's working"],
     },
     {
-      title: "AI Agents and Automations",
+      title: "AI Agents & Automations",
       description: "The stuff you do every day that eats your time — review requests, payment reminders, client follow-ups. I automate it so you can focus on the actual work.",
       features: ["Smart chatbots for your site", "Automated review collection", "Payment and booking reminders", "Client follow-up sequences"],
     },
@@ -257,7 +463,7 @@ function Solution() {
     <Section id="services">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-6">
         <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#62666d" }}>
-          How I work
+          Services
         </p>
         <h2 className="story-statement">
           I sit down with you first. <A>Then I build</A>.
@@ -297,223 +503,7 @@ function Solution() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CHAPTER 4 — SOCIAL PROOF (stats)
-   ═══════════════════════════════════════════════════════════════ */
-
-function Proof() {
-  const stats = [
-    { stat: "97%", label: "of consumers search online for local businesses", headline: "They're looking for you. Can they find you?" },
-    { stat: "5x", label: "more conversions with automated follow-up", headline: "Every lead gets answered. Automatically." },
-    { stat: "75%", label: "judge your credibility by your website", headline: "First impressions close deals." },
-    { stat: "10+", label: "hours saved per week with automation", headline: "Stop doing admin. Start doing the work." },
-  ];
-
-  return (
-    <Section>
-      <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-12 text-center">
-        <h2 className="story-statement">
-          The numbers <A>speak for themselves</A>.
-        </h2>
-      </motion.div>
-
-      <div className="grid gap-8 sm:grid-cols-2">
-        {stats.map((s, i) => (
-          <motion.div
-            key={s.stat}
-            className="rounded-xl border p-8 transition-all duration-200"
-            style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}
-            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
-          >
-            <span className="text-5xl font-bold" style={{ color: "#f7f8f8" }}>{s.stat}</span>
-            <p className="mt-1 text-xs" style={{ color: "#62666d" }}>{s.label}</p>
-            <p className="mt-4 text-base font-semibold" style={{ color: "#d0d6e0" }}>{s.headline}</p>
-          </motion.div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   CHAPTER 5 — THE WORK (Portfolio)
-   ═══════════════════════════════════════════════════════════════ */
-
-function Portfolio() {
-  {/* TODO: Screenshots currently have yellow accent colors — need to re-capture
-      with red accent theme (matching the login page) and replace these images.
-      Files to update: login-final.png, coach-schedule.png, coach-clients.png, coach-payments.png */}
-  const projects = [
-    { src: "/portfolio/login-final.png", label: "Branded Login Experience" },
-    { src: "/portfolio/coach-schedule.png", label: "Coach Schedule & Calendar" },
-    { src: "/portfolio/coach-clients.png", label: "Client Management Dashboard" },
-    { src: "/portfolio/coach-payments.png", label: "Payment & Revenue Tracking" },
-  ];
-
-  return (
-    <Section id="work">
-      <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-12">
-        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#62666d" }}>
-          Recent work
-        </p>
-        <h2 className="story-statement">
-          Built. <A>Shipped.</A> Running.
-        </h2>
-        <p className="mt-4 max-w-2xl story-body">
-          Sensei App — a coaching platform built specifically for solo martial arts and fitness coaches.
-          Not a template. Not a generic CRM. A full operating system designed around how coaches
-          actually work: <A>one coach, their clients, everything in one place</A>.
-        </p>
-      </motion.div>
-
-      {/* ─── Sensei App product pitch ─────────────────────────── */}
-      <motion.div
-        className="mb-10 rounded-xl border p-8 sm:p-10"
-        style={{ borderColor: "rgba(255,255,255,0.1)", background: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.005) 100%)" }}
-        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-      >
-        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-          <div className="flex-1 max-w-xl">
-            <h3 className="text-xl font-semibold mb-1" style={{ color: "#f7f8f8" }}>
-              Sensei App
-            </h3>
-            <p className="text-sm font-medium mb-4" style={{ color: "#62666d" }}>
-              The coaching OS for independent trainers
-            </p>
-            <p className="text-sm leading-relaxed mb-5" style={{ color: "#8a8f98" }}>
-              If you&apos;re a solo coach running things from your phone — juggling notes in one app,
-              scheduling in another, taking payments on Venmo — Sensei App replaces all of it.
-              Your own <A>branded login</A>, your clients, your schedule, your payments, your messages.
-              One place. Built for how you actually work.
-            </p>
-            <ul className="space-y-2.5 mb-6">
-              {[
-                "Your own branded coach portal — your name, your identity",
-                "Client tracking with progress, notes, and session history",
-                "Built-in scheduling and attendance",
-                "Payments and revenue tracking through Stripe",
-                "Direct coach-to-client messaging",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-2 text-sm" style={{ color: "#d0d6e0" }}>
-                  <span className="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: "#f7f8f8" }} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="flex flex-col items-center md:items-end text-center md:text-right flex-shrink-0">
-            <span className="text-3xl font-bold" style={{ color: "#f7f8f8" }}>$99</span>
-            <span className="text-sm" style={{ color: "#62666d" }}>/month</span>
-            <p className="mt-4 text-sm leading-relaxed max-w-xs" style={{ color: "#8a8f98" }}>
-              If you&apos;re a coach and this interests you, text me directly:
-            </p>
-            <a
-              href="sms:4044363393"
-              className="mt-3 inline-block rounded-md border px-6 py-3 text-sm font-semibold transition-all duration-200"
-              style={{ borderColor: "rgba(255,255,255,0.25)", color: "#f7f8f8" }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "#f7f8f8"; e.currentTarget.style.color = "#0a0a0a"; e.currentTarget.style.borderColor = "#f7f8f8"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#f7f8f8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
-            >
-              404-436-3393
-            </a>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* ─── Portfolio screenshots ────────────────────────────── */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        {projects.map((p, i) => (
-          <motion.div
-            key={p.label}
-            className="group relative overflow-hidden rounded-xl border transition-all duration-200"
-            style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}
-            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
-          >
-            <div className="relative aspect-video overflow-hidden">
-              {/* TODO: Re-capture these screenshots with red accent theme to match login page */}
-              <img
-                src={p.src}
-                alt={p.label}
-                className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
-              />
-              <div className="absolute inset-0" style={{
-                background: "linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 50%)",
-              }} />
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 p-4">
-              <p className="text-sm font-medium" style={{ color: "#f7f8f8" }}>{p.label}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      <motion.div
-        className="mt-8 text-center"
-        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={7}
-      >
-        <p className="text-sm" style={{ color: "#62666d" }}>
-          Want something like this for your business?
-        </p>
-        <a
-          href={CAL_LINK} target="_blank" rel="noopener noreferrer"
-          className="mt-4 inline-block rounded-md border px-6 py-3 text-sm font-semibold transition-all duration-200"
-          style={{ borderColor: "rgba(255,255,255,0.25)", color: "#f7f8f8" }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = "#f7f8f8"; e.currentTarget.style.color = "#0a0a0a"; e.currentTarget.style.borderColor = "#f7f8f8"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#f7f8f8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
-        >
-          Let&apos;s Talk About Yours
-        </a>
-      </motion.div>
-    </Section>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   CHAPTER 6 — PARTNERSHIP
-   Stronger. Not a freelancer. Not an agency.
-   ═══════════════════════════════════════════════════════════════ */
-
-function Partnership() {
-  return (
-    <Section>
-      <motion.div
-        className="rounded-2xl border p-10 sm:p-14 text-center"
-        style={{ borderColor: "rgba(255,255,255,0.1)", background: "linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%)" }}
-        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
-      >
-        <h2 className="story-statement mx-auto max-w-3xl">
-          I&apos;m not a freelancer who disappears.<br />
-          I&apos;m not an agency that sends you a <A>ticket number</A>.
-        </h2>
-        <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed" style={{ color: "#8a8f98" }}>
-          I&apos;m your builder. You tell me what your business needs, I make it real.
-          When things change, we adapt together. When you grow, <A>I grow with you</A>.
-          That&apos;s how this works.
-        </p>
-        <div className="mx-auto mt-10 grid max-w-xl gap-8 sm:grid-cols-3">
-          {[
-            { label: "Your brand", detail: "Everything custom to your identity, your colors, your voice" },
-            { label: "Your pace", detail: "We move when you're ready, no pressure, no corporate timelines" },
-            { label: "Direct access", detail: "You text me. I respond. No support tickets, no gatekeepers" },
-          ].map((item) => (
-            <div key={item.label}>
-              <p className="text-sm font-semibold" style={{ color: "#f7f8f8" }}>{item.label}</p>
-              <p className="mt-1 text-xs leading-relaxed" style={{ color: "#62666d" }}>{item.detail}</p>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-    </Section>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   CHAPTER 7 — PACKAGES
-   Clean pricing + detailed How It Works below
+   PACKAGES + HOW IT WORKS + PAYMENT
    ═══════════════════════════════════════════════════════════════ */
 
 function Packages() {
@@ -545,9 +535,9 @@ function Packages() {
   ];
 
   return (
-    <Section id="packages">
+    <Section id="pricing">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="mb-12 text-center">
-        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#62666d" }}>Packages</p>
+        <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase" style={{ color: "#62666d" }}>Pricing</p>
         <h2 className="story-statement">
           Transparent pricing. <A>No surprises</A>.
         </h2>
@@ -624,18 +614,17 @@ function Packages() {
           From first call to launch day — here&apos;s what the process looks like.
         </p>
 
-        {/* Timeline */}
         <div className="space-y-10">
           {[
             {
               week: "Before you pay anything",
               title: "Free strategy call",
-              body: "We hop on a call. You tell me about your business, your clients, what's working and what's not. I'll tell you honestly what I think you need — and if we're a good fit. No pressure, no sales pitch.",
+              body: "We hop on a call. You tell me about your business, your clients, what\u2019s working and what\u2019s not. I\u2019ll tell you honestly what I think you need \u2014 and if we\u2019re a good fit. No pressure, no sales pitch.",
             },
             {
               week: "Week 1",
               title: "Strategy + design",
-              body: "I map out the structure, create mockups, and get your feedback. Nothing gets built until you're happy with the direction. We go back and forth until it feels right.",
+              body: "I map out the structure, create mockups, and get your feedback. Nothing gets built until you\u2019re happy with the direction. We go back and forth until it feels right.",
             },
             {
               week: "Week 2",
@@ -650,7 +639,7 @@ function Packages() {
             {
               week: "After launch",
               title: "Ongoing support",
-              body: "I don't disappear. Every package includes free maintenance. If something breaks or you want changes, you text me directly.",
+              body: "I don\u2019t disappear. Every package includes free maintenance. If something breaks or you want changes, you text me directly.",
             },
           ].map((step, idx) => (
             <div key={step.week} className="flex gap-6">
@@ -667,7 +656,7 @@ function Packages() {
           ))}
         </div>
 
-        {/* Expected timelines by package */}
+        {/* Expected timelines */}
         <div className="mt-12 pt-8" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
           <h4 className="mb-6 text-sm font-semibold tracking-[0.1em] uppercase" style={{ color: "#62666d" }}>
             Expected timelines
@@ -698,9 +687,6 @@ function Packages() {
         <h3 className="mb-2 text-xl font-semibold" style={{ color: "#f7f8f8" }}>
           Flexible <A>payment options</A>
         </h3>
-        <p className="mb-3 text-sm leading-relaxed" style={{ color: "#8a8f98" }}>
-          I want to make this work for your budget — not the other way around.
-        </p>
         <p className="mb-8 text-base leading-relaxed" style={{ color: "#d0d6e0" }}>
           We work with your budget. Need to spread $3,500 over 6 months? We can do that.
           $1,500 over 3 months? Done. You tell me what works and we&apos;ll figure out a plan.
@@ -722,8 +708,7 @@ function Packages() {
           <div className="rounded-lg border p-6" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.01)" }}>
             <p className="mb-2 text-sm font-semibold" style={{ color: "#f7f8f8" }}>Monthly installments</p>
             <p className="text-xs leading-relaxed" style={{ color: "#8a8f98" }}>
-              X amount for X months until it&apos;s paid off. We match your cash flow.
-              Available on all packages — just tell me what you can do per month.
+              Spread it over months. We match your cash flow. Available on all packages.
             </p>
           </div>
           <div className="rounded-lg border p-6" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.01)" }}>
@@ -746,8 +731,7 @@ function Packages() {
           ))}
         </div>
         <p className="mt-6 text-sm leading-relaxed" style={{ color: "#62666d" }}>
-          Every engagement starts with a <A>free strategy call</A> before you commit anything. You don&apos;t
-          pay a dollar until we both agree on the plan, the price, and the timeline. No deposits to
+          Every engagement starts with a <A>free strategy call</A> before you commit anything. No deposits to
           &quot;hold your spot.&quot; No pressure. Just a conversation.
         </p>
       </motion.div>
@@ -756,77 +740,7 @@ function Packages() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CHAPTER 8 — ABOUT (The Human)
-   Real photo, real story.
-   ═══════════════════════════════════════════════════════════════ */
-
-function About() {
-  return (
-    <Section id="about">
-      <motion.div
-        className="flex flex-col gap-10 md:flex-row md:items-start"
-        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
-      >
-        <div className="flex-shrink-0">
-          <div className="relative h-44 w-44 overflow-hidden rounded-2xl" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
-            <Image
-              src="/josh.jpg"
-              alt="Josh Potesta"
-              fill
-              className="object-cover"
-              sizes="176px"
-              priority={false}
-            />
-          </div>
-        </div>
-
-        <div className="flex-1">
-          <h3 className="mb-1 text-xl font-semibold" style={{ color: "#f7f8f8" }}>Josh Potesta</h3>
-          <p className="mb-5 text-sm font-medium" style={{ color: "#8a8f98" }}>
-            Founder & Builder &middot; Atlanta, GA &middot; 19
-          </p>
-
-          <div className="max-w-xl space-y-4">
-            <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
-              I&apos;m 19 years old and I&apos;ve spent the last <A>6 years in martial arts</A> — training,
-              teaching, watching coaches run their entire business from their phone with notes in one app,
-              schedule in another, and payments on Venmo. I lived in that world. I know what it&apos;s like.
-            </p>
-            <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
-              I started building tools for coaches because I saw the gap firsthand. Then I realized it wasn&apos;t just coaches.
-              It&apos;s barbers, dog trainers, landscapers, personal trainers — <A>small business owners everywhere</A> getting
-              left behind while everyone talks about AI and digital transformation.
-            </p>
-            <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
-              When I work with someone, I genuinely care about their success. I want to see them grow. I want
-              to <A>make them happy</A> — that&apos;s my priority. Not just delivering a project and disappearing.
-              I stick around because I&apos;m invested in the people I build for.
-            </p>
-            <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
-              That&apos;s what I do now. I build for people who need someone
-              <A> in their corner</A>. Not a sales pitch. Not a proposal. A real conversation,
-              then real work that actually helps your business grow.
-            </p>
-          </div>
-
-          <a
-            href={CAL_LINK} target="_blank" rel="noopener noreferrer"
-            className="mt-8 inline-block rounded-md border px-8 py-3.5 text-sm font-semibold transition-all duration-200"
-            style={{ borderColor: "rgba(255,255,255,0.25)", color: "#f7f8f8" }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "#f7f8f8"; e.currentTarget.style.color = "#0a0a0a"; e.currentTarget.style.borderColor = "#f7f8f8"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#f7f8f8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
-          >
-            Let&apos;s Talk About Your Business
-          </a>
-        </div>
-      </motion.div>
-    </Section>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   CHAPTER 9 — FINAL CTA
-   Human. Warm. "Let's build something together."
+   FINAL CTA
    ═══════════════════════════════════════════════════════════════ */
 
 function FinalCta() {
@@ -910,18 +824,13 @@ export default function Home() {
         <main>
           <Hero />
           <Divider />
-          <Problem />
-          <Divider />
-          <Solution />
-          <Divider />
-          <Proof />
+          <About />
           <Divider />
           <Portfolio />
-          <Partnership />
+          <Divider />
+          <Services />
           <Divider />
           <Packages />
-          <Divider />
-          <About />
           <Divider />
           <FinalCta />
         </main>
