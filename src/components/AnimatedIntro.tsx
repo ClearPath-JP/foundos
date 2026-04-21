@@ -123,7 +123,7 @@ function CyclingText({ show }: { show: boolean }) {
     if (!show) return;
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % words.length);
-    }, 700);
+    }, 900);
     return () => clearInterval(interval);
   }, [show, words.length]);
 
@@ -242,17 +242,17 @@ export default function AnimatedIntro({
   );
 
   useEffect(() => {
-    // Phase 1: Cube builds with particles (0-1.8s) — longer to breathe
-    const revealTimer = setTimeout(() => setPhase("reveal"), 1800);
+    // Phase 1: Cube builds with particles (0-2.8s) — let it breathe
+    const revealTimer = setTimeout(() => setPhase("reveal"), 2800);
 
-    // Phase 2: Text reveal + tagline + cycling words (1.8-3.6s)
-    const servicesTimer = setTimeout(() => setPhase("services"), 3600);
+    // Phase 2: Text reveal + tagline + cycling words (2.8-5.5s)
+    const servicesTimer = setTimeout(() => setPhase("services"), 5500);
 
-    // Phase 3: Lines draw to services (3.6-5.0s)
+    // Phase 3: Lines draw to services (5.5-7.5s)
     const doneTimer = setTimeout(() => {
       setPhase("done");
-      setTimeout(onComplete, 600);
-    }, 5000);
+      setTimeout(onComplete, 700);
+    }, 7500);
 
     return () => {
       clearTimeout(revealTimer);
