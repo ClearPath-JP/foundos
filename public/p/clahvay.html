@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clahvay — Custom Platform Plan</title>
+  <style>
+    @font-face {
+      font-family: 'Inter';
+      src: url('https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hjQ.woff2') format('woff2');
+      font-weight: 100 900;
+      font-display: swap;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-feature-settings: "cv01", "ss03";
+      background: #0a0a0a;
+      color: #f7f8f8;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+
+    /* Colors */
+    .red { color: #e05545; }
+    .green { color: #3daa6d; }
+    .dim { color: #62666d; }
+    .silver { color: #d0d6e0; }
+    .white { color: #f7f8f8; }
+
+    /* ===== COVER ===== */
+    .cover {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px 0;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 56px;
+    }
+
+    .brand-bar svg { width: 28px; height: 28px; }
+
+    .brand-bar .brand-name {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #62666d;
+    }
+
+    .cover h1 {
+      font-size: clamp(28px, 7vw, 42px);
+      font-weight: 700;
+      line-height: 1.18;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+
+    .cover .intro {
+      font-size: 16px;
+      color: #8a8f98;
+      line-height: 1.8;
+      margin-bottom: 56px;
+      max-width: 540px;
+    }
+
+    .cover .intro strong { color: #f7f8f8; }
+
+    .cover-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .cover-meta label {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #62666d;
+      margin-bottom: 4px;
+    }
+
+    .cover-meta p { font-size: 14px; color: #d0d6e0; }
+
+    /* ===== SECTIONS ===== */
+    .section {
+      padding: 56px 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #62666d;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: clamp(22px, 4.5vw, 28px);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .text {
+      font-size: 15px;
+      color: #8a8f98;
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+
+    .text strong { color: #f7f8f8; font-weight: 600; }
+    .text .red { font-weight: 600; }
+    .text .green { font-weight: 600; }
+
+    /* ===== COST TABLE ===== */
+    .cost-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .cost-row .name {
+      font-size: 14px;
+      color: #d0d6e0;
+      font-weight: 500;
+    }
+
+    .cost-row .name span {
+      display: block;
+      font-size: 12px;
+      color: #62666d;
+      font-weight: 400;
+      margin-top: 1px;
+    }
+
+    .cost-row .price {
+      font-size: 16px;
+      font-weight: 700;
+      color: #e05545;
+    }
+
+    .total-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border: 1px solid rgba(224,85,69,0.2);
+      border-radius: 10px;
+      background: rgba(224,85,69,0.05);
+      margin: 20px 0 16px;
+    }
+
+    .total-bar .label { font-size: 14px; color: #8a8f98; }
+
+    .total-bar .amount {
+      font-size: 22px;
+      font-weight: 700;
+      color: #e05545;
+    }
+
+    .total-bar .amount small { font-size: 13px; font-weight: 400; color: #8a8f98; }
+
+    /* ===== ISSUES ===== */
+    .issues {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .issues li {
+      font-size: 14px;
+      color: #8a8f98;
+      padding: 8px 0 8px 18px;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      line-height: 1.65;
+    }
+
+    .issues li:last-child { border: none; }
+
+    .issues li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 14px;
+      width: 6px;
+      height: 6px;
+      background: #e05545;
+      border-radius: 50%;
+    }
+
+    .issues li strong { color: #e05545; font-weight: 600; }
+
+    /* ===== LOSS BOX ===== */
+    .loss-box {
+      border: 1px solid rgba(224,85,69,0.15);
+      border-left: 3px solid #e05545;
+      border-radius: 0 10px 10px 0;
+      padding: 20px 24px;
+      background: rgba(224,85,69,0.04);
+      margin-bottom: 28px;
+    }
+
+    .loss-box p {
+      font-size: 14px;
+      color: #8a8f98;
+      line-height: 1.7;
+    }
+
+    .loss-box strong { color: #e05545; }
+
+    /* ===== FUTURE PACING ===== */
+    .future-box {
+      border: 1px solid rgba(61,170,109,0.15);
+      border-left: 3px solid #3daa6d;
+      border-radius: 0 10px 10px 0;
+      padding: 20px 24px;
+      background: rgba(61,170,109,0.04);
+      margin-bottom: 28px;
+    }
+
+    .future-box p {
+      font-size: 15px;
+      color: #d0d6e0;
+      line-height: 1.8;
+      font-style: italic;
+    }
+
+    .future-box strong { color: #3daa6d; font-style: normal; }
+
+    /* ===== FEATURE LIST ===== */
+    .feature-list {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .feature-list li {
+      padding: 12px 0 12px 18px;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .feature-list li:last-child { border: none; }
+
+    .feature-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 18px;
+      width: 6px;
+      height: 6px;
+      background: #3daa6d;
+      border-radius: 50%;
+    }
+
+    .feature-list li .feat-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #f7f8f8;
+      margin-bottom: 2px;
+    }
+
+    .feature-list li .feat-desc {
+      font-size: 13px;
+      color: #8a8f98;
+      line-height: 1.6;
+    }
+
+    .feature-list li .feat-replaces {
+      font-size: 11px;
+      color: #3daa6d;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* ===== COMPARE TABLE ===== */
+    .vs-block {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .vs-row {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 1fr;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .vs-row:last-child { border: none; }
+
+    .vs-row.head { background: rgba(255,255,255,0.03); }
+
+    .vs-row.head .cell {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 12px 14px;
+    }
+
+    .vs-row.head .cell:nth-child(2) { color: #e05545; }
+    .vs-row.head .cell:nth-child(3) { color: #3daa6d; }
+
+    .vs-row .cell {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #62666d;
+      border-right: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .vs-row .cell:last-child { border-right: none; }
+    .vs-row .cell:first-child { color: #d0d6e0; font-weight: 500; }
+
+    .pill-bad {
+      display: inline-block;
+      padding: 1px 9px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #e05545;
+      background: rgba(224,85,69,0.08);
+      border: 1px solid rgba(224,85,69,0.15);
+    }
+
+    .pill-good {
+      display: inline-block;
+      padding: 1px 9px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #3daa6d;
+      background: rgba(61,170,109,0.08);
+      border: 1px solid rgba(61,170,109,0.15);
+    }
+
+    /* ===== PRICING ===== */
+    .price-box {
+      border: 1px solid rgba(61,170,109,0.2);
+      border-radius: 14px;
+      padding: 32px 28px;
+      background: rgba(61,170,109,0.03);
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .price-box .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: #3daa6d;
+      color: #0a0a0a;
+      padding: 3px 12px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+
+    .price-box .plan-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .price-box .plan-desc {
+      font-size: 14px;
+      color: #62666d;
+      margin-bottom: 20px;
+    }
+
+    .price-box .amount {
+      font-size: 44px;
+      font-weight: 700;
+      color: #3daa6d;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .price-box .term { font-size: 13px; color: #62666d; margin-bottom: 24px; }
+
+    .price-box ul { list-style: none; margin-bottom: 20px; }
+
+    .price-box ul li {
+      font-size: 14px;
+      color: #d0d6e0;
+      padding: 8px 0 8px 18px;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .price-box ul li:last-child { border: none; }
+
+    .price-box ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 14px;
+      width: 6px;
+      height: 6px;
+      background: #3daa6d;
+      border-radius: 50%;
+    }
+
+    .price-box .monthly {
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 14px;
+      color: #8a8f98;
+    }
+
+    .price-box .monthly strong { color: #3daa6d; font-weight: 700; font-size: 17px; }
+
+    .alt-box {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .alt-box .info { font-size: 13px; color: #8a8f98; }
+    .alt-box .info strong { color: #d0d6e0; display: block; font-size: 14px; }
+    .alt-box .alt-price { font-size: 22px; font-weight: 700; color: #d0d6e0; }
+
+    /* ===== ANCHOR COMPARE ===== */
+    .anchor-table {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .anchor-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .anchor-row:last-child { border: none; }
+
+    .anchor-row.head { background: rgba(255,255,255,0.03); }
+
+    .anchor-row .cell {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #62666d;
+      border-right: 1px solid rgba(255,255,255,0.04);
+      text-align: center;
+    }
+
+    .anchor-row .cell:last-child { border-right: none; }
+
+    .anchor-row.head .cell {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .anchor-row .cell.highlight {
+      color: #3daa6d;
+      font-weight: 600;
+      background: rgba(61,170,109,0.03);
+    }
+
+    /* ===== PAYMENT OPTIONS ===== */
+    .pay-option {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pay-option.recommended {
+      border-color: rgba(61,170,109,0.2);
+      background: rgba(61,170,109,0.03);
+    }
+
+    .pay-option .po-info {
+      font-size: 14px;
+      color: #d0d6e0;
+      font-weight: 500;
+    }
+
+    .pay-option .po-info span {
+      display: block;
+      font-size: 12px;
+      color: #62666d;
+      font-weight: 400;
+      margin-top: 1px;
+    }
+
+    .pay-option .po-info .rec-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: #3daa6d;
+      margin-left: 6px;
+    }
+
+    .pay-option .po-amount {
+      font-size: 15px;
+      font-weight: 600;
+      color: #d0d6e0;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* ===== SAVINGS ===== */
+    .savings-box {
+      border: 1px solid rgba(61,170,109,0.15);
+      border-radius: 12px;
+      padding: 24px;
+      background: rgba(61,170,109,0.03);
+      margin-bottom: 28px;
+    }
+
+    .savings-box .s-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #3daa6d;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .s-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .s-row:last-child { border: none; }
+
+    .s-row .yr { font-size: 13px; color: #62666d; width: 48px; }
+    .s-row .old { font-size: 13px; color: #e05545; text-decoration: line-through; }
+    .s-row .new { font-size: 13px; color: #3daa6d; }
+    .s-row .diff { font-size: 14px; color: #f7f8f8; font-weight: 600; }
+
+    .savings-note {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(61,170,109,0.1);
+      font-size: 13px;
+      color: #8a8f98;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .savings-note .green { font-weight: 600; }
+
+    /* ===== PROCESS STEPS ===== */
+    .steps-list {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .steps-list li {
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .steps-list li:last-child { border: none; }
+
+    .steps-list .sn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(61,170,109,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #3daa6d;
+      margin-top: 1px;
+    }
+
+    .steps-list .sd h4 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .steps-list .sd p {
+      font-size: 13px;
+      color: #8a8f98;
+      line-height: 1.65;
+    }
+
+    .steps-list .sd strong { color: #f7f8f8; }
+
+    /* ===== TIMELINE ===== */
+    .tl-row {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .tl-row:last-child { border: none; }
+
+    .tl-row .wk { font-size: 12px; font-weight: 600; color: #62666d; padding-top: 2px; }
+
+    .tl-row h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .tl-row p { font-size: 13px; color: #8a8f98; line-height: 1.6; }
+
+    /* ===== CALLOUT ===== */
+    .callout {
+      border-left: 2px solid rgba(255,255,255,0.1);
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      color: #8a8f98;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .callout strong { color: #f7f8f8; }
+
+    /* ===== COLLAB BOX ===== */
+    .collab-box {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 24px;
+      background: rgba(255,255,255,0.02);
+      margin-bottom: 28px;
+    }
+
+    .collab-box h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .collab-box p {
+      font-size: 14px;
+      color: #8a8f98;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .collab-box p:last-child { margin: 0; }
+    .collab-box strong { color: #f7f8f8; }
+
+    /* ===== CTA / CLOSING ===== */
+    .cta-section {
+      padding: 56px 0 40px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .cta-box {
+      border: 1px solid rgba(61,170,109,0.2);
+      border-radius: 14px;
+      padding: 32px 28px;
+      background: rgba(61,170,109,0.03);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .cta-box h2 { margin-bottom: 12px; font-size: 22px; }
+
+    .cta-box .cta-text {
+      font-size: 15px;
+      color: #8a8f98;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-box .cta-text strong { color: #f7f8f8; }
+
+    .cta-box .phone {
+      font-size: 28px;
+      font-weight: 700;
+      color: #3daa6d;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .cta-box .phone a {
+      color: #3daa6d;
+      text-decoration: none;
+    }
+
+    .cta-box .insta {
+      font-size: 15px;
+      color: #8a8f98;
+    }
+
+    .next-moves {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .next-moves li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 12px;
+      font-size: 14px;
+      color: #8a8f98;
+      line-height: 1.5;
+    }
+
+    .next-moves li:last-child { border: none; }
+
+    .next-moves li .mn {
+      font-weight: 700;
+      color: #3daa6d;
+      text-align: center;
+    }
+
+    .next-moves li strong { color: #f7f8f8; }
+
+    .no-pressure {
+      text-align: center;
+      font-size: 14px;
+      color: #62666d;
+      line-height: 1.7;
+      font-style: italic;
+      margin-bottom: 32px;
+    }
+
+    .closing-brand {
+      text-align: center;
+      padding: 32px 0 48px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .closing-brand .c-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+    .closing-brand .c-title { font-size: 13px; color: #62666d; margin-bottom: 16px; }
+
+    .closing-brand svg { width: 28px; height: 28px; opacity: 0.35; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ===== COVER ===== -->
+  <div class="cover">
+    <div class="brand-bar">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 15 L85 35 L50 55 L15 35 Z" fill="#fff" opacity="0.95"/>
+        <path d="M15 35 L50 55 L50 85 L15 65 Z" fill="#fff" opacity="0.55"/>
+        <path d="M85 35 L50 55 L50 85 L85 65 Z" fill="#fff" opacity="0.3"/>
+      </svg>
+      <span class="brand-name">FoundOS</span>
+    </div>
+
+    <h1>You've built Cuban Dance Soul for 14 years. <em style="font-style:italic;opacity:0.45;">Your online presence should match.</em></h1>
+
+    <p class="intro">Hey Emarlos &mdash; after checking out how Clahvay runs online, I noticed something: <strong>you're paying for three separate platforms that don't connect.</strong> Your students are bouncing between different websites and logins just to book a class, grab a ticket, or buy merch. <strong>Some of them are giving up along the way</strong> &mdash; and that's money and community you're losing every month. I want to show you what it looks like when <strong>everything lives under one roof</strong>, under your brand, with your own app in the App Store.</p>
+
+    <div class="cover-meta">
+      <div><label>For</label><p>Emarlos &mdash; Clahvay</p></div>
+      <div><label>From</label><p>Josh Potesta &mdash; FoundOS</p></div>
+      <div><label>Date</label><p>April 2026</p></div>
+      <div><label>Timeline</label><p>10 weeks to launch</p></div>
+    </div>
+  </div>
+
+  <!-- ===== WHAT YOU'RE LOSING ===== -->
+  <div class="section">
+    <div class="eyebrow">Where Your Money Goes</div>
+    <h2>You're paying <span class="red">$300&ndash;500+ a month</span> for tools that weren't built for you.</h2>
+
+    <div class="cost-row">
+      <div class="name">BigCommerce<span>clahvay.com &mdash; your website</span></div>
+      <div class="price">$39&ndash;399/mo</div>
+    </div>
+    <div class="cost-row">
+      <div class="name">Pike13<span>Class scheduling &amp; billing</span></div>
+      <div class="price">$159&ndash;286/mo</div>
+    </div>
+    <div class="cost-row">
+      <div class="name">Zoho Backstage<span>clahvayfest.com &mdash; festival site</span></div>
+      <div class="price">$0&ndash;99/mo</div>
+    </div>
+
+    <div class="total-bar">
+      <div class="label">You're spending</div>
+      <div class="amount">$300&ndash;500+ <small>/mo</small></div>
+    </div>
+
+    <p class="text">That's <strong class="red">$3,600 to $6,000+ a year</strong> going to platforms that weren't designed for a dance school. And here's what's not working:</p>
+
+    <ul class="issues">
+      <li><strong>Your website is a shopping cart.</strong> BigCommerce was built to sell products online, not run a dance studio. Your About page still has placeholder text. There are no instructor bios, no testimonials, no live class calendar.</li>
+      <li><strong>Pike13 is completely disconnected</strong> from your site. It can't sell festival tickets. It can't sell merch. Your students need a separate login just to book a class.</li>
+      <li><strong>Your festival site has a broken security certificate.</strong> When people visit clahvayfest.com, their browser warns them the site isn't safe. That's <strong>turning away ticket buyers.</strong></li>
+      <li><strong>Your students need 3 accounts and 3 passwords</strong> to book a class, buy a ticket, and grab a t-shirt. Each extra step <strong>loses people.</strong></li>
+      <li><strong>Nothing cross-sells.</strong> A festival ticket buyer has no easy path to your weekly classes. A student who loves class never sees the merch. <strong>You're leaving money on the table.</strong></li>
+    </ul>
+
+    <div class="loss-box">
+      <p>Here's the real cost: <strong>every month this stays the same, potential students visit your site, get confused by the disconnected experience, and leave without booking.</strong> If just 2&ndash;3 people a month walk away because of a clunky website or a broken festival link, that's <strong>thousands of dollars in lost revenue every year</strong> &mdash; on top of what you're already paying for these platforms.</p>
+    </div>
+  </div>
+
+  <!-- ===== WHAT I'M PROPOSING ===== -->
+  <div class="section">
+    <div class="eyebrow">What I Want to Build for You</div>
+    <h2>One custom platform that <span class="green">replaces all three.</span></h2>
+
+    <p class="text">I'll build you a <strong>custom website and a branded iOS app</strong> &mdash; a "Clahvay" app your students download from the App Store. Not a generic template that hundreds of other studios use. Something <strong>designed around your brand, your culture, and how your business actually runs.</strong></p>
+
+    <div class="future-box">
+      <p>Imagine this: it's a Sunday morning, three months from now. You open your phone and see that <strong>6 new students signed up overnight</strong> through the app. A push notification just reminded your regulars about tonight's class. <strong>Clahvay Fest tickets are selling through your own site</strong> &mdash; no broken links, no security warnings. A student who just bought a festival pass also grabbed a Clahvay t-shirt at checkout. You didn't chase any of it down. <strong>Your platform handled it while you slept.</strong></p>
+    </div>
+
+    <p class="text">Here's everything that's included:</p>
+
+    <ul class="feature-list">
+      <li>
+        <div class="feat-name">Custom Branded Website</div>
+        <div class="feat-desc">Your story, your culture, your aesthetic. Instructor profiles, student testimonials, video gallery, blog, and contact page. Designed for a dance school, not a shopping cart.</div>
+        <div class="feat-replaces">Replaces BigCommerce &mdash; saves $39&ndash;399/mo</div>
+      </li>
+      <li>
+        <div class="feat-name">Class Booking &amp; Payments</div>
+        <div class="feat-desc">Live class calendar built into your site. Drop-ins, 5-packs, 12-packs, and memberships. Students book and pay in one click. Automated reminders before every class.</div>
+        <div class="feat-replaces">Replaces Pike13 &mdash; saves $159&ndash;286/mo</div>
+      </li>
+      <li>
+        <div class="feat-name">Clahvay Fest Hub</div>
+        <div class="feat-desc">Festival lives on your main site. Ticket tiers, artist profiles, workshop schedule, past festival gallery. Someone buying a ticket is one click from weekly classes.</div>
+        <div class="feat-replaces">Replaces Zoho Backstage &mdash; no more broken SSL</div>
+      </li>
+      <li>
+        <div class="feat-name">Merch Shop</div>
+        <div class="feat-desc">Sell Clahvay gear right from your website. Same account, same checkout as classes and tickets. No separate store needed.</div>
+      </li>
+      <li>
+        <div class="feat-name">Branded iOS App in the App Store</div>
+        <div class="feat-desc">A real "Clahvay" app &mdash; book classes, buy passes, get push notifications, browse the schedule, buy festival tickets, shop merch. All from your students' phones.</div>
+        <div class="feat-replaces">Not a template &mdash; custom designed for Cuban Dance Soul</div>
+      </li>
+      <li>
+        <div class="feat-name">Automated Emails &amp; Texts</div>
+        <div class="feat-desc">Class reminders, welcome emails for new students, post-class follow-ups, festival announcements, and "we miss you" messages for students who haven't booked in a while. All automatic.</div>
+      </li>
+      <li>
+        <div class="feat-name">Admin Dashboard</div>
+        <div class="feat-desc">Update class times, change pricing, add events, manage products &mdash; all yourself. I'll train you on everything so you're never dependent on me for small changes.</div>
+      </li>
+      <li>
+        <div class="feat-name">Google &amp; SEO Setup</div>
+        <div class="feat-desc">Your Google Business Profile fully optimized &mdash; hours, photos, categories, keywords for "salsa classes Atlanta." Analytics installed so you can see exactly how many people visit, where they come from, and what they do. <strong>Your site will load in under a second and be built to rank on Google from day one.</strong></div>
+        <div class="feat-replaces">Most dance studio sites fail Google's speed test &mdash; yours won't</div>
+      </li>
+      <li>
+        <div class="feat-name">Ad-Ready Infrastructure</div>
+        <div class="feat-desc">Meta Pixel, Google Analytics, and conversion tracking installed from the start. If you ever run ads &mdash; or hire someone to &mdash; <strong>every dollar is tracked and every click is measured.</strong> No wasted ad spend on a broken funnel.</div>
+        <div class="feat-replaces">Your platform is built to turn ad traffic into students</div>
+      </li>
+    </ul>
+
+    <div class="callout">
+      <strong>The biggest shift:</strong> Right now your students need 3 websites and 3 logins. After this, they have <strong>one account that works everywhere.</strong> Classes sell the festival. The festival sells classes. Merch sells both. <strong class="green">Every touchpoint drives the next.</strong>
+    </div>
+  </div>
+
+  <!-- ===== SIDE BY SIDE ===== -->
+  <div class="section">
+    <div class="eyebrow">Side by Side</div>
+    <h2>What you have <span class="red">now</span> vs. what you'd <span class="green">get.</span></h2>
+
+    <div class="vs-block">
+      <div class="vs-row head">
+        <div class="cell dim"></div>
+        <div class="cell">Now</div>
+        <div class="cell">FoundOS Build</div>
+      </div>
+      <div class="vs-row"><div class="cell">Website</div><div class="cell"><span class="pill-bad">Template</span></div><div class="cell"><span class="pill-good">Custom</span></div></div>
+      <div class="vs-row"><div class="cell">Booking</div><div class="cell"><span class="pill-bad">Separate site</span></div><div class="cell"><span class="pill-good">Built in</span></div></div>
+      <div class="vs-row"><div class="cell">Festival</div><div class="cell"><span class="pill-bad">Broken SSL</span></div><div class="cell"><span class="pill-good">Built in</span></div></div>
+      <div class="vs-row"><div class="cell">Merch</div><div class="cell"><span class="pill-bad">Separate store</span></div><div class="cell"><span class="pill-good">Built in</span></div></div>
+      <div class="vs-row"><div class="cell">iOS app</div><div class="cell"><span class="pill-bad">None</span></div><div class="cell"><span class="pill-good">Your own app</span></div></div>
+      <div class="vs-row"><div class="cell">Logins</div><div class="cell"><span class="pill-bad">3 accounts</span></div><div class="cell"><span class="pill-good">1 account</span></div></div>
+      <div class="vs-row"><div class="cell">Notifications</div><div class="cell"><span class="pill-bad">None</span></div><div class="cell"><span class="pill-good">Push + email</span></div></div>
+      <div class="vs-row"><div class="cell">Cross-selling</div><div class="cell"><span class="pill-bad">Nothing linked</span></div><div class="cell"><span class="pill-good">Everything linked</span></div></div>
+      <div class="vs-row"><div class="cell">Google SEO</div><div class="cell"><span class="pill-bad">Not optimized</span></div><div class="cell"><span class="pill-good">Built to rank</span></div></div>
+      <div class="vs-row"><div class="cell">Ad tracking</div><div class="cell"><span class="pill-bad">None</span></div><div class="cell"><span class="pill-good">Pixel + analytics</span></div></div>
+      <div class="vs-row"><div class="cell">Ownership</div><div class="cell"><span class="pill-bad">Renting</span></div><div class="cell"><span class="pill-good">You own it</span></div></div>
+      <div class="vs-row"><div class="cell">Monthly</div><div class="cell"><span class="pill-bad">$300&ndash;500+</span></div><div class="cell"><span class="pill-good">$200&ndash;250</span></div></div>
+    </div>
+  </div>
+
+  <!-- ===== INVESTMENT ===== -->
+  <div class="section">
+    <div class="eyebrow">The Investment</div>
+    <h2>What it costs &mdash; and why the math works.</h2>
+
+    <p class="text">Agencies charge <strong>$15,000&ndash;$30,000+</strong> for a custom website and app. I'm not an agency &mdash; I work with you directly, which means <strong>you get the same quality without the overhead.</strong></p>
+
+    <div class="anchor-table">
+      <div class="anchor-row head">
+        <div class="cell">What you'd pay</div>
+        <div class="cell">Agency</div>
+        <div class="cell">FoundOS</div>
+      </div>
+      <div class="anchor-row">
+        <div class="cell" style="color:#d0d6e0;">Custom website</div>
+        <div class="cell">$8,000&ndash;15,000</div>
+        <div class="cell highlight">Included</div>
+      </div>
+      <div class="anchor-row">
+        <div class="cell" style="color:#d0d6e0;">iOS app</div>
+        <div class="cell">$10,000&ndash;25,000</div>
+        <div class="cell highlight">Included</div>
+      </div>
+      <div class="anchor-row">
+        <div class="cell" style="color:#d0d6e0;">Booking system</div>
+        <div class="cell">$200/mo ongoing</div>
+        <div class="cell highlight">Included</div>
+      </div>
+      <div class="anchor-row">
+        <div class="cell" style="color:#d0d6e0;font-weight:600;">Total Year 1</div>
+        <div class="cell" style="color:#e05545;font-weight:600;">$20,000+</div>
+        <div class="cell highlight" style="font-weight:700;">$5,000</div>
+      </div>
+    </div>
+
+    <div class="price-box">
+      <div class="badge">Recommended</div>
+      <div class="plan-name">Full Platform &mdash; Website + App</div>
+      <div class="plan-desc">Replaces BigCommerce, Pike13, and Zoho. One platform you own.</div>
+      <div class="amount">$5,000</div>
+      <div class="term">one-time investment</div>
+      <ul>
+        <li>Custom branded website</li>
+        <li>Class booking &amp; payment system</li>
+        <li>Festival page with ticket sales</li>
+        <li>Merch shop</li>
+        <li>Branded iOS app in the App Store</li>
+        <li>Push notifications &amp; automated emails</li>
+        <li>Admin dashboard &amp; training</li>
+        <li>Google Business Profile + SEO setup</li>
+        <li>Analytics + ad tracking (Meta Pixel, GA4)</li>
+        <li>Student migration from Pike13</li>
+      </ul>
+      <div class="monthly">Then <strong>$200&ndash;250</strong>/mo for hosting, updates &amp; support</div>
+    </div>
+
+    <div class="alt-box">
+      <div class="info"><strong>Website + Booking Only &mdash; $3,500</strong>Start with the site and class booking, add the app later.</div>
+      <div class="alt-price">$3,500</div>
+    </div>
+
+    <p class="text"><strong class="green">Why the math works:</strong> You're already spending <strong class="red">$300&ndash;500+/mo</strong> on platforms that don't do what you need. My maintenance is <strong class="green">$200&ndash;250/mo &mdash; less than what you pay now</strong> &mdash; for a platform built for Clahvay, with an app in the App Store, and <strong>you own all of it forever.</strong> Cancel Pike13, cancel BigCommerce, cancel Zoho.</p>
+
+    <div class="savings-box">
+      <div class="s-label">What this saves you over time</div>
+      <div class="s-row">
+        <div class="yr">Year 1</div>
+        <div class="old">$3,600&ndash;6,000</div>
+        <div class="new">$2,400&ndash;3,000</div>
+        <div class="diff">Break even</div>
+      </div>
+      <div class="s-row">
+        <div class="yr">Year 2</div>
+        <div class="old">$7,200&ndash;12,000</div>
+        <div class="new">$4,800&ndash;6,000</div>
+        <div class="diff green">Save $2,400+</div>
+      </div>
+      <div class="s-row">
+        <div class="yr">Year 3</div>
+        <div class="old">$10,800&ndash;18,000</div>
+        <div class="new">$7,200&ndash;9,000</div>
+        <div class="diff green">Save $3,600+</div>
+      </div>
+      <div class="savings-note">With your current setup, you're renting &mdash; leave any platform and <span class="red">you lose everything.</span> With this, <span class="green">you own the website, the app, the code, and the data. Permanently.</span></div>
+    </div>
+
+    <div class="eyebrow">Flexible Payment Options</div>
+    <p class="text" style="margin-bottom:16px;">I want this to work for your budget. <strong>Same total price regardless of which option you choose</strong> &mdash; pick whatever feels right.</p>
+
+    <div class="pay-option">
+      <div class="po-info">Pay in Full<span>One payment, done</span></div>
+      <div class="po-amount">$5,000</div>
+    </div>
+    <div class="pay-option recommended">
+      <div class="po-info">3 Milestone Payments <span class="rec-tag">Most Popular</span><span>Pay as each phase is delivered and approved by you</span></div>
+      <div class="po-amount">$1,500 &rarr; $2,000 &rarr; $1,500</div>
+    </div>
+    <div class="pay-option">
+      <div class="po-info">5 Monthly Plan<span>$1,000 deposit + $800/mo for 5 months</span></div>
+      <div class="po-amount">$1,000 + $800 &times; 5</div>
+    </div>
+    <div class="pay-option">
+      <div class="po-info">8 Monthly Plan<span>$1,000 deposit + $500/mo for 8 months</span></div>
+      <div class="po-amount">$1,000 + $500 &times; 8</div>
+    </div>
+  </div>
+
+  <!-- ===== COLLABORATION ===== -->
+  <div class="section">
+    <div class="eyebrow">This Is Your Platform</div>
+    <h2>You're part of the process <span class="green">every step of the way.</span></h2>
+
+    <p class="text">I don't disappear for two months and come back with something you didn't ask for. <strong>This is a collaboration.</strong> You know your business, your students, and your culture better than anyone. My job is to bring that to life digitally &mdash; but the vision is yours.</p>
+
+    <div class="collab-box">
+      <h3>How we work together</h3>
+      <p>We start with a <strong>brand discovery call</strong> where I ask you real questions about your vision for Clahvay &mdash; what you love, what you want to change, how you want students to feel. This isn't a generic intake form. <strong>I listen to how you talk about your business</strong> and use that to shape the design, the copy, and the entire experience.</p>
+      <p>After that, you get a <strong>live preview link</strong> so you can check the site on your phone anytime. Quick check-ins every week &mdash; nothing heavy, just a text or a short call. <strong>If something doesn't feel right, we change it.</strong> You approve every major decision before I move forward.</p>
+      <p><strong>You'll never wonder what's happening.</strong> I keep you updated, send progress screenshots, and make sure what I'm building matches what's in your head. By the time we launch, it'll feel like <strong>your site, your app, your brand</strong> &mdash; because it is.</p>
+    </div>
+
+    <div class="eyebrow" style="margin-top:32px;">Build Timeline</div>
+
+    <div class="tl-row">
+      <div class="wk">Wk 1&ndash;2</div>
+      <div>
+        <h4>Brand Discovery &amp; Design</h4>
+        <p>We sit down and I learn what makes Clahvay feel like Clahvay. I build a homepage mockup &mdash; you approve it before I write any code.</p>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="wk">Wk 3&ndash;5</div>
+      <div>
+        <h4>Website &amp; Booking</h4>
+        <p>Full site, class calendar, online booking, payments, instructor profiles, testimonials. Live preview on your phone.</p>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="wk">Wk 6&ndash;7</div>
+      <div>
+        <h4>Festival &amp; Merch</h4>
+        <p>Clahvay Fest page with ticket sales. Merch shop. Everything connected to one student account.</p>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="wk">Wk 8&ndash;10</div>
+      <div>
+        <h4>App &amp; Launch</h4>
+        <p>iOS app built, tested, submitted to App Store. Student migration. Admin training. Go live together.</p>
+      </div>
+    </div>
+
+    <div class="future-box" style="margin-top:24px;">
+      <p><strong>Ready before Clahvay Fest.</strong> If we start in May, you'll be live by mid-July &mdash; <strong>nearly 3 months before the October festival</strong> to sell tickets through your own site and app.</p>
+    </div>
+  </div>
+
+  <!-- ===== FUTURE ADD-ONS ===== -->
+  <div class="section">
+    <div class="eyebrow">Down the Road</div>
+    <h2>Once you're live, here's where it gets <span class="green">really interesting.</span></h2>
+
+    <p class="text">The platform we're building is the <strong>foundation.</strong> Once it's running, there are powerful add-ons we can layer on top &mdash; things that make your business work harder <strong>while you sleep.</strong> These aren't part of this proposal, but I want you to see what's possible:</p>
+
+    <ul class="feature-list">
+      <li>
+        <div class="feat-name">AI Instagram Assistant</div>
+        <div class="feat-desc">An AI connected to your Instagram that <strong>responds to DMs, answers questions about classes, and converts followers into students automatically.</strong> Someone messages "when's your next class?" at 2am &mdash; they get an instant answer and a booking link. No more missed leads because you were sleeping or teaching.</div>
+        <div class="feat-replaces">Turns your Instagram into a 24/7 booking machine</div>
+      </li>
+      <li>
+        <div class="feat-name">24/7 AI Chat on Your Website</div>
+        <div class="feat-desc">A smart chat assistant on clahvay.com that <strong>knows your class schedule, pricing, and FAQ inside and out.</strong> New visitors get instant answers. "What should I wear?" "Do I need a partner?" "How much is a drop-in?" &mdash; handled automatically, any hour of the day.</div>
+        <div class="feat-replaces">Your online presence never sleeps</div>
+      </li>
+      <li>
+        <div class="feat-name">Smart Lead Follow-Up</div>
+        <div class="feat-desc">When someone visits your site but doesn't book, AI sends a <strong>personalized follow-up</strong> based on what they looked at. Browsed the beginner class? They get a welcome message about what first-timers can expect. Looked at Clahvay Fest? They get the lineup and an early-bird link.</div>
+        <div class="feat-replaces">Recovers leads that would otherwise disappear</div>
+      </li>
+    </ul>
+
+    <div class="callout">
+      <strong>None of this is required right now.</strong> These are future add-ons we can talk about once your platform is live and running. But this is the direction &mdash; a system that doesn't just replace what you have, but <strong>grows your business in ways that weren't possible before.</strong>
+    </div>
+  </div>
+
+  <!-- ===== NEXT STEPS ===== -->
+  <div class="cta-section">
+    <div class="eyebrow">If You're Interested</div>
+    <h2>Here's exactly what happens next.</h2>
+
+    <ul class="next-moves">
+      <li>
+        <div class="mn">1</div>
+        <div><strong>Text me that you're in.</strong> Just a quick text &mdash; "let's do it" or "I'm interested" &mdash; that's all I need to get started on the next step.</div>
+      </li>
+      <li>
+        <div class="mn">2</div>
+        <div><strong>I send you a Scope of Work.</strong> A simple document that spells out exactly what gets built, what's included, and the timeline. No surprises.</div>
+      </li>
+      <li>
+        <div class="mn">3</div>
+        <div><strong>We look it over together.</strong> We hop on a quick call or meet up. You ask questions, we make changes if needed. When it feels right, we both sign.</div>
+      </li>
+      <li>
+        <div class="mn">4</div>
+        <div><strong>You pick a payment option</strong> &mdash; pay in full, milestones, or monthly &mdash; whatever works for your budget. I send a simple payment link for the first payment.</div>
+      </li>
+      <li>
+        <div class="mn">5</div>
+        <div><strong>We agree on a launch deadline together</strong> and I get to work. You'll see the first mockup within two weeks.</div>
+      </li>
+    </ul>
+
+    <div class="cta-box">
+      <h2>14 years of Cuban Dance Soul deserves more than a shopping cart.</h2>
+      <p class="cta-text">If this feels right, <strong>just text me.</strong> If you have questions first, text me those too. Either way &mdash; no pressure, no rush. <strong>You know your business best.</strong> I'm just here to show you what's possible.</p>
+      <div class="phone"><a href="tel:4044363393">(404) 436-3393</a></div>
+      <div class="insta">@josh.potesta</div>
+    </div>
+
+    <p class="no-pressure">This proposal is here to give you clarity, not pressure.<br>Take whatever time you need. If it's not the right fit or the right time, no hard feelings.</p>
+  </div>
+
+  <!-- ===== CLOSING ===== -->
+  <div class="closing-brand">
+    <div class="c-name">Josh Potesta</div>
+    <div class="c-title">FoundOS &mdash; foundos.ai</div>
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 15 L85 35 L50 55 L15 35 Z" fill="#fff" opacity="0.95"/>
+      <path d="M15 35 L50 55 L50 85 L15 65 Z" fill="#fff" opacity="0.55"/>
+      <path d="M85 35 L50 55 L50 85 L85 65 Z" fill="#fff" opacity="0.3"/>
+    </svg>
+  </div>
+
+</div>
+
+</body>
+</html>
