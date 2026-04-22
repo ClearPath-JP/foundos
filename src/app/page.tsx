@@ -219,7 +219,7 @@ function Hero() {
         style={{ color: "#8a8f98" }}
         variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
       >
-        I build custom software for businesses that <A>agencies ignore</A>.
+        I build custom software for local businesses that <A>agencies ignore</A>.
       </motion.p>
 
       <motion.div
@@ -727,7 +727,7 @@ function Pricing() {
       name: "Launch",
       price: "$1,500",
       description: "Get online fast. A real website that represents your business, not a template with your name on it.",
-      includes: ["Custom 3-5 page website", "Mobile responsive design", "Contact form + Google Maps", "Basic SEO setup", "1 month free maintenance"],
+      includes: ["Custom 3-5 page website", "Mobile responsive design", "Contact form + Google Maps", "SEO + Google Business Profile setup", "Analytics + conversion tracking", "1 month free maintenance"],
       timeline: "2-3 weeks",
       cta: "Most Popular",
       highlight: false,
@@ -736,7 +736,7 @@ function Pricing() {
       name: "Growth",
       price: "$3,500",
       description: "Website + lead generation + automations. Built to bring in new clients on autopilot.",
-      includes: ["Everything in Launch", "Lead capture landing page", "Automated email follow-ups", "Google review automation", "Missed client follow-ups", "3 months free maintenance"],
+      includes: ["Everything in Launch", "Lead capture landing page", "Automated email follow-ups", "Google review automation", "Ad-ready infrastructure (pixels + tracking)", "Missed client follow-ups", "3 months free maintenance"],
       timeline: "3-5 weeks",
       cta: "Best Value",
       highlight: true,
@@ -874,7 +874,7 @@ function About() {
             </p>
             <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>
               I started building tools for coaches because I saw the gap firsthand. Then I realized it wasn&apos;t just coaches.
-              It&apos;s barbers, dog trainers, landscapers, personal trainers — <A>small business owners everywhere</A> getting
+              It&apos;s dance studios, restaurants, salons, contractors, photographers, personal trainers — <A>local business owners everywhere</A> getting
               left behind while everyone talks about AI and digital transformation.
             </p>
             <p className="text-base leading-relaxed" style={{ color: "#8a8f98" }}>

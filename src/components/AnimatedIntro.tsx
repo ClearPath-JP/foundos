@@ -116,7 +116,7 @@ function ConnectionLines({ show }: { show: boolean }) {
 
 // ─── Cycling text ──────────────────────────────────────────────
 function CyclingText({ show }: { show: boolean }) {
-  const words = ["for gyms", "for coaches", "for salons", "for you"];
+  const words = ["for dance studios", "for coaches", "for salons", "for restaurants", "for gyms", "for contractors", "for photographers", "for you"];
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
