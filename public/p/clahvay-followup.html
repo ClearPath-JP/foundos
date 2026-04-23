@@ -823,32 +823,72 @@
 
   <!-- WHAT YOU'RE RUNNING NOW -->
   <div class="section">
-    <div class="eyebrow">Your Current Setup</div>
+    <div class="eyebrow">Your Current Setup &mdash; I Did My Homework</div>
     <h2>What you're running <span class="red">today.</span></h2>
 
+    <p class="text">I went through clahvay.com page by page and traced every tool, every widget, every redirect. Here's what I found:</p>
+
     <div class="stack-item">
-      <div class="name">BigCommerce<span>Website &amp; storefront</span></div>
+      <div class="name">BigCommerce + ZenoBuilder<span>Website, merch store, customer accounts</span></div>
       <div class="cost">$39&ndash;399/mo</div>
     </div>
     <div class="stack-item">
-      <div class="name">Pike13<span>Class scheduling &amp; billing</span></div>
-      <div class="cost">~$100+/mo</div>
+      <div class="name">Pike13<span>Class scheduling, enrollment, passes &amp; packs</span></div>
+      <div class="cost">$159&ndash;286/mo</div>
     </div>
     <div class="stack-item">
-      <div class="name">Pabbly<span>Connecting everything together</span></div>
-      <div class="cost">varies</div>
+      <div class="name">Stripe<span>New student discount checkout ($8 offer via buy.clahvay.com)</span></div>
+      <div class="cost">2.9% + 30&cent;/tx</div>
     </div>
     <div class="stack-item">
-      <div class="name">Zoho Backstage<span>Clahvay Fest ticketing</span></div>
-      <div class="cost">$0&ndash;99/mo</div>
+      <div class="name">Elfsight + Google Calendar<span>Events page display (2 calendar widgets)</span></div>
+      <div class="cost">$0&ndash;$5/mo</div>
+    </div>
+    <div class="stack-item">
+      <div class="name">Bitrix24<span>CRM &amp; live chat widget</span></div>
+      <div class="cost">$0&ndash;$99/mo</div>
+    </div>
+    <div class="stack-item">
+      <div class="name">Zoho PageSense<span>Heatmaps &amp; session recordings</span></div>
+      <div class="cost">$0&ndash;$29/mo</div>
     </div>
 
     <div class="stack-total">
       <div class="label">Estimated monthly total</div>
-      <div class="amount">$300&ndash;500+</div>
+      <div class="amount">$300&ndash;600+</div>
     </div>
 
-    <p class="text" style="margin-top:16px;">Four separate platforms, four separate logins, connected by Pabbly automations that need maintenance. <strong>If any one of these services changes their API or raises their price, your whole workflow breaks.</strong></p>
+    <p class="text" style="margin-top:16px;">Six separate platforms, each with their own login, their own billing, and their own limitations. <strong>But the real cost isn't just the monthly fees &mdash; it's what's broken.</strong></p>
+
+    <div class="answer-block">
+      <h3>Your students need 3 separate accounts</h3>
+      <p>A customer who wants to take a class, buy merch, and grab a festival ticket needs a <strong>BigCommerce account</strong> (for the shop), a <strong>Pike13 account</strong> (for class enrollment), and a <strong>Stripe checkout</strong> (for the new student discount). None of these systems talk to each other. <strong>You can't see a full picture of any single customer across all three.</strong></p>
+    </div>
+
+    <div class="answer-block">
+      <h3>The enrollment flow breaks at the seam</h3>
+      <p>When a student clicks "Enroll" on your Classes page, they leave clahvay.com entirely and land on <strong>clahvay.pike13.com</strong> &mdash; a different domain with a different login. The Pike13 JS widget (<code>widgets.pike13.com/widget.js</code>) renders the schedule, but the actual enrollment happens off your site. <strong>You lose brand continuity, session tracking, and any chance of cross-selling merch or tickets in that moment.</strong></p>
+    </div>
+
+    <div class="answer-block">
+      <h3>Half your website pages are empty</h3>
+      <p>I checked every page on clahvay.com. <strong>The About page has no content</strong> &mdash; just a page title and a broken modal overlay. <strong>The Gallery page is blank.</strong> The Events page runs on an Elfsight Google Calendar widget that shows dates but <strong>has no enrollment or ticketing links.</strong> The Instructors page returns a 404. FAQ, Chat with us, and Hot Deals in your nav all point to <code>#</code> &mdash; <strong>dead links.</strong> Your blog has one post from February 2025.</p>
+    </div>
+
+    <div class="answer-block">
+      <h3>clahvayfest.com has a broken SSL certificate</h3>
+      <p>The festival site throws an <code>ERR_TLS_CERT_ALTNAME_INVALID</code> error. <strong>Every browser shows a "This site is not safe" warning before the page loads.</strong> Anyone trying to check out Clahvay Fest hits a wall. That's ticket revenue walking away because of a certificate misconfiguration.</p>
+    </div>
+
+    <div class="answer-block">
+      <h3>Tracking pixels with no conversion events</h3>
+      <p>You have Google Analytics (<code>G-XWZTB7LW79</code>), Facebook Pixel, and TikTok Pixel installed. Good. But your <code>dataLayer</code> is empty &mdash; <strong>no conversion events are firing when someone enrolls in a class or buys a pass.</strong> The enrollment happens on Pike13's domain, so your pixels can't track it. If you ever run paid ads, <strong>you can't measure what's working.</strong></p>
+    </div>
+
+    <div class="answer-block">
+      <h3>The contact page is a shopping cart template</h3>
+      <p>Your contact form has fields for "Order Number" and "RMA Number" &mdash; that's a BigCommerce returns form, not a dance school contact page. <strong>No phone number. No studio address. No map. No hours. No social links.</strong> A new student looking for basic info hits a dead end.</p>
+    </div>
   </div>
 
   <!-- WHY WORK WITH ME -->
@@ -950,7 +990,7 @@
       </div>
     </div>
 
-    <p class="text"><strong>You won't need Pabbly anymore.</strong> There's nothing to connect because everything is one system. Classes sell the festival. The festival sells classes. Merch sells both.</p>
+    <p class="text"><strong>No more widget embeds. No more redirects. No more broken pages.</strong> Everything is one system with one login, one checkout, one customer profile. Classes sell the festival. The festival sells classes. Merch sells both. And every conversion is tracked &mdash; your pixels actually fire because the enrollment happens on YOUR site, not Pike13's domain.</p>
   </div>
 
   <!-- TECHNICAL QUESTIONS -->
@@ -984,27 +1024,31 @@
     </div>
   </div>
 
-  <!-- PIKE13 COMPARISON -->
+  <!-- SIDE BY SIDE -->
   <div class="section">
     <div class="eyebrow">Side by Side</div>
-    <h2>Pike13 vs. <span class="green">your own platform.</span></h2>
+    <h2>Your current 6-tool stack vs. <span class="green">one platform.</span></h2>
 
     <div class="vs-block">
       <div class="vs-row head">
         <div class="cell dim"></div>
-        <div class="cell">Pike13</div>
-        <div class="cell">Your Platform</div>
+        <div class="cell">What You Have Now</div>
+        <div class="cell">What I'd Build</div>
       </div>
-      <div class="vs-row"><div class="cell">App branding</div><div class="cell"><span class="pill-bad">Pike13's app</span></div><div class="cell"><span class="pill-good">Clahvay app</span></div></div>
-      <div class="vs-row"><div class="cell">Website</div><div class="cell"><span class="pill-bad">Not included</span></div><div class="cell"><span class="pill-good">Custom built</span></div></div>
-      <div class="vs-row"><div class="cell">Festival tickets</div><div class="cell"><span class="pill-bad">Can't do</span></div><div class="cell"><span class="pill-good">Built in</span></div></div>
-      <div class="vs-row"><div class="cell">Merch</div><div class="cell"><span class="pill-bad">Can't do</span></div><div class="cell"><span class="pill-good">Built in</span></div></div>
-      <div class="vs-row"><div class="cell">Cross-selling</div><div class="cell"><span class="pill-bad">None</span></div><div class="cell"><span class="pill-good">Everything linked</span></div></div>
-      <div class="vs-row"><div class="cell">Push notifications</div><div class="cell"><span class="pill-bad">Generic</span></div><div class="cell"><span class="pill-good">Your brand</span></div></div>
-      <div class="vs-row"><div class="cell">SEO / Google</div><div class="cell"><span class="pill-bad">None</span></div><div class="cell"><span class="pill-good">Optimized</span></div></div>
-      <div class="vs-row"><div class="cell">Data ownership</div><div class="cell"><span class="pill-bad">They own it</span></div><div class="cell"><span class="pill-good">You own it</span></div></div>
-      <div class="vs-row"><div class="cell">Custom features</div><div class="cell"><span class="pill-bad">Request &amp; wait</span></div><div class="cell"><span class="pill-good">Built for you</span></div></div>
-      <div class="vs-row"><div class="cell">If you leave</div><div class="cell"><span class="pill-bad">Lose everything</span></div><div class="cell"><span class="pill-good">Keep everything</span></div></div>
+      <div class="vs-row"><div class="cell">Website</div><div class="cell"><span class="pill-bad">BigCommerce template, half the pages empty</span></div><div class="cell"><span class="pill-good">Custom built for a dance school</span></div></div>
+      <div class="vs-row"><div class="cell">Class booking</div><div class="cell"><span class="pill-bad">Pike13 widget &rarr; redirects off-site</span></div><div class="cell"><span class="pill-good">Built into your site, no redirect</span></div></div>
+      <div class="vs-row"><div class="cell">Festival</div><div class="cell"><span class="pill-bad">Broken SSL on clahvayfest.com</span></div><div class="cell"><span class="pill-good">Built into main site, working tickets</span></div></div>
+      <div class="vs-row"><div class="cell">Merch</div><div class="cell"><span class="pill-bad">Separate BC store, separate account</span></div><div class="cell"><span class="pill-good">Same site, same checkout, same login</span></div></div>
+      <div class="vs-row"><div class="cell">Student accounts</div><div class="cell"><span class="pill-bad">3 logins (BC + Pike13 + Stripe)</span></div><div class="cell"><span class="pill-good">1 account for everything</span></div></div>
+      <div class="vs-row"><div class="cell">Events</div><div class="cell"><span class="pill-bad">Elfsight widget, display only, no booking</span></div><div class="cell"><span class="pill-good">Events with registration &amp; tickets</span></div></div>
+      <div class="vs-row"><div class="cell">iOS app</div><div class="cell"><span class="pill-bad">Pike13 generic app</span></div><div class="cell"><span class="pill-good">"Clahvay" in the App Store</span></div></div>
+      <div class="vs-row"><div class="cell">About page</div><div class="cell"><span class="pill-bad">Empty &mdash; no content</span></div><div class="cell"><span class="pill-good">Your 14-year story, instructor bios</span></div></div>
+      <div class="vs-row"><div class="cell">Gallery</div><div class="cell"><span class="pill-bad">Blank page</span></div><div class="cell"><span class="pill-good">Photo + video gallery</span></div></div>
+      <div class="vs-row"><div class="cell">Contact page</div><div class="cell"><span class="pill-bad">RMA/order return form</span></div><div class="cell"><span class="pill-good">Address, map, hours, social links</span></div></div>
+      <div class="vs-row"><div class="cell">Ad tracking</div><div class="cell"><span class="pill-bad">Pixels installed, no conversions fire</span></div><div class="cell"><span class="pill-good">Full conversion tracking on every action</span></div></div>
+      <div class="vs-row"><div class="cell">Cross-selling</div><div class="cell"><span class="pill-bad">Impossible &mdash; 3 separate systems</span></div><div class="cell"><span class="pill-good">Everything linked, every action feeds the next</span></div></div>
+      <div class="vs-row"><div class="cell">Data ownership</div><div class="cell"><span class="pill-bad">Spread across 6 vendors</span></div><div class="cell"><span class="pill-good">One database you own</span></div></div>
+      <div class="vs-row"><div class="cell">Monthly cost</div><div class="cell"><span class="pill-bad">$300&ndash;600+/mo</span></div><div class="cell"><span class="pill-good">$200&ndash;250/mo</span></div></div>
     </div>
   </div>
 
@@ -1116,46 +1160,46 @@
     <div class="eyebrow">Switching Over</div>
     <h2>Migrating from Pike13 &mdash; <span class="green">I handle everything.</span></h2>
 
-    <p class="text">You've got years of student data, booking history, and payment records in Pike13. <strong>I'm not asking you to lose any of that.</strong> Here's exactly how the migration works:</p>
+    <p class="text">You've got years of student data, booking history, and payment records in Pike13. <strong>I'm not asking you to lose any of that.</strong> Pike13 has a documented REST API (<code>/api/v2/</code>) with full CRUD access to clients, services, passes, and attendance data. Here's exactly how the migration works:</p>
 
     <div class="migration-step">
       <div class="step-num">1</div>
       <div>
-        <h4>Export your Pike13 data</h4>
-        <p>Pike13 allows CSV exports of your client list, transaction history, and class records. <strong>I walk you through this step by step</strong> &mdash; or I can do it for you with your login.</p>
+        <h4>Pull your data from Pike13's API</h4>
+        <p>Pike13 exposes a REST API with endpoints for clients, passes, services, attendance, and transactions. I pull everything programmatically &mdash; <strong>no manual CSV exports, no copy-paste.</strong> Client profiles, contact info, pass balances, class history, payment records &mdash; all of it, structured and clean.</p>
       </div>
     </div>
     <div class="migration-step">
       <div class="step-num">2</div>
       <div>
-        <h4>Clean &amp; structure the data</h4>
-        <p>I take the raw export and <strong>clean it up</strong> &mdash; removing duplicates, normalizing names, organizing contact info. Your data goes into your new database structured and organized.</p>
+        <h4>Map &amp; merge with BigCommerce data</h4>
+        <p>You also have customer records in BigCommerce (merch buyers) and Stripe (new student discounts). I <strong>merge all three into one unified student profile</strong> &mdash; matching by email, deduplicating, normalizing names and contact info. One student, one record, one complete history.</p>
       </div>
     </div>
     <div class="migration-step">
       <div class="step-num">3</div>
       <div>
-        <h4>Import into your new platform</h4>
-        <p>Student profiles, class history, active memberships &mdash; <strong>everything transfers over.</strong> Students get a simple invite to set up their account on the new platform with their existing email. One click, they're in. Their history is preserved.</p>
+        <h4>Import into your new database</h4>
+        <p>Student profiles, class history, active pass balances, attendance records, purchase history &mdash; <strong>everything transfers into your new PostgreSQL database.</strong> Students get a simple invite to set up their account using their existing email. One click, they're in. Their full history is preserved.</p>
       </div>
     </div>
     <div class="migration-step">
       <div class="step-num">4</div>
       <div>
         <h4>Test &amp; verify together</h4>
-        <p>We go through the data together. <strong>You confirm everything looks right</strong> before we go live. If something's missing or off, I fix it before launch.</p>
+        <p>We go through the data together. <strong>You confirm everything looks right</strong> &mdash; student counts, pass balances, class records. If something's missing or off, I fix it before launch.</p>
       </div>
     </div>
     <div class="migration-step">
       <div class="step-num">5</div>
       <div>
-        <h4>Cancel Pike13 when you're ready</h4>
-        <p><strong>You keep Pike13 running in parallel until you're 100% comfortable.</strong> No pressure to switch until everything is verified and you feel confident. Then you cancel and start saving.</p>
+        <h4>Run both systems in parallel, then cut over</h4>
+        <p><strong>You keep Pike13 and BigCommerce running until you're 100% comfortable.</strong> We run both side by side. When you're confident everything works &mdash; and only when you say so &mdash; we point clahvay.com to the new platform and cancel the old subscriptions. No pressure, no deadline.</p>
       </div>
     </div>
 
     <div class="tech-note">
-      <strong>Zero downtime, zero data loss.</strong> Your students won't notice the switch &mdash; except that everything suddenly works better and looks like Clahvay.
+      <strong>Zero downtime, zero data loss.</strong> Your students won't notice the switch &mdash; except that everything suddenly works better, loads faster, and looks like Clahvay. No more empty pages, no more broken links, no more redirects to Pike13.
     </div>
   </div>
 
