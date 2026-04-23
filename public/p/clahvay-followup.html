@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Clahvay — Platform Overview</title>
+  <style>
+    @font-face {
+      font-family: 'Inter';
+      src: url('https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hjQ.woff2') format('woff2');
+      font-weight: 100 900;
+      font-display: swap;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #0a0a0a;
+      color: #f7f8f8;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page { max-width: 620px; margin: 0 auto; padding: 0 24px; }
+
+    .red { color: #e05545; }
+    .green { color: #3daa6d; }
+    .dim { color: #62666d; }
+
+    /* ===== HEADER ===== */
+    .header {
+      padding: 48px 0 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+
+    .brand-bar svg { width: 24px; height: 24px; }
+
+    .brand-bar .brand-name {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #62666d;
+    }
+
+    .header h1 {
+      font-size: clamp(24px, 6vw, 32px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    .header .subtitle {
+      font-size: 15px;
+      color: #8a8f98;
+      line-height: 1.7;
+    }
+
+    .header .subtitle strong { color: #f7f8f8; }
+
+    .meta-row {
+      display: flex;
+      gap: 32px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .meta-row div label {
+      display: block;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #62666d;
+      margin-bottom: 2px;
+    }
+
+    .meta-row div p { font-size: 13px; color: #d0d6e0; }
+
+    /* ===== SECTIONS ===== */
+    .section {
+      padding: 40px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .eyebrow {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #62666d;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: clamp(20px, 4vw, 24px);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+
+    .text {
+      font-size: 14px;
+      color: #8a8f98;
+      line-height: 1.75;
+      margin-bottom: 20px;
+    }
+
+    .text strong { color: #f7f8f8; font-weight: 600; }
+
+    /* ===== CURRENT STACK ===== */
+    .stack-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .stack-item:last-child { border: none; }
+
+    .stack-item .name {
+      font-size: 14px;
+      color: #d0d6e0;
+      font-weight: 500;
+    }
+
+    .stack-item .name span {
+      display: block;
+      font-size: 12px;
+      color: #62666d;
+      font-weight: 400;
+    }
+
+    .stack-item .cost {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e05545;
+    }
+
+    .stack-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      border: 1px solid rgba(224,85,69,0.15);
+      border-radius: 8px;
+      background: rgba(224,85,69,0.04);
+      margin-top: 12px;
+    }
+
+    .stack-total .label { font-size: 13px; color: #8a8f98; }
+    .stack-total .amount { font-size: 18px; font-weight: 700; color: #e05545; }
+
+    /* ===== ANSWER BLOCKS ===== */
+    .answer-block {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 12px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .answer-block h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #f7f8f8;
+    }
+
+    .answer-block p {
+      font-size: 13px;
+      color: #8a8f98;
+      line-height: 1.7;
+    }
+
+    .answer-block p strong { color: #d0d6e0; }
+    .answer-block p .green { font-weight: 600; }
+
+    /* ===== COMPARISON TABLE ===== */
+    .vs-block {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .vs-row {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .vs-row:last-child { border: none; }
+    .vs-row.head { background: rgba(255,255,255,0.03); }
+
+    .vs-row .cell {
+      padding: 9px 12px;
+      font-size: 12px;
+      color: #62666d;
+      border-right: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .vs-row .cell:last-child { border-right: none; }
+    .vs-row .cell:first-child { color: #d0d6e0; font-weight: 500; }
+
+    .vs-row.head .cell {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 10px 12px;
+    }
+
+    .vs-row.head .cell:nth-child(2) { color: #8a8f98; }
+    .vs-row.head .cell:nth-child(3) { color: #3daa6d; }
+
+    .pill-bad {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #e05545;
+      background: rgba(224,85,69,0.08);
+      border: 1px solid rgba(224,85,69,0.12);
+    }
+
+    .pill-good {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #3daa6d;
+      background: rgba(61,170,109,0.08);
+      border: 1px solid rgba(61,170,109,0.12);
+    }
+
+    /* ===== FEATURES ===== */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 480px) {
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+
+    .feat-card {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .feat-card h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .feat-card p {
+      font-size: 12px;
+      color: #62666d;
+      line-height: 1.55;
+    }
+
+    /* ===== PRICING ===== */
+    .price-card {
+      border: 1px solid rgba(61,170,109,0.2);
+      border-radius: 12px;
+      padding: 28px 24px;
+      background: rgba(61,170,109,0.03);
+      margin-bottom: 12px;
+    }
+
+    .price-card .badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: #3daa6d;
+      color: #0a0a0a;
+      padding: 2px 10px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+    }
+
+    .price-card .plan-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .price-card .plan-desc {
+      font-size: 13px;
+      color: #62666d;
+      margin-bottom: 16px;
+    }
+
+    .price-card .amount {
+      font-size: 38px;
+      font-weight: 700;
+      color: #3daa6d;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .price-card .term { font-size: 12px; color: #62666d; margin-bottom: 18px; }
+
+    .price-card ul { list-style: none; }
+
+    .price-card ul li {
+      font-size: 13px;
+      color: #d0d6e0;
+      padding: 6px 0 6px 16px;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .price-card ul li:last-child { border: none; }
+
+    .price-card ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      width: 5px;
+      height: 5px;
+      background: #3daa6d;
+      border-radius: 50%;
+    }
+
+    .price-card .monthly {
+      padding-top: 14px;
+      margin-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 13px;
+      color: #8a8f98;
+    }
+
+    .price-card .monthly strong { color: #3daa6d; font-size: 16px; }
+
+    .alt-card {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .alt-card .info { font-size: 13px; color: #8a8f98; }
+    .alt-card .info strong { color: #d0d6e0; display: block; font-size: 14px; }
+    .alt-card .alt-price { font-size: 20px; font-weight: 700; color: #d0d6e0; }
+
+    /* ===== PAYMENT OPTIONS ===== */
+    .pay-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pay-row.rec {
+      border-color: rgba(61,170,109,0.2);
+      background: rgba(61,170,109,0.03);
+    }
+
+    .pay-row .po-info {
+      font-size: 13px;
+      color: #d0d6e0;
+      font-weight: 500;
+    }
+
+    .pay-row .po-info span {
+      display: block;
+      font-size: 11px;
+      color: #62666d;
+      font-weight: 400;
+    }
+
+    .pay-row .po-info .tag {
+      display: inline;
+      font-size: 10px;
+      font-weight: 600;
+      color: #3daa6d;
+      margin-left: 4px;
+    }
+
+    .pay-row .po-amount {
+      font-size: 13px;
+      font-weight: 600;
+      color: #d0d6e0;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* ===== SAVINGS ===== */
+    .save-box {
+      border: 1px solid rgba(61,170,109,0.12);
+      border-left: 3px solid #3daa6d;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      background: rgba(61,170,109,0.03);
+      margin-bottom: 20px;
+    }
+
+    .save-box p {
+      font-size: 13px;
+      color: #8a8f98;
+      line-height: 1.7;
+    }
+
+    .save-box strong { color: #f7f8f8; }
+    .save-box .green { font-weight: 600; }
+    .save-box .red { font-weight: 600; }
+
+    /* ===== WHY WORK WITH ME ===== */
+    .why-block {
+      border: 1px solid rgba(61,170,109,0.15);
+      border-radius: 10px;
+      padding: 20px;
+      background: rgba(61,170,109,0.03);
+      margin-bottom: 12px;
+    }
+
+    .why-block h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #3daa6d;
+      margin-bottom: 6px;
+    }
+
+    .why-block p {
+      font-size: 13px;
+      color: #8a8f98;
+      line-height: 1.7;
+    }
+
+    .why-block p strong { color: #f7f8f8; }
+
+    /* ===== CUSTOM ADVANTAGES ===== */
+    .adv-item {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding: 16px 0;
+    }
+
+    .adv-item:last-child { border: none; }
+
+    .adv-item h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f7f8f8;
+      margin-bottom: 4px;
+    }
+
+    .adv-item p {
+      font-size: 13px;
+      color: #8a8f98;
+      line-height: 1.65;
+    }
+
+    .adv-item p strong { color: #d0d6e0; }
+    .adv-item .tag-green {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      color: #3daa6d;
+      margin-top: 4px;
+    }
+
+    /* ===== MIGRATION ===== */
+    .migration-step {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .migration-step:last-child { border: none; }
+
+    .migration-step .step-num {
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(61,170,109,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #3daa6d;
+    }
+
+    .migration-step h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f7f8f8;
+      margin-bottom: 2px;
+    }
+
+    .migration-step p {
+      font-size: 12px;
+      color: #8a8f98;
+      line-height: 1.6;
+    }
+
+    .migration-step p strong { color: #d0d6e0; }
+
+    /* ===== AUTOMATION LIST ===== */
+    .auto-item {
+      display: grid;
+      grid-template-columns: 8px 1fr;
+      gap: 14px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      align-items: start;
+    }
+
+    .auto-item:last-child { border: none; }
+
+    .auto-item .dot {
+      width: 8px;
+      height: 8px;
+      background: #3daa6d;
+      border-radius: 50%;
+      margin-top: 6px;
+    }
+
+    .auto-item h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f7f8f8;
+      margin-bottom: 2px;
+    }
+
+    .auto-item p {
+      font-size: 12px;
+      color: #62666d;
+      line-height: 1.55;
+    }
+
+    /* ===== OWNERSHIP BOX ===== */
+    .own-box {
+      border: 2px solid rgba(61,170,109,0.2);
+      border-radius: 12px;
+      padding: 24px;
+      background: rgba(61,170,109,0.04);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .own-box h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #3daa6d;
+      margin-bottom: 8px;
+    }
+
+    .own-box p {
+      font-size: 14px;
+      color: #8a8f98;
+      line-height: 1.7;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .own-box p strong { color: #f7f8f8; }
+
+    .own-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 16px;
+      text-align: left;
+    }
+
+    @media (max-width: 480px) {
+      .own-grid { grid-template-columns: 1fr; }
+    }
+
+    .own-item {
+      padding: 10px 14px;
+      border: 1px solid rgba(61,170,109,0.1);
+      border-radius: 6px;
+      background: rgba(61,170,109,0.03);
+    }
+
+    .own-item .oi-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #3daa6d;
+      margin-bottom: 2px;
+    }
+
+    .own-item p {
+      font-size: 12px;
+      color: #d0d6e0;
+      line-height: 1.5;
+    }
+
+    /* ===== MILESTONE PROCESS ===== */
+    .ms-item {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .ms-item:last-child { border: none; }
+
+    .ms-item .ms-icon {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(61,170,109,0.15);
+      border-radius: 8px;
+      background: rgba(61,170,109,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .ms-item h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f7f8f8;
+      margin-bottom: 2px;
+    }
+
+    .ms-item p {
+      font-size: 12px;
+      color: #8a8f98;
+      line-height: 1.6;
+    }
+
+    .ms-item p strong { color: #d0d6e0; }
+
+    /* ===== TECH STACK ===== */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 480px) {
+      .tech-grid { grid-template-columns: 1fr; }
+    }
+
+    .tech-item {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .tech-item h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f7f8f8;
+      margin-bottom: 2px;
+    }
+
+    .tech-item .tech-name {
+      font-size: 12px;
+      color: #3daa6d;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .tech-item p {
+      font-size: 11px;
+      color: #62666d;
+      line-height: 1.5;
+    }
+
+    .tech-note {
+      border-left: 2px solid rgba(255,255,255,0.08);
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: #8a8f98;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .tech-note strong { color: #f7f8f8; }
+
+    /* ===== WIX COMPARISON ===== */
+    .wix-vs {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .wix-row {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .wix-row:last-child { border: none; }
+    .wix-row.head { background: rgba(255,255,255,0.03); }
+
+    .wix-row .cell {
+      padding: 9px 12px;
+      font-size: 12px;
+      color: #62666d;
+      border-right: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .wix-row .cell:last-child { border-right: none; }
+    .wix-row .cell:first-child { color: #d0d6e0; font-weight: 500; }
+
+    .wix-row.head .cell {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 10px 12px;
+    }
+
+    .wix-row.head .cell:nth-child(2) { color: #8a8f98; }
+    .wix-row.head .cell:nth-child(3) { color: #3daa6d; }
+
+    /* ===== CTA ===== */
+    .cta {
+      padding: 40px 0;
+      text-align: center;
+    }
+
+    .cta h2 { font-size: 20px; margin-bottom: 10px; }
+
+    .cta .sub {
+      font-size: 14px;
+      color: #8a8f98;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta .sub strong { color: #f7f8f8; }
+
+    .cta .phone {
+      font-size: 24px;
+      font-weight: 700;
+      color: #3daa6d;
+      margin-bottom: 4px;
+    }
+
+    .cta .phone a { color: #3daa6d; text-decoration: none; }
+
+    .cta .name-line {
+      font-size: 14px;
+      color: #62666d;
+      margin-top: 20px;
+    }
+
+    .cta .name-line strong { color: #d0d6e0; }
+
+    /* ===== PRINT ===== */
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand-bar">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 15 L85 35 L50 55 L15 35 Z" fill="#fff" opacity="0.95"/>
+        <path d="M15 35 L50 55 L50 85 L15 65 Z" fill="#fff" opacity="0.55"/>
+        <path d="M85 35 L50 55 L50 85 L85 65 Z" fill="#fff" opacity="0.3"/>
+      </svg>
+      <span class="brand-name">FoundOS</span>
+    </div>
+
+    <h1>Clahvay &mdash; Platform Overview</h1>
+    <p class="subtitle">Hey Emarlos &mdash; I appreciate you taking the time to sit down with me. You asked sharp questions about the data, the calendar, and the tools &mdash; and I want to make sure you have solid answers, not just a conversation. <strong>Here's everything laid out so you can look it over on your own time, dig into the details, and decide if it makes sense for Clahvay.</strong></p>
+
+    <div class="meta-row">
+      <div><label>Prepared for</label><p>Emarlos &mdash; Clahvay</p></div>
+      <div><label>From</label><p>Josh Potesta &mdash; FoundOS</p></div>
+      <div><label>Date</label><p>April 2026</p></div>
+    </div>
+  </div>
+
+  <!-- WHAT YOU'RE RUNNING NOW -->
+  <div class="section">
+    <div class="eyebrow">Your Current Setup</div>
+    <h2>What you're running <span class="red">today.</span></h2>
+
+    <div class="stack-item">
+      <div class="name">BigCommerce<span>Website &amp; storefront</span></div>
+      <div class="cost">$39&ndash;399/mo</div>
+    </div>
+    <div class="stack-item">
+      <div class="name">Pike13<span>Class scheduling &amp; billing</span></div>
+      <div class="cost">~$100+/mo</div>
+    </div>
+    <div class="stack-item">
+      <div class="name">Pabbly<span>Connecting everything together</span></div>
+      <div class="cost">varies</div>
+    </div>
+    <div class="stack-item">
+      <div class="name">Zoho Backstage<span>Clahvay Fest ticketing</span></div>
+      <div class="cost">$0&ndash;99/mo</div>
+    </div>
+
+    <div class="stack-total">
+      <div class="label">Estimated monthly total</div>
+      <div class="amount">$300&ndash;500+</div>
+    </div>
+
+    <p class="text" style="margin-top:16px;">Four separate platforms, four separate logins, connected by Pabbly automations that need maintenance. <strong>If any one of these services changes their API or raises their price, your whole workflow breaks.</strong></p>
+  </div>
+
+  <!-- WHY WORK WITH ME -->
+  <div class="section">
+    <div class="eyebrow">Who I Am</div>
+    <h2>Why I'm the right person <span class="green">for this build.</span></h2>
+
+    <p class="text">I'll be straight with you. I'm 19. I'm one of your students. And I know that might make you wonder whether I can actually deliver something this big. <strong>So let me show you why I can.</strong></p>
+
+    <div class="why-block">
+      <h3>This is all I do</h3>
+      <p>I run FoundOS full-time. I'm not freelancing on the side of a day job. I'm not in school hoping to figure it out later. <strong>I build custom platforms for businesses that have outgrown templates and subscriptions.</strong> It's my company, my craft, and my full focus. Every hour I'm not in your dance class, I'm building.</p>
+    </div>
+
+    <div class="why-block">
+      <h3>I understand your business because I'm in it</h3>
+      <p>Most developers would need weeks just to understand how a dance studio operates &mdash; the class structure, the packs, the drop-ins, the festival, the community. <strong>I already know because I'm a student.</strong> I see how your booking works. I see where people get confused. I see what's missing. That's not something you can hire from an agency &mdash; <strong>I have context they never will.</strong></p>
+    </div>
+
+    <div class="why-block">
+      <h3>Business thinking + modern tech</h3>
+      <p>Most developers write code. Most business people give advice. <strong>I do both.</strong> I study how your business runs &mdash; how students find you, how they book, how they pay, what makes them come back &mdash; and then I build technology around that reality. Your platform isn't just a website. <strong>It's a system engineered to grow Clahvay.</strong></p>
+    </div>
+
+    <div class="why-block">
+      <h3>I take my time and I do it right</h3>
+      <p>I work with a <strong>small number of businesses at a time</strong> so every project gets my full attention. Every page, every screen, every interaction is thought through. I don't ship something and move on. <strong>I stay with it until it's right, and then I stay to keep it running.</strong></p>
+    </div>
+
+    <div class="why-block">
+      <h3>You're not a customer &mdash; you're a partner</h3>
+      <p>The $200/mo after launch isn't just "hosting." It's me &mdash; monitoring your platform, pushing updates, fixing issues, and being a text away when you need something changed. <strong>We're in this together long-term.</strong> I don't build it and disappear. My reputation depends on your platform working.</p>
+    </div>
+
+    <div class="why-block">
+      <h3>I keep you in the loop at every step</h3>
+      <p><strong>You'll never wonder what's happening.</strong> At every milestone I send a progress update with a live preview link. You look at it on your phone, give feedback, and I adjust. Want to add something? Change something? Scrap something? We talk about it and make it happen. <strong>No surprises. No "here's the final product, take it or leave it."</strong></p>
+    </div>
+
+    <div class="why-block">
+      <h3>What if something goes wrong?</h3>
+      <p>If your site goes down, <strong>I get an automated alert immediately</strong> &mdash; often before you even notice. Hosting is monitored 24/7 by the infrastructure provider. If there's a Stripe issue, a deployment problem, or a bug, <strong>I'm on it the same day.</strong> You text me, I fix it. And because you own the code, if you ever want a different developer to take over &mdash; they can. <strong>You're never stuck.</strong></p>
+    </div>
+
+    <div class="tech-note">
+      <strong>One more thing:</strong> This document you're reading right now? I designed and built it. The layout, the structure, the responsiveness on your phone. <strong>This is the level of detail and care that goes into everything I build.</strong>
+    </div>
+  </div>
+
+  <!-- WHAT I'D BUILD -->
+  <div class="section">
+    <div class="eyebrow">What I'd Build</div>
+    <h2>One platform that <span class="green">replaces all four.</span></h2>
+
+    <p class="text">A custom website and branded iOS app &mdash; built specifically for how Clahvay runs. Not a template. Not someone else's product with your logo on it. <strong>Your platform, your code, your data.</strong></p>
+
+    <div class="feature-grid">
+      <div class="feat-card">
+        <h4>Custom Website</h4>
+        <p>Your brand, your story. Instructor bios, testimonials, video gallery. Built for a dance studio, not a shopping cart.</p>
+      </div>
+      <div class="feat-card">
+        <h4>Class Booking</h4>
+        <p>Live calendar on your site. Drop-ins, packs, memberships. Students book and pay in one click.</p>
+      </div>
+      <div class="feat-card">
+        <h4>Clahvay Fest Hub</h4>
+        <p>Festival tickets, artist profiles, workshop schedule. All on your main site &mdash; no broken links.</p>
+      </div>
+      <div class="feat-card">
+        <h4>Merch Shop</h4>
+        <p>Sell Clahvay gear from the same site. Same account, same checkout as classes and tickets.</p>
+      </div>
+      <div class="feat-card">
+        <h4>iOS App</h4>
+        <p>A "Clahvay" app in the App Store. Book classes, buy passes, get push notifications, shop merch.</p>
+      </div>
+      <div class="feat-card">
+        <h4>Admin Dashboard</h4>
+        <p>Update class times, change pricing, manage events. You control everything yourself.</p>
+      </div>
+      <div class="feat-card">
+        <h4>Automated Comms</h4>
+        <p>Class reminders, welcome emails, festival announcements. All automatic &mdash; no manual work.</p>
+      </div>
+      <div class="feat-card">
+        <h4>SEO &amp; Analytics</h4>
+        <p>Google optimized from day one. Meta Pixel, GA4, conversion tracking all installed.</p>
+      </div>
+    </div>
+
+    <p class="text"><strong>You won't need Pabbly anymore.</strong> There's nothing to connect because everything is one system. Classes sell the festival. The festival sells classes. Merch sells both.</p>
+  </div>
+
+  <!-- TECHNICAL QUESTIONS -->
+  <div class="section">
+    <div class="eyebrow">Your Questions, Answered</div>
+    <h2>The data, the calendar, the tools.</h2>
+
+    <div class="answer-block">
+      <h3>Where does my data live?</h3>
+      <p>Your data sits in a <strong>dedicated database</strong> that you own. Not shared with other businesses. Not locked inside someone else's platform. If you ever want to leave, I export everything &mdash; student records, booking history, transactions, all of it &mdash; in standard formats you can take anywhere. <strong class="green">You are never locked in.</strong></p>
+    </div>
+
+    <div class="answer-block">
+      <h3>How does the calendar &amp; booking work?</h3>
+      <p>The class calendar is <strong>built directly into your website and app.</strong> You set your schedule in the admin dashboard. Students see real-time availability, book, and pay &mdash; all in one step through <strong>Stripe</strong>, the same payment processor used by Amazon and Google. Automated reminders go out before each class. <strong>No separate login, no redirect to Pike13.</strong> The calendar handles recurring classes, drop-ins, packs, memberships, special workshops, and private sessions.</p>
+    </div>
+
+    <div class="answer-block">
+      <h3>Can it handle Clahvay Fest traffic?</h3>
+      <p>Yes. Your platform runs on the <strong>same cloud infrastructure that powers Netflix, Uber, and Spotify.</strong> It auto-scales &mdash; meaning when Clahvay Fest ticket sales spike, the platform spins up more capacity automatically, then scales back down after. <strong>BigCommerce is solid for e-commerce, but you're not running an e-commerce store</strong> &mdash; you're running a dance studio with a festival. This is purpose-built for that.</p>
+    </div>
+
+    <div class="answer-block">
+      <h3>What about Pike13's app?</h3>
+      <p>Pike13 gives you access to <strong>their app</strong> &mdash; a generic app that looks the same for every studio that uses Pike13. Your students download "Pike13" and search for your studio inside it. With a custom build, your students download <strong>"Clahvay"</strong> from the App Store. Your name, your icon, your brand. <strong>Nobody else's logo on your business.</strong></p>
+    </div>
+
+    <div class="answer-block">
+      <h3>What's the real difference from Pike13?</h3>
+      <p>Pike13 is a <strong>subscription to someone else's product.</strong> You're renting access. If they raise prices, you pay more. If they shut down, you lose your data. If they don't build a feature you need, you wait. With a custom platform, <strong>you own the code, you own the data, and I build exactly what your business needs</strong> &mdash; not what works for every generic studio.</p>
+    </div>
+  </div>
+
+  <!-- PIKE13 COMPARISON -->
+  <div class="section">
+    <div class="eyebrow">Side by Side</div>
+    <h2>Pike13 vs. <span class="green">your own platform.</span></h2>
+
+    <div class="vs-block">
+      <div class="vs-row head">
+        <div class="cell dim"></div>
+        <div class="cell">Pike13</div>
+        <div class="cell">Your Platform</div>
+      </div>
+      <div class="vs-row"><div class="cell">App branding</div><div class="cell"><span class="pill-bad">Pike13's app</span></div><div class="cell"><span class="pill-good">Clahvay app</span></div></div>
+      <div class="vs-row"><div class="cell">Website</div><div class="cell"><span class="pill-bad">Not included</span></div><div class="cell"><span class="pill-good">Custom built</span></div></div>
+      <div class="vs-row"><div class="cell">Festival tickets</div><div class="cell"><span class="pill-bad">Can't do</span></div><div class="cell"><span class="pill-good">Built in</span></div></div>
+      <div class="vs-row"><div class="cell">Merch</div><div class="cell"><span class="pill-bad">Can't do</span></div><div class="cell"><span class="pill-good">Built in</span></div></div>
+      <div class="vs-row"><div class="cell">Cross-selling</div><div class="cell"><span class="pill-bad">None</span></div><div class="cell"><span class="pill-good">Everything linked</span></div></div>
+      <div class="vs-row"><div class="cell">Push notifications</div><div class="cell"><span class="pill-bad">Generic</span></div><div class="cell"><span class="pill-good">Your brand</span></div></div>
+      <div class="vs-row"><div class="cell">SEO / Google</div><div class="cell"><span class="pill-bad">None</span></div><div class="cell"><span class="pill-good">Optimized</span></div></div>
+      <div class="vs-row"><div class="cell">Data ownership</div><div class="cell"><span class="pill-bad">They own it</span></div><div class="cell"><span class="pill-good">You own it</span></div></div>
+      <div class="vs-row"><div class="cell">Custom features</div><div class="cell"><span class="pill-bad">Request &amp; wait</span></div><div class="cell"><span class="pill-good">Built for you</span></div></div>
+      <div class="vs-row"><div class="cell">If you leave</div><div class="cell"><span class="pill-bad">Lose everything</span></div><div class="cell"><span class="pill-good">Keep everything</span></div></div>
+    </div>
+  </div>
+
+  <!-- TECH STACK -->
+  <div class="section">
+    <div class="eyebrow">Under the Hood</div>
+    <h2>What it's built with &mdash; <span class="green">no black box.</span></h2>
+
+    <p class="text">You asked about the tools. Here's the full stack &mdash; <strong>the same technologies used by Airbnb, Shopify, Uber, and Netflix.</strong> Nothing experimental. Nothing obscure. Industry standard, battle-tested tools.</p>
+
+    <div class="tech-grid">
+      <div class="tech-item">
+        <h4>Website Framework</h4>
+        <div class="tech-name">Next.js + React</div>
+        <p>Used by Nike, TikTok, Twitch, Hulu. Server-rendered for speed and SEO. Not a drag-and-drop template.</p>
+      </div>
+      <div class="tech-item">
+        <h4>iOS App</h4>
+        <div class="tech-name">React Native</div>
+        <p>Used by Meta, Microsoft, Shopify, Discord. One codebase, native iOS performance. Real App Store app.</p>
+      </div>
+      <div class="tech-item">
+        <h4>Language</h4>
+        <div class="tech-name">TypeScript</div>
+        <p>Type-safe JavaScript. Industry standard for production apps. Clean, maintainable, well-documented code.</p>
+      </div>
+      <div class="tech-item">
+        <h4>Payments</h4>
+        <div class="tech-name">Stripe</div>
+        <p>Powers payments for Amazon, Google, Lyft, Instacart. PCI compliant. Handles subscriptions, one-time, and recurring.</p>
+      </div>
+      <div class="tech-item">
+        <h4>Database</h4>
+        <div class="tech-name">PostgreSQL</div>
+        <p>The most trusted production database in the world. Used by Apple, Spotify, Instagram. Your data is structured and exportable.</p>
+      </div>
+      <div class="tech-item">
+        <h4>Hosting &amp; Deployment</h4>
+        <div class="tech-name">Vercel + Cloud Infrastructure</div>
+        <p>Auto-scaling, global CDN, instant deployments. Same infrastructure behind Fortune 500 sites. Handles any traffic spike.</p>
+      </div>
+    </div>
+
+    <div class="tech-note">
+      <strong>Why this matters to you:</strong> Every one of these tools is open-source or industry-standard. If I get hit by a bus tomorrow, any qualified developer can pick up your codebase and keep it running. You're never dependent on a single person or a proprietary system. <strong>The code is yours. The data is yours. No lock-in. Ever.</strong>
+    </div>
+  </div>
+
+  <!-- WHAT CUSTOM GIVES YOU -->
+  <div class="section">
+    <div class="eyebrow">What Custom Gives You</div>
+    <h2>Things no template or subscription <span class="green">can do.</span></h2>
+
+    <p class="text">Wix, Squarespace, Pike13 &mdash; they all give you the same thing they give every other business. Here's what a custom build does that <strong>none of them can.</strong></p>
+
+    <div class="adv-item">
+      <h4>Designed to convert, not just look good</h4>
+      <p>Every page is structured to <strong>move a visitor toward an action</strong> &mdash; booking a class, buying a ticket, signing up. The layout, the copy placement, the button positioning, the flow from one section to the next &mdash; it's all intentional. Template sites look generic because they're built for everyone. <strong>Yours is built to turn visitors into students.</strong></p>
+      <div class="tag-green">Wix and Squarespace can't do this</div>
+    </div>
+
+    <div class="adv-item">
+      <h4>Full-screen video &amp; media built into the experience</h4>
+      <p>Dance is visual. Your site should feel like walking into your studio. <strong>Background videos of your classes, full-width festival footage, instructor reels</strong> &mdash; all loading fast, looking cinematic, and working perfectly on mobile. Templates either can't do video well or load so slowly that visitors leave. <strong>Your site loads in under a second even with video.</strong></p>
+      <div class="tag-green">Templates bloat and slow down with video &mdash; yours won't</div>
+    </div>
+
+    <div class="adv-item">
+      <h4>Every element matches your brand</h4>
+      <p>Your colors, your fonts, your energy. Not "pick from 12 templates and swap the logo." <strong>The design is built from scratch around Cuban Dance Soul.</strong> When a student opens your site or your app, it feels like Clahvay &mdash; not like a website builder.</p>
+      <div class="tag-green">Your app icon, your splash screen, your brand from top to bottom</div>
+    </div>
+
+    <div class="adv-item">
+      <h4>Pages that tell your story</h4>
+      <p><strong>Instructor profiles with photos and bios. Student testimonials. A gallery of classes and events. Your 14-year journey.</strong> This isn't a landing page with a "Sign Up" button &mdash; it's a complete experience that makes someone feel the culture before they ever walk through the door.</p>
+      <div class="tag-green">Your story is your competitive advantage &mdash; let it sell for you</div>
+    </div>
+
+    <div class="adv-item">
+      <h4>Cross-selling built into the DNA</h4>
+      <p>On template sites, your classes, your festival, and your merch live in separate silos. On your custom platform, <strong>someone buying a festival ticket sees a "start taking classes" prompt. A student who books a class sees Clahvay gear at checkout.</strong> Every touchpoint feeds the next. One customer generates more revenue without you lifting a finger.</p>
+      <div class="tag-green">Pike13 + BigCommerce + Zoho can never do this</div>
+    </div>
+
+    <div class="adv-item">
+      <h4>An iOS app that's actually yours</h4>
+      <p>Not a white-label Pike13 app. Not a Wix mobile site saved to the home screen. <strong>A real app in the App Store called "Clahvay."</strong> Your icon. Your design. Push notifications that say "Tonight's Bachata class starts at 7 &mdash; see you there." Your students open their phone and see your brand, not someone else's.</p>
+      <div class="tag-green">Pike13's app has their logo &mdash; yours will have your logo</div>
+    </div>
+  </div>
+
+  <!-- PIKE13 MIGRATION -->
+  <div class="section">
+    <div class="eyebrow">Switching Over</div>
+    <h2>Migrating from Pike13 &mdash; <span class="green">I handle everything.</span></h2>
+
+    <p class="text">You've got years of student data, booking history, and payment records in Pike13. <strong>I'm not asking you to lose any of that.</strong> Here's exactly how the migration works:</p>
+
+    <div class="migration-step">
+      <div class="step-num">1</div>
+      <div>
+        <h4>Export your Pike13 data</h4>
+        <p>Pike13 allows CSV exports of your client list, transaction history, and class records. <strong>I walk you through this step by step</strong> &mdash; or I can do it for you with your login.</p>
+      </div>
+    </div>
+    <div class="migration-step">
+      <div class="step-num">2</div>
+      <div>
+        <h4>Clean &amp; structure the data</h4>
+        <p>I take the raw export and <strong>clean it up</strong> &mdash; removing duplicates, normalizing names, organizing contact info. Your data goes into your new database structured and organized.</p>
+      </div>
+    </div>
+    <div class="migration-step">
+      <div class="step-num">3</div>
+      <div>
+        <h4>Import into your new platform</h4>
+        <p>Student profiles, class history, active memberships &mdash; <strong>everything transfers over.</strong> Students get a simple invite to set up their account on the new platform with their existing email. One click, they're in. Their history is preserved.</p>
+      </div>
+    </div>
+    <div class="migration-step">
+      <div class="step-num">4</div>
+      <div>
+        <h4>Test &amp; verify together</h4>
+        <p>We go through the data together. <strong>You confirm everything looks right</strong> before we go live. If something's missing or off, I fix it before launch.</p>
+      </div>
+    </div>
+    <div class="migration-step">
+      <div class="step-num">5</div>
+      <div>
+        <h4>Cancel Pike13 when you're ready</h4>
+        <p><strong>You keep Pike13 running in parallel until you're 100% comfortable.</strong> No pressure to switch until everything is verified and you feel confident. Then you cancel and start saving.</p>
+      </div>
+    </div>
+
+    <div class="tech-note">
+      <strong>Zero downtime, zero data loss.</strong> Your students won't notice the switch &mdash; except that everything suddenly works better and looks like Clahvay.
+    </div>
+  </div>
+
+  <!-- AUTOMATIONS -->
+  <div class="section">
+    <div class="eyebrow">Built-In Automations</div>
+    <h2>Everything Pabbly does &mdash; <span class="green">without Pabbly.</span></h2>
+
+    <p class="text">Right now you're using Pabbly to connect tools that don't talk to each other. When everything is one system, <strong>automations are built in natively.</strong> No third-party glue. No broken connections. No monthly Pabbly fee.</p>
+
+    <div class="auto-item">
+      <div class="dot"></div>
+      <div>
+        <h4>Class reminders</h4>
+        <p>Automatic push notification + email 24 hours and 1 hour before class. Students never forget.</p>
+      </div>
+    </div>
+    <div class="auto-item">
+      <div class="dot"></div>
+      <div>
+        <h4>Welcome sequence for new students</h4>
+        <p>When someone signs up, they get a welcome email with what to expect, what to wear, and a link to book their first class.</p>
+      </div>
+    </div>
+    <div class="auto-item">
+      <div class="dot"></div>
+      <div>
+        <h4>"We miss you" re-engagement</h4>
+        <p>If a student hasn't booked in 2+ weeks, they automatically get a personalized message inviting them back.</p>
+      </div>
+    </div>
+    <div class="auto-item">
+      <div class="dot"></div>
+      <div>
+        <h4>Festival announcements</h4>
+        <p>Push notification to all app users when Clahvay Fest tickets go on sale. Instant reach, zero effort.</p>
+      </div>
+    </div>
+    <div class="auto-item">
+      <div class="dot"></div>
+      <div>
+        <h4>Post-class follow-up</h4>
+        <p>After someone attends their first class, they get a follow-up asking how it went with a link to book again or buy a pack.</p>
+      </div>
+    </div>
+    <div class="auto-item">
+      <div class="dot"></div>
+      <div>
+        <h4>Payment receipts &amp; confirmations</h4>
+        <p>Every booking, every ticket purchase, every merch order &mdash; automatic confirmation through Stripe. Professional receipts with your branding.</p>
+      </div>
+    </div>
+    <div class="auto-item">
+      <div class="dot"></div>
+      <div>
+        <h4>Membership renewal reminders</h4>
+        <p>Students get a heads-up before their membership renews or expires. No confusion, no surprise charges, no churn.</p>
+      </div>
+    </div>
+
+    <div class="tech-note">
+      <strong>All of this runs without you touching anything.</strong> You set it up once in the admin dashboard, and the platform handles the rest. No Pabbly. No Zapier. No manual work. It just runs.
+    </div>
+  </div>
+
+  <!-- WIX COMPARISON -->
+  <div class="section">
+    <div class="eyebrow">Wix vs. Custom</div>
+    <h2>Why a template builder <span class="red">won't cut it.</span></h2>
+
+    <p class="text">Wix is fine for a personal blog or a basic landing page. But <strong>for a business that sells classes, festival tickets, and merch with a branded app?</strong> It wasn't built for that.</p>
+
+    <div class="wix-vs">
+      <div class="wix-row head">
+        <div class="cell dim"></div>
+        <div class="cell">Wix</div>
+        <div class="cell">Custom Build</div>
+      </div>
+      <div class="wix-row"><div class="cell">Site speed</div><div class="cell"><span class="pill-bad">Slow &mdash; bloated code</span></div><div class="cell"><span class="pill-good">Sub-second loads</span></div></div>
+      <div class="wix-row"><div class="cell">SEO / Google</div><div class="cell"><span class="pill-bad">Limited control</span></div><div class="cell"><span class="pill-good">Full control</span></div></div>
+      <div class="wix-row"><div class="cell">iOS app</div><div class="cell"><span class="pill-bad">Can't build one</span></div><div class="cell"><span class="pill-good">Your own app</span></div></div>
+      <div class="wix-row"><div class="cell">Class booking</div><div class="cell"><span class="pill-bad">3rd-party plugin</span></div><div class="cell"><span class="pill-good">Built in natively</span></div></div>
+      <div class="wix-row"><div class="cell">Payments</div><div class="cell"><span class="pill-bad">Wix Payments (limited)</span></div><div class="cell"><span class="pill-good">Stripe (industry standard)</span></div></div>
+      <div class="wix-row"><div class="cell">Festival tickets</div><div class="cell"><span class="pill-bad">Plugin or workaround</span></div><div class="cell"><span class="pill-good">Built in</span></div></div>
+      <div class="wix-row"><div class="cell">Code ownership</div><div class="cell"><span class="pill-bad">You own nothing</span></div><div class="cell"><span class="pill-good">You own it all</span></div></div>
+      <div class="wix-row"><div class="cell">Custom features</div><div class="cell"><span class="pill-bad">Limited to templates</span></div><div class="cell"><span class="pill-good">Anything you need</span></div></div>
+      <div class="wix-row"><div class="cell">Data export</div><div class="cell"><span class="pill-bad">Partial, messy</span></div><div class="cell"><span class="pill-good">Full export anytime</span></div></div>
+      <div class="wix-row"><div class="cell">If you leave</div><div class="cell"><span class="pill-bad">Start over from zero</span></div><div class="cell"><span class="pill-good">Take everything</span></div></div>
+    </div>
+
+    <div class="save-box">
+      <p>Wix charges <span class="red">$32&ndash;159/mo</span> for their business plans &mdash; and you'd <strong>still</strong> need Pike13 for booking, a separate ticketing tool for the festival, and Pabbly to glue it all together. <strong>You'd end up paying more than you do now, for a slower site you don't own.</strong></p>
+    </div>
+  </div>
+
+  <!-- OWNERSHIP -->
+  <div class="section">
+    <div class="eyebrow">Ownership</div>
+    <h2>Once it's paid off, <span class="green">it's yours. Period.</span></h2>
+
+    <div class="own-box">
+      <h3>You own everything.</h3>
+      <p>The website, the app, the code, the database, the student records, the design files. <strong>All of it is yours.</strong> Not licensed. Not rented. Not held hostage. Yours to keep forever.</p>
+
+      <div class="own-grid">
+        <div class="own-item">
+          <div class="oi-label">The code</div>
+          <p>Full source code delivered to you. Open, readable, documented. Any developer can work on it.</p>
+        </div>
+        <div class="own-item">
+          <div class="oi-label">The data</div>
+          <p>Your database, your student records, your transaction history. Exportable anytime in standard formats.</p>
+        </div>
+        <div class="own-item">
+          <div class="oi-label">The design</div>
+          <p>All design assets, brand files, and visual elements. Nothing locked behind a subscription.</p>
+        </div>
+        <div class="own-item">
+          <div class="oi-label">The app</div>
+          <p>Published under your Apple Developer account. Your name, your listing, your app. You control it.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="text"><strong>The $200/mo after it's paid off covers hosting, maintenance, security updates, and ongoing support.</strong> That's it. No hidden fees. No licensing. No "you need to upgrade to access this feature." If you ever want to stop the monthly and host it yourself or hire someone else &mdash; <strong>you take everything with you, no questions asked.</strong></p>
+
+    <div class="save-box">
+      <p>With Pike13, Wix, or BigCommerce &mdash; if you stop paying, <span class="red">you lose everything.</span> Your site goes dark. Your data gets locked. Your students can't book. With your own platform &mdash; <strong>even if you stop working with me, <span class="green">the code, the data, and the app are still yours.</span></strong> That's the difference between renting and owning.</p>
+    </div>
+  </div>
+
+  <!-- DESIGN PROCESS -->
+  <div class="section">
+    <div class="eyebrow">How the Design Process Works</div>
+    <h2>You control how it <span class="green">looks and feels.</span></h2>
+
+    <p class="text">I don't guess what you want and deliver a finished product. <strong>You're involved at every milestone.</strong> Here's exactly how it works:</p>
+
+    <div class="ms-item">
+      <div class="ms-icon">1</div>
+      <div>
+        <h4>Brand discovery call</h4>
+        <p>We sit down and I ask you real questions. Not "what color do you like." More like &mdash; <strong>what do you want a new student to feel when they land on your site?</strong> What's the Clahvay energy? What makes your studio different from every other dance school? I listen to how you talk about your business and use that to shape everything.</p>
+      </div>
+    </div>
+    <div class="ms-item">
+      <div class="ms-icon">2</div>
+      <div>
+        <h4>Homepage mockup &mdash; you approve first</h4>
+        <p>Before I write a single line of code, you see a <strong>full visual design of the homepage.</strong> On your phone, on your laptop. If you love it, I build it. If something's off &mdash; we adjust until it feels right. <strong>I don't move forward until you say yes.</strong></p>
+      </div>
+    </div>
+    <div class="ms-item">
+      <div class="ms-icon">3</div>
+      <div>
+        <h4>Live preview link at every milestone</h4>
+        <p>As I build, you get a <strong>live link you can check on your phone anytime.</strong> Not a screenshot &mdash; the actual site running. You can scroll through it, click around, show your team. <strong>You see exactly what your students will see.</strong></p>
+      </div>
+    </div>
+    <div class="ms-item">
+      <div class="ms-icon">4</div>
+      <div>
+        <h4>Change anything, anytime</h4>
+        <p>Don't like how a page is laid out? Want to move the class calendar higher? Want to change the wording? <strong>Tell me and I change it.</strong> This isn't a "3 rounds of revisions" agency deal. We go until it's right.</p>
+      </div>
+    </div>
+    <div class="ms-item">
+      <div class="ms-icon">5</div>
+      <div>
+        <h4>Progress updates you can actually see</h4>
+        <p>At each milestone I send you a <strong>progress update with what's done, what's next, and the live preview.</strong> Quick text or call &mdash; nothing heavy. You always know exactly where we are and what's coming.</p>
+      </div>
+    </div>
+
+    <div class="tech-note">
+      <strong>Bottom line:</strong> If you don't like something, it doesn't ship. You approve every major design decision. The final product will feel like yours because you shaped it every step of the way. I bring the technical skills &mdash; <strong>you bring the vision.</strong>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="section">
+    <div class="eyebrow">The Investment</div>
+    <h2>What it costs &mdash; and what it <span class="green">saves.</span></h2>
+
+    <div class="price-card">
+      <div class="badge">Full Platform</div>
+      <div class="plan-name">Website + iOS App + Everything</div>
+      <div class="plan-desc">Replaces BigCommerce, Pike13, Pabbly, and Zoho.</div>
+      <div class="amount">$5,000</div>
+      <div class="term">one-time build</div>
+      <ul>
+        <li>Custom branded website</li>
+        <li>Class booking &amp; payment system</li>
+        <li>Clahvay Fest page with ticket sales</li>
+        <li>Merch shop</li>
+        <li>Branded iOS app in the App Store</li>
+        <li>Push notifications &amp; automated emails</li>
+        <li>Admin dashboard &amp; training</li>
+        <li>SEO + analytics + ad tracking</li>
+        <li>Student data migration from Pike13</li>
+      </ul>
+      <div class="monthly">Then <strong>$200&ndash;250</strong>/mo for hosting, updates &amp; support. That's it. No hidden fees.</div>
+    </div>
+
+    <div class="alt-card">
+      <div class="info"><strong>Website + Booking Only</strong>Start with the site, add the app later.</div>
+      <div class="alt-price">$3,500</div>
+    </div>
+
+    <div class="save-box">
+      <p><strong>The math:</strong> You're spending <span class="red">$300&ndash;500+/mo</span> across BigCommerce + Pike13 + Pabbly + Zoho &mdash; four platforms that don't talk to each other. This replaces <strong>all of them</strong> for <span class="green">$200&ndash;250/mo</span>. That's less than what you're paying right now &mdash; for a platform that does more, runs faster, and <strong>you own it.</strong> Cancel all four subscriptions. The savings start immediately.</p>
+    </div>
+
+    <div class="answer-block">
+      <h3>What does the $200&ndash;250/mo actually cover?</h3>
+      <p><strong>Hosting</strong> &mdash; your site and app running 24/7 on cloud infrastructure. <strong>Security updates</strong> &mdash; keeping your platform safe and up to date. <strong>Maintenance</strong> &mdash; if something breaks, I fix it. <strong>Ongoing support</strong> &mdash; need a small change? Text me. That's the whole list. No surprise add-ons. No "premium tier" to unlock features. <strong>$200&ndash;250 a month. That's it.</strong></p>
+    </div>
+
+    <div class="eyebrow" style="margin-top:28px;">Payment Options</div>
+    <p class="text" style="margin-bottom:12px;">Same price regardless of which you choose.</p>
+
+    <div class="pay-row">
+      <div class="po-info">Pay in Full</div>
+      <div class="po-amount">$5,000</div>
+    </div>
+    <div class="pay-row rec">
+      <div class="po-info">3 Milestone Payments <span class="tag">Most Popular</span><span>Pay as each phase delivers</span></div>
+      <div class="po-amount">$1,500 / $2,000 / $1,500</div>
+    </div>
+    <div class="pay-row">
+      <div class="po-info">5 Monthly<span>$1,000 deposit + $800 &times; 5</span></div>
+      <div class="po-amount">$1,000 + $800/mo</div>
+    </div>
+    <div class="pay-row">
+      <div class="po-info">8 Monthly<span>$1,000 deposit + $500 &times; 8</span></div>
+      <div class="po-amount">$1,000 + $500/mo</div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="section">
+    <div class="eyebrow">Timeline</div>
+    <h2>Live in <span class="green">10 weeks.</span></h2>
+
+    <p class="text">You'll see designs within two weeks. A live preview on your phone by week three. <strong>You approve every major decision before I move forward.</strong></p>
+
+    <div class="answer-block">
+      <h3>Wk 1&ndash;2: Brand Discovery &amp; Design</h3>
+      <p>We sit down and I learn Clahvay &mdash; the culture, the feel, the vision. I build a homepage mockup. <strong>You approve before I write any code.</strong></p>
+    </div>
+    <div class="answer-block">
+      <h3>Wk 3&ndash;5: Website &amp; Booking System</h3>
+      <p>Full site, class calendar, booking, payments. Live preview link on your phone so you can check progress anytime.</p>
+    </div>
+    <div class="answer-block">
+      <h3>Wk 6&ndash;7: Festival &amp; Merch</h3>
+      <p>Clahvay Fest page with ticket tiers. Merch shop. All connected to one student account.</p>
+    </div>
+    <div class="answer-block">
+      <h3>Wk 8&ndash;10: App &amp; Launch</h3>
+      <p>iOS app built, tested, submitted. Student data migrated from Pike13. Admin training. <strong>Go live together.</strong></p>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <h2>Take your time with this.</h2>
+    <p class="sub">I know this is a real decision. I'm not here to rush you &mdash; I'm here because I genuinely believe Clahvay deserves better than duct-taped platforms. <strong>If you have questions, poke holes, want to challenge anything in this document &mdash; text me.</strong> That's what I'm here for.</p>
+    <p class="sub">And if it's not the right fit or the right time &mdash; no hard feelings. <strong>I'll still be in class on Wednesday.</strong></p>
+
+    <div class="phone"><a href="tel:4044363393">(404) 436-3393</a></div>
+
+    <div class="name-line">
+      <strong>Josh Potesta</strong> &mdash; FoundOS
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
