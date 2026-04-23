@@ -444,10 +444,10 @@ function Work() {
                 {[
                   "Branded coach portal — their name, their identity",
                   "Client tracking with progress, notes, and session history",
-                  "Built-in scheduling and attendance",
+                  "Built-in scheduling, calendar, and attendance",
                   "Stripe payment processing and revenue tracking",
-                  "Direct coach-to-client messaging",
-                  "Admin dashboard for platform management",
+                  "Video library with Google Drive integration",
+                  "Programs, packages, and assignment management",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-sm" style={{ color: "#d0d6e0" }}>
                     <span className="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: "#f7f8f8" }} />
@@ -476,9 +476,9 @@ function Work() {
 
         <div className="grid gap-px sm:grid-cols-2" style={{ background: "rgba(255,255,255,0.05)" }}>
           {[
-            { src: "/portfolio/login-final.png", label: "Branded Login Experience" },
-            { src: "/portfolio/coach-schedule.png", label: "Coach Schedule & Calendar" },
-            { src: "/portfolio/coach-clients.png", label: "Client Management Dashboard" },
+            { src: "/portfolio/login-final.png", label: "Cinematic Login Experience" },
+            { src: "/portfolio/coach-dashboard.png", label: "Command Center Dashboard" },
+            { src: "/portfolio/coach-schedule.png", label: "Schedule & Calendar" },
             { src: "/portfolio/coach-payments.png", label: "Payment & Revenue Tracking" },
           ].map((p) => (
             <div key={p.label} className="group relative overflow-hidden" style={{ background: "#0a0a0a" }}>
