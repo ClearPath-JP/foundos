@@ -808,7 +808,7 @@
         <path d="M15 35 L50 55 L50 85 L15 65 Z" fill="#fff" opacity="0.55"/>
         <path d="M85 35 L50 55 L50 85 L85 65 Z" fill="#fff" opacity="0.3"/>
       </svg>
-      <span class="brand-name">FoundOS</span>
+      <a href="https://foundos.ai" target="_blank" class="brand-name" style="text-decoration:none;color:#62666d;">FoundOS</a>
     </div>
 
     <h1>Clahvay &mdash; Platform Overview</h1>
@@ -859,8 +859,13 @@
     <p class="text">I'll be straight with you. I'm 19. I'm one of your students. And I know that might make you wonder whether I can actually deliver something this big. <strong>So let me show you why I can.</strong></p>
 
     <div class="why-block">
+      <h3>I've already built and shipped a real product</h3>
+      <p>I'm not pitching something I've never done before. <strong>I built and deployed Sensei App</strong> &mdash; a full SaaS platform for solo fitness and martial arts coaches. It's live right now. Auth, Stripe billing, client tracking, session notes, scheduling, video management, admin dashboard &mdash; <strong>the full stack, built from scratch, deployed to production.</strong> Not a template. Not a tutorial project. A real product with real infrastructure that real coaches use. Clahvay's custom website would be built with the same tools, the same standards, and the same attention to detail. The iOS app would be a first for both of us &mdash; and I'll be transparent about that &mdash; but the core web platform, the booking system, the payments, the database, the admin? <strong>I've already built all of that and I can show you the live product.</strong></p>
+    </div>
+
+    <div class="why-block">
       <h3>This is all I do</h3>
-      <p>I run FoundOS full-time. I'm not freelancing on the side of a day job. I'm not in school hoping to figure it out later. <strong>I build custom platforms for businesses that have outgrown templates and subscriptions.</strong> It's my company, my craft, and my full focus. Every hour I'm not in your dance class, I'm building.</p>
+      <p>I run <a href="https://foundos.ai" target="_blank" style="color:#3daa6d;text-decoration:underline;">FoundOS</a> full-time. I'm not freelancing on the side of a day job. I'm not in school hoping to figure it out later. <strong>I build custom platforms for businesses that have outgrown templates and subscriptions.</strong> It's my company, my craft, and my full focus. Every hour I'm not in your dance class, I'm building.</p>
     </div>
 
     <div class="why-block">
@@ -871,6 +876,11 @@
     <div class="why-block">
       <h3>Business thinking + modern tech</h3>
       <p>Most developers write code. Most business people give advice. <strong>I do both.</strong> I study how your business runs &mdash; how students find you, how they book, how they pay, what makes them come back &mdash; and then I build technology around that reality. Your platform isn't just a website. <strong>It's a system engineered to grow Clahvay.</strong></p>
+    </div>
+
+    <div class="why-block">
+      <h3>What an agency would charge you</h3>
+      <p>I want you to know what the alternative looks like. A <strong>custom website alone from an Atlanta agency runs $8,000&ndash;$15,000.</strong> A custom iOS app? <strong>$15,000&ndash;$30,000.</strong> A booking and payment system on top of that? More. And then you're paying a project manager, a designer, and three developers who have never set foot in your studio. <strong>Total agency cost for what I'm proposing: $25,000&ndash;$50,000+.</strong> You'd get a polished deliverable from people who don't know your students' names. With me, you get the same tech at a fraction of the price &mdash; and a builder who shows up to Bachata on Wednesday.</p>
     </div>
 
     <div class="why-block">
@@ -894,7 +904,7 @@
     </div>
 
     <div class="tech-note">
-      <strong>One more thing:</strong> This document you're reading right now? I designed and built it. The layout, the structure, the responsiveness on your phone. <strong>This is the level of detail and care that goes into everything I build.</strong>
+      <strong>One more thing:</strong> This document you're reading right now? I designed and built it. The layout, the structure, the responsiveness on your phone. <strong>This is the level of detail and care that goes into everything I build.</strong> You can see my company and other work at <a href="https://foundos.ai" target="_blank" style="color:#3daa6d;text-decoration:underline;font-weight:600;">foundos.ai</a>.
     </div>
   </div>
 
@@ -1003,43 +1013,57 @@
     <div class="eyebrow">Under the Hood</div>
     <h2>What it's built with &mdash; <span class="green">no black box.</span></h2>
 
-    <p class="text">You asked about the tools. Here's the full stack &mdash; <strong>the same technologies used by Airbnb, Shopify, Uber, and Netflix.</strong> Nothing experimental. Nothing obscure. Industry standard, battle-tested tools.</p>
+    <p class="text">I know you've got an IT background, so I'm not going to gloss over this. Here's the full stack &mdash; <strong>the same technologies used by Airbnb, Shopify, Uber, and Netflix.</strong> Nothing experimental. Nothing obscure. Industry standard, battle-tested, well-documented tools with massive communities behind them.</p>
 
     <div class="tech-grid">
       <div class="tech-item">
         <h4>Website Framework</h4>
-        <div class="tech-name">Next.js + React</div>
-        <p>Used by Nike, TikTok, Twitch, Hulu. Server-rendered for speed and SEO. Not a drag-and-drop template.</p>
+        <div class="tech-name">Next.js 16 + React 19</div>
+        <p>Used by Nike, TikTok, Twitch, Hulu. Server-side rendering for speed and SEO. Automatic code splitting, image optimization, and edge caching. Not a drag-and-drop template &mdash; production-grade framework.</p>
       </div>
       <div class="tech-item">
         <h4>iOS App</h4>
-        <div class="tech-name">React Native</div>
-        <p>Used by Meta, Microsoft, Shopify, Discord. One codebase, native iOS performance. Real App Store app.</p>
+        <div class="tech-name">React Native + Expo</div>
+        <p>Used by Meta, Microsoft, Shopify, Discord. One TypeScript codebase, native iOS performance. Real App Store app with push notifications via APNs. OTA updates without resubmitting to Apple.</p>
       </div>
       <div class="tech-item">
         <h4>Language</h4>
-        <div class="tech-name">TypeScript</div>
-        <p>Type-safe JavaScript. Industry standard for production apps. Clean, maintainable, well-documented code.</p>
+        <div class="tech-name">TypeScript (Strict Mode)</div>
+        <p>Type-safe JavaScript with compile-time error checking. Strict mode enforced &mdash; catches bugs before they ship. Same language across web and mobile, so the entire codebase is consistent and maintainable.</p>
       </div>
       <div class="tech-item">
         <h4>Payments</h4>
-        <div class="tech-name">Stripe</div>
-        <p>Powers payments for Amazon, Google, Lyft, Instacart. PCI compliant. Handles subscriptions, one-time, and recurring.</p>
+        <div class="tech-name">Stripe (API + Webhooks)</div>
+        <p>PCI DSS Level 1 compliant &mdash; card data never touches your server. Webhook-driven architecture for real-time subscription management. Handles one-time charges, recurring billing, refunds, and failed payment recovery automatically.</p>
       </div>
       <div class="tech-item">
         <h4>Database</h4>
-        <div class="tech-name">PostgreSQL</div>
-        <p>The most trusted production database in the world. Used by Apple, Spotify, Instagram. Your data is structured and exportable.</p>
+        <div class="tech-name">PostgreSQL (Supabase)</div>
+        <p>Managed Postgres with Row-Level Security (RLS) &mdash; data access enforced at the database layer, not just the app. Automatic backups, point-in-time recovery. Full SQL access &mdash; your data is always queryable and exportable.</p>
       </div>
       <div class="tech-item">
         <h4>Hosting &amp; Deployment</h4>
-        <div class="tech-name">Vercel + Cloud Infrastructure</div>
-        <p>Auto-scaling, global CDN, instant deployments. Same infrastructure behind Fortune 500 sites. Handles any traffic spike.</p>
+        <div class="tech-name">Vercel + Supabase Cloud</div>
+        <p>Auto-scaling serverless infrastructure. Global CDN with edge caching. Automatic HTTPS/TLS. Zero-downtime deployments with instant rollback if anything goes wrong. 99.99% uptime SLA.</p>
+      </div>
+      <div class="tech-item">
+        <h4>Auth &amp; Security</h4>
+        <div class="tech-name">Supabase Auth + JWT</div>
+        <p>Industry-standard JWT token authentication. PKCE flow for OAuth. Session management with automatic refresh. CORS, CSP headers, rate limiting, and OWASP Top 10 protections baked in from day one.</p>
+      </div>
+      <div class="tech-item">
+        <h4>Monitoring &amp; Uptime</h4>
+        <div class="tech-name">Sentry + UptimeRobot</div>
+        <p>Real-time error tracking with stack traces. Health check endpoint monitored 24/7 with instant alerts. I know about issues before your students do &mdash; and I can push a fix without any downtime.</p>
       </div>
     </div>
 
     <div class="tech-note">
-      <strong>Why this matters to you:</strong> Every one of these tools is open-source or industry-standard. If I get hit by a bus tomorrow, any qualified developer can pick up your codebase and keep it running. You're never dependent on a single person or a proprietary system. <strong>The code is yours. The data is yours. No lock-in. Ever.</strong>
+      <strong>Why this matters:</strong> Every one of these tools is open-source or industry-standard with massive communities and documentation. If I get hit by a bus tomorrow, any qualified developer can clone the Git repo, read the code, and keep it running. You're never dependent on a single person or a proprietary system. <strong>The code is yours. The data is yours. The infrastructure is portable. No vendor lock-in. Ever.</strong>
+    </div>
+
+    <div class="tech-note" style="margin-top:12px;">
+      <strong>Version control:</strong> Every line of code lives in a <strong>Git repository</strong> with full commit history. Every change is tracked, documented, and reversible. When the project is delivered, you get the entire repo &mdash; not a zip file, not a compiled binary. <strong>The full source code with every decision baked into the history.</strong>
     </div>
   </div>
 
@@ -1233,33 +1257,33 @@
     <h2>Once it's paid off, <span class="green">it's yours. Period.</span></h2>
 
     <div class="own-box">
-      <h3>You own everything.</h3>
-      <p>The website, the app, the code, the database, the student records, the design files. <strong>All of it is yours.</strong> Not licensed. Not rented. Not held hostage. Yours to keep forever.</p>
+      <h3>You own everything. This is not a subscription.</h3>
+      <p>The website, the app, the source code, the Git repository, the database, the student records, the design files. <strong>All of it is yours.</strong> Not licensed. Not rented. Not held hostage behind a monthly fee. Yours to keep permanently.</p>
 
       <div class="own-grid">
         <div class="own-item">
           <div class="oi-label">The code</div>
-          <p>Full source code delivered to you. Open, readable, documented. Any developer can work on it.</p>
+          <p>Full Git repository with complete commit history. TypeScript source code &mdash; readable, documented, and portable. Any qualified developer can fork it and keep building.</p>
         </div>
         <div class="own-item">
           <div class="oi-label">The data</div>
-          <p>Your database, your student records, your transaction history. Exportable anytime in standard formats.</p>
+          <p>Your own PostgreSQL database. Student records, transaction history, booking data &mdash; all queryable with standard SQL. Full export anytime in CSV, JSON, or SQL dump.</p>
         </div>
         <div class="own-item">
-          <div class="oi-label">The design</div>
-          <p>All design assets, brand files, and visual elements. Nothing locked behind a subscription.</p>
+          <div class="oi-label">The infrastructure</div>
+          <p>Vercel and Supabase accounts under your email. You hold the keys. DNS, domain, SSL certificates &mdash; all registered to you. Nothing is locked to my account.</p>
         </div>
         <div class="own-item">
           <div class="oi-label">The app</div>
-          <p>Published under your Apple Developer account. Your name, your listing, your app. You control it.</p>
+          <p>Published under your Apple Developer account. Your name, your listing, your app icon. You control every update, every release, every push notification.</p>
         </div>
       </div>
     </div>
 
-    <p class="text"><strong>The $200/mo after it's paid off covers hosting, maintenance, security updates, and ongoing support.</strong> That's it. No hidden fees. No licensing. No "you need to upgrade to access this feature." If you ever want to stop the monthly and host it yourself or hire someone else &mdash; <strong>you take everything with you, no questions asked.</strong></p>
+    <p class="text"><strong>The $200/mo after it's paid off covers hosting, maintenance, security patches, dependency updates, and ongoing support.</strong> That's it. No hidden fees. No licensing. No "you need to upgrade to access this feature." If you ever want to stop the monthly and host it yourself or hire someone else &mdash; <strong>you take everything with you, no questions asked.</strong></p>
 
     <div class="save-box">
-      <p>With Pike13, Wix, or BigCommerce &mdash; if you stop paying, <span class="red">you lose everything.</span> Your site goes dark. Your data gets locked. Your students can't book. With your own platform &mdash; <strong>even if you stop working with me, <span class="green">the code, the data, and the app are still yours.</span></strong> That's the difference between renting and owning.</p>
+      <p><strong>This is the difference between renting and owning.</strong> With Pike13, BigCommerce, or any SaaS &mdash; if you stop paying, <span class="red">you lose everything.</span> Your site goes dark. Your student data gets locked behind their export limits. Your booking history disappears. With your own platform &mdash; <strong>even if you stop working with me, <span class="green">the code, the data, the database, and the app are still yours.</span></strong> You can host it on any cloud provider, hire any developer, and keep running. That's ownership.</p>
     </div>
   </div>
 
@@ -1337,7 +1361,7 @@
     </div>
 
     <div class="alt-card">
-      <div class="info"><strong>Website + Booking Only</strong>Start with the site, add the app later.</div>
+      <div class="info"><strong>Website + Booking Only</strong><br>Start with the site, add the app later.</div>
       <div class="alt-price">$3,500</div>
     </div>
 
@@ -1396,16 +1420,38 @@
     </div>
   </div>
 
+  <!-- FUTURE ROADMAP -->
+  <div class="section">
+    <div class="eyebrow">After Launch</div>
+    <h2>Once you're live, here's where it gets <span class="green">really interesting.</span></h2>
+
+    <p class="text">The website and app are the foundation. Once your platform is running and your students are on it, <strong>we can layer on growth tools that make your business work harder while you're teaching.</strong> This isn't part of the initial build &mdash; but I want you to see where this goes.</p>
+
+    <div class="why-block">
+      <h3>Professional content &amp; ad management</h3>
+      <p>I work with a photographer who shoots video and stills. Once your platform is live, we can <strong>create professional content &mdash; class footage, instructor profiles, student testimonials, festival highlights &mdash; and turn it into ads</strong> that run on Instagram and Facebook, all pointing back to your booking system. One platform, one funnel, one dashboard. <strong>Every dollar you spend on ads goes straight to a conversion &mdash; because the booking page is built into your site, not a redirect to Pike13.</strong> I'm actively learning ad management by doing it, and I plan to offer this as a service once your platform is the engine behind it.</p>
+    </div>
+
+    <div class="why-block">
+      <h3>AI-powered marketing</h3>
+      <p>AI tools can <strong>generate ad copy, respond to Instagram DMs, answer class questions on your website 24/7, and send personalized follow-ups</strong> to students who haven't booked in a while. Someone messages "what's your schedule?" at midnight &mdash; they get an instant answer and a booking link. This only works when your website, booking, and student data are <strong>all in one system.</strong> With Pike13 + BigCommerce + Zoho, none of this is possible.</p>
+    </div>
+
+    <div class="tech-note">
+      <strong>None of this is required right now.</strong> We build the foundation first &mdash; your website, your app, your booking system. Once that's running and you're seeing results, we talk about growth. <strong>I learn by doing, and I'd rather prove it with results than promise it with words.</strong>
+    </div>
+  </div>
+
   <!-- CTA -->
   <div class="cta">
     <h2>Take your time with this.</h2>
     <p class="sub">I know this is a real decision. I'm not here to rush you &mdash; I'm here because I genuinely believe Clahvay deserves better than duct-taped platforms. <strong>If you have questions, poke holes, want to challenge anything in this document &mdash; text me.</strong> That's what I'm here for.</p>
-    <p class="sub">And if it's not the right fit or the right time &mdash; no hard feelings. <strong>I'll still be in class on Wednesday.</strong></p>
+    <p class="sub">And if this isn't a fit &mdash; that's totally fine. No pressure at all. I'd rather you feel 100% right about it than feel rushed into something. <strong>Either way, I'll still be in class on Wednesday.</strong></p>
 
     <div class="phone"><a href="tel:4044363393">(404) 436-3393</a></div>
 
     <div class="name-line">
-      <strong>Josh Potesta</strong> &mdash; FoundOS
+      <strong>Josh Potesta</strong> &mdash; <a href="https://foundos.ai" target="_blank" style="color:#3daa6d;text-decoration:underline;">FoundOS</a>
     </div>
   </div>
 
