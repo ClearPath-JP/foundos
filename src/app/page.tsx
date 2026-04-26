@@ -152,7 +152,7 @@ function AnimatedBackground() {
           const y = (r + 0.5) * gap;
 
           const wave = Math.sin((r + cl) * 0.35 + elapsed * 0.8);
-          const opacity = 0.02 + (wave + 1) * 0.04;
+          const opacity = 0.04 + (wave + 1) * 0.07;
 
           const dx = x / w - 0.5;
           const dy = y / h - 0.5;
@@ -172,7 +172,7 @@ function AnimatedBackground() {
         const oy = h * (0.3 + i * 0.15) + Math.cos(elapsed * 0.25 + i * 1.5) * 60;
         const radius = 150 + i * 50;
         const grad = ctx.createRadialGradient(ox, oy, 0, ox, oy, radius);
-        grad.addColorStop(0, `rgba(255,255,255,${0.015 - i * 0.003})`);
+        grad.addColorStop(0, `rgba(255,255,255,${0.04 - i * 0.008})`);
         grad.addColorStop(1, "rgba(255,255,255,0)");
         ctx.beginPath();
         ctx.arc(ox, oy, radius, 0, Math.PI * 2);
@@ -248,7 +248,7 @@ export default function Page() {
   useEffect(() => { if (!navOpen) return; const cl = () => setNavOpen(false); window.addEventListener("scroll", cl, { passive: true }); return () => window.removeEventListener("scroll", cl); }, [navOpen]);
 
   return (
-    <div className="min-h-screen relative" style={{ background: c.bg, color: c.text }}>
+    <div className="min-h-screen relative" style={{ color: c.text }}>
 
       <AnimatedBackground />
 
@@ -285,8 +285,7 @@ export default function Page() {
       </motion.nav>
 
       {/* ── Hero ────────────────────────────────────────── */}
-      <section id="top" className="relative min-h-[100svh] flex items-center justify-center px-6 sm:px-10">
-        {/* Canvas background handles ambient animation */}
+      <section id="top" className="relative min-h-[100svh] flex items-center justify-center px-6 sm:px-10 z-10">
 
         <div className="relative max-w-[800px] text-center">
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.2 }}
@@ -322,6 +321,9 @@ export default function Page() {
           </motion.div>
         </div>
       </section>
+
+      {/* Everything below hero gets solid background so canvas shows only in hero */}
+      <div className="relative z-10" style={{ background: c.bg }}>
 
       {/* ── Ticker ──────────────────────────────────────── */}
       <div className="overflow-hidden py-3 border-y" style={{ borderColor: c.border }}>
@@ -591,6 +593,8 @@ export default function Page() {
           </div>
         </div>
       </footer>
+
+      </div>{/* end solid-bg wrapper */}
     </div>
   );
 }
