@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Fonts loaded via Next.js font optimization in layout.tsx (Inter + Geist Mono) */
 
 :root {
   --black: #111111;
@@ -15,7 +15,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', 'Arial Black', sans-serif;
+  font-family: var(--font-inter), 'Inter', 'Arial Black', sans-serif;
   background: var(--black);
   color: var(--white);
   -webkit-font-smoothing: antialiased;
@@ -33,7 +33,7 @@ body {
 }
 
 .mono {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-geist-mono), 'JetBrains Mono', monospace;
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -54,7 +54,7 @@ body {
   position: relative;
   display: inline-block;
   padding: 14px 28px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-geist-mono), monospace;
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -103,7 +103,7 @@ body {
 }
 
 .nav-link {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-geist-mono), monospace;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-size: 12px;

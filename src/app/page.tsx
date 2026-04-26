@@ -83,8 +83,9 @@ export default function Page() {
       renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
       renderer.setClearColor(0x000000, 0);
 
-      // Fibonacci sphere — 2000 particles
-      const count = 2000;
+      // Fibonacci sphere — responsive particle count
+      const isMobile = window.innerWidth < 768;
+      const count = isMobile ? 800 : 2000;
       const positions = new Float32Array(count * 3);
       const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
