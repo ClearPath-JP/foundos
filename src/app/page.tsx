@@ -1,282 +1,165 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
 const CAL = "https://cal.com/foundos.ai/strategy-call";
 
-/* ─── Palette ─────────────────────────────────────────────────── */
-const c = {
-  bg: "#0a0a0a",
-  text: "#f7f8f8",
-  muted: "#8a8f98",
-  dim: "#62666d",
-  surface: "#111111",
-  surfaceUp: "#161617",
-  border: "rgba(255,255,255,0.06)",
-  glow: "rgba(255,255,255,0.08)",
-};
-
-/* ─── Data ────────────────────────────────────────────────────── */
-const SERVICES = [
-  {
-    title: "Custom Websites",
-    desc: "Built around your brand, not dragged from a template. Mobile-first, fast, designed to convert visitors into customers.",
-    tags: ["Next.js", "Tailwind", "SEO", "Mobile-first"],
-  },
-  {
-    title: "Professional Photography",
-    desc: "I work with a photographer who shoots your space, food, and products. Real photos make real websites — no stock images.",
-    tags: ["Food & interior", "Lifestyle shots", "Brand photography"],
-  },
-  {
-    title: "Monthly Support",
-    desc: "Your business changes. Your site should too. Menu updates, new photos, seasonal content — handled. You text me, I respond.",
-    tags: ["Content updates", "Direct access", "No tickets"],
-  },
-  {
-    title: "Automations & Add-ons",
-    desc: "Online ordering, booking systems, email capture, review collection, AI chatbots — added when you're ready, not before.",
-    tags: ["Booking", "Email", "Reviews", "AI"],
-  },
-];
-
-const PORTFOLIO = [
-  {
-    title: "Sensei App",
-    tag: "SaaS Product",
-    desc: "A full platform for independent martial arts and fitness coaches. Video library, client management, scheduling, Stripe billing — one system replacing five apps.",
-    stats: [
-      { val: "46", label: "Database tables" },
-      { val: "150+", label: "API endpoints" },
-      { val: "1", label: "Person built it" },
-    ],
-    images: [
-      { src: "/portfolio/login-final.png", label: "Login" },
-      { src: "/portfolio/coach-dashboard.png", label: "Dashboard" },
-      { src: "/portfolio/coach-schedule.png", label: "Schedule" },
-      { src: "/portfolio/coach-payments.png", label: "Payments" },
-    ],
-  },
-  {
-    title: "FRAMELOCK",
-    tag: "Client Project",
-    desc: "A dark, cinematic photography portfolio for a car photographer in Atlanta. Film-inspired design with masonry gallery and tiered pricing.",
-    stats: [
-      { val: "33", label: "Photos loaded" },
-      { val: "<2wk", label: "Build time" },
-      { val: "Live", label: "In production" },
-    ],
-    images: [
-      { src: "/portfolio/framelock-hero.png", label: "Hero" },
-      { src: "/portfolio/framelock-gallery.png", label: "Gallery" },
-      { src: "/portfolio/framelock-pricing.png", label: "Pricing" },
-      { src: "/portfolio/framelock-mobile.png", label: "Mobile" },
-    ],
-    link: "https://shutter-city.vercel.app",
-  },
-];
-
-const PROCESS = [
-  { step: "01", title: "Free strategy call", desc: "You tell me about your business. I tell you what I think you need. No pressure." },
-  { step: "02", title: "Design + build", desc: "I create the site, you see progress along the way. Nothing launches until you love it." },
-  { step: "03", title: "Photography shoot", desc: "My photographer comes to your space. We shoot the food, the interior, the team. Real photos, not stock." },
-  { step: "04", title: "Launch + support", desc: "We go live. I handle hosting, updates, and support. You text me directly — no tickets, no waiting." },
-];
-
-const NAV_LINKS = [
-  { href: "#services", label: "Services" },
-  { href: "#work", label: "Work" },
-  { href: "#process", label: "Process" },
-  { href: "#about", label: "About" },
-];
-
-/* ─── Primitives ─────────────────────────────────────────────── */
-function R({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  return <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay }} className={className}>{children}</motion.div>;
-}
-
-function WordReveal({ text, className = "", delay = 0 }: { text: string; className?: string; delay?: number }) {
-  return (
-    <span className={`inline-flex flex-wrap ${className}`}>
-      {text.split(" ").map((w, i) => (
-        <motion.span key={`${w}-${i}`} initial={{ opacity: 0, y: 16, filter: "blur(4px)" }} whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          viewport={{ once: true, margin: "-30px" }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: delay + i * 0.06 }}
-          className="mr-[0.28em] inline-block">{w}</motion.span>
-      ))}
-    </span>
-  );
-}
-
-/* ─── Animated Background — canvas dot grid + floating orbs ──── */
-function AnimatedBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
+/* ─── Animated Background ─────────────────────────────────────── */
+function AnimBg() {
+  const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animId: number;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-    function resize() {
-      if (!canvas) return;
-      canvas.width = canvas.offsetWidth * dpr;
-      canvas.height = canvas.offsetHeight * dpr;
-      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-    resize();
-    window.addEventListener("resize", resize);
-
+    const cv = ref.current; if (!cv) return;
+    const ctx = cv.getContext("2d"); if (!ctx) return;
+    let id: number;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const resize = () => { cv.width = cv.offsetWidth * dpr; cv.height = cv.offsetHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+    resize(); window.addEventListener("resize", resize);
     const t0 = performance.now();
-
-    function draw(now: number) {
-      if (!canvas || !ctx) return;
-      const w = canvas.offsetWidth;
-      const h = canvas.offsetHeight;
-      const elapsed = (now - t0) / 1000;
-
+    const draw = (now: number) => {
+      const w = cv.offsetWidth, h = cv.offsetHeight, t = (now - t0) / 1000;
       ctx.clearRect(0, 0, w, h);
-
-      // Dot grid
-      const gap = 40;
-      const cols = Math.ceil(w / gap);
-      const rows = Math.ceil(h / gap);
-
-      for (let r = 0; r < rows; r++) {
-        for (let cl = 0; cl < cols; cl++) {
-          const x = (cl + 0.5) * gap;
-          const y = (r + 0.5) * gap;
-
-          const wave = Math.sin((r + cl) * 0.35 + elapsed * 0.8);
-          const opacity = 0.04 + (wave + 1) * 0.07;
-
-          const dx = x / w - 0.5;
-          const dy = y / h - 0.5;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const fade = Math.max(0, 1 - dist * 2);
-
-          ctx.beginPath();
-          ctx.arc(x, y, 1, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255,255,255,${opacity * fade})`;
-          ctx.fill();
+      const gap = 35;
+      for (let r = 0; r < Math.ceil(h / gap); r++) {
+        for (let c = 0; c < Math.ceil(w / gap); c++) {
+          const x = (c + 0.5) * gap, y = (r + 0.5) * gap;
+          const wave = Math.sin((r + c) * 0.3 + t * 0.7);
+          const op = 0.03 + (wave + 1) * 0.06;
+          const dx = x / w - 0.5, dy = y / h - 0.5;
+          const fade = Math.max(0, 1 - Math.sqrt(dx * dx + dy * dy) * 2.2);
+          ctx.beginPath(); ctx.arc(x, y, 1, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${op * fade})`; ctx.fill();
         }
       }
-
-      // Floating orbs
       for (let i = 0; i < 3; i++) {
-        const ox = w * (0.2 + i * 0.3) + Math.sin(elapsed * 0.3 + i * 2) * 80;
-        const oy = h * (0.3 + i * 0.15) + Math.cos(elapsed * 0.25 + i * 1.5) * 60;
-        const radius = 150 + i * 50;
-        const grad = ctx.createRadialGradient(ox, oy, 0, ox, oy, radius);
-        grad.addColorStop(0, `rgba(255,255,255,${0.04 - i * 0.008})`);
-        grad.addColorStop(1, "rgba(255,255,255,0)");
-        ctx.beginPath();
-        ctx.arc(ox, oy, radius, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
-        ctx.fill();
+        const ox = w * (0.2 + i * 0.3) + Math.sin(t * 0.25 + i * 2) * 100;
+        const oy = h * (0.25 + i * 0.2) + Math.cos(t * 0.2 + i * 1.5) * 70;
+        const g = ctx.createRadialGradient(ox, oy, 0, ox, oy, 180 + i * 40);
+        g.addColorStop(0, `rgba(255,255,255,${0.035 - i * 0.008})`);
+        g.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.beginPath(); ctx.arc(ox, oy, 180 + i * 40, 0, Math.PI * 2);
+        ctx.fillStyle = g; ctx.fill();
       }
-
-      animId = requestAnimationFrame(draw);
-    }
-
-    animId = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
+      id = requestAnimationFrame(draw);
+    };
+    id = requestAnimationFrame(draw);
+    return () => { cancelAnimationFrame(id); window.removeEventListener("resize", resize); };
   }, []);
+  return <canvas ref={ref} className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} />;
+}
 
-  return (
-    <canvas ref={canvasRef} className="fixed inset-0 w-full h-full pointer-events-none z-0" style={{ opacity: 1 }} />
-  );
+/* ─── Primitives ─────────────────────────────────────────────── */
+const ease = [0.22, 1, 0.36, 1] as const;
+
+function R({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  return <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.7, ease, delay }} className={className}>{children}</motion.div>;
+}
+
+function WordReveal({ text, className = "" , delay = 0 }: { text: string; className?: string; delay?: number }) {
+  return <span className={`inline-flex flex-wrap ${className}`}>{text.split(" ").map((w, i) => (
+    <motion.span key={`${w}-${i}`} initial={{ opacity: 0, y: 14, filter: "blur(4px)" }} whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, margin: "-30px" }} transition={{ duration: 0.5, ease, delay: delay + i * 0.06 }} className="mr-[0.28em] inline-block">{w}</motion.span>
+  ))}</span>;
 }
 
 function GlowCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const handleMouse = useCallback((e: React.MouseEvent) => {
-    const el = ref.current; if (!el) return;
-    const r = el.getBoundingClientRect();
+  const hm = useCallback((e: React.MouseEvent) => {
+    const el = ref.current; if (!el) return; const r = el.getBoundingClientRect();
     el.style.setProperty("--mouse-x", `${e.clientX - r.left}px`);
     el.style.setProperty("--mouse-y", `${e.clientY - r.top}px`);
   }, []);
-  return <div ref={ref} onMouseMove={handleMouse} className={`glow-card ${className}`}>{children}</div>;
+  return <div ref={ref} onMouseMove={hm} className={`glow-card ${className}`}>{children}</div>;
 }
 
 function Burger({ open }: { open: boolean }) {
-  return (
-    <div className="w-6 h-5 relative flex flex-col justify-between">
-      <motion.span animate={open ? { rotate: 45, y: 8 } : {}} className="block w-full h-[1.5px] bg-white origin-center" transition={{ duration: 0.3 }} />
-      <motion.span animate={open ? { opacity: 0 } : { opacity: 1 }} className="block w-full h-[1.5px] bg-white" transition={{ duration: 0.2 }} />
-      <motion.span animate={open ? { rotate: -45, y: -8 } : {}} className="block w-full h-[1.5px] bg-white origin-center" transition={{ duration: 0.3 }} />
-    </div>
-  );
-}
-
-function AnimLine({ width = "40%", className = "" }: { width?: string; className?: string }) {
-  return (
-    <div className={`mx-auto overflow-hidden ${className}`} style={{ maxWidth: width }}>
-      <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        className="h-[1px] origin-left" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)" }} />
-    </div>
-  );
+  return <div className="w-6 h-5 relative flex flex-col justify-between">
+    <motion.span animate={open ? { rotate: 45, y: 8 } : {}} className="block w-full h-[1.5px] bg-white origin-center" transition={{ duration: 0.3 }} />
+    <motion.span animate={open ? { opacity: 0 } : { opacity: 1 }} className="block w-full h-[1.5px] bg-white" transition={{ duration: 0.2 }} />
+    <motion.span animate={open ? { rotate: -45, y: -8 } : {}} className="block w-full h-[1.5px] bg-white origin-center" transition={{ duration: 0.3 }} />
+  </div>;
 }
 
 /* ─── Industry Cycler ─────────────────────────────────────────── */
-const INDUSTRIES = ["restaurants", "cafes", "salons", "gyms", "photographers", "contractors", "coaches", "you"];
-function IndustryCycler() {
-  const [idx, setIdx] = useState(0);
-  useEffect(() => { const t = setInterval(() => setIdx((i) => (i + 1) % INDUSTRIES.length), 2000); return () => clearInterval(t); }, []);
-  return (
-    <span className="inline-block relative h-[1.2em] overflow-hidden align-bottom" style={{ width: "clamp(120px, 15vw, 200px)" }}>
-      <AnimatePresence mode="wait">
-        <motion.span key={INDUSTRIES[idx]} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: "-100%", opacity: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="absolute left-0 text-white/50">
-          for {INDUSTRIES[idx]}
-        </motion.span>
-      </AnimatePresence>
-    </span>
-  );
+const IND = ["restaurants", "cafes", "salons", "gyms", "photographers", "contractors", "coaches"];
+function Cycler() {
+  const [i, setI] = useState(0);
+  useEffect(() => { const t = setInterval(() => setI((v) => (v + 1) % IND.length), 2200); return () => clearInterval(t); }, []);
+  return <span className="inline-block relative h-[1.15em] overflow-hidden align-bottom" style={{ minWidth: "clamp(130px,16vw,220px)" }}>
+    <AnimatePresence mode="wait">
+      <motion.span key={IND[i]} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 0.5 }} exit={{ y: "-100%", opacity: 0 }}
+        transition={{ duration: 0.4, ease }} className="absolute left-0 whitespace-nowrap">for {IND[i]}</motion.span>
+    </AnimatePresence>
+  </span>;
 }
+
+/* ─── Data ────────────────────────────────────────────────────── */
+const PILLARS = [
+  { title: "Custom Websites", desc: "Designed around your brand. Mobile-first, fast, built to convert — not dragged from a template library." },
+  { title: "Professional Photography", desc: "My photographer shoots your space, food, and team. Real images that make your site feel alive." },
+  { title: "Ongoing Support", desc: "Menu updates, new photos, seasonal changes — handled. You text me directly. No tickets." },
+  { title: "Automations & Add-ons", desc: "Online ordering, booking, email capture, review collection, AI — added when you're ready." },
+];
+
+const PORTFOLIO = [
+  {
+    title: "Sensei App", tag: "SaaS Product",
+    desc: "A full platform for independent coaches. Video library, client management, scheduling, billing — one system replacing five apps.",
+    stats: [{ v: "46", l: "DB tables" }, { v: "150+", l: "Endpoints" }, { v: "1", l: "Builder" }],
+    imgs: ["/portfolio/login-final.png", "/portfolio/coach-dashboard.png", "/portfolio/coach-schedule.png", "/portfolio/coach-payments.png"],
+  },
+  {
+    title: "FRAMELOCK", tag: "Client Project", link: "https://shutter-city.vercel.app",
+    desc: "A dark, cinematic photography portfolio for a car photographer in Atlanta. Masonry gallery, tiered pricing, built in under 2 weeks.",
+    stats: [{ v: "33", l: "Photos" }, { v: "<2wk", l: "Build time" }, { v: "Live", l: "Production" }],
+    imgs: ["/portfolio/framelock-hero.png", "/portfolio/framelock-gallery.png", "/portfolio/framelock-pricing.png", "/portfolio/framelock-mobile.png"],
+  },
+];
+
+const PROCESS = [
+  { n: "01", t: "Free Strategy Call", d: "You tell me about your business. I tell you what I think you need. No pressure, no pitch." },
+  { n: "02", t: "Design + Build", d: "I create the site. You see progress along the way. Nothing launches until you love it." },
+  { n: "03", t: "Photography Shoot", d: "My photographer comes to your space. We shoot food, interior, the team. Real photos." },
+  { n: "04", t: "Launch + Support", d: "We go live. I handle hosting, updates, support. You text me — I respond." },
+];
+
+const NAV = [
+  { href: "#pillars", label: "Services" }, { href: "#work", label: "Work" },
+  { href: "#process", label: "Process" }, { href: "#about", label: "About" },
+];
 
 /* ─── Page ────────────────────────────────────────────────────── */
 export default function Page() {
   const [navOpen, setNavOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const px = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-
   useEffect(() => { if (!navOpen) return; const cl = () => setNavOpen(false); window.addEventListener("scroll", cl, { passive: true }); return () => window.removeEventListener("scroll", cl); }, [navOpen]);
 
   return (
-    <div className="min-h-screen relative" style={{ color: c.text }}>
+    <div className="min-h-screen relative" style={{ color: "#f7f8f8" }}>
+      <AnimBg />
 
-      <AnimatedBackground />
-
-      {/* Progress */}
-      <motion.div style={{ scaleX: px, transformOrigin: "0%" }} className="fixed top-16 left-0 right-0 h-[1px] z-50">
-        <div className="w-full h-full bg-white/20" />
-      </motion.div>
+      {/* Progress bar */}
+      <motion.div style={{ scaleX: px, transformOrigin: "0%" }} className="fixed top-16 left-0 right-0 h-[1px] z-50"><div className="w-full h-full bg-white/20" /></motion.div>
 
       {/* ── Nav ─────────────────────────────────────────── */}
       <motion.nav initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.1 }}
-        className="fixed top-0 inset-x-0 z-50 backdrop-blur-lg border-b" style={{ background: "rgba(10,10,10,0.85)", borderColor: c.border }}>
+        className="fixed top-0 inset-x-0 z-50 backdrop-blur-lg border-b border-white/[0.06]" style={{ background: "rgba(10,10,10,0.8)" }}>
         <div className="max-w-[1200px] mx-auto px-6 sm:px-10 h-16 flex items-center justify-between">
-          <a href="#top" className="text-[15px] font-semibold tracking-[0.15em] uppercase">FOUNDOS</a>
-          <div className="hidden md:flex items-center gap-8 text-[13px]" style={{ color: c.dim }}>
-            {NAV_LINKS.map((l) => <a key={l.label} href={l.href} className="hover:text-white transition-colors duration-300">{l.label}</a>)}
-            <a href={CAL} target="_blank" rel="noopener noreferrer"
-              className="ml-2 px-5 py-2 rounded-full text-[13px] font-medium bg-white text-black hover:bg-white/90 transition-all">Book a Call</a>
+          <a href="#top" className="text-[15px] font-semibold tracking-[0.15em] uppercase text-shine">FOUNDOS</a>
+          <div className="hidden md:flex items-center gap-8 text-[13px] text-white/40">
+            {NAV.map((l) => <a key={l.label} href={l.href} className="hover:text-white transition-colors duration-300">{l.label}</a>)}
+            <a href={CAL} target="_blank" rel="noopener noreferrer" className="ml-2 px-5 py-2 rounded-full text-[13px] font-medium bg-white text-black hover:bg-white/90 transition-all">Book a Call &rarr;</a>
           </div>
-          <button onClick={() => setNavOpen((v) => !v)} className="md:hidden p-2 -mr-2 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Menu">
-            <Burger open={navOpen} />
-          </button>
+          <button onClick={() => setNavOpen((v) => !v)} className="md:hidden p-2 -mr-2 min-h-[44px] min-w-[44px] flex items-center justify-center"><Burger open={navOpen} /></button>
         </div>
         <AnimatePresence>
           {navOpen && (
-            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }} className="md:hidden overflow-hidden border-b" style={{ background: "rgba(10,10,10,0.95)", borderColor: c.border }}>
+            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}
+              className="md:hidden overflow-hidden border-b border-white/5" style={{ background: "rgba(10,10,10,0.95)" }}>
               <div className="px-6 py-4 flex flex-col gap-1">
-                {NAV_LINKS.map((l) => <a key={l.label} href={l.href} onClick={() => setNavOpen(false)} className="py-3 text-[16px] border-b border-white/5 last:border-0">{l.label}</a>)}
+                {NAV.map((l) => <a key={l.label} href={l.href} onClick={() => setNavOpen(false)} className="py-3 text-[16px] border-b border-white/5 last:border-0">{l.label}</a>)}
                 <a href={CAL} target="_blank" rel="noopener noreferrer" className="mt-3 py-3.5 text-center rounded-full text-[15px] font-medium bg-white text-black">Book a Call</a>
               </div>
             </motion.div>
@@ -284,182 +167,87 @@ export default function Page() {
         </AnimatePresence>
       </motion.nav>
 
-      {/* ── Hero ────────────────────────────────────────── */}
-      <section id="top" className="relative min-h-[100svh] flex items-center justify-center px-6 sm:px-10 z-10">
+      {/* ── Hero — WorldQuant style: big statement, centered ─── */}
+      <section id="top" className="relative z-10 min-h-[100svh] flex flex-col items-center justify-center px-6 sm:px-10 text-center">
+        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.3, ease }}>
+          <p className="font-mono-label mb-8 text-white/30">Web Development &bull; Photography &bull; Atlanta</p>
 
-        <div className="relative max-w-[800px] text-center">
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-mono-label mb-8" style={{ color: c.dim }}>
-            Web Development &bull; Photography &bull; Atlanta
-          </motion.p>
+          <h1 className="text-[clamp(40px,8.5vw,90px)] font-bold leading-[1.0] tracking-[-0.04em] mb-6 max-w-[900px]">
+            <span className="text-shine">Building Digital Systems</span>
+            <br />
+            <span className="text-gradient">For Local Businesses</span>
+          </h1>
 
-          <motion.h1 className="text-[clamp(40px,8vw,80px)] font-semibold leading-[1.02] tracking-[-0.03em] mb-6"
-            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}>
-            <span className="text-shine">I build websites</span>{" "}
-            <br className="hidden sm:block" />
-            <span className="text-gradient">
-              <IndustryCycler />
-            </span>
-          </motion.h1>
+          <p className="text-[clamp(16px,1.5vw,20px)] font-light leading-[1.7] max-w-[520px] mx-auto text-white/50 mb-4">
+            Custom websites and professional photography for businesses that serve their community. <span className="text-white/80">No templates. No agencies.</span> Just a builder in your corner.
+          </p>
 
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-[clamp(16px,1.5vw,20px)] font-light leading-[1.7] max-w-[560px] mx-auto" style={{ color: c.muted }}>
-            Custom websites for local businesses. <span className="text-white/90">No templates.</span> No agencies.
-            No ticket numbers. Just a builder in your corner — <span className="text-white/90">with a
-            photographer</span> who shoots your space.
-          </motion.p>
+          <p className="text-[clamp(15px,1.3vw,18px)] font-light text-white/30 mb-12"><Cycler /></p>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.9 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href={CAL} target="_blank" rel="noopener noreferrer"
               className="group px-8 py-4 sm:py-3.5 rounded-full text-[14px] font-medium bg-white text-black hover:bg-white/90 hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] transition-all min-h-[48px] inline-flex items-center gap-2">
-              Book a Free Call <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+              Book a Free Strategy Call <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
             </a>
-            <a href="#work" className="group px-8 py-4 sm:py-3.5 rounded-full text-[14px] font-medium border border-white/15 hover:bg-white/5 transition-all min-h-[48px] inline-flex items-center gap-2">
-              See My Work <span className="group-hover:translate-x-1 transition-transform" style={{ color: c.dim }}>&rarr;</span>
+            <a href="#work" className="group px-8 py-4 sm:py-3.5 rounded-full text-[14px] font-medium border border-white/15 hover:bg-white/5 transition-all min-h-[48px] inline-flex items-center gap-2 text-white/70">
+              See My Work <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
             </a>
-          </motion.div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Everything below: solid bg */}
+      <div className="relative z-10" style={{ background: "#0a0a0a" }}>
+
+      {/* ── Ethos — WorldQuant "Vision matters. Velocity wins." style ── */}
+      <section className="px-6 sm:px-10 py-20 sm:py-28 border-y border-white/[0.06]">
+        <div className="max-w-[900px] mx-auto text-center">
+          <R>
+            <p className="text-[clamp(24px,4vw,48px)] font-bold leading-[1.15] tracking-[-0.02em]">
+              <span className="text-shine">Quality matters.</span>{" "}
+              <span className="text-white/30">Speed wins.</span>
+            </p>
+          </R>
+          <R delay={0.15}>
+            <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] max-w-[600px] mx-auto mt-6 text-white/40">
+              Your business deserves more than a template. I build real systems — designed around how you work, photographed in your space, and supported after launch.
+            </p>
+          </R>
         </div>
       </section>
 
-      {/* Everything below hero gets solid background so canvas shows only in hero */}
-      <div className="relative z-10" style={{ background: c.bg }}>
-
-      {/* ── Ticker ──────────────────────────────────────── */}
-      <div className="overflow-hidden py-3 border-y" style={{ borderColor: c.border }}>
-        <motion.div animate={{ x: ["0%", "-50%"] }} transition={{ duration: 28, repeat: Infinity, ease: "linear" }} className="flex whitespace-nowrap gap-10">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="text-[11px] tracking-[0.2em] uppercase" style={{ color: c.dim }}>
-              Custom Websites &bull; Professional Photography &bull; Restaurants &bull; Cafes &bull; Salons &bull; Gyms &bull; Contractors &bull; Starting at $2,000 &bull; Atlanta Based &bull;&nbsp;
-            </span>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* ── Stats ──────────────────────────────────────── */}
-      <section className="px-6 sm:px-10 py-16 sm:py-20">
+      {/* ── Stats bar ────────────────────────────────────── */}
+      <section className="px-6 sm:px-10 py-16">
         <div className="max-w-[1000px] mx-auto grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
           {[
-            { val: "$2k", label: "Starting price" },
-            { val: "<3 wk", label: "Avg delivery" },
-            { val: "100%", label: "Completion rate" },
-            { val: "Direct", label: "Access to me" },
+            { v: "$2k", l: "Starting price" }, { v: "<3 wk", l: "Avg delivery" },
+            { v: "100%", l: "Completion rate" }, { v: "Direct", l: "Access to me" },
           ].map((s, i) => (
-            <R key={s.label} delay={i * 0.08}>
-              <div>
-                <p className="text-[clamp(28px,4vw,44px)] font-semibold text-shine">{s.val}</p>
-                <p className="font-mono-label mt-2" style={{ color: c.dim }}>{s.label}</p>
-              </div>
+            <R key={s.l} delay={i * 0.08}>
+              <p className="text-[clamp(28px,4vw,44px)] font-bold text-shine">{s.v}</p>
+              <p className="font-mono-label mt-2 text-white/30">{s.l}</p>
             </R>
           ))}
         </div>
       </section>
 
-      <AnimLine />
-
-      {/* ── Services ────────────────────────────────────── */}
-      <section id="services" className="px-6 sm:px-10" style={{ paddingTop: "clamp(100px,14vw,200px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
+      {/* ── Pillars — WorldQuant 4-feature grid ──────────── */}
+      <section id="pillars" className="px-6 sm:px-10" style={{ paddingTop: "clamp(60px,8vw,120px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
         <div className="max-w-[1200px] mx-auto">
-          <R><p className="font-mono-label mb-4" style={{ color: c.dim }}>What I Do</p></R>
+          <R><p className="font-mono-label mb-4 text-white/30">What I Build</p></R>
           <R delay={0.1}>
-            <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-4">
+            <h2 className="text-[clamp(28px,4vw,48px)] font-bold leading-[1.1] tracking-[-0.02em] mb-14">
               <WordReveal text="Everything your business" /> <span className="text-gradient">needs.</span>
             </h2>
           </R>
-          <R delay={0.2}><p className="text-[clamp(15px,1.2vw,18px)] font-light max-w-[500px] mb-14" style={{ color: c.muted }}>Website, photography, support, and automations — all from one person who actually picks up the phone.</p></R>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {SERVICES.map((s, i) => (
-              <R key={s.title} delay={i * 0.1}>
-                <GlowCard className="p-6 sm:p-8 h-full">
-                  <div className="relative z-10">
-                    <h3 className="text-[clamp(18px,1.5vw,22px)] font-semibold mb-3">{s.title}</h3>
-                    <p className="text-[14px] leading-[1.75] mb-5" style={{ color: c.muted }}>{s.desc}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {s.tags.map((t) => <span key={t} className="px-3 py-1 text-[11px] tracking-[0.05em] rounded-full border" style={{ borderColor: c.border, color: c.dim }}>{t}</span>)}
-                    </div>
-                  </div>
-                </GlowCard>
-              </R>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <AnimLine />
-
-      {/* ── Portfolio ───────────────────────────────────── */}
-      <section id="work" className="px-6 sm:px-10" style={{ paddingTop: "clamp(80px,10vw,160px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
-        <div className="max-w-[1200px] mx-auto">
-          <R><p className="font-mono-label mb-4" style={{ color: c.dim }}>Work</p></R>
-          <R delay={0.1}>
-            <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-4">
-              <WordReveal text="Real things I've" /> <span className="text-shine">built.</span>
-            </h2>
-          </R>
-          <R delay={0.2}><p className="text-[clamp(15px,1.2vw,18px)] font-light max-w-[500px] mb-14" style={{ color: c.muted }}>No mockups. Everything here is shipped and running in production.</p></R>
-
-          <div className="space-y-8">
-            {PORTFOLIO.map((p, pi) => (
-              <R key={p.title} delay={pi * 0.15}>
-                <GlowCard className="p-6 sm:p-8">
-                  <div className="relative z-10">
-                    <div className="flex flex-wrap items-center gap-3 mb-4">
-                      <span className="px-3 py-1 text-[11px] tracking-[0.1em] uppercase rounded-full border" style={{ borderColor: c.border, color: c.dim }}>{p.tag}</span>
-                      {p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" className="text-[12px] hover:text-white transition-colors" style={{ color: c.dim }}>See it live &rarr;</a>}
-                    </div>
-                    <h3 className="text-[clamp(24px,3vw,36px)] font-semibold mb-3">{p.title}</h3>
-                    <p className="text-[15px] leading-[1.7] max-w-[600px] mb-6" style={{ color: c.muted }}>{p.desc}</p>
-
-                    {/* Stats */}
-                    <div className="flex flex-wrap gap-6 mb-8">
-                      {p.stats.map((s) => (
-                        <div key={s.label}>
-                          <p className="text-[clamp(20px,2vw,28px)] font-semibold">{s.val}</p>
-                          <p className="text-[12px]" style={{ color: c.dim }}>{s.label}</p>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Screenshots */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {p.images.map((img) => (
-                        <div key={img.label} className="relative aspect-[4/3] rounded-lg overflow-hidden group">
-                          <Image src={img.src} alt={img.label} fill className="object-cover object-top group-hover:scale-105 transition-transform duration-500" sizes="300px" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          <p className="absolute bottom-2 left-3 text-[11px] text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300">{img.label}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </GlowCard>
-              </R>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <AnimLine />
-
-      {/* ── Process ─────────────────────────────────────── */}
-      <section id="process" className="px-6 sm:px-10" style={{ paddingTop: "clamp(80px,10vw,160px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
-        <div className="max-w-[800px] mx-auto">
-          <R><p className="font-mono-label mb-4" style={{ color: c.dim }}>Process</p></R>
-          <R delay={0.1}>
-            <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-14">
-              <WordReveal text="How it" /> <span className="text-gradient">works.</span>
-            </h2>
-          </R>
-
-          <div className="space-y-0">
-            {PROCESS.map((p, i) => (
-              <R key={p.step} delay={i * 0.08}>
-                <div className="flex gap-6 py-8 border-b" style={{ borderColor: c.border }}>
-                  <span className="text-[clamp(14px,1.2vw,16px)] font-mono tabular-nums shrink-0 mt-1" style={{ color: c.dim }}>{p.step}</span>
-                  <div>
-                    <h3 className="text-[clamp(18px,1.5vw,22px)] font-semibold mb-2">{p.title}</h3>
-                    <p className="text-[15px] leading-[1.75]" style={{ color: c.muted }}>{p.desc}</p>
-                  </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-[1px] bg-white/[0.06] rounded-2xl overflow-hidden">
+            {PILLARS.map((p, i) => (
+              <R key={p.title} delay={i * 0.08}>
+                <div className="p-8 sm:p-10 bg-[#0f0f0f] hover:bg-[#131313] transition-colors duration-500 h-full">
+                  <p className="font-mono-label mb-4 text-white/20">{String(i + 1).padStart(2, "0")}</p>
+                  <h3 className="text-[clamp(20px,1.8vw,26px)] font-semibold mb-3">{p.title}</h3>
+                  <p className="text-[15px] leading-[1.75] text-white/40">{p.desc}</p>
                 </div>
               </R>
             ))}
@@ -467,86 +255,136 @@ export default function Page() {
         </div>
       </section>
 
-      <AnimLine />
-
-      {/* ── Pricing — single line ────────────────────────── */}
-      <section className="px-6 sm:px-10" style={{ paddingTop: "clamp(80px,10vw,160px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
-        <div className="max-w-[700px] mx-auto text-center">
-          <R><p className="font-mono-label mb-4" style={{ color: c.dim }}>Pricing</p></R>
+      {/* ── Portfolio ───────────────────────────────────── */}
+      <section id="work" className="px-6 sm:px-10" style={{ paddingTop: "clamp(60px,8vw,120px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
+        <div className="max-w-[1200px] mx-auto">
+          <R><p className="font-mono-label mb-4 text-white/30">Work</p></R>
           <R delay={0.1}>
-            <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-6">
+            <h2 className="text-[clamp(28px,4vw,48px)] font-bold leading-[1.1] tracking-[-0.02em] mb-14">
+              <WordReveal text="Shipped and" /> <span className="text-shine">running.</span>
+            </h2>
+          </R>
+
+          <div className="space-y-6">
+            {PORTFOLIO.map((p, pi) => (
+              <R key={p.title} delay={pi * 0.1}>
+                <GlowCard className="p-6 sm:p-10">
+                  <div className="relative z-10">
+                    <div className="flex flex-wrap items-center gap-3 mb-5">
+                      <span className="font-mono-label px-3 py-1 rounded-full border border-white/[0.08] text-white/30">{p.tag}</span>
+                      {p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" className="group font-mono-label text-white/30 hover:text-white transition-colors inline-flex items-center gap-1">
+                        Live site <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                      </a>}
+                    </div>
+                    <h3 className="text-[clamp(26px,3.5vw,40px)] font-bold mb-3">{p.title}</h3>
+                    <p className="text-[15px] leading-[1.75] text-white/40 max-w-[600px] mb-8">{p.desc}</p>
+
+                    <div className="flex flex-wrap gap-8 mb-8">
+                      {p.stats.map((s) => (
+                        <div key={s.l}>
+                          <p className="text-[clamp(22px,2.5vw,32px)] font-bold text-shine">{s.v}</p>
+                          <p className="font-mono-label mt-1 text-white/25">{s.l}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {p.imgs.map((src, ii) => (
+                        <motion.div key={src} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }} transition={{ duration: 0.5, delay: ii * 0.08 }}
+                          className="relative aspect-[4/3] rounded-lg overflow-hidden group border border-white/[0.06]">
+                          <Image src={src} alt="" fill className="object-cover object-top group-hover:scale-105 transition-transform duration-700" sizes="300px" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </GlowCard>
+              </R>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Process ─────────────────────────────────────── */}
+      <section id="process" className="px-6 sm:px-10" style={{ paddingTop: "clamp(60px,8vw,120px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
+        <div className="max-w-[800px] mx-auto">
+          <R><p className="font-mono-label mb-4 text-white/30">Process</p></R>
+          <R delay={0.1}>
+            <h2 className="text-[clamp(28px,4vw,48px)] font-bold leading-[1.1] tracking-[-0.02em] mb-14">
+              <WordReveal text="How it" /> <span className="text-gradient">works.</span>
+            </h2>
+          </R>
+
+          {PROCESS.map((p, i) => (
+            <R key={p.n} delay={i * 0.06}>
+              <div className="flex gap-6 py-8 border-b border-white/[0.06] group hover:border-white/[0.12] transition-colors">
+                <span className="font-mono-label text-white/15 mt-1 shrink-0">{p.n}</span>
+                <div>
+                  <h3 className="text-[clamp(18px,1.5vw,22px)] font-semibold mb-2 group-hover:text-shine transition-all">{p.t}</h3>
+                  <p className="text-[15px] leading-[1.75] text-white/40">{p.d}</p>
+                </div>
+              </div>
+            </R>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Pricing — single bold statement ───────────────── */}
+      <section className="px-6 sm:px-10 py-20 sm:py-28 border-y border-white/[0.06]">
+        <div className="max-w-[700px] mx-auto text-center">
+          <R><p className="font-mono-label mb-6 text-white/30">Pricing</p></R>
+          <R delay={0.1}>
+            <h2 className="text-[clamp(32px,5vw,56px)] font-bold leading-[1.05] tracking-[-0.02em] mb-6">
               Starting at <span className="text-shine">$2,000</span>
             </h2>
           </R>
           <R delay={0.2}>
-            <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] mb-10" style={{ color: c.muted }}>
-              Custom website, professional photography of your space, your own domain,
-              SEO setup, and a site that actually looks like your business.
-              Monthly support starts at $150/mo.
+            <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] text-white/40 mb-10">
+              Custom website. Professional photography of your space. Your own domain. SEO setup. Mobile-first. Monthly support from <span className="text-white/70">$150/mo.</span>
             </p>
           </R>
           <R delay={0.3}>
             <div className="flex flex-wrap justify-center gap-3 mb-10">
-              {["Custom design", "Professional photos", "Your own domain", "SEO & Google setup", "Mobile-first", "Ongoing support"].map((t) => (
-                <span key={t} className="px-4 py-2 text-[12px] tracking-[0.05em] rounded-full border" style={{ borderColor: c.border, color: c.muted }}>{t}</span>
+              {["Custom design", "Professional photos", "Your domain", "SEO setup", "Mobile-first", "Ongoing support"].map((t) => (
+                <span key={t} className="px-4 py-2 text-[12px] font-medium rounded-full border border-white/[0.08] text-white/30">{t}</span>
               ))}
             </div>
-          </R>
-          <R delay={0.4}>
-            <p className="text-[13px] mb-8" style={{ color: c.dim }}>
-              Every project starts with a free call. You don&apos;t pay until we both agree on the plan.
-            </p>
             <a href={CAL} target="_blank" rel="noopener noreferrer"
-              className="px-8 py-4 sm:py-3.5 rounded-full text-[14px] font-medium bg-white text-black hover:bg-white/90 hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] transition-all min-h-[48px] inline-flex items-center">
-              Book a Free Strategy Call
+              className="group px-8 py-4 sm:py-3.5 rounded-full text-[14px] font-medium bg-white text-black hover:bg-white/90 hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] transition-all min-h-[48px] inline-flex items-center gap-2">
+              Book a Free Strategy Call <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
             </a>
+            <p className="font-mono-label mt-6 text-white/20">Free 30-min call &bull; No commitment</p>
           </R>
         </div>
       </section>
-
-      <AnimLine />
 
       {/* ── About ───────────────────────────────────────── */}
       <section id="about" className="px-6 sm:px-10" style={{ paddingTop: "clamp(80px,10vw,160px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
         <div className="max-w-[1000px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-10 md:gap-16 items-start">
-            <R>
-              <div className="relative w-40 h-40 md:w-full md:h-auto md:aspect-square rounded-2xl overflow-hidden mx-auto md:mx-0">
-                <Image src="/josh.jpg" alt="Josh Potesta" fill className="object-cover" sizes="224px" />
-              </div>
-            </R>
-
+            <R><div className="relative w-40 h-40 md:w-full md:h-auto md:aspect-square rounded-2xl overflow-hidden mx-auto md:mx-0 border border-white/[0.06]">
+              <Image src="/josh.jpg" alt="Josh Potesta" fill className="object-cover" sizes="224px" />
+            </div></R>
             <div>
-              <R><p className="font-mono-label mb-4" style={{ color: c.dim }}>Josh Potesta &bull; Atlanta &bull; 19</p></R>
+              <R><p className="font-mono-label mb-4 text-white/30">Josh Potesta &bull; Atlanta &bull; 19</p></R>
               <R delay={0.1}>
-                <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-6">
+                <h2 className="text-[clamp(28px,4vw,48px)] font-bold leading-[1.1] tracking-[-0.02em] mb-6">
                   <WordReveal text="I don't disappear" /> <span className="text-shine">after launch.</span>
                 </h2>
               </R>
-              <R delay={0.2}>
-                <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] mb-4" style={{ color: c.muted }}>
-                  I&apos;ve spent 6 years in martial arts — training, teaching, watching coaches
-                  run their entire business from their phone. I know what it&apos;s like to be
-                  a local business owner who got left behind by the tech world.
-                </p>
-              </R>
-              <R delay={0.3}>
-                <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] mb-8" style={{ color: c.muted }}>
-                  Restaurants, cafes, salons, contractors, photographers — if you serve
-                  your community, I want to build for you. You text me. I respond.
-                  No support tickets. No gatekeepers.
-                </p>
-              </R>
+              <R delay={0.2}><p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] text-white/40 mb-4">
+                Six years in martial arts — training, teaching, watching coaches run entire businesses from their phones. I know what it&apos;s like to be a local business owner the tech world forgot about.
+              </p></R>
+              <R delay={0.3}><p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] text-white/40 mb-8">
+                Restaurants, cafes, salons, contractors, photographers — if you serve your community, I want to build for you. <span className="text-white/80">You text me. I respond. No tickets. No gatekeepers.</span>
+              </p></R>
               <R delay={0.4}>
                 <div className="flex flex-wrap gap-3">
-                  <a href={CAL} target="_blank" rel="noopener noreferrer"
-                    className="px-6 py-3 rounded-full text-[14px] font-medium border border-white/15 hover:bg-white hover:text-black transition-all min-h-[48px] inline-flex items-center">
-                    Book a Call
+                  <a href={CAL} target="_blank" rel="noopener noreferrer" className="group px-6 py-3 rounded-full text-[14px] font-medium border border-white/15 hover:bg-white hover:text-black transition-all min-h-[48px] inline-flex items-center gap-2">
+                    Book a Call <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
                   </a>
-                  <a href="mailto:hello@foundos.ai"
-                    className="px-6 py-3 rounded-full text-[14px] font-medium border border-white/10 hover:border-white/20 transition-all min-h-[48px] inline-flex items-center" style={{ color: c.muted }}>
-                    hello@foundos.ai
-                  </a>
+                  <a href="mailto:hello@foundos.ai" className="px-6 py-3 rounded-full text-[14px] font-medium border border-white/10 text-white/40 hover:text-white/70 hover:border-white/20 transition-all min-h-[48px] inline-flex items-center">hello@foundos.ai</a>
                 </div>
               </R>
             </div>
@@ -556,37 +394,30 @@ export default function Page() {
 
       {/* ── Final CTA ───────────────────────────────────── */}
       <section className="relative px-6 sm:px-10" style={{ paddingTop: "clamp(80px,10vw,160px)", paddingBottom: "clamp(100px,12vw,180px)" }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 80%, rgba(255,255,255,0.03) 0%, transparent 60%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 80%, rgba(255,255,255,0.02) 0%, transparent 60%)" }} />
         <div className="max-w-[600px] mx-auto text-center relative">
-          <R>
-            <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-6">
-              <WordReveal text="Let's build something" /> <span className="text-glow text-shine">together.</span>
-            </h2>
-          </R>
-          <R delay={0.2}>
-            <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.7] mb-10" style={{ color: c.muted }}>
-              Book a call, tell me about your business. No pressure, no commitment.
-              Just a conversation about what you need.
-            </p>
-          </R>
+          <R><h2 className="text-[clamp(32px,5vw,56px)] font-bold leading-[1.05] tracking-[-0.02em] mb-6">
+            <WordReveal text="Let's build something" /> <span className="text-glow text-shine">together.</span>
+          </h2></R>
+          <R delay={0.2}><p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.7] text-white/40 mb-10">
+            Tell me about your business. No pressure, no commitment. Just a conversation about what you need.
+          </p></R>
           <R delay={0.3}>
             <a href={CAL} target="_blank" rel="noopener noreferrer"
               className="group px-10 py-4 rounded-full text-[15px] font-medium bg-white text-black hover:bg-white/90 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all min-h-[52px] inline-flex items-center gap-2">
               Book Your Free Strategy Call <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
             </a>
-            <p className="font-mono-label mt-6" style={{ color: c.dim }}>Free 30-minute call &bull; No commitment</p>
+            <p className="font-mono-label mt-6 text-white/20">Free 30-min call &bull; No commitment</p>
           </R>
         </div>
       </section>
 
       {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="px-6 sm:px-10 py-12 border-t" style={{ borderColor: c.border }}>
+      <footer className="px-6 sm:px-10 py-12 border-t border-white/[0.06]">
         <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div>
-            <p className="text-[14px] font-semibold tracking-[0.1em] uppercase">FOUNDOS</p>
-            <p className="text-[12px] mt-1" style={{ color: c.dim }}>Custom websites &bull; Atlanta</p>
-          </div>
-          <div className="flex items-center gap-8 text-[13px]" style={{ color: c.dim }}>
+          <div><p className="text-[14px] font-semibold tracking-[0.1em] uppercase text-shine">FOUNDOS</p>
+            <p className="text-[12px] mt-1 text-white/25">Custom websites &bull; Atlanta</p></div>
+          <div className="flex items-center gap-8 text-[13px] text-white/25">
             <a href="https://instagram.com/foundos.ai" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors min-h-[44px] flex items-center">Instagram</a>
             <a href="https://tiktok.com/@foundos.ai" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors min-h-[44px] flex items-center">TikTok</a>
             <a href="mailto:hello@foundos.ai" className="hover:text-white transition-colors min-h-[44px] flex items-center">hello@foundos.ai</a>
@@ -594,7 +425,7 @@ export default function Page() {
         </div>
       </footer>
 
-      </div>{/* end solid-bg wrapper */}
+      </div>{/* end solid-bg */}
     </div>
   );
 }
