@@ -109,3 +109,28 @@ body::after {
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
+
+/* Animated underline that draws on scroll */
+.text-underline-anim {
+  position: relative;
+  display: inline;
+}
+.text-underline-anim::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.2));
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.text-underline-anim.in-view::after {
+  width: 100%;
+}
+
+/* Bright highlight for key words */
+.text-bright {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.1);
+}

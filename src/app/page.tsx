@@ -6,47 +6,144 @@ import Image from "next/image";
 
 const CAL = "https://cal.com/foundos.ai/strategy-call";
 
-/* ─── Animated Background ─────────────────────────────────────── */
+/* ─── 3D Particle Field (Three.js) ────────────────────────────── */
 function AnimBg() {
-  const ref = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const cv = ref.current; if (!cv) return;
-    const ctx = cv.getContext("2d"); if (!ctx) return;
-    let id: number;
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    const resize = () => { cv.width = cv.offsetWidth * dpr; cv.height = cv.offsetHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
-    resize(); window.addEventListener("resize", resize);
-    const t0 = performance.now();
-    const draw = (now: number) => {
-      const w = cv.offsetWidth, h = cv.offsetHeight, t = (now - t0) / 1000;
-      ctx.clearRect(0, 0, w, h);
-      const gap = 35;
-      for (let r = 0; r < Math.ceil(h / gap); r++) {
-        for (let c = 0; c < Math.ceil(w / gap); c++) {
-          const x = (c + 0.5) * gap, y = (r + 0.5) * gap;
-          const wave = Math.sin((r + c) * 0.3 + t * 0.7);
-          const op = 0.03 + (wave + 1) * 0.06;
-          const dx = x / w - 0.5, dy = y / h - 0.5;
-          const fade = Math.max(0, 1 - Math.sqrt(dx * dx + dy * dy) * 2.2);
-          ctx.beginPath(); ctx.arc(x, y, 1, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255,255,255,${op * fade})`; ctx.fill();
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Dynamic import to avoid SSR issues
+    let cleanup: (() => void) | undefined;
+
+    (async () => {
+      const THREE = await import("three");
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 3;
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setClearColor(0x000000, 0);
+      container.appendChild(renderer.domElement);
+
+      // Particle system — 2000 particles in 3D space
+      const count = 2000;
+      const positions = new Float32Array(count * 3);
+      const scales = new Float32Array(count);
+      const speeds = new Float32Array(count);
+
+      for (let i = 0; i < count; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 8;      // x
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 8;  // y
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 8;  // z
+        scales[i] = Math.random() * 0.5 + 0.5;
+        speeds[i] = Math.random() * 0.5 + 0.2;
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+      // Custom shader material for soft glowing points
+      const material = new THREE.ShaderMaterial({
+        uniforms: {
+          uTime: { value: 0 },
+          uMouse: { value: new THREE.Vector2(0, 0) },
+        },
+        vertexShader: `
+          uniform float uTime;
+          varying float vOpacity;
+          void main() {
+            vec3 pos = position;
+            // Gentle wave motion
+            pos.y += sin(pos.x * 1.5 + uTime * 0.4) * 0.1;
+            pos.x += cos(pos.z * 1.2 + uTime * 0.3) * 0.08;
+
+            vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+            gl_Position = projectionMatrix * mvPosition;
+
+            // Size attenuation (closer = bigger)
+            float size = 2.5 * (1.0 / -mvPosition.z);
+            gl_PointSize = max(size, 0.5);
+
+            // Depth-based opacity (closer = brighter)
+            float depth = smoothstep(8.0, 1.0, -mvPosition.z);
+            vOpacity = depth * 0.6;
+          }
+        `,
+        fragmentShader: `
+          varying float vOpacity;
+          void main() {
+            // Circular soft point
+            float d = length(gl_PointCoord - vec2(0.5));
+            if (d > 0.5) discard;
+            float alpha = smoothstep(0.5, 0.1, d) * vOpacity;
+            gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
+          }
+        `,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      });
+
+      const particles = new THREE.Points(geometry, material);
+      scene.add(particles);
+
+      // Mouse tracking
+      let mouseX = 0, mouseY = 0;
+      const onMouseMove = (e: MouseEvent) => {
+        mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+      };
+      window.addEventListener("mousemove", onMouseMove);
+
+      // Resize handler
+      const onResize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      };
+      window.addEventListener("resize", onResize);
+
+      // Animation loop
+      const clock = new THREE.Clock();
+      let animId: number;
+
+      const animate = () => {
+        animId = requestAnimationFrame(animate);
+        const elapsed = clock.getElapsedTime();
+
+        // Slow rotation + mouse reactivity
+        particles.rotation.y = elapsed * 0.05 + mouseX * 0.15;
+        particles.rotation.x = elapsed * 0.03 + mouseY * 0.1;
+
+        material.uniforms.uTime.value = elapsed;
+
+        renderer.render(scene, camera);
+      };
+
+      animate();
+
+      cleanup = () => {
+        cancelAnimationFrame(animId);
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("resize", onResize);
+        renderer.dispose();
+        geometry.dispose();
+        material.dispose();
+        if (container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement);
         }
-      }
-      for (let i = 0; i < 3; i++) {
-        const ox = w * (0.2 + i * 0.3) + Math.sin(t * 0.25 + i * 2) * 100;
-        const oy = h * (0.25 + i * 0.2) + Math.cos(t * 0.2 + i * 1.5) * 70;
-        const g = ctx.createRadialGradient(ox, oy, 0, ox, oy, 180 + i * 40);
-        g.addColorStop(0, `rgba(255,255,255,${0.035 - i * 0.008})`);
-        g.addColorStop(1, "rgba(255,255,255,0)");
-        ctx.beginPath(); ctx.arc(ox, oy, 180 + i * 40, 0, Math.PI * 2);
-        ctx.fillStyle = g; ctx.fill();
-      }
-      id = requestAnimationFrame(draw);
-    };
-    id = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(id); window.removeEventListener("resize", resize); };
+      };
+    })();
+
+    return () => { if (cleanup) cleanup(); };
   }, []);
-  return <canvas ref={ref} className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} />;
+
+  return <div ref={containerRef} className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }} />;
 }
 
 /* ─── Primitives ─────────────────────────────────────────────── */
@@ -179,7 +276,7 @@ export default function Page() {
           </h1>
 
           <p className="text-[clamp(16px,1.5vw,20px)] font-light leading-[1.7] max-w-[520px] mx-auto text-white/50 mb-4">
-            Custom websites and professional photography for businesses that serve their community. <span className="text-white/80">No templates. No agencies.</span> Just a builder in your corner.
+            Custom websites and professional photography for businesses that serve their community. <span className="text-bright">No templates. No agencies.</span> Just a builder in your corner.
           </p>
 
           <p className="text-[clamp(15px,1.3vw,18px)] font-light text-white/30 mb-12"><Cycler /></p>
@@ -204,8 +301,8 @@ export default function Page() {
         <div className="max-w-[900px] mx-auto text-center">
           <R>
             <p className="text-[clamp(24px,4vw,48px)] font-bold leading-[1.15] tracking-[-0.02em]">
-              <span className="text-shine">Quality matters.</span>{" "}
-              <span className="text-white/30">Speed wins.</span>
+              <span className="text-bright text-shine">Quality matters.</span>{" "}
+              <span className="text-gradient">Speed wins.</span>
             </p>
           </R>
           <R delay={0.15}>
@@ -341,7 +438,7 @@ export default function Page() {
           </R>
           <R delay={0.2}>
             <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] text-white/40 mb-10">
-              Custom website. Professional photography of your space. Your own domain. SEO setup. Mobile-first. Monthly support from <span className="text-white/70">$150/mo.</span>
+              Custom website. Professional photography of your space. Your own domain. SEO setup. Mobile-first. Monthly support from <span className="text-bright">$150/mo.</span>
             </p>
           </R>
           <R delay={0.3}>
@@ -377,7 +474,7 @@ export default function Page() {
                 Six years in martial arts — training, teaching, watching coaches run entire businesses from their phones. I know what it&apos;s like to be a local business owner the tech world forgot about.
               </p></R>
               <R delay={0.3}><p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] text-white/40 mb-8">
-                Restaurants, cafes, salons, contractors, photographers — if you serve your community, I want to build for you. <span className="text-white/80">You text me. I respond. No tickets. No gatekeepers.</span>
+                Restaurants, cafes, salons, contractors, photographers — if you serve your community, I want to build for you. <span className="text-bright">You text me. I respond.</span> No tickets. No gatekeepers.
               </p></R>
               <R delay={0.4}>
                 <div className="flex flex-wrap gap-3">
