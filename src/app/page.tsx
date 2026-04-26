@@ -109,6 +109,89 @@ function WordReveal({ text, className = "", delay = 0 }: { text: string; classNa
   );
 }
 
+/* ─── Animated Background — canvas dot grid + floating orbs ──── */
+function AnimatedBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resize() {
+      if (!canvas) return;
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    const t0 = performance.now();
+
+    function draw(now: number) {
+      if (!canvas || !ctx) return;
+      const w = canvas.offsetWidth;
+      const h = canvas.offsetHeight;
+      const elapsed = (now - t0) / 1000;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Dot grid
+      const gap = 40;
+      const cols = Math.ceil(w / gap);
+      const rows = Math.ceil(h / gap);
+
+      for (let r = 0; r < rows; r++) {
+        for (let cl = 0; cl < cols; cl++) {
+          const x = (cl + 0.5) * gap;
+          const y = (r + 0.5) * gap;
+
+          const wave = Math.sin((r + cl) * 0.35 + elapsed * 0.8);
+          const opacity = 0.02 + (wave + 1) * 0.04;
+
+          const dx = x / w - 0.5;
+          const dy = y / h - 0.5;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const fade = Math.max(0, 1 - dist * 2);
+
+          ctx.beginPath();
+          ctx.arc(x, y, 1, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${opacity * fade})`;
+          ctx.fill();
+        }
+      }
+
+      // Floating orbs
+      for (let i = 0; i < 3; i++) {
+        const ox = w * (0.2 + i * 0.3) + Math.sin(elapsed * 0.3 + i * 2) * 80;
+        const oy = h * (0.3 + i * 0.15) + Math.cos(elapsed * 0.25 + i * 1.5) * 60;
+        const radius = 150 + i * 50;
+        const grad = ctx.createRadialGradient(ox, oy, 0, ox, oy, radius);
+        grad.addColorStop(0, `rgba(255,255,255,${0.015 - i * 0.003})`);
+        grad.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.beginPath();
+        ctx.arc(ox, oy, radius, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+
+      animId = requestAnimationFrame(draw);
+    }
+
+    animId = requestAnimationFrame(draw);
+    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
+  }, []);
+
+  return (
+    <canvas ref={canvasRef} className="fixed inset-0 w-full h-full pointer-events-none z-0" style={{ opacity: 1 }} />
+  );
+}
+
 function GlowCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const handleMouse = useCallback((e: React.MouseEvent) => {
@@ -167,6 +250,8 @@ export default function Page() {
   return (
     <div className="min-h-screen relative" style={{ background: c.bg, color: c.text }}>
 
+      <AnimatedBackground />
+
       {/* Progress */}
       <motion.div style={{ scaleX: px, transformOrigin: "0%" }} className="fixed top-16 left-0 right-0 h-[1px] z-50">
         <div className="w-full h-full bg-white/20" />
@@ -201,13 +286,7 @@ export default function Page() {
 
       {/* ── Hero ────────────────────────────────────────── */}
       <section id="top" className="relative min-h-[100svh] flex items-center justify-center px-6 sm:px-10">
-        {/* Ambient glow */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full opacity-[0.03]"
-            style={{ background: "radial-gradient(circle, white 0%, transparent 70%)" }} />
-          <div className="absolute bottom-[10%] right-[5%] w-[400px] h-[400px] rounded-full opacity-[0.02]"
-            style={{ background: "radial-gradient(circle, white 0%, transparent 70%)" }} />
-        </div>
+        {/* Canvas background handles ambient animation */}
 
         <div className="relative max-w-[800px] text-center">
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.2 }}
