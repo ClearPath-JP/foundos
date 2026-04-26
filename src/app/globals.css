@@ -212,5 +212,60 @@ canvas.scene {
   text-transform: uppercase;
   line-height: 1.1;
   text-align: center;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, color 0.5s;
+}
+
+/* ─── Text Alive Effects ───────────────────────── */
+
+/* Key word highlight — stands out from surrounding text */
+.text-key {
+  color: var(--white);
+  font-weight: 600;
+}
+.text-key-dark {
+  color: var(--black);
+  font-weight: 600;
+}
+
+/* Animated underline that draws in */
+.text-draw-line {
+  position: relative;
+  display: inline;
+}
+.text-draw-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 0;
+  background: currentColor;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.text-draw-line.drawn::after {
+  width: 100%;
+}
+
+/* Copper accent text */
+.text-copper { color: var(--copper); }
+
+/* Slate accent text */
+.text-slate { color: var(--slate); }
+
+/* Hero text clip reveal container */
+.text-clip {
+  overflow: hidden;
+  display: block;
+}
+.text-clip > span {
+  display: block;
+  transform: translateY(105%);
+}
+
+/* Subtle letter spacing animation on headings */
+.heading-animate {
+  transition: letter-spacing 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.heading-animate:hover {
+  letter-spacing: 0.01em;
 }

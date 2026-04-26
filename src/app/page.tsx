@@ -162,12 +162,12 @@ export default function Page() {
       gsap.registerPlugin(ScrollTrigger);
 
       ctx = gsap.context(() => {
-        // Hero entrance
-        gsap.from(".hero-line", {
-          y: 80, opacity: 0, duration: 1.2, ease: "power4.out",
-          stagger: 0.15, delay: 0.8,
+        // Hero clip reveal — text slides up from hidden
+        gsap.to(".text-clip > span", {
+          y: 0, duration: 1.4, ease: "power4.out",
+          stagger: 0.12, delay: 0.7,
         });
-        gsap.from(".hero-bottom", { y: 20, opacity: 0, duration: 1, ease: "power3.out", delay: 1.2 });
+        gsap.from(".hero-bottom", { y: 20, opacity: 0, duration: 1, ease: "power3.out", delay: 1.4 });
 
         // Ethos section
         gsap.from(".ethos-heading", {
@@ -186,16 +186,25 @@ export default function Page() {
           stagger: 0.15,
         });
 
-        // Focus items — scrub opacity
-        document.querySelectorAll(".focus-item").forEach((item) => {
+        // Ethos underline draw
+        ScrollTrigger.create({
+          trigger: ".ethos-line",
+          start: "top 80%",
+          onEnter: () => document.querySelector(".ethos-line")?.classList.add("drawn"),
+        });
+
+        // Focus items — scrub opacity + color shift
+        document.querySelectorAll(".focus-item").forEach((item, idx) => {
+          const colors = ["#3D5A80", "#C17950", "#111111", "#3D5A80", "#C17950", "#111111", "#3D5A80", "#C17950", "#111111"];
           gsap.fromTo(item,
-            { opacity: 0.12 },
+            { opacity: 0.08, color: "rgba(17,17,17,0.08)" },
             {
               opacity: 1,
+              color: colors[idx % colors.length],
               scrollTrigger: {
                 trigger: item,
                 start: "top 70%",
-                end: "top 30%",
+                end: "top 35%",
                 scrub: true,
               },
             }
@@ -262,15 +271,21 @@ export default function Page() {
         <canvas ref={heroCanvasRef} className="scene" />
 
         <div style={{ position: "absolute", bottom: 180, left: 40, right: 40, zIndex: 1 }}>
-          <p className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)" }}>
-            Building Digital
-          </p>
-          <p className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)" }}>
-            Systems
-          </p>
-          <p className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)", textAlign: "right" }}>
-            For Local Businesses
-          </p>
+          <div className="text-clip">
+            <span className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)" }}>
+              Building Digital
+            </span>
+          </div>
+          <div className="text-clip">
+            <span className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)" }}>
+              <span className="text-copper">Systems</span>
+            </span>
+          </div>
+          <div className="text-clip" style={{ textAlign: "right" }}>
+            <span className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)" }}>
+              For <span style={{ opacity: 0.4 }}>Local</span> Businesses
+            </span>
+          </div>
         </div>
 
         {/* Bottom bar */}
@@ -290,20 +305,20 @@ export default function Page() {
         <div className="ethos-grid" style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "clamp(40px,6vw,80px)", alignItems: "start" }}>
           <div>
             <p className="mono" style={{ color: "rgba(17,17,17,0.4)", marginBottom: 24 }}>Our Ethos</p>
-            <h2 className="ethos-heading heading" style={{ fontSize: "clamp(36px, 5vw, 72px)", color: "var(--black)" }}>
-              Quality Matters.
+            <h2 className="ethos-heading heading heading-animate" style={{ fontSize: "clamp(36px, 5vw, 72px)", color: "var(--black)" }}>
+              <span className="text-slate">Quality</span> Matters.
               <br />
-              Speed Wins.
+              <span className="text-copper">Speed</span> Wins.
             </h2>
           </div>
           <div className="ethos-body">
             <div style={{ borderTop: "1px solid rgba(17,17,17,0.15)", paddingTop: 32, marginBottom: 32 }} />
             <p className="body-text" style={{ color: "var(--black)", maxWidth: 520, marginBottom: 16 }}>
-              Your business deserves more than a template. I build real digital systems — designed around
-              how you work, photographed in your space, and supported long after launch day.
+              Your business deserves more than a template. I build <span className="text-key-dark">real digital systems</span> — designed around
+              how you work, <span className="text-key-dark">photographed in your space</span>, and supported long after launch day.
             </p>
             <p className="body-text" style={{ color: "rgba(17,17,17,0.6)", maxWidth: 520, marginBottom: 32 }}>
-              No agencies. No ticket numbers. No disappearing after launch.
+              No agencies. No ticket numbers. <span className="text-key-dark text-draw-line ethos-line">No disappearing after launch.</span>{" "}
               Just one person who picks up the phone, knows your business,
               and builds exactly what you need.
             </p>
@@ -390,15 +405,16 @@ export default function Page() {
         </div>
 
         <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
-          <h2 className="about-heading heading" style={{ fontSize: "clamp(36px, 7vw, 100px)", color: "var(--white)", marginBottom: 32 }}>
-            I Don&apos;t Disappear
+          <h2 className="about-heading heading heading-animate" style={{ fontSize: "clamp(36px, 7vw, 100px)", color: "var(--white)", marginBottom: 32 }}>
+            I Don&apos;t <span className="text-copper">Disappear</span>
             <br />After Launch
           </h2>
           <div className="about-body" style={{ maxWidth: 600, margin: "0 auto" }}>
             <p className="mono" style={{ color: "rgba(255,255,255,0.5)", marginBottom: 24, lineHeight: 1.8, fontSize: 13, textTransform: "none", letterSpacing: "0.02em" }}>
               Six years in martial arts — training, teaching, watching coaches run their entire business from their phone.
-              Restaurants, cafes, salons, contractors — if you serve your community, I build for you.
-              You text me. I respond. No tickets. No gatekeepers.
+              Restaurants, cafes, salons, contractors — <span className="text-key">if you serve your community, I build for you.</span>
+              <br /><br />
+              <span className="text-key">You text me. I respond.</span> No tickets. No gatekeepers.
             </p>
             <BracketBtn href={CAL}>Book a Call</BracketBtn>
           </div>
@@ -414,9 +430,9 @@ export default function Page() {
       <section className="process-section bg-light" style={{ padding: "clamp(80px,12vw,180px) 40px", borderTopLeftRadius: 24, borderTopRightRadius: 24, position: "relative", zIndex: 2, marginTop: -24 }}>
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
           <p className="mono" style={{ color: "rgba(17,17,17,0.35)", marginBottom: 16 }}>Process</p>
-          <h2 className="heading" style={{ fontSize: "clamp(32px,5vw,64px)", color: "var(--black)", marginBottom: 48 }}>
+          <h2 className="heading heading-animate" style={{ fontSize: "clamp(32px,5vw,64px)", color: "var(--black)", marginBottom: 48 }}>
             From First Call
-            <br />To Launch Day
+            <br />To <span className="text-copper">Launch Day</span>
           </h2>
 
           <div style={{ borderTop: "1px solid rgba(17,17,17,0.1)" }}>
@@ -437,8 +453,8 @@ export default function Page() {
       <section style={{ padding: "0 24px 24px" }}>
         <div className="cta-card cta-grid bg-orange" style={{ borderRadius: 24, padding: "clamp(60px,8vw,120px) clamp(32px,5vw,80px)", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "center", minHeight: "60vh" }}>
           <div>
-            <h2 className="heading" style={{ fontSize: "clamp(40px, 6vw, 80px)", color: "var(--black)", marginBottom: 20 }}>
-              Let&apos;s Build
+            <h2 className="heading heading-animate" style={{ fontSize: "clamp(40px, 6vw, 80px)", color: "var(--black)", marginBottom: 20 }}>
+              Let&apos;s <span className="text-slate">Build</span>
               <br />Something
               <br />Together
             </h2>
