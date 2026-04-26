@@ -211,34 +211,34 @@ export default function Page() {
 
         <div className="relative max-w-[800px] text-center">
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-[12px] tracking-[0.35em] uppercase mb-8" style={{ color: c.dim }}>
+            className="font-mono-label mb-8" style={{ color: c.dim }}>
             Web Development &bull; Photography &bull; Atlanta
           </motion.p>
 
-          <motion.h1 className="text-[clamp(36px,7vw,72px)] font-semibold leading-[1.05] tracking-[-0.03em] mb-6"
+          <motion.h1 className="text-[clamp(40px,8vw,80px)] font-semibold leading-[1.02] tracking-[-0.03em] mb-6"
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}>
-            I build websites {" "}
+            <span className="text-shine">I build websites</span>{" "}
             <br className="hidden sm:block" />
-            <span style={{ color: c.muted }}>
+            <span className="text-gradient">
               <IndustryCycler />
             </span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.6 }}
             className="text-[clamp(16px,1.5vw,20px)] font-light leading-[1.7] max-w-[560px] mx-auto" style={{ color: c.muted }}>
-            Custom websites for local businesses. No templates, no agencies,
-            no ticket numbers. Just a builder in your corner — with a
-            photographer who shoots your space.
+            Custom websites for local businesses. <span className="text-white/90">No templates.</span> No agencies.
+            No ticket numbers. Just a builder in your corner — <span className="text-white/90">with a
+            photographer</span> who shoots your space.
           </motion.p>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.9 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
             <a href={CAL} target="_blank" rel="noopener noreferrer"
-              className="px-8 py-4 sm:py-3.5 rounded-full text-[14px] font-medium bg-white text-black hover:bg-white/90 hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] transition-all min-h-[48px] inline-flex items-center">
-              Book a Free Call
+              className="group px-8 py-4 sm:py-3.5 rounded-full text-[14px] font-medium bg-white text-black hover:bg-white/90 hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] transition-all min-h-[48px] inline-flex items-center gap-2">
+              Book a Free Call <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
             </a>
-            <a href="#work" className="px-8 py-4 sm:py-3.5 rounded-full text-[14px] font-medium border border-white/15 hover:bg-white/5 transition-all min-h-[48px] inline-flex items-center">
-              See My Work
+            <a href="#work" className="group px-8 py-4 sm:py-3.5 rounded-full text-[14px] font-medium border border-white/15 hover:bg-white/5 transition-all min-h-[48px] inline-flex items-center gap-2">
+              See My Work <span className="group-hover:translate-x-1 transition-transform" style={{ color: c.dim }}>&rarr;</span>
             </a>
           </motion.div>
         </div>
@@ -255,13 +255,34 @@ export default function Page() {
         </motion.div>
       </div>
 
+      {/* ── Stats ──────────────────────────────────────── */}
+      <section className="px-6 sm:px-10 py-16 sm:py-20">
+        <div className="max-w-[1000px] mx-auto grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
+          {[
+            { val: "$2k", label: "Starting price" },
+            { val: "<3 wk", label: "Avg delivery" },
+            { val: "100%", label: "Completion rate" },
+            { val: "Direct", label: "Access to me" },
+          ].map((s, i) => (
+            <R key={s.label} delay={i * 0.08}>
+              <div>
+                <p className="text-[clamp(28px,4vw,44px)] font-semibold text-shine">{s.val}</p>
+                <p className="font-mono-label mt-2" style={{ color: c.dim }}>{s.label}</p>
+              </div>
+            </R>
+          ))}
+        </div>
+      </section>
+
+      <AnimLine />
+
       {/* ── Services ────────────────────────────────────── */}
       <section id="services" className="px-6 sm:px-10" style={{ paddingTop: "clamp(100px,14vw,200px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
         <div className="max-w-[1200px] mx-auto">
-          <R><p className="text-[11px] tracking-[0.35em] uppercase mb-4" style={{ color: c.dim }}>What I Do</p></R>
+          <R><p className="font-mono-label mb-4" style={{ color: c.dim }}>What I Do</p></R>
           <R delay={0.1}>
             <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-4">
-              <WordReveal text="Everything your business needs." />
+              <WordReveal text="Everything your business" /> <span className="text-gradient">needs.</span>
             </h2>
           </R>
           <R delay={0.2}><p className="text-[clamp(15px,1.2vw,18px)] font-light max-w-[500px] mb-14" style={{ color: c.muted }}>Website, photography, support, and automations — all from one person who actually picks up the phone.</p></R>
@@ -289,10 +310,10 @@ export default function Page() {
       {/* ── Portfolio ───────────────────────────────────── */}
       <section id="work" className="px-6 sm:px-10" style={{ paddingTop: "clamp(80px,10vw,160px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
         <div className="max-w-[1200px] mx-auto">
-          <R><p className="text-[11px] tracking-[0.35em] uppercase mb-4" style={{ color: c.dim }}>Work</p></R>
+          <R><p className="font-mono-label mb-4" style={{ color: c.dim }}>Work</p></R>
           <R delay={0.1}>
             <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-4">
-              <WordReveal text="Real things I've built." />
+              <WordReveal text="Real things I've" /> <span className="text-shine">built.</span>
             </h2>
           </R>
           <R delay={0.2}><p className="text-[clamp(15px,1.2vw,18px)] font-light max-w-[500px] mb-14" style={{ color: c.muted }}>No mockups. Everything here is shipped and running in production.</p></R>
@@ -342,10 +363,10 @@ export default function Page() {
       {/* ── Process ─────────────────────────────────────── */}
       <section id="process" className="px-6 sm:px-10" style={{ paddingTop: "clamp(80px,10vw,160px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
         <div className="max-w-[800px] mx-auto">
-          <R><p className="text-[11px] tracking-[0.35em] uppercase mb-4" style={{ color: c.dim }}>Process</p></R>
+          <R><p className="font-mono-label mb-4" style={{ color: c.dim }}>Process</p></R>
           <R delay={0.1}>
             <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-14">
-              <WordReveal text="How it works." />
+              <WordReveal text="How it" /> <span className="text-gradient">works.</span>
             </h2>
           </R>
 
@@ -370,10 +391,10 @@ export default function Page() {
       {/* ── Pricing — single line ────────────────────────── */}
       <section className="px-6 sm:px-10" style={{ paddingTop: "clamp(80px,10vw,160px)", paddingBottom: "clamp(80px,10vw,160px)" }}>
         <div className="max-w-[700px] mx-auto text-center">
-          <R><p className="text-[11px] tracking-[0.35em] uppercase mb-4" style={{ color: c.dim }}>Pricing</p></R>
+          <R><p className="font-mono-label mb-4" style={{ color: c.dim }}>Pricing</p></R>
           <R delay={0.1}>
             <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-6">
-              Starting at <span className="text-white">$2,000</span>
+              Starting at <span className="text-shine">$2,000</span>
             </h2>
           </R>
           <R delay={0.2}>
@@ -415,10 +436,10 @@ export default function Page() {
             </R>
 
             <div>
-              <R><p className="text-[11px] tracking-[0.35em] uppercase mb-4" style={{ color: c.dim }}>Josh Potesta &bull; Atlanta &bull; 19</p></R>
+              <R><p className="font-mono-label mb-4" style={{ color: c.dim }}>Josh Potesta &bull; Atlanta &bull; 19</p></R>
               <R delay={0.1}>
                 <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-6">
-                  <WordReveal text="I don't disappear after launch." />
+                  <WordReveal text="I don't disappear" /> <span className="text-shine">after launch.</span>
                 </h2>
               </R>
               <R delay={0.2}>
@@ -458,7 +479,7 @@ export default function Page() {
         <div className="max-w-[600px] mx-auto text-center relative">
           <R>
             <h2 className="text-[clamp(28px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] mb-6">
-              <WordReveal text="Let's build something together." />
+              <WordReveal text="Let's build something" /> <span className="text-glow text-shine">together.</span>
             </h2>
           </R>
           <R delay={0.2}>
@@ -469,10 +490,10 @@ export default function Page() {
           </R>
           <R delay={0.3}>
             <a href={CAL} target="_blank" rel="noopener noreferrer"
-              className="px-10 py-4 rounded-full text-[15px] font-medium bg-white text-black hover:bg-white/90 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all min-h-[52px] inline-flex items-center">
-              Book Your Free Strategy Call
+              className="group px-10 py-4 rounded-full text-[15px] font-medium bg-white text-black hover:bg-white/90 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all min-h-[52px] inline-flex items-center gap-2">
+              Book Your Free Strategy Call <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
             </a>
-            <p className="text-[13px] mt-4" style={{ color: c.dim }}>Free 30-minute call. No commitment.</p>
+            <p className="font-mono-label mt-6" style={{ color: c.dim }}>Free 30-minute call &bull; No commitment</p>
           </R>
         </div>
       </section>

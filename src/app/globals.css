@@ -73,3 +73,39 @@ body::after {
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
+
+/* Gradient shimmer text */
+.text-shine {
+  background: linear-gradient(120deg, #f7f8f8 0%, #f7f8f8 35%, #ffffff 50%, #f7f8f8 65%, #f7f8f8 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 4s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* Gradient accent text */
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.5) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Highlight glow on specific words */
+.text-glow {
+  text-shadow: 0 0 20px rgba(255,255,255,0.15), 0 0 40px rgba(255,255,255,0.05);
+}
+
+/* Mono labels */
+.font-mono-label {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
