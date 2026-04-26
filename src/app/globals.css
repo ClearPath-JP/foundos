@@ -3,10 +3,10 @@
 
 :root {
   --black: #111111;
-  --off-white: #e8e5df;
-  --light-grey: #d4d0c9;
-  --teal: #4a9090;
-  --orange: #e8541e;
+  --off-white: #ECEAE4;
+  --light-grey: #D8D4CC;
+  --slate: #3D5A80;
+  --copper: #C17950;
   --white: #ffffff;
 }
 
@@ -22,7 +22,7 @@ body {
   overflow-x: hidden;
 }
 
-::selection { background: rgba(74, 144, 144, 0.3); }
+::selection { background: rgba(61, 90, 128, 0.3); }
 
 /* ─── Typography System ────────────────────────── */
 .heading {
@@ -128,8 +128,8 @@ body {
 .bg-black { background: var(--black); }
 .bg-light { background: var(--light-grey); }
 .bg-off-white { background: var(--off-white); }
-.bg-teal { background: var(--teal); }
-.bg-orange { background: var(--orange); }
+.bg-teal { background: var(--slate); }
+.bg-orange { background: var(--copper); }
 
 /* ─── Canvas base ──────────────────────────────── */
 canvas.scene {

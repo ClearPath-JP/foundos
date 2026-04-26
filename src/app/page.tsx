@@ -26,8 +26,8 @@ const NAV = [
 
 const FEATURES = [
   { n: "01", title: "Custom Websites", desc: "Built from scratch around your brand. Mobile-first, fast-loading, SEO-ready. Real code, real design — not a template with your name on it.", stat: "Starting at $2K", bg: "var(--black)", color: "var(--white)" },
-  { n: "02", title: "Photography", desc: "My photographer comes to your space. We shoot your food, your interior, your team. Real images that make your business look as good online as it does in person.", stat: "Included in build", bg: "var(--teal)", color: "var(--black)" },
-  { n: "03", title: "Growth Tools", desc: "Online ordering, booking systems, email capture, Google reviews, AI chatbots. We add what you need, when you need it — not everything at once.", stat: "Add when ready", bg: "var(--orange)", color: "var(--black)" },
+  { n: "02", title: "Photography", desc: "My photographer comes to your space. We shoot your food, your interior, your team. Real images that make your business look as good online as it does in person.", stat: "Included in build", bg: "var(--slate)", color: "var(--black)" },
+  { n: "03", title: "Growth Tools", desc: "Online ordering, booking systems, email capture, Google reviews, AI chatbots. We add what you need, when you need it — not everything at once.", stat: "Add when ready", bg: "var(--copper)", color: "var(--black)" },
   { n: "04", title: "Ongoing Support", desc: "Your menu changes. Your hours shift. Your photos get better. I handle all of it — you text me directly and it gets done. No tickets, no waiting, no agencies.", stat: "$150/mo", bg: "var(--off-white)", color: "var(--black)" },
 ];
 
