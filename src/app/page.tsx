@@ -1,104 +1,21 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
-import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 const CAL = "https://cal.com/foundos.ai/strategy-call";
-const ease = [0.16, 1, 0.3, 1] as const;
 
-/* ─── Scroll-triggered reveal — WQF style (dramatic, staggered) ── */
-function Reveal({ children, className = "", delay = 0, direction = "up" }: {
-  children: React.ReactNode; className?: string; delay?: number; direction?: "up" | "left" | "right" | "scale";
-}) {
-  const variants = {
-    up: { hidden: { opacity: 0, y: 60 }, visible: { opacity: 1, y: 0 } },
-    left: { hidden: { opacity: 0, x: -60 }, visible: { opacity: 1, x: 0 } },
-    right: { hidden: { opacity: 0, x: 60 }, visible: { opacity: 1, x: 0 } },
-    scale: { hidden: { opacity: 0, scale: 0.92 }, visible: { opacity: 1, scale: 1 } },
-  };
+/* ─── Bracket Button ─────────────────────────────────────────── */
+function BracketBtn({ children, href, dark = false }: { children: React.ReactNode; href: string; dark?: boolean }) {
   return (
-    <motion.div
-      initial="hidden" whileInView="visible"
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.9, ease, delay }}
-      variants={variants[direction]}
-      className={className}
-    >{children}</motion.div>
+    <a href={href} target={href.startsWith("http") ? "_blank" : undefined}
+      rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+      className="btn-bracket" style={{ color: dark ? "var(--black)" : "var(--white)" }}>
+      <span className="btn-bracket__tl" /><span className="btn-bracket__tr" />
+      {children}
+      <span className="btn-bracket__bl" /><span className="btn-bracket__br" />
+    </a>
   );
-}
-
-/* Staggered children container */
-function StaggerContainer({ children, className = "", stagger = 0.1 }: {
-  children: React.ReactNode; className?: string; stagger?: number;
-}) {
-  return (
-    <motion.div
-      initial="hidden" whileInView="visible"
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ staggerChildren: stagger }}
-      className={className}
-    >{children}</motion.div>
-  );
-}
-
-function StaggerItem({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <motion.div
-      variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } }}
-      transition={{ duration: 0.8, ease }}
-      className={className}
-    >{children}</motion.div>
-  );
-}
-
-/* Line that draws on scroll */
-function DrawLine({ className = "", vertical = false }: { className?: string; vertical?: boolean }) {
-  return (
-    <motion.div
-      initial={{ scaleX: vertical ? 1 : 0, scaleY: vertical ? 0 : 1 }}
-      whileInView={{ scaleX: 1, scaleY: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 1.2, ease }}
-      className={className}
-      style={{ transformOrigin: vertical ? "top" : "left", background: "linear-gradient(90deg, rgba(100,140,255,0.15), rgba(100,140,255,0.03))" }}
-    />
-  );
-}
-
-/* GlowCard with mouse tracking */
-function GlowCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const hm = useCallback((e: React.MouseEvent) => {
-    const el = ref.current; if (!el) return; const r = el.getBoundingClientRect();
-    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
-    el.style.setProperty("--my", `${e.clientY - r.top}px`);
-  }, []);
-  return <div ref={ref} onMouseMove={hm} className={`glow-card ${className}`}>{children}</div>;
-}
-
-function Burger({ open }: { open: boolean }) {
-  return <div className="w-6 h-5 relative flex flex-col justify-between">
-    <motion.span animate={open ? { rotate: 45, y: 8 } : {}} className="block w-full h-[1.5px] bg-white origin-center" transition={{ duration: 0.3 }} />
-    <motion.span animate={open ? { opacity: 0 } : { opacity: 1 }} className="block w-full h-[1.5px] bg-white" transition={{ duration: 0.2 }} />
-    <motion.span animate={open ? { rotate: -45, y: -8 } : {}} className="block w-full h-[1.5px] bg-white origin-center" transition={{ duration: 0.3 }} />
-  </div>;
-}
-
-/* Counter that animates on scroll */
-function Counter({ value, suffix = "" }: { value: string; suffix?: string }) {
-  return <span className="tabular-nums">{value}{suffix}</span>;
-}
-
-/* Industry cycler */
-const IND = ["restaurants", "cafes", "salons", "gyms", "photographers", "contractors"];
-function Cycler() {
-  const [i, setI] = useState(0);
-  useEffect(() => { const t = setInterval(() => setI(v => (v + 1) % IND.length), 2200); return () => clearInterval(t); }, []);
-  return <AnimatePresence mode="wait">
-    <motion.span key={IND[i]} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 0.5 }} exit={{ y: -20, opacity: 0 }}
-      transition={{ duration: 0.4, ease }} className="absolute left-0 whitespace-nowrap">for {IND[i]}</motion.span>
-  </AnimatePresence>;
 }
 
 /* ─── Data ────────────────────────────────────────────────────── */
@@ -107,408 +24,454 @@ const NAV = [
   { href: "#process", label: "Process" }, { href: "#about", label: "About" },
 ];
 
-const PILLARS = [
-  { n: "01", title: "Custom Websites", desc: "Designed around your brand and built to convert. Mobile-first, fast, SEO-ready. No templates, no page builders — real code." },
-  { n: "02", title: "Professional Photography", desc: "My photographer shoots your space, your food, your team. Real images that make your business look as good online as it does in person." },
-  { n: "03", title: "Ongoing Support", desc: "Your business changes. Your site should too. Menu updates, new photos, seasonal content — all handled. You text me directly." },
-  { n: "04", title: "Automations & Growth", desc: "Online ordering, booking systems, email capture, review collection, AI chatbots — added when you're ready, not before." },
+const FEATURES = [
+  { n: "01", title: "Custom Websites", desc: "Designed around your brand and built to convert. Mobile-first, fast, SEO-ready. Real code, not templates.", bg: "var(--black)", color: "var(--white)" },
+  { n: "02", title: "Photography", desc: "My photographer shoots your space, food, and team. Real images that make your site feel alive.", bg: "var(--teal)", color: "var(--black)" },
+  { n: "03", title: "Growth Tools", desc: "Online ordering, booking systems, email capture, review collection — added when you're ready.", bg: "var(--orange)", color: "var(--black)" },
+  { n: "04", title: "Ongoing Support", desc: "Menu updates, new photos, seasonal content. You text me directly — no tickets, no waiting.", bg: "var(--off-white)", color: "var(--black)" },
 ];
 
+const FOCUS_ITEMS = ["Websites", "Photography", "Restaurants", "Cafes", "Salons", "Gyms", "Contractors", "Automations", "SEO"];
+
 const PORTFOLIO = [
-  {
-    title: "Sensei App", tag: "SaaS Platform",
-    desc: "A complete operating system for independent martial arts and fitness coaches. Video library, client management, scheduling, Stripe billing — one platform replacing five apps.",
-    stats: [{ v: "46", l: "Database Tables" }, { v: "150+", l: "API Endpoints" }, { v: "1", l: "Person Built It" }],
-    imgs: ["/portfolio/login-final.png", "/portfolio/coach-dashboard.png", "/portfolio/coach-schedule.png", "/portfolio/coach-payments.png"],
-  },
-  {
-    title: "FRAMELOCK", tag: "Client Project", link: "https://shutter-city.vercel.app",
-    desc: "A dark, cinematic photography portfolio for a car photographer in Atlanta. Film-inspired design with masonry gallery and tiered pricing. Built and shipped in under two weeks.",
-    stats: [{ v: "33", l: "Photos" }, { v: "<2 wk", l: "Build Time" }, { v: "Live", l: "In Production" }],
-    imgs: ["/portfolio/framelock-hero.png", "/portfolio/framelock-gallery.png", "/portfolio/framelock-pricing.png", "/portfolio/framelock-mobile.png"],
-  },
+  { title: "Sensei App", tag: "SaaS Platform", desc: "A complete operating system for independent martial arts and fitness coaches.", link: "" },
+  { title: "FRAMELOCK", tag: "Client Project", desc: "Dark, cinematic photography portfolio for a car photographer in Atlanta.", link: "https://shutter-city.vercel.app" },
+  { title: "Babygirl ATL", tag: "Spec Demo", desc: "Restaurant website for a Michelin-recognized chef's cafe in East Lake.", link: "https://babygirl-atl.vercel.app" },
+  { title: "Station 11", tag: "Spec Demo", desc: "Caribbean-Asian fusion cafe in a historic 1907 Midtown firehouse.", link: "https://station11-atl.vercel.app" },
 ];
 
 const PROCESS = [
-  { n: "01", title: "Free Strategy Call", desc: "You tell me about your business. I tell you honestly what I think you need. No pressure, no sales pitch. Just a real conversation." },
-  { n: "02", title: "Design + Build", desc: "I map out the structure, design the site, and build it — you see progress along the way. Nothing launches until you love it." },
-  { n: "03", title: "Photography Shoot", desc: "My photographer comes to your space. We shoot the food, the interior, the team. Real photos that make your site feel alive." },
-  { n: "04", title: "Launch + Support", desc: "We go live. I handle hosting, updates, and ongoing support. You text me directly — no tickets, no waiting, no gatekeepers." },
+  { n: "01", title: "Free Strategy Call", desc: "You tell me about your business. I tell you what I think you need. No pressure, no pitch." },
+  { n: "02", title: "Design + Build", desc: "I design and build the site. You see progress along the way. Nothing launches until you love it." },
+  { n: "03", title: "Photography Shoot", desc: "My photographer comes to your space. We shoot food, interior, the team. Real photos." },
+  { n: "04", title: "Launch + Support", desc: "We go live. I handle hosting, updates, support. You text me — I respond." },
 ];
 
 /* ─── Page ────────────────────────────────────────────────────── */
 export default function Page() {
-  const [navOpen, setNavOpen] = useState(false);
-  const { scrollYProgress } = useScroll();
-  const px = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: hp } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroOp = useTransform(hp, [0, 0.8], [1, 0]);
-  const heroY = useTransform(hp, [0, 1], [0, -80]);
+  const heroCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => { if (!navOpen) return; const c = () => setNavOpen(false); window.addEventListener("scroll", c, { passive: true }); return () => window.removeEventListener("scroll", c); }, [navOpen]);
+  /* ── Nav scroll state ──────────────────────────── */
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* ── Loading overlay ───────────────────────────── */
+  useEffect(() => {
+    const t = setTimeout(() => setLoaded(true), 600);
+    return () => clearTimeout(t);
+  }, []);
+
+  /* ── Three.js hero particle sphere ─────────────── */
+  useEffect(() => {
+    const canvas = heroCanvasRef.current;
+    if (!canvas) return;
+
+    let cleanup: (() => void) | undefined;
+
+    (async () => {
+      const THREE = await import("three");
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, canvas.offsetWidth / canvas.offsetHeight, 0.1, 100);
+      camera.position.z = 5;
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setClearColor(0x000000, 0);
+
+      // Fibonacci sphere — 2000 particles
+      const count = 2000;
+      const positions = new Float32Array(count * 3);
+      const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+
+      for (let i = 0; i < count; i++) {
+        const y = 1 - (i / (count - 1)) * 2;
+        const radius = Math.sqrt(1 - y * y);
+        const theta = goldenAngle * i;
+        positions[i * 3] = Math.cos(theta) * radius * 2;
+        positions[i * 3 + 1] = y * 2;
+        positions[i * 3 + 2] = Math.sin(theta) * radius * 2;
+      }
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+      const mat = new THREE.PointsMaterial({
+        size: 1.8,
+        color: 0x888888,
+        transparent: true,
+        opacity: 0.6,
+        sizeAttenuation: true,
+      });
+
+      const points = new THREE.Points(geo, mat);
+      points.position.x = 1.5; // Offset right
+      scene.add(points);
+
+      let mouseX = 0, mouseY = 0;
+      const onMouse = (e: MouseEvent) => {
+        mouseX = (e.clientX / window.innerWidth - 0.5) * 0.3;
+        mouseY = (e.clientY / window.innerHeight - 0.5) * 0.3;
+      };
+      window.addEventListener("mousemove", onMouse);
+
+      const onResize = () => {
+        camera.aspect = canvas.offsetWidth / canvas.offsetHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+      };
+      window.addEventListener("resize", onResize);
+
+      let targetRotX = 0, targetRotY = 0;
+      let animId: number;
+
+      const animate = () => {
+        animId = requestAnimationFrame(animate);
+        points.rotation.y += 0.0008;
+        targetRotY += (mouseX - targetRotY) * 0.02;
+        targetRotX += (mouseY - targetRotX) * 0.02;
+        points.rotation.y += targetRotY * 0.01;
+        points.rotation.x += targetRotX * 0.01;
+        renderer.render(scene, camera);
+      };
+      animate();
+
+      cleanup = () => {
+        cancelAnimationFrame(animId);
+        window.removeEventListener("mousemove", onMouse);
+        window.removeEventListener("resize", onResize);
+        renderer.dispose(); geo.dispose(); mat.dispose();
+      };
+    })();
+
+    return () => { if (cleanup) cleanup(); };
+  }, []);
+
+  /* ── GSAP ScrollTrigger setup ──────────────────── */
+  useEffect(() => {
+    let ctx: { revert: () => void } | undefined;
+
+    (async () => {
+      const gsap = (await import("gsap")).default;
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        // Hero entrance
+        gsap.from(".hero-line", {
+          y: 80, opacity: 0, duration: 1.2, ease: "power4.out",
+          stagger: 0.15, delay: 0.8,
+        });
+        gsap.from(".hero-bottom", { y: 20, opacity: 0, duration: 1, ease: "power3.out", delay: 1.2 });
+
+        // Ethos section
+        gsap.from(".ethos-heading", {
+          scrollTrigger: { trigger: ".ethos-section", start: "top 75%" },
+          y: 60, opacity: 0, duration: 1, ease: "power3.out",
+        });
+        gsap.from(".ethos-body", {
+          scrollTrigger: { trigger: ".ethos-section", start: "top 75%" },
+          y: 40, opacity: 0, duration: 0.8, ease: "power2.out", delay: 0.2,
+        });
+
+        // Feature cards
+        gsap.from(".feature-card", {
+          scrollTrigger: { trigger: ".feature-grid", start: "top 80%" },
+          y: 60, opacity: 0, duration: 0.8, ease: "power3.out",
+          stagger: 0.15,
+        });
+
+        // Focus items — scrub opacity
+        document.querySelectorAll(".focus-item").forEach((item) => {
+          gsap.fromTo(item,
+            { opacity: 0.12 },
+            {
+              opacity: 1,
+              scrollTrigger: {
+                trigger: item,
+                start: "top 70%",
+                end: "top 30%",
+                scrub: true,
+              },
+            }
+          );
+        });
+
+        // Portfolio entrance
+        gsap.from(".portfolio-section", {
+          scrollTrigger: { trigger: ".portfolio-section", start: "top 75%" },
+          y: 40, opacity: 0, duration: 1, ease: "power3.out",
+        });
+
+        // Process items
+        gsap.from(".process-item", {
+          scrollTrigger: { trigger: ".process-section", start: "top 75%" },
+          y: 50, opacity: 0, duration: 0.8, ease: "power3.out",
+          stagger: 0.12,
+        });
+
+        // About
+        gsap.from(".about-heading", {
+          scrollTrigger: { trigger: ".about-section", start: "top 75%" },
+          scale: 0.85, opacity: 0, duration: 1, ease: "power3.out",
+        });
+        gsap.from(".about-body", {
+          scrollTrigger: { trigger: ".about-section", start: "top 70%" },
+          y: 30, opacity: 0, duration: 0.8, ease: "power2.out", delay: 0.2,
+        });
+
+        // CTA card
+        gsap.from(".cta-card", {
+          scrollTrigger: { trigger: ".cta-card", start: "top 80%" },
+          y: 60, opacity: 0, duration: 1, ease: "power3.out",
+        });
+      });
+    })();
+
+    return () => { if (ctx) ctx.revert(); };
+  }, []);
 
   return (
-    <div className="min-h-screen">
-
-      {/* Progress */}
-      <motion.div style={{ scaleX: px, transformOrigin: "0%" }} className="fixed top-[64px] left-0 right-0 h-[2px] z-[60]">
-        <div className="w-full h-full" style={{ background: "linear-gradient(90deg, #648CFF, #A78BFA)" }} />
-      </motion.div>
+    <>
+      {/* ── Loading Overlay ──────────────────────────── */}
+      <div className="loader" style={{ opacity: loaded ? 0 : 1, pointerEvents: loaded ? "none" : "all", transition: "opacity 0.6s ease" }}>
+        <p className="mono" style={{ color: "var(--white)", opacity: 0.3 }}>FOUNDOS</p>
+      </div>
 
       {/* ── Nav ─────────────────────────────────────────── */}
-      <motion.nav initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.1 }}
-        className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl border-b border-white/[0.06]" style={{ background: "rgba(10,15,28,0.75)" }}>
-        <div className="max-w-[1280px] mx-auto px-6 sm:px-12 h-16 flex items-center justify-between">
-          <a href="#top" className="text-[14px] font-semibold tracking-[0.18em] uppercase text-shine">FOUNDOS</a>
-          <div className="hidden md:flex items-center gap-10 text-[13px] text-white/35">
-            {NAV.map(l => <a key={l.label} href={l.href} className="hover:text-white/80 transition-colors duration-400">{l.label}</a>)}
-            <a href={CAL} target="_blank" rel="noopener noreferrer"
-              className="ml-4 px-6 py-2.5 text-[12px] font-semibold tracking-[0.08em] uppercase text-white bg-white/10 hover:bg-white/15 border border-white/10 hover:border-white/20 rounded-full transition-all duration-400">
-              Contact
-            </a>
+      <nav className={`nav-bar ${scrolled ? "scrolled" : ""}`}>
+        <a href="#top" style={{ textDecoration: "none" }}>
+          <div style={{ lineHeight: 1.1 }}>
+            <span style={{ display: "block", fontSize: 11, fontWeight: 300, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--white)", opacity: 0.6 }}>Custom Websites</span>
+            <span style={{ display: "block", fontSize: 16, fontWeight: 800, letterSpacing: "-0.01em", textTransform: "uppercase", color: "var(--white)" }}>FOUNDOS</span>
           </div>
-          <button onClick={() => setNavOpen(v => !v)} className="md:hidden p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"><Burger open={navOpen} /></button>
+        </a>
+        <div className="hidden md:flex items-center gap-8">
+          {NAV.map(l => <a key={l.label} href={l.href} className="nav-link">{l.label}</a>)}
+          <BracketBtn href={CAL}>Contact Us</BracketBtn>
         </div>
-        <AnimatePresence>
-          {navOpen && (
-            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }} className="md:hidden overflow-hidden border-b border-white/5" style={{ background: "rgba(10,15,28,0.95)" }}>
-              <div className="px-6 py-6 flex flex-col gap-2">
-                {NAV.map(l => <a key={l.label} href={l.href} onClick={() => setNavOpen(false)} className="py-3 text-[16px] text-white/70 border-b border-white/5 last:border-0">{l.label}</a>)}
-                <a href={CAL} target="_blank" rel="noopener noreferrer" className="mt-4 py-3.5 text-center rounded-full text-[14px] font-semibold bg-white/10 border border-white/10 text-white">Contact</a>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.nav>
+      </nav>
 
-      {/* ── Hero — WQF style ───────────────────────────── */}
-      <section ref={heroRef} id="top" className="relative bg-hero min-h-[100svh] flex items-center justify-center overflow-hidden">
-        {/* Gradient orbs */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-[15%] left-[15%] w-[600px] h-[600px] rounded-full opacity-[0.07]" style={{ background: "radial-gradient(circle, #648CFF 0%, transparent 70%)" }} />
-          <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full opacity-[0.05]" style={{ background: "radial-gradient(circle, #A78BFA 0%, transparent 70%)" }} />
-          <div className="absolute top-[60%] left-[50%] w-[400px] h-[400px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, #648CFF 0%, transparent 70%)" }} />
+      {/* ── Hero ────────────────────────────────────────── */}
+      <section id="top" className="relative bg-black" style={{ height: "100vh", overflow: "hidden" }}>
+        <canvas ref={heroCanvasRef} className="scene" />
+
+        <div style={{ position: "absolute", bottom: 180, left: 40, right: 40, zIndex: 1 }}>
+          <p className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)" }}>
+            Building Digital
+          </p>
+          <p className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)" }}>
+            Systems
+          </p>
+          <p className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)", textAlign: "right" }}>
+            For Local Businesses
+          </p>
         </div>
 
-        <motion.div style={{ opacity: heroOp, y: heroY }} className="relative text-center px-6 max-w-[1000px]">
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
-            className="font-mono text-[11px] sm:text-[12px] tracking-[0.3em] uppercase mb-10 text-white/25">
-            Web Development &bull; Photography &bull; Atlanta, GA
-          </motion.p>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[clamp(36px,7.5vw,82px)] font-bold leading-[1.02] tracking-[-0.035em] mb-8"
-          >
-            <span className="text-shine">Building Digital Systems</span>
-            <br />
-            <span className="text-accent-gradient">For Local Businesses</span>
-          </motion.h1>
-
-          <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.7 }}
-            className="text-[clamp(16px,1.4vw,20px)] font-light leading-[1.75] max-w-[560px] mx-auto text-white/40 mb-4">
-            Custom websites and <span className="text-white/70">professional photography</span> for businesses that serve
-            their community. <span className="text-white/70">No templates. No agencies.</span>
-          </motion.p>
-
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.9 }}
-            className="text-[15px] text-white/25 mb-14 h-[1.2em] relative">
-            <Cycler />
-          </motion.p>
-
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 1 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href={CAL} target="_blank" rel="noopener noreferrer"
-              className="group px-8 py-4 rounded-full text-[13px] font-semibold tracking-[0.06em] uppercase bg-white text-[#0A0F1C] hover:shadow-[0_0_40px_rgba(100,140,255,0.2)] transition-all duration-500 min-h-[52px] inline-flex items-center gap-3">
-              Book a Strategy Call <span className="group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
-            </a>
-            <a href="#work" className="group px-8 py-4 rounded-full text-[13px] font-semibold tracking-[0.06em] uppercase border border-white/15 text-white/60 hover:text-white hover:border-white/30 transition-all duration-500 min-h-[52px] inline-flex items-center gap-3">
-              View Work <span className="group-hover:translate-x-1 transition-transform duration-300 opacity-50">&rarr;</span>
-            </a>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* ── Ethos — WQF "Vision matters. Velocity wins." ─── */}
-      <section className="bg-section-dark px-6 sm:px-12 py-24 sm:py-32">
-        <div className="max-w-[900px] mx-auto text-center">
-          <Reveal>
-            <p className="text-[clamp(28px,4.5vw,56px)] font-bold leading-[1.12] tracking-[-0.025em]">
-              <span className="text-shine">Quality matters.</span>{" "}
-              <span className="text-accent-gradient">Speed wins.</span>
+        {/* Bottom bar */}
+        <div className="hero-bottom" style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 40px 40px", zIndex: 1 }}>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: 20, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+            <BracketBtn href={CAL}>Contact Us</BracketBtn>
+            <p className="mono hidden sm:block" style={{ color: "rgba(255,255,255,0.4)", fontSize: 11 }}>
+              Custom websites &bull; Photography &bull; Atlanta, GA
             </p>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.85] max-w-[580px] mx-auto mt-8 text-white/35">
-              Your business deserves more than a template. I build real digital systems — designed around
-              how you work, photographed in your space, and supported long after launch day.
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── Stats ────────────────────────────────────────── */}
-      <section className="px-6 sm:px-12 py-16 sm:py-20 border-y border-white/[0.04]" style={{ background: "#0B1020" }}>
-        <StaggerContainer className="max-w-[1100px] mx-auto grid grid-cols-2 sm:grid-cols-4 gap-10 text-center" stagger={0.1}>
-          {[
-            { v: "$2,000", l: "Starting price" }, { v: "< 3 weeks", l: "Average delivery" },
-            { v: "100%", l: "Completion rate" }, { v: "Direct", l: "Access to me" },
-          ].map(s => (
-            <StaggerItem key={s.l}>
-              <p className="text-[clamp(24px,3.5vw,40px)] font-bold tracking-[-0.02em] text-shine">{s.v}</p>
-              <p className="font-mono text-[10px] tracking-[0.2em] uppercase mt-3 text-white/25">{s.l}</p>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-      </section>
-
-      {/* ── Services — WQF 4-pillar grid ─────────────────── */}
-      <section id="services" className="bg-navy px-6 sm:px-12" style={{ paddingTop: "clamp(80px,12vw,180px)", paddingBottom: "clamp(80px,12vw,180px)" }}>
-        <div className="max-w-[1280px] mx-auto">
-          <Reveal>
-            <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-white/25 mb-5">What I Build</p>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <h2 className="text-[clamp(32px,5vw,60px)] font-bold leading-[1.05] tracking-[-0.03em] mb-6 max-w-[700px]">
-              Everything your business <span className="text-accent-gradient">needs.</span>
-            </h2>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] text-white/35 max-w-[520px] mb-16">
-              Website, photography, support, and growth tools — all from one person who picks up the phone.
-            </p>
-          </Reveal>
-
-          <DrawLine className="h-[1px] w-full mb-0" />
-          <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
-            {PILLARS.map((p, i) => (
-              <StaggerItem key={p.n}>
-                <div className={`p-8 sm:p-10 h-full border-b sm:border-b-0 sm:border-r border-white/[0.04] last:border-r-0 hover:bg-white/[0.02] transition-colors duration-500 ${i === 0 ? "" : ""}`}>
-                  <p className="font-mono text-[11px] tracking-[0.2em] text-white/15 mb-6">{p.n} / 04</p>
-                  <h3 className="text-[clamp(20px,1.6vw,24px)] font-semibold mb-4 leading-[1.2]">{p.title}</h3>
-                  <p className="text-[14px] leading-[1.8] text-white/35">{p.desc}</p>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-          <DrawLine className="h-[1px] w-full mt-0" />
-        </div>
-      </section>
-
-      {/* ── Portfolio — WQF showcase style ────────────────── */}
-      <section id="work" className="bg-section-deeper px-6 sm:px-12" style={{ paddingTop: "clamp(80px,12vw,180px)", paddingBottom: "clamp(80px,12vw,180px)" }}>
-        <div className="max-w-[1280px] mx-auto">
-          <Reveal>
-            <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-white/25 mb-5">Work</p>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <h2 className="text-[clamp(32px,5vw,60px)] font-bold leading-[1.05] tracking-[-0.03em] mb-6 max-w-[700px]">
-              Shipped and <span className="text-shine">running.</span>
-            </h2>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] text-white/35 max-w-[520px] mb-16">
-              No mockups. Everything here is live in production.
-            </p>
-          </Reveal>
-
-          <div className="space-y-8">
-            {PORTFOLIO.map((p, pi) => (
-              <Reveal key={p.title} delay={pi * 0.12} direction="scale">
-                <GlowCard className="p-8 sm:p-12">
-                  <div className="relative z-10">
-                    <div className="flex flex-wrap items-center gap-4 mb-6">
-                      <span className="font-mono text-[10px] tracking-[0.15em] uppercase px-4 py-1.5 rounded-full border border-white/[0.08] text-white/30">{p.tag}</span>
-                      {p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" className="group font-mono text-[10px] tracking-[0.15em] uppercase text-white/25 hover:text-white/60 transition-colors inline-flex items-center gap-2">
-                        Live site <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-                      </a>}
-                    </div>
-                    <h3 className="text-[clamp(28px,4vw,44px)] font-bold tracking-[-0.02em] mb-4">{p.title}</h3>
-                    <p className="text-[15px] leading-[1.8] text-white/35 max-w-[620px] mb-10">{p.desc}</p>
-
-                    <div className="flex flex-wrap gap-10 mb-10">
-                      {p.stats.map(s => (
-                        <div key={s.l}>
-                          <p className="text-[clamp(24px,3vw,36px)] font-bold text-shine">{s.v}</p>
-                          <p className="font-mono text-[10px] tracking-[0.15em] uppercase mt-2 text-white/20">{s.l}</p>
-                        </div>
-                      ))}
-                    </div>
-
-                    <StaggerContainer className="grid grid-cols-2 sm:grid-cols-4 gap-3" stagger={0.08}>
-                      {p.imgs.map(src => (
-                        <StaggerItem key={src}>
-                          <div className="relative aspect-[4/3] rounded-xl overflow-hidden border border-white/[0.04] group">
-                            <Image src={src} alt="" fill className="object-cover object-top group-hover:scale-105 transition-transform duration-700" sizes="300px" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0F1C]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                          </div>
-                        </StaggerItem>
-                      ))}
-                    </StaggerContainer>
-                  </div>
-                </GlowCard>
-              </Reveal>
-            ))}
+            <span className="mono hidden sm:block" style={{ color: "rgba(255,255,255,0.3)", fontSize: 10 }}>FOUNDOS.AI</span>
           </div>
         </div>
       </section>
 
-      {/* ── Process — WQF numbered steps ──────────────────── */}
-      <section id="process" className="bg-section-dark px-6 sm:px-12" style={{ paddingTop: "clamp(80px,12vw,180px)", paddingBottom: "clamp(80px,12vw,180px)" }}>
-        <div className="max-w-[900px] mx-auto">
-          <Reveal>
-            <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-white/25 mb-5">Process</p>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <h2 className="text-[clamp(32px,5vw,60px)] font-bold leading-[1.05] tracking-[-0.03em] mb-16 max-w-[600px]">
-              From first call to <span className="text-accent-gradient">launch day.</span>
-            </h2>
-          </Reveal>
-
-          <DrawLine className="h-[1px] w-full" />
-          <StaggerContainer stagger={0.1}>
-            {PROCESS.map(p => (
-              <StaggerItem key={p.n}>
-                <div className="flex gap-8 py-10 border-b border-white/[0.04] group hover:border-white/[0.08] transition-colors duration-500">
-                  <span className="font-mono text-[12px] text-white/15 mt-1.5 shrink-0 tracking-[0.1em]">{p.n}</span>
-                  <div>
-                    <h3 className="text-[clamp(20px,1.8vw,26px)] font-semibold mb-3">{p.title}</h3>
-                    <p className="text-[15px] leading-[1.8] text-white/35 max-w-[550px]">{p.desc}</p>
-                  </div>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      {/* ── Pricing ──────────────────────────────────────── */}
-      <section className="bg-navy px-6 sm:px-12 py-24 sm:py-32">
-        <div className="max-w-[800px] mx-auto text-center">
-          <Reveal>
-            <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-white/25 mb-8">Pricing</p>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <h2 className="text-[clamp(36px,5.5vw,64px)] font-bold leading-[1.05] tracking-[-0.03em] mb-8">
-              Starting at <span className="text-shine">$2,000</span>
-            </h2>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.85] text-white/35 mb-12 max-w-[560px] mx-auto">
-              Custom website. Professional photography. Your own domain. SEO setup.
-              Mobile-first design. Monthly support from <span className="text-white/60">$150/mo</span>.
-            </p>
-          </Reveal>
-          <Reveal delay={0.25}>
-            <StaggerContainer className="flex flex-wrap justify-center gap-3 mb-14" stagger={0.05}>
-              {["Custom design", "Professional photography", "Your domain", "SEO & Google setup", "Mobile-first", "Ongoing support"].map(t => (
-                <StaggerItem key={t}>
-                  <span className="px-5 py-2.5 text-[12px] font-medium rounded-full border border-white/[0.06] text-white/30 hover:border-white/[0.12] hover:text-white/50 transition-all duration-400">{t}</span>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
-          </Reveal>
-          <Reveal delay={0.3}>
-            <a href={CAL} target="_blank" rel="noopener noreferrer"
-              className="group px-8 py-4 rounded-full text-[13px] font-semibold tracking-[0.06em] uppercase bg-white text-[#0A0F1C] hover:shadow-[0_0_40px_rgba(100,140,255,0.2)] transition-all duration-500 min-h-[52px] inline-flex items-center gap-3">
-              Book a Free Strategy Call <span className="group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
-            </a>
-            <p className="font-mono text-[10px] tracking-[0.2em] uppercase mt-8 text-white/20">Free 30-min call &bull; No commitment</p>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── About ───────────────────────────────────────── */}
-      <section id="about" className="bg-section-deeper px-6 sm:px-12" style={{ paddingTop: "clamp(80px,12vw,180px)", paddingBottom: "clamp(80px,12vw,180px)" }}>
-        <div className="max-w-[1100px] mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-12 md:gap-20 items-start">
-            <Reveal direction="left">
-              <div className="relative w-44 h-44 md:w-full md:h-auto md:aspect-square rounded-2xl overflow-hidden mx-auto md:mx-0 border border-white/[0.06]">
-                <Image src="/josh.jpg" alt="Josh Potesta" fill className="object-cover" sizes="224px" />
-              </div>
-            </Reveal>
-            <div>
-              <Reveal><p className="font-mono text-[11px] tracking-[0.3em] uppercase text-white/25 mb-5">Josh Potesta &bull; Atlanta &bull; 19</p></Reveal>
-              <Reveal delay={0.1}>
-                <h2 className="text-[clamp(32px,4.5vw,52px)] font-bold leading-[1.08] tracking-[-0.03em] mb-8">
-                  I don&apos;t disappear <span className="text-accent-gradient">after launch.</span>
-                </h2>
-              </Reveal>
-              <Reveal delay={0.2}><p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.85] text-white/35 mb-5">
-                Six years in martial arts — training, teaching, watching coaches run their entire business from their phone. I know what it&apos;s like to be a local business owner the tech world left behind.
-              </p></Reveal>
-              <Reveal delay={0.3}><p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.85] text-white/35 mb-10">
-                Restaurants, cafes, salons, contractors — if you serve your community, I build for you.{" "}
-                <span className="text-white/70">You text me. I respond.</span> No tickets. No gatekeepers.
-              </p></Reveal>
-              <Reveal delay={0.4}>
-                <div className="flex flex-wrap gap-4">
-                  <a href={CAL} target="_blank" rel="noopener noreferrer" className="group px-6 py-3.5 rounded-full text-[13px] font-semibold tracking-[0.06em] uppercase border border-white/15 hover:bg-white hover:text-[#0A0F1C] transition-all duration-500 min-h-[48px] inline-flex items-center gap-2">
-                    Book a Call <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                  </a>
-                  <a href="mailto:hello@foundos.ai" className="px-6 py-3.5 rounded-full text-[13px] font-medium border border-white/8 text-white/30 hover:text-white/50 hover:border-white/15 transition-all duration-400 min-h-[48px] inline-flex items-center">hello@foundos.ai</a>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Final CTA — WQF "Own what's next" style ──────── */}
-      <section className="relative bg-hero px-6 sm:px-12" style={{ paddingTop: "clamp(100px,14vw,200px)", paddingBottom: "clamp(120px,16vw,220px)" }}>
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute bottom-0 left-[30%] w-[500px] h-[500px] rounded-full opacity-[0.06]" style={{ background: "radial-gradient(circle, #648CFF 0%, transparent 70%)" }} />
-          <div className="absolute bottom-[20%] right-[20%] w-[400px] h-[400px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, #A78BFA 0%, transparent 70%)" }} />
-        </div>
-        <div className="max-w-[700px] mx-auto text-center relative">
-          <Reveal>
-            <h2 className="text-[clamp(36px,6vw,72px)] font-bold leading-[1.02] tracking-[-0.035em] mb-8">
-              <span className="text-shine">Let&apos;s build something</span>
+      {/* ── Ethos ───────────────────────────────────────── */}
+      <section className="ethos-section bg-light" style={{ minHeight: "100vh", padding: "clamp(80px,12vw,160px) 40px", borderTopLeftRadius: 24, borderTopRightRadius: 24, position: "relative", zIndex: 2, marginTop: -24 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "clamp(40px,6vw,80px)", alignItems: "start" }}>
+          <div>
+            <p className="mono" style={{ color: "rgba(17,17,17,0.4)", marginBottom: 24 }}>Our Ethos</p>
+            <h2 className="ethos-heading heading" style={{ fontSize: "clamp(36px, 5vw, 72px)", color: "var(--black)" }}>
+              Quality Matters.
               <br />
-              <span className="text-accent-gradient">together.</span>
+              Speed Wins.
             </h2>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <p className="text-[clamp(15px,1.2vw,18px)] font-light leading-[1.8] text-white/35 mb-12 max-w-[480px] mx-auto">
-              Tell me about your business. No pressure, no commitment. Just a real conversation about what you need and whether I can help.
+          </div>
+          <div className="ethos-body">
+            <div style={{ borderTop: "1px solid rgba(17,17,17,0.15)", paddingTop: 32, marginBottom: 32 }} />
+            <p className="body-text" style={{ color: "var(--black)", maxWidth: 520, marginBottom: 32 }}>
+              Your business deserves more than a template. I build real digital systems — designed around
+              how you work, photographed in your space, and supported long after launch day. No agencies,
+              no ticket numbers. Just a builder in your corner.
             </p>
-          </Reveal>
-          <Reveal delay={0.25}>
-            <a href={CAL} target="_blank" rel="noopener noreferrer"
-              className="group px-10 py-4.5 rounded-full text-[14px] font-semibold tracking-[0.06em] uppercase bg-white text-[#0A0F1C] hover:shadow-[0_0_50px_rgba(100,140,255,0.25)] transition-all duration-500 min-h-[56px] inline-flex items-center gap-3">
-              Book Your Free Strategy Call <span className="group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
-            </a>
-            <p className="font-mono text-[10px] tracking-[0.2em] uppercase mt-8 text-white/15">Free 30-min call &bull; No commitment &bull; No pitch</p>
-          </Reveal>
+            <BracketBtn href={CAL} dark>Book a Call</BracketBtn>
+          </div>
         </div>
       </section>
 
-      {/* ── Footer — WQF dark footer ─────────────────────── */}
-      <footer className="bg-footer px-6 sm:px-12 py-14 border-t border-white/[0.04]">
-        <div className="max-w-[1280px] mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8 mb-10">
-            <div>
-              <p className="text-[14px] font-semibold tracking-[0.18em] uppercase text-shine">FOUNDOS</p>
-              <p className="font-mono text-[10px] tracking-[0.15em] uppercase mt-2 text-white/20">Custom Websites &bull; Photography &bull; Atlanta</p>
+      {/* ── Feature Cards ───────────────────────────────── */}
+      <section id="services" className="feature-grid">
+        {FEATURES.map((f, i) => (
+          <div key={f.n} className="feature-card" style={{ background: f.bg, color: f.color }}>
+            <div style={{ flex: 1, position: "relative", minHeight: 280 }}>
+              {/* Decorative gradient */}
+              <div style={{ position: "absolute", inset: 0, opacity: 0.15, background: `radial-gradient(circle at ${30 + i * 15}% ${40 + i * 10}%, currentColor 0%, transparent 60%)` }} />
             </div>
-            <div className="flex flex-wrap gap-8 text-[13px] text-white/25">
-              {NAV.map(l => <a key={l.label} href={l.href} className="hover:text-white/60 transition-colors">{l.label}</a>)}
-            </div>
-          </div>
-          <div className="h-[1px] bg-white/[0.04] mb-8" />
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <p className="font-mono text-[10px] tracking-[0.1em] text-white/15">&copy; 2026 FoundOS. All rights reserved.</p>
-            <div className="flex items-center gap-8 text-[12px] text-white/20">
-              <a href="https://instagram.com/foundos.ai" target="_blank" rel="noopener noreferrer" className="hover:text-white/50 transition-colors min-h-[44px] flex items-center">Instagram</a>
-              <a href="https://tiktok.com/@foundos.ai" target="_blank" rel="noopener noreferrer" className="hover:text-white/50 transition-colors min-h-[44px] flex items-center">TikTok</a>
-              <a href="mailto:hello@foundos.ai" className="hover:text-white/50 transition-colors min-h-[44px] flex items-center">hello@foundos.ai</a>
+            <div className="feature-card__content">
+              <p className="mono" style={{ marginBottom: 16, opacity: 0.5 }}>{f.n} / 04</p>
+              <h3 className="heading" style={{ fontSize: "clamp(20px,2vw,28px)", marginBottom: 12 }}>{f.title}</h3>
+              <p className="mono" style={{ opacity: 0.7, lineHeight: 1.6 }}>{f.desc}</p>
             </div>
           </div>
+        ))}
+      </section>
+
+      {/* ── Focus / Skills List ──────────────────────────── */}
+      <section className="bg-light" style={{ padding: "clamp(100px,14vw,200px) 40px" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto", textAlign: "center" }}>
+          <p className="mono" style={{ color: "rgba(17,17,17,0.35)", marginBottom: 16 }}>Our Focus</p>
+          <p className="heading" style={{ fontSize: "clamp(20px,3vw,40px)", color: "rgba(17,17,17,0.15)", marginBottom: 60 }}>
+            What We Build. Who We Serve.
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
+            {FOCUS_ITEMS.map(item => (
+              <p key={item} className="focus-item" style={{ fontSize: "clamp(36px, 7vw, 100px)", color: "var(--black)" }}>
+                {item}
+              </p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Portfolio ───────────────────────────────────── */}
+      <section className="portfolio-section bg-light" style={{ padding: "clamp(80px,10vw,160px) 40px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <p className="mono" style={{ color: "rgba(17,17,17,0.35)", marginBottom: 16 }}>Portfolio</p>
+          <h2 className="heading" style={{ fontSize: "clamp(32px,5vw,64px)", color: "var(--black)", marginBottom: 16 }}>
+            Shipped &amp; Running
+          </h2>
+          <p className="body-text" style={{ color: "rgba(17,17,17,0.6)", maxWidth: 480, marginBottom: 48 }}>
+            No mockups. Everything here is live in production.
+          </p>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+            {PORTFOLIO.map(p => (
+              <div key={p.title} style={{ background: "var(--white)", borderRadius: 16, padding: "clamp(28px,4vw,48px)", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 320 }}>
+                <div>
+                  <p className="mono" style={{ color: "rgba(17,17,17,0.3)", marginBottom: 16 }}>{p.tag}</p>
+                  <h3 className="heading" style={{ fontSize: "clamp(24px,2.5vw,32px)", color: "var(--black)", marginBottom: 12 }}>{p.title}</h3>
+                  <p className="body-text" style={{ color: "rgba(17,17,17,0.6)", fontSize: 14 }}>{p.desc}</p>
+                </div>
+                {p.link && <div style={{ marginTop: 24 }}>
+                  <BracketBtn href={p.link} dark>View Site</BracketBtn>
+                </div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── About / Team ────────────────────────────────── */}
+      <section className="about-section bg-black" style={{ padding: "clamp(80px,12vw,180px) 40px" }}>
+        {/* Marquee */}
+        <div style={{ overflow: "hidden", marginBottom: 80, borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: 16 }}>
+          <div className="marquee-track">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <span key={i} className="mono" style={{ color: "rgba(255,255,255,0.25)", fontSize: 11, marginRight: 40 }}>
+                About &bull; Josh Potesta &bull; Atlanta &bull; 19 Years Old &bull; Martial Arts &bull; Web Development &bull; Photography &bull;&nbsp;
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+          <h2 className="about-heading heading" style={{ fontSize: "clamp(36px, 7vw, 100px)", color: "var(--white)", marginBottom: 32 }}>
+            I Don&apos;t Disappear
+            <br />After Launch
+          </h2>
+          <div className="about-body" style={{ maxWidth: 600, margin: "0 auto" }}>
+            <p className="mono" style={{ color: "rgba(255,255,255,0.5)", marginBottom: 24, lineHeight: 1.8, fontSize: 13, textTransform: "none", letterSpacing: "0.02em" }}>
+              Six years in martial arts — training, teaching, watching coaches run their entire business from their phone.
+              Restaurants, cafes, salons, contractors — if you serve your community, I build for you.
+              You text me. I respond. No tickets. No gatekeepers.
+            </p>
+            <BracketBtn href={CAL}>Book a Call</BracketBtn>
+          </div>
+        </div>
+
+        {/* Photo */}
+        <div style={{ maxWidth: 200, margin: "60px auto 0", borderRadius: 16, overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <Image src="/josh.jpg" alt="Josh Potesta" width={200} height={200} style={{ width: "100%", height: "auto", display: "block", filter: "grayscale(100%)" }} />
+        </div>
+      </section>
+
+      {/* ── Process ──────────────────────────────────────── */}
+      <section className="process-section bg-light" style={{ padding: "clamp(80px,12vw,180px) 40px", borderTopLeftRadius: 24, borderTopRightRadius: 24, position: "relative", zIndex: 2, marginTop: -24 }}>
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
+          <p className="mono" style={{ color: "rgba(17,17,17,0.35)", marginBottom: 16 }}>Process</p>
+          <h2 className="heading" style={{ fontSize: "clamp(32px,5vw,64px)", color: "var(--black)", marginBottom: 48 }}>
+            From First Call
+            <br />To Launch Day
+          </h2>
+
+          <div style={{ borderTop: "1px solid rgba(17,17,17,0.1)" }}>
+            {PROCESS.map(p => (
+              <div key={p.n} className="process-item" style={{ display: "flex", gap: 32, padding: "32px 0", borderBottom: "1px solid rgba(17,17,17,0.1)" }}>
+                <span className="mono" style={{ color: "rgba(17,17,17,0.2)", marginTop: 4, flexShrink: 0 }}>{p.n}</span>
+                <div>
+                  <h3 className="heading" style={{ fontSize: "clamp(20px,2vw,28px)", color: "var(--black)", marginBottom: 8 }}>{p.title}</h3>
+                  <p className="body-text" style={{ color: "rgba(17,17,17,0.55)", fontSize: 14 }}>{p.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA Card ────────────────────────────────────── */}
+      <section style={{ padding: "0 24px 24px" }}>
+        <div className="cta-card bg-orange" style={{ borderRadius: 24, padding: "clamp(60px,8vw,120px) clamp(32px,5vw,80px)", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "center", minHeight: "60vh" }}>
+          <div>
+            <h2 className="heading" style={{ fontSize: "clamp(40px, 6vw, 80px)", color: "var(--black)", marginBottom: 20 }}>
+              Let&apos;s Build
+              <br />Something
+              <br />Together
+            </h2>
+            <p className="mono" style={{ color: "rgba(17,17,17,0.6)", marginBottom: 32, fontSize: 13, textTransform: "none", letterSpacing: "0.02em", maxWidth: 400 }}>
+              Book a call, tell me about your business. No pressure, no commitment. Just a conversation about what you need.
+            </p>
+            <BracketBtn href={CAL} dark>Contact Us</BracketBtn>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <p className="heading" style={{ fontSize: "clamp(80px,12vw,200px)", color: "rgba(17,17,17,0.08)", lineHeight: 0.9 }}>
+              F<br />O<br />S
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Footer ───────────────────────────────────────── */}
+      <footer className="bg-black" style={{ padding: "60px 40px 32px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, marginBottom: 48 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {NAV.map(l => (
+              <a key={l.label} href={l.href} className="heading" style={{ fontSize: "clamp(28px,4vw,48px)", color: "var(--white)", textDecoration: "none", opacity: 0.8, transition: "opacity 0.2s" }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = "0.5")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.8")}>
+                {l.label}
+              </a>
+            ))}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
+            <a href="https://instagram.com/foundos.ai" target="_blank" rel="noopener noreferrer" className="mono" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Instagram</a>
+            <a href="https://tiktok.com/@foundos.ai" target="_blank" rel="noopener noreferrer" className="mono" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>TikTok</a>
+            <a href="mailto:hello@foundos.ai" className="mono" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>hello@foundos.ai</a>
+          </div>
+        </div>
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 24, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+          <p className="mono" style={{ color: "rgba(255,255,255,0.2)", fontSize: 10 }}>&copy; 2026 FoundOS. All rights reserved.</p>
+          <p className="mono" style={{ color: "rgba(255,255,255,0.15)", fontSize: 10 }}>Site by Josh Potesta</p>
         </div>
       </footer>
-    </div>
+    </>
   );
 }
