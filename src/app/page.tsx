@@ -25,19 +25,17 @@ const NAV = [
 ];
 
 const FEATURES = [
-  { n: "01", title: "Custom Websites", desc: "Designed around your brand and built to convert. Mobile-first, fast, SEO-ready. Real code, not templates.", bg: "var(--black)", color: "var(--white)" },
-  { n: "02", title: "Photography", desc: "My photographer shoots your space, food, and team. Real images that make your site feel alive.", bg: "var(--teal)", color: "var(--black)" },
-  { n: "03", title: "Growth Tools", desc: "Online ordering, booking systems, email capture, review collection — added when you're ready.", bg: "var(--orange)", color: "var(--black)" },
-  { n: "04", title: "Ongoing Support", desc: "Menu updates, new photos, seasonal content. You text me directly — no tickets, no waiting.", bg: "var(--off-white)", color: "var(--black)" },
+  { n: "01", title: "Custom Websites", desc: "Built from scratch around your brand. Mobile-first, fast-loading, SEO-ready. Real code, real design — not a template with your name on it.", stat: "Starting at $2K", bg: "var(--black)", color: "var(--white)" },
+  { n: "02", title: "Photography", desc: "My photographer comes to your space. We shoot your food, your interior, your team. Real images that make your business look as good online as it does in person.", stat: "Included in build", bg: "var(--teal)", color: "var(--black)" },
+  { n: "03", title: "Growth Tools", desc: "Online ordering, booking systems, email capture, Google reviews, AI chatbots. We add what you need, when you need it — not everything at once.", stat: "Add when ready", bg: "var(--orange)", color: "var(--black)" },
+  { n: "04", title: "Ongoing Support", desc: "Your menu changes. Your hours shift. Your photos get better. I handle all of it — you text me directly and it gets done. No tickets, no waiting, no agencies.", stat: "$150/mo", bg: "var(--off-white)", color: "var(--black)" },
 ];
 
 const FOCUS_ITEMS = ["Websites", "Photography", "Restaurants", "Cafes", "Salons", "Gyms", "Contractors", "Automations", "SEO"];
 
 const PORTFOLIO = [
-  { title: "Sensei App", tag: "SaaS Platform", desc: "A complete operating system for independent martial arts and fitness coaches.", link: "" },
-  { title: "FRAMELOCK", tag: "Client Project", desc: "Dark, cinematic photography portfolio for a car photographer in Atlanta.", link: "https://shutter-city.vercel.app" },
-  { title: "Babygirl ATL", tag: "Spec Demo", desc: "Restaurant website for a Michelin-recognized chef's cafe in East Lake.", link: "https://babygirl-atl.vercel.app" },
-  { title: "Station 11", tag: "Spec Demo", desc: "Caribbean-Asian fusion cafe in a historic 1907 Midtown firehouse.", link: "https://station11-atl.vercel.app" },
+  { title: "Sensei App", tag: "SaaS Platform", desc: "A complete operating system for independent martial arts and fitness coaches. Video library, client management, scheduling, billing — one system replacing five apps.", link: "" },
+  { title: "FRAMELOCK", tag: "Client Project", desc: "Dark, cinematic photography portfolio for a car photographer in Atlanta. Film-inspired design with masonry gallery and tiered pricing. Built and shipped in under two weeks.", link: "https://shutter-city.vercel.app" },
 ];
 
 const PROCESS = [
@@ -299,10 +297,14 @@ export default function Page() {
           </div>
           <div className="ethos-body">
             <div style={{ borderTop: "1px solid rgba(17,17,17,0.15)", paddingTop: 32, marginBottom: 32 }} />
-            <p className="body-text" style={{ color: "var(--black)", maxWidth: 520, marginBottom: 32 }}>
+            <p className="body-text" style={{ color: "var(--black)", maxWidth: 520, marginBottom: 16 }}>
               Your business deserves more than a template. I build real digital systems — designed around
-              how you work, photographed in your space, and supported long after launch day. No agencies,
-              no ticket numbers. Just a builder in your corner.
+              how you work, photographed in your space, and supported long after launch day.
+            </p>
+            <p className="body-text" style={{ color: "rgba(17,17,17,0.6)", maxWidth: 520, marginBottom: 32 }}>
+              No agencies. No ticket numbers. No disappearing after launch.
+              Just one person who picks up the phone, knows your business,
+              and builds exactly what you need.
             </p>
             <BracketBtn href={CAL} dark>Book a Call</BracketBtn>
           </div>
@@ -318,9 +320,10 @@ export default function Page() {
               <div style={{ position: "absolute", inset: 0, opacity: 0.15, background: `radial-gradient(circle at ${30 + i * 15}% ${40 + i * 10}%, currentColor 0%, transparent 60%)` }} />
             </div>
             <div className="feature-card__content">
-              <p className="mono" style={{ marginBottom: 16, opacity: 0.5 }}>{f.n} / 04</p>
-              <h3 className="heading" style={{ fontSize: "clamp(20px,2vw,28px)", marginBottom: 12 }}>{f.title}</h3>
-              <p className="mono" style={{ opacity: 0.7, lineHeight: 1.6 }}>{f.desc}</p>
+              <p className="mono" style={{ marginBottom: 12, opacity: 0.4 }}>{f.n} / 04</p>
+              <h3 className="heading" style={{ fontSize: "clamp(22px,2.2vw,30px)", marginBottom: 12 }}>{f.title}</h3>
+              <p style={{ fontSize: 13, lineHeight: 1.7, opacity: 0.65, marginBottom: 16, textTransform: "none" }}>{f.desc}</p>
+              <p className="mono" style={{ opacity: 0.9, fontWeight: 600, fontSize: 12 }}>{f.stat}</p>
             </div>
           </div>
         ))}
