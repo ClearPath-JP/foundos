@@ -34,8 +34,8 @@ const FEATURES = [
 const FOCUS_ITEMS = ["Websites", "Photography", "Restaurants", "Cafes", "Salons", "Gyms", "Contractors", "Automations", "SEO"];
 
 const PORTFOLIO = [
-  { title: "Sensei App", tag: "SaaS Platform", desc: "A complete operating system for independent martial arts and fitness coaches. Video library, client management, scheduling, billing — one system replacing five apps.", link: "" },
-  { title: "FRAMELOCK", tag: "Client Project", desc: "Dark, cinematic photography portfolio for a car photographer in Atlanta. Film-inspired design with masonry gallery and tiered pricing. Built and shipped in under two weeks.", link: "https://shutter-city.vercel.app" },
+  { title: "Sensei App", tag: "SaaS Platform", desc: "A complete operating system for independent martial arts and fitness coaches. Video library, client management, scheduling, billing — one system replacing five apps.", stats: "46 DB Tables · 150+ Endpoints · Solo Built", link: "" },
+  { title: "FRAMELOCK", tag: "Client Project", desc: "Dark, cinematic photography portfolio for a car photographer in Atlanta. Film-inspired design with masonry gallery and tiered pricing. Built and shipped in under two weeks.", stats: "33 Photos · 3 Tiers · Live in Production", link: "https://shutter-city.vercel.app" },
 ];
 
 const PROCESS = [
@@ -250,7 +250,7 @@ export default function Page() {
             <span style={{ display: "block", fontSize: 16, fontWeight: 800, letterSpacing: "-0.01em", textTransform: "uppercase", color: "var(--white)" }}>FOUNDOS</span>
           </div>
         </a>
-        <div className="hidden md:flex items-center gap-8">
+        <div className="nav-desktop" style={{ display: "flex", alignItems: "center", gap: 32 }}>
           {NAV.map(l => <a key={l.label} href={l.href} className="nav-link">{l.label}</a>)}
           <BracketBtn href={CAL}>Contact Us</BracketBtn>
         </div>
@@ -286,7 +286,7 @@ export default function Page() {
 
       {/* ── Ethos ───────────────────────────────────────── */}
       <section className="ethos-section bg-light" style={{ minHeight: "100vh", padding: "clamp(80px,12vw,160px) 40px", borderTopLeftRadius: 24, borderTopRightRadius: 24, position: "relative", zIndex: 2, marginTop: -24 }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "clamp(40px,6vw,80px)", alignItems: "start" }}>
+        <div className="ethos-grid" style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "clamp(40px,6vw,80px)", alignItems: "start" }}>
           <div>
             <p className="mono" style={{ color: "rgba(17,17,17,0.4)", marginBottom: 24 }}>Our Ethos</p>
             <h2 className="ethos-heading heading" style={{ fontSize: "clamp(36px, 5vw, 72px)", color: "var(--black)" }}>
@@ -357,17 +357,18 @@ export default function Page() {
             No mockups. Everything here is live in production.
           </p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 24 }}>
             {PORTFOLIO.map(p => (
-              <div key={p.title} style={{ background: "var(--white)", borderRadius: 16, padding: "clamp(28px,4vw,48px)", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 320 }}>
+              <div key={p.title} style={{ background: "var(--white)", borderRadius: 16, padding: "clamp(32px,4vw,52px)", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 380 }}>
                 <div>
-                  <p className="mono" style={{ color: "rgba(17,17,17,0.3)", marginBottom: 16 }}>{p.tag}</p>
-                  <h3 className="heading" style={{ fontSize: "clamp(24px,2.5vw,32px)", color: "var(--black)", marginBottom: 12 }}>{p.title}</h3>
-                  <p className="body-text" style={{ color: "rgba(17,17,17,0.6)", fontSize: 14 }}>{p.desc}</p>
+                  <p className="mono" style={{ color: "rgba(17,17,17,0.3)", marginBottom: 20 }}>{p.tag}</p>
+                  <h3 className="heading" style={{ fontSize: "clamp(28px,3vw,40px)", color: "var(--black)", marginBottom: 16 }}>{p.title}</h3>
+                  <p className="body-text" style={{ color: "rgba(17,17,17,0.6)", fontSize: 15, marginBottom: 20 }}>{p.desc}</p>
+                  <p className="mono" style={{ color: "rgba(17,17,17,0.35)", fontSize: 10, letterSpacing: "0.1em" }}>{p.stats}</p>
                 </div>
-                {p.link && <div style={{ marginTop: 24 }}>
-                  <BracketBtn href={p.link} dark>View Site</BracketBtn>
-                </div>}
+                <div style={{ marginTop: 28, display: "flex", gap: 16, flexWrap: "wrap" }}>
+                  {p.link && <BracketBtn href={p.link} dark>View Site</BracketBtn>}
+                </div>
               </div>
             ))}
           </div>
@@ -433,7 +434,7 @@ export default function Page() {
 
       {/* ── CTA Card ────────────────────────────────────── */}
       <section style={{ padding: "0 24px 24px" }}>
-        <div className="cta-card bg-orange" style={{ borderRadius: 24, padding: "clamp(60px,8vw,120px) clamp(32px,5vw,80px)", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "center", minHeight: "60vh" }}>
+        <div className="cta-card cta-grid bg-orange" style={{ borderRadius: 24, padding: "clamp(60px,8vw,120px) clamp(32px,5vw,80px)", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "center", minHeight: "60vh" }}>
           <div>
             <h2 className="heading" style={{ fontSize: "clamp(40px, 6vw, 80px)", color: "var(--black)", marginBottom: 20 }}>
               Let&apos;s Build
@@ -445,7 +446,7 @@ export default function Page() {
             </p>
             <BracketBtn href={CAL} dark>Contact Us</BracketBtn>
           </div>
-          <div style={{ textAlign: "right" }}>
+          <div className="cta-deco" style={{ textAlign: "right" }}>
             <p className="heading" style={{ fontSize: "clamp(80px,12vw,200px)", color: "rgba(17,17,17,0.08)", lineHeight: 0.9 }}>
               F<br />O<br />S
             </p>
@@ -455,7 +456,7 @@ export default function Page() {
 
       {/* ── Footer ───────────────────────────────────────── */}
       <footer className="bg-black" style={{ padding: "60px 40px 32px" }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, marginBottom: 48 }}>
+        <div className="footer-grid" style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, marginBottom: 48 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {NAV.map(l => (
               <a key={l.label} href={l.href} className="heading" style={{ fontSize: "clamp(28px,4vw,48px)", color: "var(--white)", textDecoration: "none", opacity: 0.8, transition: "opacity 0.2s" }}

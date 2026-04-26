@@ -165,6 +165,30 @@ canvas.scene {
   .feature-grid { grid-template-columns: 1fr; }
 }
 
+/* Ethos responsive */
+@media (max-width: 768px) {
+  .ethos-grid { grid-template-columns: 1fr !important; }
+}
+
+/* CTA card responsive */
+@media (max-width: 768px) {
+  .cta-grid { grid-template-columns: 1fr !important; }
+  .cta-deco { display: none; }
+}
+
+/* Footer responsive */
+@media (max-width: 768px) {
+  .footer-grid { grid-template-columns: 1fr !important; text-align: center; }
+  .footer-grid > div:last-child { align-items: center !important; }
+}
+
+/* Nav responsive */
+@media (max-width: 768px) {
+  .nav-bar { padding: 16px 20px !important; }
+  .nav-bar.scrolled { max-width: calc(100% - 32px) !important; padding: 10px 20px !important; }
+  .nav-desktop { display: none !important; }
+}
+
 .feature-card {
   position: relative;
   overflow: hidden;
