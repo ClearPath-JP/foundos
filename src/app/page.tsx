@@ -49,6 +49,96 @@ function Reveal({
   );
 }
 
+/* ─── Dot Grid Background (lightweight canvas) ───── */
+function DotGrid() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    let mouseX = -1000;
+    let mouseY = -1000;
+    const DOT_SPACING = 32;
+    const DOT_RADIUS = 1;
+    const INFLUENCE = 120;
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth * Math.min(devicePixelRatio, 2);
+      canvas.height = canvas.offsetHeight * Math.min(devicePixelRatio, 2);
+      ctx.scale(Math.min(devicePixelRatio, 2), Math.min(devicePixelRatio, 2));
+    };
+    resize();
+
+    const onMouse = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.touches[0].clientX - rect.left;
+      mouseY = e.touches[0].clientY - rect.top;
+    };
+
+    const onLeave = () => {
+      mouseX = -1000;
+      mouseY = -1000;
+    };
+
+    const draw = () => {
+      const w = canvas.offsetWidth;
+      const h = canvas.offsetHeight;
+      ctx.clearRect(0, 0, w, h);
+
+      const cols = Math.ceil(w / DOT_SPACING) + 1;
+      const rows = Math.ceil(h / DOT_SPACING) + 1;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * DOT_SPACING;
+          const y = r * DOT_SPACING;
+          const dx = mouseX - x;
+          const dy = mouseY - y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const proximity = Math.max(0, 1 - dist / INFLUENCE);
+
+          const radius = DOT_RADIUS + proximity * 2.5;
+          const alpha = 0.12 + proximity * 0.6;
+
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+        }
+      }
+
+      animId = requestAnimationFrame(draw);
+    };
+    draw();
+
+    canvas.addEventListener("mousemove", onMouse);
+    canvas.addEventListener("touchmove", onTouchMove, { passive: true });
+    canvas.addEventListener("mouseleave", onLeave);
+    window.addEventListener("resize", resize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      canvas.removeEventListener("mousemove", onMouse);
+      canvas.removeEventListener("touchmove", onTouchMove);
+      canvas.removeEventListener("mouseleave", onLeave);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="dot-grid" />;
+}
+
 /* ─── Data ───────────────────────────────────────── */
 const NAV_LINKS = [
   { href: "#work", label: "Work" },
@@ -60,23 +150,58 @@ const PROJECTS = [
   {
     title: "Heirloom Market BBQ",
     tag: "Restaurant",
-    desc: "Award-winning BBQ with Southern and Korean roots. Full site with menu, gallery, catering, and online ordering integration.",
+    desc: "Michelin Bib Gourmand BBQ with Southern and Korean roots. Full menu, gallery, catering, and online ordering.",
     link: "/demo/heirloom",
     external: false,
   },
   {
     title: "Babygirl",
     tag: "Restaurant & Bar",
-    desc: "Upscale brunch and cocktail spot in East Lake. Menu tabs, photo gallery, and location details designed to match the space.",
+    desc: "Upscale brunch and cocktail spot in East Lake. Seasonal menu tabs, photo gallery, and walk-in details.",
     link: "/demo/babygirl",
     external: false,
   },
   {
+    title: "Banshee",
+    tag: "Fine Dining",
+    desc: "Michelin Bib Gourmand restaurant in East Atlanta Village. Seasonal New American fare with Resy reservations.",
+    link: "https://banshee-atl.com",
+    external: true,
+  },
+  {
+    title: "Clahvay",
+    tag: "Dance & Fitness",
+    desc: "Cuban dance studio with video hero, instructor bios, festival schedule, and class booking system.",
+    link: "https://clahvay.com",
+    external: true,
+  },
+  {
+    title: "Station 11",
+    tag: "Neighborhood Cafe",
+    desc: "Caribbean-influenced cafe in a historic firehouse. Breakfast, lunch, wok, and coffee bar with warm cafe aesthetic.",
+    link: "#",
+    external: false,
+  },
+  {
+    title: "MF Phone Repair",
+    tag: "Local Service",
+    desc: "Phone repair shop with multi-location support, service pricing, reviews, and trust signals.",
+    link: "https://www.mfphonerepair.com",
+    external: true,
+  },
+  {
     title: "FRAMELOCK",
-    tag: "Photography Portfolio",
-    desc: "Dark, cinematic portfolio for an Atlanta car photographer. Masonry gallery with tiered pricing. Built and shipped in two weeks.",
+    tag: "Photography",
+    desc: "Dark, cinematic portfolio for an Atlanta car photographer. Masonry gallery with tiered pricing.",
     link: "https://shutter-city.vercel.app",
     external: true,
+  },
+  {
+    title: "Sensei App",
+    tag: "SaaS Platform",
+    desc: "Operating system for independent martial arts and fitness coaches. Client management, scheduling, billing \u2014 one platform.",
+    link: "#",
+    external: false,
   },
 ];
 
@@ -189,6 +314,7 @@ export default function Page() {
 
       {/* ── Hero ────────────────────────────────── */}
       <section id="top" className="hero">
+        <DotGrid />
         <div className="hero__content">
           <p className="mono hero__label">Web Design + Photography &mdash; Atlanta, GA</p>
           <h1 className="heading hero__title">
@@ -217,8 +343,10 @@ export default function Page() {
       <section id="work" className="section">
         <div className="container">
           <Reveal>
-            <p className="mono section__label">Recent Work</p>
-            <h2 className="heading section__title">Built. Shipped. Live.</h2>
+            <p className="mono section__label">Work</p>
+            <h2 className="heading section__title">
+              {PROJECTS.length} Projects.<br />All Real.
+            </h2>
           </Reveal>
 
           <div className="work-grid">
@@ -228,14 +356,20 @@ export default function Page() {
                   <p className="mono work-card__tag">{p.tag}</p>
                   <h3 className="heading work-card__title">{p.title}</h3>
                   <p className="work-card__desc">{p.desc}</p>
-                  <a
-                    href={p.link}
-                    target={p.external ? "_blank" : undefined}
-                    rel={p.external ? "noopener noreferrer" : undefined}
-                    className="work-card__link"
-                  >
-                    View Site <span aria-hidden="true">&rarr;</span>
-                  </a>
+                  {p.link !== "#" ? (
+                    <a
+                      href={p.link}
+                      target={p.external ? "_blank" : undefined}
+                      rel={p.external ? "noopener noreferrer" : undefined}
+                      className="work-card__link"
+                    >
+                      View Site <span aria-hidden="true">&rarr;</span>
+                    </a>
+                  ) : (
+                    <span className="work-card__link work-card__link--muted">
+                      Coming Soon
+                    </span>
+                  )}
                 </div>
               </Reveal>
             ))}
