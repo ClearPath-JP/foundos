@@ -1,498 +1,392 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 
 const CAL = "https://cal.com/foundos.ai/strategy-call";
 
-/* ─── Bracket Button ─────────────────────────────────────────── */
-function BracketBtn({ children, href, dark = false }: { children: React.ReactNode; href: string; dark?: boolean }) {
+/* ─── Scroll Reveal (CSS transitions, no heavy libs) ─── */
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <a href={href} target={href.startsWith("http") ? "_blank" : undefined}
-      rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-      className="btn-bracket" style={{ color: dark ? "var(--black)" : "var(--white)" }}>
-      <span className="btn-bracket__tl" /><span className="btn-bracket__tr" />
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(24px)",
+        transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`,
+      }}
+    >
       {children}
-      <span className="btn-bracket__bl" /><span className="btn-bracket__br" />
-    </a>
+    </div>
   );
 }
 
-/* ─── Data ────────────────────────────────────────────────────── */
-const NAV = [
-  { href: "#services", label: "Services" }, { href: "#work", label: "Work" },
-  { href: "#process", label: "Process" }, { href: "#about", label: "About" },
+/* ─── Data ───────────────────────────────────────── */
+const NAV_LINKS = [
+  { href: "#work", label: "Work" },
+  { href: "#services", label: "Services" },
+  { href: "#about", label: "About" },
 ];
 
-const FEATURES = [
-  { n: "01", title: "Custom Websites", desc: "Built from scratch around your brand. Mobile-first, fast-loading, SEO-ready. Real code, real design — not a template with your name on it.", stat: "Starting at $2K", bg: "var(--black)", color: "var(--white)" },
-  { n: "02", title: "Photography", desc: "My photographer comes to your space. We shoot your food, your interior, your team. Real images that make your business look as good online as it does in person.", stat: "Included in build", bg: "var(--slate)", color: "var(--black)" },
-  { n: "03", title: "Growth Tools", desc: "Online ordering, booking systems, email capture, Google reviews, AI chatbots. We add what you need, when you need it — not everything at once.", stat: "Add when ready", bg: "var(--copper)", color: "var(--black)" },
-  { n: "04", title: "Ongoing Support", desc: "Your menu changes. Your hours shift. Your photos get better. I handle all of it — you text me directly and it gets done. No tickets, no waiting, no agencies.", stat: "$150/mo", bg: "var(--off-white)", color: "var(--black)" },
+const PROJECTS = [
+  {
+    title: "Heirloom Market BBQ",
+    tag: "Restaurant",
+    desc: "Award-winning BBQ with Southern and Korean roots. Full site with menu, gallery, catering, and online ordering integration.",
+    link: "/demo/heirloom",
+    external: false,
+  },
+  {
+    title: "Babygirl",
+    tag: "Restaurant & Bar",
+    desc: "Upscale brunch and cocktail spot in East Lake. Menu tabs, photo gallery, and location details designed to match the space.",
+    link: "/demo/babygirl",
+    external: false,
+  },
+  {
+    title: "FRAMELOCK",
+    tag: "Photography Portfolio",
+    desc: "Dark, cinematic portfolio for an Atlanta car photographer. Masonry gallery with tiered pricing. Built and shipped in two weeks.",
+    link: "https://shutter-city.vercel.app",
+    external: true,
+  },
 ];
 
-const FOCUS_ITEMS = ["Websites", "Photography", "Restaurants", "Cafes", "Salons", "Gyms", "Contractors", "Automations", "SEO"];
-
-const PORTFOLIO = [
-  { title: "Sensei App", tag: "SaaS Platform", desc: "A complete operating system for independent martial arts and fitness coaches. Video library, client management, scheduling, billing — one system replacing five apps.", stats: "46 DB Tables · 150+ Endpoints · Solo Built", link: "" },
-  { title: "FRAMELOCK", tag: "Client Project", desc: "Dark, cinematic photography portfolio for a car photographer in Atlanta. Film-inspired design with masonry gallery and tiered pricing. Built and shipped in under two weeks.", stats: "33 Photos · 3 Tiers · Live in Production", link: "https://shutter-city.vercel.app" },
+const SERVICES = [
+  {
+    title: "Custom Website",
+    desc: "Designed and built from scratch around your brand. No templates. Mobile-first, fast, and yours.",
+  },
+  {
+    title: "Professional Photography",
+    desc: "My photographer comes to your space. We shoot your food, your interior, your team. Real images, not stock.",
+  },
+  {
+    title: "Monthly Support",
+    desc: "Menu changes, hour updates, new photos \u2014 you text me, it gets done. No tickets. No waiting.",
+  },
+  {
+    title: "Growth Tools",
+    desc: "Online ordering, Google reviews, email capture, SEO. Added when you\u2019re ready, not forced upfront.",
+  },
 ];
 
-const PROCESS = [
-  { n: "01", title: "Free Strategy Call", desc: "You tell me about your business. I tell you what I think you need. No pressure, no pitch." },
-  { n: "02", title: "Design + Build", desc: "I design and build the site. You see progress along the way. Nothing launches until you love it." },
-  { n: "03", title: "Photography Shoot", desc: "My photographer comes to your space. We shoot food, interior, the team. Real photos." },
-  { n: "04", title: "Launch + Support", desc: "We go live. I handle hosting, updates, support. You text me — I respond." },
+const STEPS = [
+  {
+    n: "01",
+    title: "We Talk",
+    desc: "15-minute call. You tell me about your business. I tell you what I\u2019d build. Free, no pressure.",
+  },
+  {
+    n: "02",
+    title: "We Build + Shoot",
+    desc: "I design and build your site while my photographer shoots your space. You see progress the whole way.",
+  },
+  {
+    n: "03",
+    title: "You Launch",
+    desc: "We go live. I handle hosting, updates, and support. You run your business \u2014 I keep your site running.",
+  },
 ];
 
-/* ─── Page ────────────────────────────────────────────────────── */
+/* ─── Page ───────────────────────────────────────── */
 export default function Page() {
-  const heroCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const [showSticky, setShowSticky] = useState(false);
 
-  /* ── Nav scroll state ──────────────────────────── */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 50);
+      setShowSticky(window.scrollY > window.innerHeight * 0.7);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* ── Loading overlay ───────────────────────────── */
+  // Lock body scroll when mobile menu is open
   useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 600);
-    return () => clearTimeout(t);
-  }, []);
-
-  /* ── Three.js hero particle sphere ─────────────── */
-  useEffect(() => {
-    const canvas = heroCanvasRef.current;
-    if (!canvas) return;
-
-    let cleanup: (() => void) | undefined;
-
-    (async () => {
-      const THREE = await import("three");
-
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(50, canvas.offsetWidth / canvas.offsetHeight, 0.1, 100);
-      camera.position.z = 5;
-
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-      renderer.setClearColor(0x000000, 0);
-
-      // Fibonacci sphere — responsive particle count
-      const isMobile = window.innerWidth < 768;
-      const count = isMobile ? 800 : 2000;
-      const positions = new Float32Array(count * 3);
-      const goldenAngle = Math.PI * (3 - Math.sqrt(5));
-
-      for (let i = 0; i < count; i++) {
-        const y = 1 - (i / (count - 1)) * 2;
-        const radius = Math.sqrt(1 - y * y);
-        const theta = goldenAngle * i;
-        positions[i * 3] = Math.cos(theta) * radius * 2;
-        positions[i * 3 + 1] = y * 2;
-        positions[i * 3 + 2] = Math.sin(theta) * radius * 2;
-      }
-
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-
-      const mat = new THREE.PointsMaterial({
-        size: 1.8,
-        color: 0x888888,
-        transparent: true,
-        opacity: 0.6,
-        sizeAttenuation: true,
-      });
-
-      const points = new THREE.Points(geo, mat);
-      points.position.x = 1.5; // Offset right
-      scene.add(points);
-
-      let mouseX = 0, mouseY = 0;
-      const onMouse = (e: MouseEvent) => {
-        mouseX = (e.clientX / window.innerWidth - 0.5) * 0.3;
-        mouseY = (e.clientY / window.innerHeight - 0.5) * 0.3;
-      };
-      window.addEventListener("mousemove", onMouse);
-
-      const onResize = () => {
-        camera.aspect = canvas.offsetWidth / canvas.offsetHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
-      };
-      window.addEventListener("resize", onResize);
-
-      let targetRotX = 0, targetRotY = 0;
-      let animId: number;
-
-      const animate = () => {
-        animId = requestAnimationFrame(animate);
-        points.rotation.y += 0.0008;
-        targetRotY += (mouseX - targetRotY) * 0.02;
-        targetRotX += (mouseY - targetRotX) * 0.02;
-        points.rotation.y += targetRotY * 0.01;
-        points.rotation.x += targetRotX * 0.01;
-        renderer.render(scene, camera);
-      };
-      animate();
-
-      cleanup = () => {
-        cancelAnimationFrame(animId);
-        window.removeEventListener("mousemove", onMouse);
-        window.removeEventListener("resize", onResize);
-        renderer.dispose(); geo.dispose(); mat.dispose();
-      };
-    })();
-
-    return () => { if (cleanup) cleanup(); };
-  }, []);
-
-  /* ── GSAP ScrollTrigger setup ──────────────────── */
-  useEffect(() => {
-    let ctx: { revert: () => void } | undefined;
-
-    (async () => {
-      const gsap = (await import("gsap")).default;
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      gsap.registerPlugin(ScrollTrigger);
-
-      ctx = gsap.context(() => {
-        // Hero clip reveal — text slides up from hidden
-        gsap.to(".text-clip > span", {
-          y: 0, duration: 1.4, ease: "power4.out",
-          stagger: 0.12, delay: 0.7,
-        });
-        gsap.from(".hero-bottom", { y: 20, opacity: 0, duration: 1, ease: "power3.out", delay: 1.4 });
-
-        // Ethos section
-        gsap.from(".ethos-heading", {
-          scrollTrigger: { trigger: ".ethos-section", start: "top 75%" },
-          y: 60, opacity: 0, duration: 1, ease: "power3.out",
-        });
-        gsap.from(".ethos-body", {
-          scrollTrigger: { trigger: ".ethos-section", start: "top 75%" },
-          y: 40, opacity: 0, duration: 0.8, ease: "power2.out", delay: 0.2,
-        });
-
-        // Feature cards
-        gsap.from(".feature-card", {
-          scrollTrigger: { trigger: ".feature-grid", start: "top 80%" },
-          y: 60, opacity: 0, duration: 0.8, ease: "power3.out",
-          stagger: 0.15,
-        });
-
-        // Ethos underline draw
-        ScrollTrigger.create({
-          trigger: ".ethos-line",
-          start: "top 80%",
-          onEnter: () => document.querySelector(".ethos-line")?.classList.add("drawn"),
-        });
-
-        // Focus items — scrub opacity + color shift
-        document.querySelectorAll(".focus-item").forEach((item, idx) => {
-          const colors = ["#3D5A80", "#C17950", "#111111", "#3D5A80", "#C17950", "#111111", "#3D5A80", "#C17950", "#111111"];
-          gsap.fromTo(item,
-            { opacity: 0.08, color: "rgba(17,17,17,0.08)" },
-            {
-              opacity: 1,
-              color: colors[idx % colors.length],
-              scrollTrigger: {
-                trigger: item,
-                start: "top 70%",
-                end: "top 35%",
-                scrub: true,
-              },
-            }
-          );
-        });
-
-        // Portfolio entrance
-        gsap.from(".portfolio-section", {
-          scrollTrigger: { trigger: ".portfolio-section", start: "top 75%" },
-          y: 40, opacity: 0, duration: 1, ease: "power3.out",
-        });
-
-        // Process items
-        gsap.from(".process-item", {
-          scrollTrigger: { trigger: ".process-section", start: "top 75%" },
-          y: 50, opacity: 0, duration: 0.8, ease: "power3.out",
-          stagger: 0.12,
-        });
-
-        // About
-        gsap.from(".about-heading", {
-          scrollTrigger: { trigger: ".about-section", start: "top 75%" },
-          scale: 0.85, opacity: 0, duration: 1, ease: "power3.out",
-        });
-        gsap.from(".about-body", {
-          scrollTrigger: { trigger: ".about-section", start: "top 70%" },
-          y: 30, opacity: 0, duration: 0.8, ease: "power2.out", delay: 0.2,
-        });
-
-        // CTA card
-        gsap.from(".cta-card", {
-          scrollTrigger: { trigger: ".cta-card", start: "top 80%" },
-          y: 60, opacity: 0, duration: 1, ease: "power3.out",
-        });
-      });
-    })();
-
-    return () => { if (ctx) ctx.revert(); };
-  }, []);
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
 
   return (
     <>
-      {/* ── Loading Overlay ──────────────────────────── */}
-      <div className="loader" style={{ opacity: loaded ? 0 : 1, pointerEvents: loaded ? "none" : "all", transition: "opacity 0.6s ease" }}>
-        <p className="mono" style={{ color: "var(--white)", opacity: 0.3 }}>FOUNDOS</p>
-      </div>
-
-      {/* ── Nav ─────────────────────────────────────────── */}
-      <nav className={`nav-bar ${scrolled ? "scrolled" : ""}`}>
-        <a href="#top" style={{ textDecoration: "none" }}>
-          <div style={{ lineHeight: 1.1 }}>
-            <span style={{ display: "block", fontSize: 11, fontWeight: 300, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--white)", opacity: 0.6 }}>Custom Websites</span>
-            <span style={{ display: "block", fontSize: 16, fontWeight: 800, letterSpacing: "-0.01em", textTransform: "uppercase", color: "var(--white)" }}>FOUNDOS</span>
-          </div>
-        </a>
-        <div className="nav-desktop" style={{ display: "flex", alignItems: "center", gap: 32 }}>
-          {NAV.map(l => <a key={l.label} href={l.href} className="nav-link">{l.label}</a>)}
-          <BracketBtn href={CAL}>Contact Us</BracketBtn>
+      {/* ── Nav ─────────────────────────────────── */}
+      <nav className={`nav ${scrolled ? "nav--scrolled" : ""}`}>
+        <a href="#top" className="nav__logo">FOUNDOS</a>
+        <div className="nav__links">
+          {NAV_LINKS.map((l) => (
+            <a key={l.label} href={l.href} className="nav__link">{l.label}</a>
+          ))}
+          <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn btn--sm">
+            Book a Call
+          </a>
         </div>
+        <button
+          className="nav__hamburger"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
+        >
+          <span className={`hamburger ${menuOpen ? "hamburger--open" : ""}`} />
+        </button>
       </nav>
 
-      {/* ── Hero ────────────────────────────────────────── */}
-      <section id="top" className="relative bg-black" style={{ height: "100vh", overflow: "hidden" }}>
-        <canvas ref={heroCanvasRef} className="scene" />
-
-        <div style={{ position: "absolute", bottom: 180, left: 40, right: 40, zIndex: 1 }}>
-          <div className="text-clip">
-            <span className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)" }}>
-              Building Digital
-            </span>
-          </div>
-          <div className="text-clip">
-            <span className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)" }}>
-              <span className="text-copper">Systems</span>
-            </span>
-          </div>
-          <div className="text-clip" style={{ textAlign: "right" }}>
-            <span className="hero-line heading" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--white)" }}>
-              For <span style={{ opacity: 0.4 }}>Local</span> Businesses
-            </span>
-          </div>
-        </div>
-
-        {/* Bottom bar */}
-        <div className="hero-bottom" style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 40px 40px", zIndex: 1 }}>
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: 20, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-            <BracketBtn href={CAL}>Contact Us</BracketBtn>
-            <p className="mono hidden sm:block" style={{ color: "rgba(255,255,255,0.4)", fontSize: 11 }}>
-              Custom websites &bull; Photography &bull; Atlanta, GA
-            </p>
-            <span className="mono hidden sm:block" style={{ color: "rgba(255,255,255,0.3)", fontSize: 10 }}>FOUNDOS.AI</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Ethos ───────────────────────────────────────── */}
-      <section className="ethos-section bg-light" style={{ minHeight: "100vh", padding: "clamp(80px,12vw,160px) 40px", borderTopLeftRadius: 24, borderTopRightRadius: 24, position: "relative", zIndex: 2, marginTop: -24 }}>
-        <div className="ethos-grid" style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "clamp(40px,6vw,80px)", alignItems: "start" }}>
-          <div>
-            <p className="mono" style={{ color: "rgba(17,17,17,0.4)", marginBottom: 24 }}>Our Ethos</p>
-            <h2 className="ethos-heading heading heading-animate" style={{ fontSize: "clamp(36px, 5vw, 72px)", color: "var(--black)" }}>
-              <span className="text-slate">Quality</span> Matters.
-              <br />
-              <span className="text-copper">Speed</span> Wins.
-            </h2>
-          </div>
-          <div className="ethos-body">
-            <div style={{ borderTop: "1px solid rgba(17,17,17,0.15)", paddingTop: 32, marginBottom: 32 }} />
-            <p className="body-text" style={{ color: "var(--black)", maxWidth: 520, marginBottom: 16 }}>
-              Your business deserves more than a template. I build <span className="text-key-dark">real digital systems</span> — designed around
-              how you work, <span className="text-key-dark">photographed in your space</span>, and supported long after launch day.
-            </p>
-            <p className="body-text" style={{ color: "rgba(17,17,17,0.6)", maxWidth: 520, marginBottom: 32 }}>
-              No agencies. No ticket numbers. <span className="text-key-dark text-draw-line ethos-line">No disappearing after launch.</span>{" "}
-              Just one person who picks up the phone, knows your business,
-              and builds exactly what you need.
-            </p>
-            <BracketBtn href={CAL} dark>Book a Call</BracketBtn>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Feature Cards ───────────────────────────────── */}
-      <section id="services" className="feature-grid">
-        {FEATURES.map((f, i) => (
-          <div key={f.n} className="feature-card" style={{ background: f.bg, color: f.color }}>
-            <div style={{ flex: 1, position: "relative", minHeight: 280 }}>
-              {/* Decorative gradient */}
-              <div style={{ position: "absolute", inset: 0, opacity: 0.15, background: `radial-gradient(circle at ${30 + i * 15}% ${40 + i * 10}%, currentColor 0%, transparent 60%)` }} />
-            </div>
-            <div className="feature-card__content">
-              <p className="mono" style={{ marginBottom: 12, opacity: 0.4 }}>{f.n} / 04</p>
-              <h3 className="heading" style={{ fontSize: "clamp(22px,2.2vw,30px)", marginBottom: 12 }}>{f.title}</h3>
-              <p style={{ fontSize: 13, lineHeight: 1.7, opacity: 0.65, marginBottom: 16, textTransform: "none" }}>{f.desc}</p>
-              <p className="mono" style={{ opacity: 0.9, fontWeight: 600, fontSize: 12 }}>{f.stat}</p>
-            </div>
-          </div>
-        ))}
-      </section>
-
-      {/* ── Focus / Skills List ──────────────────────────── */}
-      <section className="bg-light" style={{ padding: "clamp(100px,14vw,200px) 40px" }}>
-        <div style={{ maxWidth: 1000, margin: "0 auto", textAlign: "center" }}>
-          <p className="mono" style={{ color: "rgba(17,17,17,0.35)", marginBottom: 16 }}>Our Focus</p>
-          <p className="heading" style={{ fontSize: "clamp(20px,3vw,40px)", color: "rgba(17,17,17,0.15)", marginBottom: 60 }}>
-            What We Build. Who We Serve.
-          </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
-            {FOCUS_ITEMS.map(item => (
-              <p key={item} className="focus-item" style={{ fontSize: "clamp(36px, 7vw, 100px)", color: "var(--black)" }}>
-                {item}
-              </p>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Portfolio ───────────────────────────────────── */}
-      <section className="portfolio-section bg-light" style={{ padding: "clamp(80px,10vw,160px) 40px" }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <p className="mono" style={{ color: "rgba(17,17,17,0.35)", marginBottom: 16 }}>Portfolio</p>
-          <h2 className="heading" style={{ fontSize: "clamp(32px,5vw,64px)", color: "var(--black)", marginBottom: 16 }}>
-            Shipped &amp; Running
-          </h2>
-          <p className="body-text" style={{ color: "rgba(17,17,17,0.6)", maxWidth: 480, marginBottom: 48 }}>
-            No mockups. Everything here is live in production.
-          </p>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 24 }}>
-            {PORTFOLIO.map(p => (
-              <div key={p.title} style={{ background: "var(--white)", borderRadius: 16, padding: "clamp(32px,4vw,52px)", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 380 }}>
-                <div>
-                  <p className="mono" style={{ color: "rgba(17,17,17,0.3)", marginBottom: 20 }}>{p.tag}</p>
-                  <h3 className="heading" style={{ fontSize: "clamp(28px,3vw,40px)", color: "var(--black)", marginBottom: 16 }}>{p.title}</h3>
-                  <p className="body-text" style={{ color: "rgba(17,17,17,0.6)", fontSize: 15, marginBottom: 20 }}>{p.desc}</p>
-                  <p className="mono" style={{ color: "rgba(17,17,17,0.35)", fontSize: 10, letterSpacing: "0.1em" }}>{p.stats}</p>
-                </div>
-                <div style={{ marginTop: 28, display: "flex", gap: 16, flexWrap: "wrap" }}>
-                  {p.link && <BracketBtn href={p.link} dark>View Site</BracketBtn>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── About / Team ────────────────────────────────── */}
-      <section className="about-section bg-black" style={{ padding: "clamp(80px,12vw,180px) 40px" }}>
-        {/* Marquee */}
-        <div style={{ overflow: "hidden", marginBottom: 80, borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: 16 }}>
-          <div className="marquee-track">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <span key={i} className="mono" style={{ color: "rgba(255,255,255,0.25)", fontSize: 11, marginRight: 40 }}>
-                About &bull; Josh Potesta &bull; Atlanta &bull; 19 Years Old &bull; Martial Arts &bull; Web Development &bull; Photography &bull;&nbsp;
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
-          <h2 className="about-heading heading heading-animate" style={{ fontSize: "clamp(36px, 7vw, 100px)", color: "var(--white)", marginBottom: 32 }}>
-            I Don&apos;t <span className="text-copper">Disappear</span>
-            <br />After Launch
-          </h2>
-          <div className="about-body" style={{ maxWidth: 600, margin: "0 auto" }}>
-            <p className="mono" style={{ color: "rgba(255,255,255,0.5)", marginBottom: 24, lineHeight: 1.8, fontSize: 13, textTransform: "none", letterSpacing: "0.02em" }}>
-              Six years in martial arts — training, teaching, watching coaches run their entire business from their phone.
-              Restaurants, cafes, salons, contractors — <span className="text-key">if you serve your community, I build for you.</span>
-              <br /><br />
-              <span className="text-key">You text me. I respond.</span> No tickets. No gatekeepers.
-            </p>
-            <BracketBtn href={CAL}>Book a Call</BracketBtn>
-          </div>
-        </div>
-
-        {/* Photo */}
-        <div style={{ maxWidth: 200, margin: "60px auto 0", borderRadius: 16, overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)" }}>
-          <Image src="/josh.jpg" alt="Josh Potesta" width={200} height={200} style={{ width: "100%", height: "auto", display: "block", filter: "grayscale(100%)" }} />
-        </div>
-      </section>
-
-      {/* ── Process ──────────────────────────────────────── */}
-      <section className="process-section bg-light" style={{ padding: "clamp(80px,12vw,180px) 40px", borderTopLeftRadius: 24, borderTopRightRadius: 24, position: "relative", zIndex: 2, marginTop: -24 }}>
-        <div style={{ maxWidth: 800, margin: "0 auto" }}>
-          <p className="mono" style={{ color: "rgba(17,17,17,0.35)", marginBottom: 16 }}>Process</p>
-          <h2 className="heading heading-animate" style={{ fontSize: "clamp(32px,5vw,64px)", color: "var(--black)", marginBottom: 48 }}>
-            From First Call
-            <br />To <span className="text-copper">Launch Day</span>
-          </h2>
-
-          <div style={{ borderTop: "1px solid rgba(17,17,17,0.1)" }}>
-            {PROCESS.map(p => (
-              <div key={p.n} className="process-item" style={{ display: "flex", gap: 32, padding: "32px 0", borderBottom: "1px solid rgba(17,17,17,0.1)" }}>
-                <span className="mono" style={{ color: "rgba(17,17,17,0.2)", marginTop: 4, flexShrink: 0 }}>{p.n}</span>
-                <div>
-                  <h3 className="heading" style={{ fontSize: "clamp(20px,2vw,28px)", color: "var(--black)", marginBottom: 8 }}>{p.title}</h3>
-                  <p className="body-text" style={{ color: "rgba(17,17,17,0.55)", fontSize: 14 }}>{p.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA Card ────────────────────────────────────── */}
-      <section style={{ padding: "0 24px 24px" }}>
-        <div className="cta-card cta-grid bg-orange" style={{ borderRadius: 24, padding: "clamp(60px,8vw,120px) clamp(32px,5vw,80px)", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "center", minHeight: "60vh" }}>
-          <div>
-            <h2 className="heading heading-animate" style={{ fontSize: "clamp(40px, 6vw, 80px)", color: "var(--black)", marginBottom: 20 }}>
-              Let&apos;s <span className="text-slate">Build</span>
-              <br />Something
-              <br />Together
-            </h2>
-            <p className="mono" style={{ color: "rgba(17,17,17,0.6)", marginBottom: 32, fontSize: 13, textTransform: "none", letterSpacing: "0.02em", maxWidth: 400 }}>
-              Book a call, tell me about your business. No pressure, no commitment. Just a conversation about what you need.
-            </p>
-            <BracketBtn href={CAL} dark>Contact Us</BracketBtn>
-          </div>
-          <div className="cta-deco" style={{ textAlign: "right" }}>
-            <p className="heading" style={{ fontSize: "clamp(80px,12vw,200px)", color: "rgba(17,17,17,0.08)", lineHeight: 0.9 }}>
-              F<br />O<br />S
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="bg-black" style={{ padding: "60px 40px 32px" }}>
-        <div className="footer-grid" style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, marginBottom: 48 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {NAV.map(l => (
-              <a key={l.label} href={l.href} className="heading" style={{ fontSize: "clamp(28px,4vw,48px)", color: "var(--white)", textDecoration: "none", opacity: 0.8, transition: "opacity 0.2s" }}
-                onMouseEnter={e => (e.currentTarget.style.opacity = "0.5")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.8")}>
+      {/* ── Mobile Menu Overlay ─────────────────── */}
+      {menuOpen && (
+        <div className="mobile-menu" onClick={() => setMenuOpen(false)}>
+          <div className="mobile-menu__inner" onClick={(e) => e.stopPropagation()}>
+            {NAV_LINKS.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                className="mobile-menu__link"
+                onClick={() => setMenuOpen(false)}
+              >
                 {l.label}
               </a>
             ))}
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
-            <a href="https://instagram.com/foundos.ai" target="_blank" rel="noopener noreferrer" className="mono" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Instagram</a>
-            <a href="https://tiktok.com/@foundos.ai" target="_blank" rel="noopener noreferrer" className="mono" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>TikTok</a>
-            <a href="mailto:hello@foundos.ai" className="mono" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>hello@foundos.ai</a>
+            <a
+              href={CAL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn"
+              style={{ marginTop: 16 }}
+            >
+              Book a Free Call
+            </a>
           </div>
         </div>
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 24, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-          <p className="mono" style={{ color: "rgba(255,255,255,0.2)", fontSize: 10 }}>&copy; 2026 FoundOS. All rights reserved.</p>
-          <p className="mono" style={{ color: "rgba(255,255,255,0.15)", fontSize: 10 }}>Site by Josh Potesta</p>
+      )}
+
+      {/* ── Hero ────────────────────────────────── */}
+      <section id="top" className="hero">
+        <div className="hero__content">
+          <p className="mono hero__label">Web Design + Photography &mdash; Atlanta, GA</p>
+          <h1 className="heading hero__title">
+            Websites That<br />Fill Tables.
+          </h1>
+          <p className="hero__sub">
+            Custom websites and professional photography for restaurants,
+            cafes, and bars that take their food seriously.
+          </p>
+          <div className="hero__ctas">
+            <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn">
+              Book a Free Call
+            </a>
+            <a href="#work" className="btn btn--ghost">
+              See the Work
+            </a>
+          </div>
+        </div>
+        <div className="hero__scroll">
+          <span className="mono">Scroll</span>
+          <div className="hero__scroll-line" />
+        </div>
+      </section>
+
+      {/* ── Work ────────────────────────────────── */}
+      <section id="work" className="section">
+        <div className="container">
+          <Reveal>
+            <p className="mono section__label">Recent Work</p>
+            <h2 className="heading section__title">Built. Shipped. Live.</h2>
+          </Reveal>
+
+          <div className="work-grid">
+            {PROJECTS.map((p, i) => (
+              <Reveal key={p.title} delay={i * 0.1} className="work-card">
+                <div className="work-card__inner">
+                  <p className="mono work-card__tag">{p.tag}</p>
+                  <h3 className="heading work-card__title">{p.title}</h3>
+                  <p className="work-card__desc">{p.desc}</p>
+                  <a
+                    href={p.link}
+                    target={p.external ? "_blank" : undefined}
+                    rel={p.external ? "noopener noreferrer" : undefined}
+                    className="work-card__link"
+                  >
+                    View Site <span aria-hidden="true">&rarr;</span>
+                  </a>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Services ────────────────────────────── */}
+      <section id="services" className="section section--alt">
+        <div className="container">
+          <Reveal>
+            <p className="mono section__label">What You Get</p>
+            <h2 className="heading section__title">
+              Everything Your<br />Business Needs Online.
+            </h2>
+          </Reveal>
+
+          <div className="services-list">
+            {SERVICES.map((s, i) => (
+              <Reveal key={s.title} delay={i * 0.08} className="service-item">
+                <div className="service-item__number mono">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <div>
+                  <h3 className="service-item__title">{s.title}</h3>
+                  <p className="service-item__desc">{s.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Process ─────────────────────────────── */}
+      <section className="section">
+        <div className="container">
+          <Reveal>
+            <p className="mono section__label">How It Works</p>
+            <h2 className="heading section__title">
+              Three Steps.<br />That&apos;s It.
+            </h2>
+          </Reveal>
+
+          <div className="process-list">
+            {STEPS.map((s, i) => (
+              <Reveal key={s.n} delay={i * 0.1} className="process-step">
+                <span className="process-step__n mono">{s.n}</span>
+                <div>
+                  <h3 className="process-step__title">{s.title}</h3>
+                  <p className="process-step__desc">{s.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Pricing ─────────────────────────────── */}
+      <section className="section section--alt pricing">
+        <div className="container pricing__inner">
+          <Reveal>
+            <p className="mono section__label">Pricing</p>
+            <h2 className="heading pricing__number">Starting at $2,000</h2>
+            <p className="pricing__includes">
+              Custom design. Professional photography. Your own domain.
+            </p>
+            <p className="pricing__retainer">
+              $150/mo for hosting, updates, and direct support.
+            </p>
+            <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn">
+              Book a Free Call
+            </a>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── About ───────────────────────────────── */}
+      <section id="about" className="section">
+        <div className="container about">
+          <Reveal className="about__photo-wrap">
+            <Image
+              src="/josh.jpg"
+              alt="Josh Potesta"
+              width={280}
+              height={280}
+              className="about__photo"
+            />
+          </Reveal>
+          <Reveal delay={0.15} className="about__text">
+            <p className="mono section__label">About</p>
+            <h2 className="heading about__heading">
+              I Don&apos;t Disappear<br />After Launch.
+            </h2>
+            <p className="about__bio">
+              I&apos;m Josh &mdash; 19, based in Atlanta. Six years in martial arts
+              taught me how small businesses actually run. Restaurants, cafes, salons,
+              contractors &mdash; if you serve your community, I build for you.
+            </p>
+            <p className="about__bio about__bio--dim">
+              You text me. I respond. No tickets. No gatekeepers. No agencies.
+              Just one person who knows your business and keeps your site running.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── Final CTA ───────────────────────────── */}
+      <section className="section cta-final">
+        <div className="container cta-final__inner">
+          <Reveal>
+            <h2 className="heading cta-final__title">
+              Let&apos;s Build<br />Something.
+            </h2>
+            <p className="cta-final__sub">
+              Book a free call. Tell me about your business. No pressure,
+              no commitment &mdash; just a conversation about what you need.
+            </p>
+            <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn btn--lg">
+              Book a Free Call
+            </a>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── Footer ──────────────────────────────── */}
+      <footer className="footer">
+        <div className="container footer__top">
+          <div>
+            <p className="heading footer__brand">FOUNDOS</p>
+            <p className="mono footer__tagline">Custom websites for local businesses.</p>
+          </div>
+          <div className="footer__links">
+            <a href="https://instagram.com/foundos.ai" target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href="https://tiktok.com/@foundos.ai" target="_blank" rel="noopener noreferrer">TikTok</a>
+            <a href="mailto:hello@foundos.ai">hello@foundos.ai</a>
+          </div>
+        </div>
+        <div className="container">
+          <div className="footer__bottom">
+            <p className="mono">&copy; 2026 FoundOS</p>
+            <p className="mono">Atlanta, GA</p>
+          </div>
         </div>
       </footer>
+
+      {/* ── Sticky Mobile CTA ───────────────────── */}
+      <div className={`sticky-cta ${showSticky ? "sticky-cta--show" : ""}`}>
+        <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn sticky-cta__btn">
+          Book a Free Call
+        </a>
+      </div>
     </>
   );
 }
