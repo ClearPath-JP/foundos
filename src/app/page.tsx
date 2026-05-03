@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
 import Image from "next/image";
 
 const CAL = "https://cal.com/foundos.ai/strategy-call";
+const PHONE = "4704898838"; // JP's number for text CTA
+const TEXT_MSG = "Hey Josh — I need a website.";
+const TEXT_LINK = `sms:+1${PHONE}?body=${encodeURIComponent(TEXT_MSG)}`;
 
-/* ─── Scroll Reveal (CSS transitions, no heavy libs) ─── */
+/* ─── Scroll Reveal ──────────────────────────────── */
 function Reveal({
   children,
   className = "",
@@ -49,7 +52,7 @@ function Reveal({
   );
 }
 
-/* ─── Dot Grid Background (lightweight canvas) ───── */
+/* ─── Dot Grid Background ────────────────────────── */
 function DotGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -139,6 +142,152 @@ function DotGrid() {
   return <canvas ref={canvasRef} className="dot-grid" />;
 }
 
+/* ─── Portfolio Carousel ─────────────────────────── */
+function Carousel({ projects }: { projects: typeof PROJECTS }) {
+  const [active, setActive] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval>>(null);
+  const touchStartRef = useRef(0);
+
+  const count = projects.length;
+
+  const goTo = useCallback(
+    (idx: number) => {
+      setActive(((idx % count) + count) % count);
+    },
+    [count]
+  );
+
+  // Auto-rotate every 4s
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setActive((prev) => (prev + 1) % count);
+    }, 4000);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [count]);
+
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setActive((prev) => (prev + 1) % count);
+    }, 4000);
+  }, [count]);
+
+  const next = useCallback(() => {
+    goTo(active + 1);
+    resetTimer();
+  }, [active, goTo, resetTimer]);
+
+  const prev = useCallback(() => {
+    goTo(active - 1);
+    resetTimer();
+  }, [active, goTo, resetTimer]);
+
+  const p = projects[active];
+
+  return (
+    <div className="carousel">
+      {/* Screenshot display */}
+      <div
+        className="carousel__viewport"
+        onTouchStart={(e) => {
+          touchStartRef.current = e.touches[0].clientX;
+        }}
+        onTouchEnd={(e) => {
+          const diff = touchStartRef.current - e.changedTouches[0].clientX;
+          if (Math.abs(diff) > 50) {
+            diff > 0 ? next() : prev();
+          }
+        }}
+      >
+        {/* Arrows */}
+        <button
+          className="carousel__arrow carousel__arrow--left"
+          onClick={prev}
+          aria-label="Previous project"
+        >
+          &larr;
+        </button>
+        <button
+          className="carousel__arrow carousel__arrow--right"
+          onClick={next}
+          aria-label="Next project"
+        >
+          &rarr;
+        </button>
+
+        {/* Image */}
+        <div className="carousel__img-wrap">
+          {projects.map((proj, i) => (
+            <div
+              key={proj.title}
+              className="carousel__slide"
+              style={{
+                opacity: i === active ? 1 : 0,
+                zIndex: i === active ? 1 : 0,
+              }}
+            >
+              <Image
+                src={proj.image}
+                alt={proj.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 960px"
+                className="carousel__img"
+                priority={i === 0}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Browser chrome overlay */}
+        <div className="carousel__chrome">
+          <div className="carousel__dots-chrome">
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="carousel__url">{p.url}</div>
+        </div>
+      </div>
+
+      {/* Info bar */}
+      <div className="carousel__info">
+        <div className="carousel__meta">
+          <p className="mono carousel__tag">{p.tag}</p>
+          <h3 className="heading carousel__title">{p.title}</h3>
+          <p className="carousel__desc">{p.desc}</p>
+        </div>
+        <div className="carousel__actions">
+          <a
+            href={p.link}
+            target={p.external ? "_blank" : undefined}
+            rel={p.external ? "noopener noreferrer" : undefined}
+            className="btn btn--sm"
+          >
+            View Site
+          </a>
+        </div>
+      </div>
+
+      {/* Pagination dots */}
+      <div className="carousel__pips">
+        {projects.map((proj, i) => (
+          <button
+            key={proj.title}
+            className={`carousel__pip ${i === active ? "carousel__pip--active" : ""}`}
+            onClick={() => {
+              goTo(i);
+              resetTimer();
+            }}
+            aria-label={`View ${proj.title}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Data ───────────────────────────────────────── */
 const NAV_LINKS = [
   { href: "#work", label: "Work" },
@@ -148,46 +297,13 @@ const NAV_LINKS = [
 
 const PROJECTS = [
   {
-    title: "Heirloom Market BBQ",
+    title: "Heirloom BBQ",
     tag: "Restaurant",
-    desc: "Michelin Bib Gourmand BBQ with Southern and Korean roots. Full menu, gallery, catering, and online ordering.",
-    link: "/demo/heirloom",
-    external: false,
-  },
-  {
-    title: "Babygirl",
-    tag: "Restaurant & Bar",
-    desc: "Upscale brunch and cocktail spot in East Lake. Seasonal menu tabs, photo gallery, and walk-in details.",
-    link: "/demo/babygirl",
-    external: false,
-  },
-  {
-    title: "Banshee",
-    tag: "Fine Dining",
-    desc: "Michelin Bib Gourmand restaurant in East Atlanta Village. Seasonal New American fare with Resy reservations.",
-    link: "https://banshee-atl.com",
+    desc: "Wood-fired barbecue spot. Full menu, catering info, and location details with an earthy, fire-inspired palette.",
+    link: "https://heirloom-bbq.vercel.app",
     external: true,
-  },
-  {
-    title: "Clahvay",
-    tag: "Dance & Fitness",
-    desc: "Cuban dance studio with video hero, instructor bios, festival schedule, and class booking system.",
-    link: "https://clahvay.com",
-    external: true,
-  },
-  {
-    title: "Station 11",
-    tag: "Neighborhood Cafe",
-    desc: "Caribbean-influenced cafe in a historic firehouse. Breakfast, lunch, wok, and coffee bar with warm cafe aesthetic.",
-    link: "#",
-    external: false,
-  },
-  {
-    title: "MF Phone Repair",
-    tag: "Local Service",
-    desc: "Phone repair shop with multi-location support, service pricing, reviews, and trust signals.",
-    link: "https://www.mfphonerepair.com",
-    external: true,
+    image: "/portfolio/heirloom.png",
+    url: "heirloombbq.com",
   },
   {
     title: "FRAMELOCK",
@@ -195,50 +311,81 @@ const PROJECTS = [
     desc: "Dark, cinematic portfolio for an Atlanta car photographer. Masonry gallery with tiered pricing.",
     link: "https://shutter-city.vercel.app",
     external: true,
+    image: "/portfolio/framelock.png",
+    url: "framelock.co",
   },
   {
-    title: "Sensei App",
-    tag: "SaaS Platform",
-    desc: "Operating system for independent martial arts and fitness coaches. Client management, scheduling, billing \u2014 one platform.",
-    link: "#",
+    title: "Babygirl",
+    tag: "Bar & Lounge",
+    desc: "Upscale brunch and cocktail spot in East Lake. Seasonal menu tabs, photo gallery, and walk-in details.",
+    link: "/demo/babygirl",
     external: false,
+    image: "/portfolio/babygirl.png",
+    url: "babygirlatl.com",
+  },
+  {
+    title: "Clahvay",
+    tag: "Barbershop",
+    desc: "Premium barbershop with online booking, service menu, and brand photography. Clean, modern, mobile-first.",
+    link: "https://clahvay.vercel.app",
+    external: true,
+    image: "/portfolio/clahvay.png",
+    url: "clahvay.com",
+  },
+  {
+    title: "Amistad Coffee",
+    tag: "Coffee Shop",
+    desc: "Latin-inspired cafe in Midtown. Menu, hours, and story page designed to match their warm, community energy.",
+    link: "https://amistad-coffee.vercel.app",
+    external: true,
+    image: "/portfolio/amistad.png",
+    url: "amistadcoffee.com",
+  },
+  {
+    title: "Station 11",
+    tag: "Café",
+    desc: "Caribbean-Asian café in a historic Midtown firehouse. Menu, reservations, and interior photography.",
+    link: "https://station11-atl.vercel.app",
+    external: true,
+    image: "/portfolio/station11.png",
+    url: "station11atl.com",
   },
 ];
 
 const SERVICES = [
   {
     title: "Custom Website",
-    desc: "Designed and built from scratch around your brand. No templates. Mobile-first, fast, and yours.",
+    desc: "Designed and built from scratch around your brand. No templates. Mobile-first, fast, and 100% yours.",
   },
   {
     title: "Professional Photography",
-    desc: "My photographer comes to your space. We shoot your food, your interior, your team. Real images, not stock.",
+    desc: "My photographer comes to your space. We shoot your product, your interior, your team. Real images, not stock.",
   },
   {
     title: "Monthly Support",
-    desc: "Menu changes, hour updates, new photos \u2014 you text me, it gets done. No tickets. No waiting.",
+    desc: "Content changes, updates, new photos \u2014 you text me, it gets done. No tickets. No waiting.",
   },
   {
     title: "Growth Tools",
-    desc: "Online ordering, Google reviews, email capture, SEO. Added when you\u2019re ready, not forced upfront.",
+    desc: "Booking systems, Google reviews, email capture, SEO. Added when you\u2019re ready, not forced upfront.",
   },
 ];
 
 const STEPS = [
   {
     n: "01",
-    title: "We Talk",
-    desc: "15-minute call. You tell me about your business. I tell you what I\u2019d build. Free, no pressure.",
+    title: "You Text Me",
+    desc: "Tell me about your business. I\u2019ll tell you exactly what I\u2019d build. No forms. No waiting.",
   },
   {
     n: "02",
-    title: "We Build + Shoot",
-    desc: "I design and build your site while my photographer shoots your space. You see progress the whole way.",
+    title: "I Build It",
+    desc: "Custom site designed and coded in days, not months. You see progress and give feedback the whole way.",
   },
   {
     n: "03",
-    title: "You Launch",
-    desc: "We go live. I handle hosting, updates, and support. You run your business \u2014 I keep your site running.",
+    title: "You Go Live",
+    desc: "Your site launches on your own domain. I handle hosting, updates, and support. You own everything.",
   },
 ];
 
@@ -257,23 +404,31 @@ export default function Page() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [menuOpen]);
 
   return (
     <>
       {/* ── Nav ─────────────────────────────────── */}
       <nav className={`nav ${scrolled ? "nav--scrolled" : ""}`}>
-        <a href="#top" className="nav__logo">FOUNDOS</a>
+        <a href="#top" className="nav__logo">
+          FOUNDOS
+        </a>
         <div className="nav__links">
           {NAV_LINKS.map((l) => (
-            <a key={l.label} href={l.href} className="nav__link">{l.label}</a>
+            <a key={l.label} href={l.href} className="nav__link">
+              {l.label}
+            </a>
           ))}
-          <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn btn--sm">
-            Book a Call
+          <a
+            href={TEXT_LINK}
+            className="btn btn--sm"
+          >
+            Text Me
           </a>
         </div>
         <button
@@ -281,14 +436,19 @@ export default function Page() {
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
-          <span className={`hamburger ${menuOpen ? "hamburger--open" : ""}`} />
+          <span
+            className={`hamburger ${menuOpen ? "hamburger--open" : ""}`}
+          />
         </button>
       </nav>
 
-      {/* ── Mobile Menu Overlay ─────────────────── */}
+      {/* ── Mobile Menu ────────────────────────── */}
       {menuOpen && (
         <div className="mobile-menu" onClick={() => setMenuOpen(false)}>
-          <div className="mobile-menu__inner" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="mobile-menu__inner"
+            onClick={(e) => e.stopPropagation()}
+          >
             {NAV_LINKS.map((l) => (
               <a
                 key={l.label}
@@ -300,13 +460,11 @@ export default function Page() {
               </a>
             ))}
             <a
-              href={CAL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={TEXT_LINK}
               className="btn"
               style={{ marginTop: 16 }}
             >
-              Book a Free Call
+              Text Me
             </a>
           </div>
         </div>
@@ -316,22 +474,32 @@ export default function Page() {
       <section id="top" className="hero">
         <DotGrid />
         <div className="hero__content">
-          <p className="mono hero__label">Web Design + Photography &mdash; Atlanta, GA</p>
+          <p className="mono hero__label">
+            Custom Web Design &mdash; Atlanta, GA
+          </p>
           <h1 className="heading hero__title">
-            Websites That<br />Fill Tables.
+            Your Website.
+            <br />
+            Live This Week.
           </h1>
           <p className="hero__sub">
-            Custom websites and professional photography for restaurants,
-            cafes, and bars that take their food seriously.
+            Custom-built websites for local businesses. No templates. No
+            agencies. You talk directly to the person who builds it.
           </p>
           <div className="hero__ctas">
-            <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn">
-              Book a Free Call
+            <a
+              href={TEXT_LINK}
+              className="btn"
+            >
+              Text Me
             </a>
             <a href="#work" className="btn btn--ghost">
               See the Work
             </a>
           </div>
+          <p className="mono hero__response">
+            I reply in minutes. Yes, really.
+          </p>
         </div>
         <div className="hero__scroll">
           <span className="mono">Scroll</span>
@@ -339,41 +507,20 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ── Work ────────────────────────────────── */}
+      {/* ── Work (Carousel) ─────────────────────── */}
       <section id="work" className="section">
         <div className="container">
           <Reveal>
             <p className="mono section__label">Work</p>
             <h2 className="heading section__title">
-              {PROJECTS.length} Projects.<br />All Real.
+              Real Work.
+              <br />
+              Real Businesses.
             </h2>
           </Reveal>
-
-          <div className="work-grid">
-            {PROJECTS.map((p, i) => (
-              <Reveal key={p.title} delay={i * 0.1} className="work-card">
-                <div className="work-card__inner">
-                  <p className="mono work-card__tag">{p.tag}</p>
-                  <h3 className="heading work-card__title">{p.title}</h3>
-                  <p className="work-card__desc">{p.desc}</p>
-                  {p.link !== "#" ? (
-                    <a
-                      href={p.link}
-                      target={p.external ? "_blank" : undefined}
-                      rel={p.external ? "noopener noreferrer" : undefined}
-                      className="work-card__link"
-                    >
-                      View Site <span aria-hidden="true">&rarr;</span>
-                    </a>
-                  ) : (
-                    <span className="work-card__link work-card__link--muted">
-                      Coming Soon
-                    </span>
-                  )}
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <Reveal delay={0.15}>
+            <Carousel projects={PROJECTS} />
+          </Reveal>
         </div>
       </section>
 
@@ -383,7 +530,9 @@ export default function Page() {
           <Reveal>
             <p className="mono section__label">What You Get</p>
             <h2 className="heading section__title">
-              Everything Your<br />Business Needs Online.
+              Everything Your
+              <br />
+              Business Needs Online.
             </h2>
           </Reveal>
 
@@ -409,7 +558,9 @@ export default function Page() {
           <Reveal>
             <p className="mono section__label">How It Works</p>
             <h2 className="heading section__title">
-              Three Steps.<br />That&apos;s It.
+              Three Steps.
+              <br />
+              That&apos;s It.
             </h2>
           </Reveal>
 
@@ -432,16 +583,31 @@ export default function Page() {
         <div className="container pricing__inner">
           <Reveal>
             <p className="mono section__label">Pricing</p>
-            <h2 className="heading pricing__number">Starting at $2,000</h2>
+            <h2 className="heading pricing__number">$2,000</h2>
             <p className="pricing__includes">
               Custom design. Professional photography. Your own domain.
+              <br />
+              Live in days, not months.
             </p>
             <p className="pricing__retainer">
-              $150/mo for hosting, updates, and direct support.
+              + $150/mo for hosting, updates, and direct support.
             </p>
-            <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn">
-              Book a Free Call
-            </a>
+            <p className="pricing__ownership mono">
+              You own your code. You own your domain. No lock-in.
+            </p>
+            <div className="hero__ctas" style={{ marginTop: "2rem" }}>
+              <a href={TEXT_LINK} className="btn">
+                Text Me
+              </a>
+              <a
+                href={CAL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn--ghost"
+              >
+                Book a Call
+              </a>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -452,7 +618,7 @@ export default function Page() {
           <Reveal className="about__photo-wrap">
             <Image
               src="/josh.jpg"
-              alt="Josh Potesta"
+              alt="Josh Poteat"
               width={280}
               height={280}
               className="about__photo"
@@ -461,16 +627,20 @@ export default function Page() {
           <Reveal delay={0.15} className="about__text">
             <p className="mono section__label">About</p>
             <h2 className="heading about__heading">
-              I Don&apos;t Disappear<br />After Launch.
+              One Person.
+              <br />
+              No Handoffs.
             </h2>
             <p className="about__bio">
-              I&apos;m Josh &mdash; 19, based in Atlanta. Six years in martial arts
-              taught me how small businesses actually run. Restaurants, cafes, salons,
-              contractors &mdash; if you serve your community, I build for you.
+              I&apos;m Josh &mdash; a web developer in Atlanta. I build
+              custom websites for local businesses using the same tools agencies
+              use, at a fraction of the cost. You work directly with me &mdash;
+              the same person who designs, builds, and maintains your site.
             </p>
             <p className="about__bio about__bio--dim">
-              You text me. I respond. No tickets. No gatekeepers. No agencies.
-              Just one person who knows your business and keeps your site running.
+              No account managers. No junior devs. No surprise invoices. You
+              text me, I respond in minutes. Your site stays fast, secure, and
+              up to date &mdash; every single month.
             </p>
           </Reveal>
         </div>
@@ -481,15 +651,28 @@ export default function Page() {
         <div className="container cta-final__inner">
           <Reveal>
             <h2 className="heading cta-final__title">
-              Let&apos;s Build<br />Something.
+              Ready for a
+              <br />
+              Real Website?
             </h2>
             <p className="cta-final__sub">
-              Book a free call. Tell me about your business. No pressure,
-              no commitment &mdash; just a conversation about what you need.
+              Text me what your business does. I&apos;ll tell you exactly what
+              I&apos;d build &mdash; no pressure, no commitment. If it makes
+              sense, your site can be live this week.
             </p>
-            <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn btn--lg">
-              Book a Free Call
-            </a>
+            <div className="hero__ctas">
+              <a href={TEXT_LINK} className="btn btn--lg">
+                Text Me Now
+              </a>
+              <a
+                href={CAL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn--ghost"
+              >
+                Or Book a Call
+              </a>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -499,26 +682,52 @@ export default function Page() {
         <div className="container footer__top">
           <div>
             <p className="heading footer__brand">FOUNDOS</p>
-            <p className="mono footer__tagline">Custom websites for local businesses.</p>
+            <p className="mono footer__tagline">
+              Custom websites. Built fast. Owned by you.
+            </p>
           </div>
           <div className="footer__links">
-            <a href="https://instagram.com/foundos.ai" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a href="https://tiktok.com/@foundos.ai" target="_blank" rel="noopener noreferrer">TikTok</a>
-            <a href="mailto:hello@foundos.ai">hello@foundos.ai</a>
+            <a
+              href="https://instagram.com/foundos.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
+            <a
+              href="https://tiktok.com/@foundos.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              TikTok
+            </a>
+            <a href="mailto:josh@foundos.ai">josh@foundos.ai</a>
           </div>
         </div>
         <div className="container">
           <div className="footer__bottom">
             <p className="mono">&copy; 2026 FoundOS</p>
-            <p className="mono">Atlanta, GA</p>
+            <div style={{ display: "flex", gap: 24 }}>
+              <a
+                href="/privacy"
+                className="mono"
+                style={{ color: "var(--text-dim)", textDecoration: "none" }}
+              >
+                Privacy
+              </a>
+              <p className="mono">Atlanta, GA</p>
+            </div>
           </div>
         </div>
       </footer>
 
       {/* ── Sticky Mobile CTA ───────────────────── */}
       <div className={`sticky-cta ${showSticky ? "sticky-cta--show" : ""}`}>
-        <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn sticky-cta__btn">
-          Book a Free Call
+        <a
+          href={TEXT_LINK}
+          className="btn sticky-cta__btn"
+        >
+          Text Me
         </a>
       </div>
     </>

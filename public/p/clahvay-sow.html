@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Scope of Work — Cuban Dance Soul</title>
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0a0a0a;
+      --bg-card: #111111;
+      --bg-card-alt: #161616;
+      --white: #f5f5f5;
+      --white-dim: #a0a0a0;
+      --red: #c9302b;
+      --red-dim: rgba(201, 48, 43, 0.15);
+      --border: #222222;
+      --radius: 12px;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      padding: 0;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+      padding-left: max(20px, env(safe-area-inset-left));
+      padding-right: max(20px, env(safe-area-inset-right));
+    }
+
+    /* ---- Header ---- */
+    .header {
+      text-align: center;
+      padding: 40px 0 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+
+    .header-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .header h1 {
+      font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      line-height: 1.05;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .header-sub {
+      font-size: 1.05rem;
+      color: var(--white-dim);
+      font-weight: 400;
+    }
+
+    .header-date {
+      font-size: 0.8rem;
+      color: var(--white-dim);
+      margin-top: 16px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .header-parties {
+      margin-top: 24px;
+      font-size: 0.82rem;
+      color: var(--white-dim);
+      line-height: 1.8;
+    }
+
+    .header-parties strong {
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section-number {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .section h2 {
+      font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      line-height: 1.15;
+    }
+
+    .section p {
+      color: var(--white-dim);
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    /* ---- Deliverable cards ---- */
+    .deliverable-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .deliverable-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+
+    .deliverable-item .label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 3px;
+    }
+
+    .deliverable-item .desc {
+      font-size: 0.82rem;
+      color: var(--white-dim);
+      line-height: 1.5;
+    }
+
+    .preview-link {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--red);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+      padding: 6px 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .preview-link:hover,
+    .preview-link:active {
+      border-bottom-color: var(--red);
+    }
+
+    /* ---- Pricing ---- */
+    .pricing-table {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .pricing-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pricing-row:last-child {
+      border-bottom: none;
+    }
+
+    .pricing-row .item {
+      font-size: 0.92rem;
+      color: var(--white);
+    }
+
+    .pricing-row .item-desc {
+      font-size: 0.75rem;
+      color: var(--white-dim);
+      margin-top: 2px;
+    }
+
+    .pricing-row .price {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+      white-space: nowrap;
+      margin-left: 16px;
+    }
+
+    .pricing-total {
+      background: var(--red-dim);
+      border: 1px solid var(--red);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .pricing-total .item {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .pricing-total .price {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .payment-options {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+
+    .payment-options .label {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .payment-option {
+      font-size: 0.9rem;
+      color: var(--white);
+      padding: 6px 0;
+    }
+
+    .payment-option span {
+      color: var(--white-dim);
+      font-size: 0.82rem;
+    }
+
+    .payment-divider {
+      font-size: 0.78rem;
+      color: var(--white-dim);
+      padding: 4px 0;
+      text-align: center;
+    }
+
+    /* ---- Ongoing ---- */
+    .ongoing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .ongoing-price {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .ongoing-list {
+      list-style: none;
+      margin-bottom: 14px;
+    }
+
+    .ongoing-list li {
+      font-size: 0.88rem;
+      color: var(--white-dim);
+      padding: 4px 0;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .ongoing-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 11px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .ongoing-quote {
+      font-size: 0.88rem;
+      color: var(--white);
+      font-style: italic;
+      padding-top: 4px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    /* ---- Timeline ---- */
+    .timeline {
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .timeline-step {
+      position: relative;
+      padding-bottom: 24px;
+    }
+
+    .timeline-step:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-step::before {
+      content: '';
+      position: absolute;
+      left: -23px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--red);
+    }
+
+    .timeline-step.final::before {
+      background: var(--red);
+    }
+
+    .timeline-step .step-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 2px;
+    }
+
+    .timeline-step .step-desc {
+      font-size: 0.82rem;
+      color: var(--white-dim);
+      line-height: 1.5;
+    }
+
+    .timeline-summary {
+      margin-top: 20px;
+      background: var(--red-dim);
+      border: 1px solid var(--red);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--white);
+      text-align: center;
+    }
+
+    /* ---- Exclusions ---- */
+    .exclusion-list {
+      list-style: none;
+      margin-bottom: 14px;
+    }
+
+    .exclusion-list li {
+      font-size: 0.88rem;
+      color: var(--white-dim);
+      padding: 5px 0;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .exclusion-list li::before {
+      content: '';
+      position: absolute;
+      left: 2px;
+      top: 12px;
+      width: 8px;
+      height: 2px;
+      background: var(--white-dim);
+      border-radius: 1px;
+    }
+
+    .exclusion-note {
+      font-size: 0.88rem;
+      color: var(--white);
+      font-style: italic;
+    }
+
+    /* ---- Footer / CTA ---- */
+    .footer {
+      margin-top: 48px;
+      text-align: center;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer h2 {
+      font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .cta-option {
+      margin-bottom: 16px;
+    }
+
+    .cta-primary {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 18px 40px;
+      border-radius: 50px;
+      letter-spacing: 0.02em;
+      transition: transform 0.15s, opacity 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      min-height: 52px;
+    }
+
+    .cta-primary:hover {
+      opacity: 0.9;
+    }
+
+    .cta-primary:active {
+      transform: scale(0.97);
+      opacity: 0.85;
+    }
+
+    .cta-secondary {
+      font-size: 0.88rem;
+      color: var(--white-dim);
+      margin-top: 8px;
+    }
+
+    .cta-divider {
+      font-size: 0.82rem;
+      color: var(--white-dim);
+      margin: 12px 0;
+    }
+
+    .footer-brand {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--white-dim);
+    }
+
+    .footer-brand a {
+      color: var(--white-dim);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .footer-brand a:hover {
+      color: var(--white);
+      border-bottom-color: var(--white);
+    }
+
+    /* ---- Responsive ---- */
+    @media (min-width: 640px) {
+      .container {
+        padding: 40px 32px 64px;
+      }
+
+      .header h1 {
+        font-size: 3.4rem;
+      }
+
+      .section h2 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-label">Cuban Dance Soul</div>
+      <h1>Scope of Work</h1>
+      <p class="header-sub">Website Design, Build &amp; Launch</p>
+      <p class="header-date">April 29, 2026</p>
+      <div class="header-parties">
+        <strong>Prepared for:</strong> Emarlos &mdash; Cuban Dance Soul (Clahvay)<br>
+        768 Concord Rd SE, Smyrna GA 30082<br><br>
+        <strong>Prepared by:</strong> Josh Potesta &mdash; FoundOS<br>
+        <a href="tel:+14044363393" style="color: inherit; text-decoration: none;">(404) 436-3393</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://foundos.ai" style="color: var(--red); text-decoration: none;">foundos.ai</a>
+      </div>
+    </header>
+
+    <!-- Section 1: What You're Getting -->
+    <section class="section">
+      <div class="section-number">01</div>
+      <h2>What You're Getting</h2>
+      <p>A complete premium website package &mdash; designed, built, photographed, and wired up so your students can find you, book classes, and stay connected.</p>
+      <ul class="deliverable-list">
+        <li class="deliverable-item">
+          <div class="label">Custom-Designed Brand Website</div>
+          <div class="desc">Already built to match your brand. Dark, bold, premium &mdash; the way Clahvay should look online.</div>
+          <a href="https://clahvay.vercel.app" target="_blank" rel="noopener" class="preview-link">Preview your site &rarr;</a>
+        </li>
+        <li class="deliverable-item">
+          <div class="label">Professional Photography Session</div>
+          <div class="desc">On-site photo shoot at the studio &mdash; instructors, classes in action, the space itself. Real photos of your people, not stock images. These go directly into your new site.</div>
+        </li>
+        <li class="deliverable-item">
+          <div class="label">Pike13 Class Scheduling</div>
+          <div class="desc">Your existing Pike13 system, embedded right into the new site. Students book classes without leaving the page &mdash; no extra steps, no confusion. Already compatible with your current setup.</div>
+          <div class="desc" style="margin-top: 6px; font-size: 0.78rem; color: #888;">Down the road, if you ever want a fully custom booking experience built just for Clahvay, we can talk about that too.</div>
+        </li>
+        <li class="deliverable-item">
+          <div class="label">Contact Form Wired to Email</div>
+          <div class="desc">New leads land straight in your inbox. No messages falling through the cracks.</div>
+        </li>
+        <li class="deliverable-item">
+          <div class="label">Newsletter Email Capture</div>
+          <div class="desc">Build your list. Keep your community in the loop on events, classes, and festivals.</div>
+        </li>
+        <li class="deliverable-item">
+          <div class="label">Festival Ticket Integration</div>
+          <div class="desc">Link directly to your ticketing platform so fans can grab tickets without leaving the vibe.</div>
+        </li>
+        <li class="deliverable-item">
+          <div class="label">Google Analytics + Meta Pixel</div>
+          <div class="desc">See who's visiting, where they come from, and what makes them convert.</div>
+        </li>
+        <li class="deliverable-item">
+          <div class="label">SEO Optimization</div>
+          <div class="desc">Rank for &ldquo;salsa classes Atlanta,&rdquo; &ldquo;Cuban dance Atlanta,&rdquo; and the searches your future students are making right now.</div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 2: The Investment -->
+    <section class="section">
+      <div class="section-number">02</div>
+      <h2>The Investment</h2>
+
+      <div class="pricing-table">
+        <div class="pricing-row">
+          <div>
+            <div class="item">Website Design &amp; Build</div>
+            <div class="item-desc">Completed</div>
+          </div>
+          <div class="price">$800</div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="item">Professional Photography</div>
+            <div class="item-desc">On-site studio shoot, edited &amp; placed</div>
+          </div>
+          <div class="price">$400</div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="item">Integrations &amp; Wiring</div>
+            <div class="item-desc">Pike13, forms, analytics, ticketing</div>
+          </div>
+          <div class="price">$400</div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="item">Year 1 Hosting &amp; Support</div>
+            <div class="item-desc">Vercel hosting, SSL, 2 content updates</div>
+          </div>
+          <div class="price">$400</div>
+        </div>
+      </div>
+
+      <div class="pricing-total">
+        <div class="item">Total</div>
+        <div class="price">$2,000</div>
+      </div>
+
+      <div class="payment-options">
+        <div class="label">Payment Options</div>
+        <div class="payment-option"><strong>Option A:</strong> $2,000 upfront</div>
+        <div class="payment-divider">&mdash; or &mdash;</div>
+        <div class="payment-option"><strong>Option B:</strong> $1,000 now + $1,000 at launch</div>
+      </div>
+    </section>
+
+    <!-- Section 3: After Year One -->
+    <section class="section">
+      <div class="section-number">03</div>
+      <h2>After Year One</h2>
+
+      <div class="ongoing-card">
+        <div class="ongoing-price">$50 &ndash; $75 / month</div>
+        <ul class="ongoing-list">
+          <li>Hosting &amp; SSL</li>
+          <li>Uptime monitoring</li>
+          <li>Content swaps &mdash; event dates, pricing, new instructors</li>
+        </ul>
+        <div class="ongoing-quote">&ldquo;I update your site so you never have to.&rdquo;</div>
+      </div>
+    </section>
+
+    <!-- Section 4: What Happens Next -->
+    <section class="section">
+      <div class="section-number">04</div>
+      <h2>What Happens Next</h2>
+
+      <div class="timeline">
+        <div class="timeline-step">
+          <div class="step-title">Sign this scope</div>
+          <div class="step-desc">Then we hop on a 30-min brand discovery Zoom. I record it to capture your voice and vision.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-title">Photo shoot at the studio</div>
+          <div class="step-desc">I come to the studio, shoot the space, the instructors, and a class in action. Real photos for a real site.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-title">Integrations + real assets</div>
+          <div class="step-desc">I wire everything up, edit the photos, and swap them into the site. Takes 5&ndash;7 business days.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-title">You review</div>
+          <div class="step-desc">One round of revisions included. We make sure it feels right.</div>
+        </div>
+        <div class="timeline-step final">
+          <div class="step-title">Go live</div>
+          <div class="step-desc">Your old site redirects to the new one. You're live.</div>
+        </div>
+      </div>
+
+      <div class="timeline-summary">~2 weeks from signature to launch</div>
+    </section>
+
+    <!-- Section 5: What's NOT Included -->
+    <section class="section">
+      <div class="section-number">05</div>
+      <h2>What's Not Included</h2>
+
+      <ul class="exclusion-list">
+        <li>Custom booking system &mdash; replace Pike13, keep more of your money</li>
+        <li>Custom app / member portal</li>
+        <li>E-commerce / gear shop</li>
+        <li>Blog content writing</li>
+        <li>Studio rental booking page</li>
+      </ul>
+      <p class="exclusion-note">&ldquo;Right now we work with your Pike13. When you&rsquo;re ready to own the whole system and stop paying monthly fees, we build that next.&rdquo;</p>
+    </section>
+
+    <!-- Footer / CTA -->
+    <footer class="footer">
+      <h2>Ready to Move?</h2>
+
+      <div class="cta-option">
+        <a href="sms:+14044363393&body=I'm%20in" class="cta-primary">Text me "I'm in"</a>
+        <div class="cta-secondary">(404) 436-3393</div>
+      </div>
+
+      <div class="cta-divider">or reply to this doc</div>
+
+      <div class="footer-brand">
+        Built by <a href="https://foundos.ai" target="_blank" rel="noopener">FoundOS</a> &mdash; foundos.ai
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>
