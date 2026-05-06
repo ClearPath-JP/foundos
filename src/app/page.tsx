@@ -189,7 +189,7 @@ export default function Page() {
   /* Intro: sketch plays ~3s at center, then collapses to header */
   const [introDone, setIntroDone] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => setIntroDone(true), 3200);
+    const t = setTimeout(() => setIntroDone(true), 5500);
     return () => clearTimeout(t);
   }, []);
 
