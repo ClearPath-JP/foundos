@@ -272,59 +272,126 @@ body {
 
 .hero__annotation--visible { opacity: 1; }
 
-/* ─── Tier Cards (sketch bordered) ───────────────── */
-.tiers-grid {
+/* ─── Service Cards ──────────────────────────────── */
+.cards-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--s3);
 }
 
-.tier-card {
+.card {
   position: relative;
   padding: var(--s4);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   background: var(--bg);
-  min-height: 200px;
-  transition: transform 0.2s var(--spring);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.25s var(--spring),
+              box-shadow 0.25s var(--spring),
+              transform 0.25s var(--spring);
 }
 
-.tier-card:hover { transform: translateY(-3px); }
-
-.tier-card__sketch {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+.card:hover,
+.card--active {
+  border-color: rgba(224, 85, 51, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  transform: translateY(-4px);
 }
 
-.tier-card__number {
-  font-family: var(--font-caveat), cursive;
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--accent);
-  margin-bottom: var(--s1);
-}
-
-.tier-card__title {
-  font-size: clamp(20px, 3vw, 24px);
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 4px;
-  letter-spacing: -0.02em;
-}
-
-.tier-card__subtitle {
-  font-size: 12px;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   margin-bottom: var(--s2);
 }
 
-.tier-card__desc {
-  font-size: 15px;
+.card__number {
+  font-family: var(--font-caveat), cursive;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.card__price {
+  font-size: 11px;
+  font-family: var(--font-geist-mono), monospace;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+}
+
+.card__title {
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  margin-bottom: 4px;
+}
+
+.card__subtitle {
+  font-size: 12px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  margin-bottom: var(--s2);
+}
+
+.card__desc {
+  font-size: 14px;
   color: var(--text-muted);
   line-height: 1.7;
+}
+
+/* Expand reveal */
+.card__reveal {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.5s var(--spring),
+              opacity 0.3s ease 0.1s;
+}
+
+.card--active .card__reveal {
+  max-height: 400px;
+  opacity: 1;
+}
+
+.card__divider {
+  height: 1px;
+  background: var(--border);
+  margin: var(--s3) 0;
+}
+
+.card__reveal-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: var(--s3);
+}
+
+.card__flow {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: var(--s1);
+}
+
+.card-flow-svg {
+  width: 100%;
+  height: auto;
+  min-width: 320px;
+}
+
+/* Hint */
+.card__hint {
+  font-size: 11px;
+  font-family: var(--font-geist-mono), monospace;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+  margin-top: var(--s3);
+  transition: opacity 0.2s;
+  min-height: 18px;
 }
 
 /* ─── AI Section ─────────────────────────────────── */
@@ -643,80 +710,11 @@ body {
 .hero-wordmark { display: block; }
 .hero-wordmark-line { display: block; margin-top: -2px; }
 
-/* ─── Tier Cards — Expandable ────────────────────── */
-.tier-card--interactive {
-  cursor: default;
-  transition: all 0.35s var(--spring);
-  overflow: hidden;
-}
-
-.tier-card--interactive:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-  z-index: 2;
-}
-
-.tier-card__content {
-  position: relative;
-  z-index: 1;
-}
-
-.tier-card__expanded {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height 0.5s var(--spring), opacity 0.3s ease;
-}
-
-.tier-card--expanded .tier-card__expanded {
-  max-height: 500px;
-  opacity: 1;
-}
-
-.tier-card__expanded-desc {
-  font-size: 14px;
-  color: var(--text-muted);
-  line-height: 1.7;
-  margin-top: var(--s3);
-  margin-bottom: var(--s3);
-  padding-top: var(--s3);
-  border-top: 1px solid var(--border);
-}
-
-.tier-card__workflow-wrap {
-  width: 100%;
-  overflow-x: auto;
-  margin-bottom: var(--s2);
-}
-
-.tier-workflow-svg {
-  width: 100%;
-  height: auto;
-  min-width: 360px;
-}
-
-.tier-card__steps {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: var(--s2);
-}
-
-.tier-step {
-  font-size: 11px;
-  font-family: var(--font-geist-mono), monospace;
-  color: var(--text-dim);
-  letter-spacing: 0.03em;
-}
-
-.tier-step__arrow {
-  margin: 0 4px;
-  color: var(--accent);
-}
+/* (old tier card animation styles removed — replaced by .card system) */
 
 /* ─── Responsive ─────────────────────────────────── */
 @media (max-width: 768px) {
-  .tiers-grid { grid-template-columns: 1fr; }
+  .cards-grid { grid-template-columns: 1fr; }
   .ai-cards { grid-template-columns: 1fr; }
 
   .cursor-img { display: none !important; }
