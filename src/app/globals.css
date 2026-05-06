@@ -734,8 +734,10 @@ body {
   .intro__inner { transform: translate(-50%, -55%) scale(0.85); }
   .intro--done .intro__inner { transform: translate(0, 0) scale(0.35); }
 
-  /* Cards */
+  /* Cards — show expanded content by default on mobile (no hover) */
   .cards-grid { grid-template-columns: 1fr; }
+  .card__reveal { max-height: 400px; opacity: 1; }
+  .card__hint { display: none; }
   .ai-cards { grid-template-columns: 1fr; }
 
   /* Work */

@@ -139,7 +139,7 @@ const TIERS = [
     number: "03",
     title: "Intelligence",
     subtitle: "Dashboards + Data",
-    price: "Project-based",
+    price: "From $3,500",
     desc: "See your business in real-time. Custom CRM, reporting, and analytics built around how you actually work.",
     expandedDesc: "All your data — calls, leads, revenue, traffic — centralized. A custom dashboard built for your business model. No more guessing what's working. You see the full picture.",
     Workflow: IntelligenceFlow,
@@ -196,7 +196,7 @@ export default function TierCards() {
 
             {/* Expand hint */}
             <p className="card__hint">
-              {isActive ? "" : "Hover to explore \u2192"}
+              {isActive ? "" : "See the full workflow \u2192"}
             </p>
           </div>
         );
