@@ -585,11 +585,19 @@ body {
 /* ─── CTA Final ──────────────────────────────────── */
 .cta-final { border-top: 1px solid var(--border); }
 
-.cta-final__inner { text-align: center; max-width: 640px; position: relative; }
+.cta-final__inner {
+  text-align: center;
+  max-width: 640px;
+  position: relative;
+  padding: var(--s4);
+}
 
 .cta-final__sketch {
   position: absolute;
-  inset: -24px;
+  top: -12px;
+  left: -12px;
+  right: -12px;
+  bottom: -12px;
   pointer-events: none;
 }
 
@@ -755,19 +763,57 @@ body {
   .footer__top { flex-direction: column; gap: var(--s4); }
   .footer__links { align-items: flex-start; }
 
+  /* CTA sketch box — tighter on mobile */
+  .cta-final__sketch {
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+  }
+  .cta-final__inner { padding: var(--s3); }
+  .cta-final__title { font-size: clamp(28px, 8vw, 48px); }
+  .cta-final__sub { font-size: 15px; }
+
   /* CTA section bottom buffer above bottom nav */
   .cta-final { padding-bottom: clamp(100px, 16vh, 160px); }
+
+  /* Section title smaller on mobile */
+  .section__title { font-size: clamp(28px, 7vw, 44px); margin-bottom: var(--s5); }
+
+  /* Stack section tighter */
+  .stack-section { padding: var(--s4) 0; }
+  .stack-tag { padding: 5px 12px; font-size: 11px; }
+
+  /* About heading */
+  .about__heading { font-size: clamp(28px, 7vw, 40px); }
 
   /* Bottom nav */
   .bottom-nav { left: var(--s2); right: var(--s2); bottom: var(--s2); transform: translateX(0) translateY(100px); justify-content: center; }
   .bottom-nav--visible { transform: translateX(0) translateY(0); }
   .bottom-nav__link { padding: 10px 14px; font-size: 12px; }
   .bottom-nav__cta { padding: 10px 18px; font-size: 12px; }
+
+  /* Card flow SVGs — allow horizontal scroll */
+  .card-flow-svg { min-width: 280px; }
+  .card__flow { -webkit-overflow-scrolling: touch; }
 }
 
 @media (max-width: 480px) {
-  /* Tighter bottom nav — drop text labels, keep CTA */
+  .hero__title { font-size: clamp(30px, 9.5vw, 44px); }
+  .hero__sub { font-size: 15px; }
+
+  /* Bottom nav — compact */
   .bottom-nav__link { padding: 8px 10px; font-size: 11px; }
   .bottom-nav__cta { padding: 8px 14px; font-size: 11px; }
-  .hero__title { font-size: clamp(32px, 10vw, 48px); }
+
+  /* Cards — tighter padding */
+  .card { padding: var(--s3); }
+  .card__number { font-size: 28px; }
+  .card__title { font-size: 20px; }
+
+  /* CTA buttons stack on narrow screens */
+  .cta-final__ctas { flex-direction: column; align-items: center; }
+  .hero__ctas { flex-direction: column; }
+  .hero__ctas .btn { width: 100%; text-align: center; }
+  .cta-final__ctas .btn { width: 100%; max-width: 320px; text-align: center; }
 }
