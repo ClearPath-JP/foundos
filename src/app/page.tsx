@@ -2,13 +2,82 @@
 
 import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
 import Image from "next/image";
-import HeroCanvas from "@/components/HeroCanvas";
 
 /* ─── Constants ──────────────────────────────────── */
 const CAL = "https://cal.com/foundos.ai/strategy-call";
 const PHONE = "4704898838";
 const TEXT_MSG = "Hey Josh — interested in working together.";
 const TEXT_LINK = `sms:+1${PHONE}?body=${encodeURIComponent(TEXT_MSG)}`;
+
+/* ─── SVG Sketch Draw-on-Scroll ──────────────────── */
+function Sketch({
+  d,
+  viewBox,
+  className = "",
+  delay = 0,
+  duration = 0.8,
+  stroke = "var(--sketch)",
+  strokeWidth = 2.5,
+  preserveAspectRatio = "none",
+}: {
+  d: string;
+  viewBox: string;
+  className?: string;
+  delay?: number;
+  duration?: number;
+  stroke?: string;
+  strokeWidth?: number;
+  preserveAspectRatio?: string;
+}) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
+  const [drawn, setDrawn] = useState(false);
+  const [len, setLen] = useState(1000);
+
+  useEffect(() => {
+    if (pathRef.current) setLen(pathRef.current.getTotalLength());
+  }, []);
+
+  useEffect(() => {
+    const el = svgRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setDrawn(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <svg
+      ref={svgRef}
+      viewBox={viewBox}
+      className={`sketch-svg ${className}`}
+      preserveAspectRatio={preserveAspectRatio}
+    >
+      <path
+        ref={pathRef}
+        d={d}
+        fill="none"
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{
+          strokeDasharray: len,
+          strokeDashoffset: drawn ? 0 : len,
+          transition: `stroke-dashoffset ${duration}s ease ${delay}s`,
+        }}
+      />
+    </svg>
+  );
+}
 
 /* ─── Scroll Reveal ──────────────────────────────── */
 function Reveal({
@@ -21,7 +90,7 @@ function Reveal({
   delay?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [vis, setVis] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -29,7 +98,7 @@ function Reveal({
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setVisible(true);
+          setVis(true);
           obs.disconnect();
         }
       },
@@ -44,9 +113,9 @@ function Reveal({
       ref={ref}
       className={className}
       style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(32px)",
-        transition: `opacity 0.8s ease ${delay}s, transform 0.8s ease ${delay}s`,
+        opacity: vis ? 1 : 0,
+        transform: vis ? "translateY(0)" : "translateY(24px)",
+        transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
       }}
     >
       {children}
@@ -60,21 +129,19 @@ function BottomNav() {
   const [active, setActive] = useState("");
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 800);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setVisible(true), 600);
+    return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
     const ids = ["work", "ai", "about"];
     const onScroll = () => {
-      let current = "";
+      let cur = "";
       for (const id of ids) {
         const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= window.innerHeight / 2) {
-          current = id;
-        }
+        if (el && el.getBoundingClientRect().top <= window.innerHeight / 2) cur = id;
       }
-      setActive(current);
+      setActive(cur);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
@@ -94,151 +161,35 @@ function BottomNav() {
   );
 }
 
-/* ─── Tier Card with Hover Animation ─────────────── */
-function TierCard({
-  n,
-  title,
-  subtitle,
-  desc,
-  children,
-}: {
-  n: string;
-  title: string;
-  subtitle: string;
-  desc: string;
-  children: ReactNode;
-}) {
-  const [hovered, setHovered] = useState(false);
+/* ─── Sketch SVG Paths (hand-drawn) ──────────────── */
+const PATHS = {
+  underline1: "M 2,10 C 40,4 80,16 120,8 C 160,2 190,14 198,10",
+  underline2: "M 2,8 C 50,14 100,2 150,10 C 175,14 195,6 198,8",
+  box: "M 3,4 C 25,-1 75,2 97,3 C 101,25 99,75 97,97 C 75,101 25,99 3,97 C -1,75 1,25 3,4",
+  arrowDown: "M 12,4 C 11,12 13,24 12,36 M 5,28 L 12,39 L 19,28",
+  circle: "M 50,5 C 78,-2 102,22 97,50 C 102,78 78,102 50,97 C 22,102 -2,78 5,50 C -2,22 22,-2 50,5",
+  topLine: "M 0,2 C 30,1 70,3 100,2",
+};
 
-  return (
-    <div
-      className="tier-card"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <p className="mono tier-card__number">{n}</p>
-      <h3 className="tier-card__title">{title}</h3>
-      <p className="tier-card__subtitle">{subtitle}</p>
-      <p className="tier-card__desc">{desc}</p>
-      <div className={`tier-viz ${hovered ? "tier-viz--active" : ""}`}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Tier Animations ────────────────────────────── */
-function TimelineViz() {
-  const steps = ["Discovery", "Design", "Build", "Launch"];
-  return (
-    <div className="viz-timeline">
-      {steps.map((s, i) => (
-        <div key={s} className="viz-timeline__step" style={{ animationDelay: `${i * 0.3}s` }}>
-          <div className={`viz-timeline__dot ${i === steps.length - 1 ? "viz-timeline__dot--launch" : ""}`} />
-          {i < steps.length - 1 && <div className="viz-timeline__line" style={{ animationDelay: `${i * 0.3 + 0.15}s` }} />}
-          <span className="viz-timeline__label">{s}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function FlowViz() {
-  const nodes = ["Lead", "Qualify", "Book", "Confirm", "Done"];
-  return (
-    <div className="viz-flow">
-      {nodes.map((n, i) => (
-        <div key={n} className="viz-flow__node" style={{ animationDelay: `${i * 0.4}s` }}>
-          <div className="viz-flow__circle">
-            <svg width="14" height="14" viewBox="0 0 14 14">
-              <path d="M3 7l3 3 5-5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <span className="viz-flow__label">{n}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function DashViz() {
-  const bars = [60, 85, 45, 70, 55];
-  return (
-    <div className="viz-dash">
-      <div className="viz-dash__metrics">
-        <div className="viz-dash__metric">
-          <span className="viz-dash__num">147</span>
-          <span className="viz-dash__unit">leads</span>
-        </div>
-        <div className="viz-dash__metric">
-          <span className="viz-dash__num">$28k</span>
-          <span className="viz-dash__unit">revenue</span>
-        </div>
-        <div className="viz-dash__metric">
-          <span className="viz-dash__num">94%</span>
-          <span className="viz-dash__unit">response</span>
-        </div>
-      </div>
-      <div className="viz-dash__bars">
-        {bars.map((h, i) => (
-          <div
-            key={i}
-            className="viz-dash__bar"
-            style={{ "--bar-h": `${h}%`, animationDelay: `${0.6 + i * 0.1}s` } as React.CSSProperties}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ConnectedViz() {
-  return (
-    <svg className="viz-connected" viewBox="0 0 160 120">
-      {/* Connecting lines */}
-      <line x1="80" y1="15" x2="30" y2="60" className="viz-connected__line" style={{ animationDelay: "0.8s" }} />
-      <line x1="80" y1="15" x2="130" y2="60" className="viz-connected__line" style={{ animationDelay: "0.9s" }} />
-      <line x1="30" y1="60" x2="80" y2="105" className="viz-connected__line" style={{ animationDelay: "1.0s" }} />
-      <line x1="130" y1="60" x2="80" y2="105" className="viz-connected__line" style={{ animationDelay: "1.1s" }} />
-      <line x1="30" y1="60" x2="130" y2="60" className="viz-connected__line" style={{ animationDelay: "1.2s" }} />
-      <line x1="80" y1="15" x2="80" y2="105" className="viz-connected__line" style={{ animationDelay: "1.3s" }} />
-      {/* Nodes */}
-      <circle cx="80" cy="15" r="6" className="viz-connected__node" style={{ animationDelay: "0.2s" }} />
-      <circle cx="30" cy="60" r="6" className="viz-connected__node" style={{ animationDelay: "0.4s" }} />
-      <circle cx="130" cy="60" r="6" className="viz-connected__node" style={{ animationDelay: "0.6s" }} />
-      <circle cx="80" cy="105" r="6" className="viz-connected__node" style={{ animationDelay: "0.8s" }} />
-      {/* Labels */}
-      <text x="80" y="35" className="viz-connected__text" style={{ animationDelay: "0.3s" }}>Web</text>
-      <text x="30" y="80" className="viz-connected__text" style={{ animationDelay: "0.5s" }}>AI</text>
-      <text x="130" y="80" className="viz-connected__text" style={{ animationDelay: "0.7s" }}>Data</text>
-      <text x="80" y="100" className="viz-connected__text" style={{ animationDelay: "0.9s" }}>OS</text>
-    </svg>
-  );
-}
-
-/* ─── AI Section Icons ───────────────────────────── */
+/* ─── Icons ──────────────────────────────────────── */
 function PhoneIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="ai-card__icon">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="ai-card__icon">
       <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
     </svg>
   );
 }
-
 function ClockIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="ai-card__icon">
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="ai-card__icon">
+      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
     </svg>
   );
 }
-
 function BrainIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="ai-card__icon">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="ai-card__icon">
       <path d="M12 2a4 4 0 014 4v1a3 3 0 012.83 2A3 3 0 0120 12.17 3 3 0 0118 16a4 4 0 01-2 3.46V21h-4v-1.54A4 4 0 0110 16a3 3 0 01-1.17-3.83A3 3 0 019 7V6a4 4 0 014-4z" />
-      <path d="M12 2v6M8 10h8" />
     </svg>
   );
 }
@@ -266,15 +217,18 @@ const PROJECTS = [
   { title: "Station 11", tag: "Caf\u00e9", link: "https://station11-atl.vercel.app", image: "/portfolio/station11.png", external: true },
 ];
 
-const STACK = [
-  "Next.js", "React", "TypeScript", "Tailwind CSS", "Vercel",
-  "Supabase", "Claude AI", "n8n", "Stripe", "Vapi",
-];
+const STACK = ["Next.js", "React", "TypeScript", "Tailwind CSS", "Vercel", "Supabase", "Claude AI", "n8n", "Stripe", "Vapi"];
 
 /* ─── Page ───────────────────────────────────────── */
 export default function Page() {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const imgRef = useRef<HTMLDivElement>(null);
+  const [heroReady, setHeroReady] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setHeroReady(true), 300);
+    return () => clearTimeout(t);
+  }, []);
 
   const onMouseMove = useCallback((e: React.MouseEvent) => {
     if (imgRef.current) {
@@ -293,92 +247,119 @@ export default function Page() {
 
   return (
     <>
-      {/* ── Floating Logo ───────────────────────── */}
       <a href="#top" className="logo">FOUNDOS</a>
 
-      {/* ── Hero (Isometric Building Canvas) ───── */}
+      {/* ── Hero ────────────────────────────────── */}
       <section id="top" className="hero">
-        <HeroCanvas />
         <div className="hero__content">
           <p className="mono hero__label">
             Business Architect &mdash; Atlanta, GA
           </p>
-          <h1 className="heading heading--gradient hero__title">
-            I find what&apos;s
+          <h1 className="heading hero__title">
+            I find what&apos;s broken.
             <br />
-            broken. Then I<br />
-            build the fix.
+            Then I build the fix.
+            {/* Hand-drawn underline draws on load */}
+            <Sketch
+              d={PATHS.underline1}
+              viewBox="0 0 200 20"
+              className="hero__underline"
+              delay={0.6}
+              duration={1}
+              stroke="var(--accent)"
+              strokeWidth={3}
+            />
           </h1>
           <p className="hero__sub">
             AI agents. Automation. Custom software. Websites. I look at how your
             business actually runs and build the technology that fills the gaps.
           </p>
           <div className="hero__ctas">
-            <a href={TEXT_LINK} className="btn">
-              Let&apos;s Talk
-            </a>
-            <a href="#work" className="btn btn--ghost">
-              See the Work
-            </a>
+            <a href={TEXT_LINK} className="btn">Let&apos;s Talk</a>
+            <a href="#work" className="btn btn--ghost">See the Work</a>
           </div>
         </div>
-        <div className="hero__scroll">
-          <span className="mono">Scroll</span>
-          <div className="hero__scroll-line" />
-        </div>
+
+        {/* Hand-drawn arrow pointing down */}
+        <Sketch
+          d={PATHS.arrowDown}
+          viewBox="0 0 24 44"
+          className="hero__arrow"
+          delay={1.2}
+          duration={0.6}
+          stroke="var(--sketch)"
+          strokeWidth={2}
+          preserveAspectRatio="xMidYMid meet"
+        />
+
+        {/* Annotation scribble */}
+        <p className={`hero__annotation hand ${heroReady ? "hero__annotation--visible" : ""}`}>
+          &larr; yes, I actually build all of this
+        </p>
       </section>
 
-      {/* ── What I Build — Tiers with Animations ── */}
-      <section className="section section--alt section--gradient-top">
+      {/* ── Tiers (sketch-bordered cards) ────────── */}
+      <section className="section">
         <div className="container">
           <Reveal>
             <p className="mono section__label">What I Build</p>
             <h2 className="heading section__title">
-              Four levels.
-              <br />
-              One architect.
+              Four levels. One architect.
             </h2>
           </Reveal>
-          <Reveal delay={0.12}>
-            <div className="tiers-grid">
-              <TierCard {...TIERS[0]}>
-                <TimelineViz />
-              </TierCard>
-              <TierCard {...TIERS[1]}>
-                <FlowViz />
-              </TierCard>
-              <TierCard {...TIERS[2]}>
-                <DashViz />
-              </TierCard>
-              <TierCard {...TIERS[3]}>
-                <ConnectedViz />
-              </TierCard>
-            </div>
-          </Reveal>
+          <div className="tiers-grid">
+            {TIERS.map((t, i) => (
+              <Reveal key={t.n} delay={i * 0.08}>
+                <div className="tier-card">
+                  {/* Sketch border draws on scroll */}
+                  <Sketch
+                    d={PATHS.box}
+                    viewBox="0 0 100 100"
+                    className="tier-card__sketch"
+                    delay={i * 0.15}
+                    duration={0.9}
+                    strokeWidth={1.8}
+                  />
+                  <p className="tier-card__number hand">{t.n}</p>
+                  <h3 className="tier-card__title">{t.title}</h3>
+                  <p className="tier-card__subtitle">{t.subtitle}</p>
+                  <p className="tier-card__desc">{t.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ── Why AI — 3-Column Cards on Navy ─────── */}
-      <section id="ai" className="section section--deep-navy">
+      {/* ── Why AI ───────────────────────────────── */}
+      <section id="ai" className="section ai-section">
         <div className="container">
           <Reveal>
-            <p className="mono section__label">Why AI</p>
-            <h2 className="heading section__title ai-heading">
-              AI is here. But nobody&apos;s showing you{" "}
-              <span className="ai-heading__accent">what to do with it.</span>
+            <p className="mono section__label" style={{ color: "var(--accent)" }}>Why AI</p>
+            <h2 className="heading section__title">
+              AI is here. But nobody&apos;s showing you what to do with it.
             </h2>
-            <div className="ai-heading__rule" />
           </Reveal>
           <div className="ai-cards">
             {AI_CARDS.map((card, i) => (
               <Reveal key={card.title} delay={i * 0.1} className="ai-card">
+                {/* Sketch top line */}
+                <Sketch
+                  d={PATHS.topLine}
+                  viewBox="0 0 100 4"
+                  className="ai-card__sketch-top"
+                  delay={i * 0.15 + 0.2}
+                  duration={0.5}
+                  stroke="var(--accent)"
+                  strokeWidth={3}
+                />
                 <card.icon />
                 <h3 className="ai-card__title">{card.title}</h3>
                 <p className="ai-card__desc">{card.desc}</p>
               </Reveal>
             ))}
           </div>
-          <Reveal delay={0.35}>
+          <Reveal delay={0.3}>
             <div style={{ marginTop: "var(--s6)", textAlign: "center" }}>
               <a href="/ai" className="btn btn--ghost btn--sm">
                 See How AI Works for Your Business &rarr;
@@ -388,15 +369,13 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ── Work — Project List + Cursor Image ──── */}
-      <section id="work" className="section section--alt">
+      {/* ── Work ─────────────────────────────────── */}
+      <section id="work" className="section">
         <div className="container">
           <Reveal>
             <p className="mono section__label">Work</p>
             <h2 className="heading section__title">
-              Real businesses.
-              <br />
-              Real systems.
+              Real businesses. Real systems.
             </h2>
           </Reveal>
           <Reveal delay={0.12}>
@@ -417,20 +396,13 @@ export default function Page() {
                   <span className="project-row__name">{p.title}</span>
                   <span className="project-row__type">{p.tag}</span>
                   <div className="project-row__mobile-img">
-                    <Image
-                      src={p.image}
-                      alt={p.title}
-                      fill
-                      sizes="100vw"
-                      style={{ objectFit: "cover", objectPosition: "top" }}
-                    />
+                    <Image src={p.image} alt={p.title} fill sizes="100vw" style={{ objectFit: "cover", objectPosition: "top" }} />
                   </div>
                 </a>
               ))}
             </div>
           </Reveal>
         </div>
-
         <div
           ref={imgRef}
           className="cursor-img"
@@ -440,19 +412,7 @@ export default function Page() {
           }}
         >
           {PROJECTS.map((p, i) => (
-            <Image
-              key={p.title}
-              src={p.image}
-              alt=""
-              fill
-              sizes="400px"
-              style={{
-                objectFit: "cover",
-                objectPosition: "top",
-                opacity: hoverIdx === i ? 1 : 0,
-                transition: "opacity 0.15s ease",
-              }}
-            />
+            <Image key={p.title} src={p.image} alt="" fill sizes="400px" style={{ objectFit: "cover", objectPosition: "top", opacity: hoverIdx === i ? 1 : 0, transition: "opacity 0.15s ease" }} />
           ))}
         </div>
       </section>
@@ -461,21 +421,24 @@ export default function Page() {
       <section id="about" className="section">
         <div className="container about">
           <Reveal className="about__photo-wrap">
-            <Image
-              src="/josh.jpg"
-              alt="Josh Poteat"
-              fill
-              sizes="(max-width: 768px) 300px, 50vw"
-              className="about__photo"
+            <div className="about__photo-inner">
+              <Image src="/josh.jpg" alt="Josh Poteat" fill sizes="(max-width: 768px) 260px, 50vw" className="about__photo" />
+            </div>
+            {/* Hand-drawn frame */}
+            <Sketch
+              d={PATHS.box}
+              viewBox="0 0 100 100"
+              className="about__frame"
+              delay={0.3}
+              duration={1.2}
+              stroke="var(--sketch)"
+              strokeWidth={1.5}
+              preserveAspectRatio="none"
             />
           </Reveal>
           <Reveal delay={0.15}>
             <p className="mono section__label">About</p>
-            <h2 className="heading about__heading">
-              One person.
-              <br />
-              Full stack.
-            </h2>
+            <h2 className="heading about__heading">One person. Full stack.</h2>
             <p className="about__bio">
               I&apos;m Josh &mdash; a builder in Atlanta. I build custom AI
               systems, wire automation into real business workflows, and ship
@@ -495,28 +458,33 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ── Tech Stack Strip ────────────────────── */}
+      {/* ── Stack ────────────────────────────────── */}
       <div className="stack-section">
         <div className="container">
           <Reveal>
             <p className="mono stack-label">Built With</p>
             <div className="stack-strip">
-              {STACK.map((s) => (
-                <span key={s} className="stack-tag">{s}</span>
-              ))}
+              {STACK.map((s) => <span key={s} className="stack-tag">{s}</span>)}
             </div>
           </Reveal>
         </div>
       </div>
 
-      {/* ── Final CTA ───────────────────────────── */}
+      {/* ── CTA ──────────────────────────────────── */}
       <section className="section cta-final">
         <div className="container cta-final__inner">
+          {/* Big hand-drawn frame */}
+          <Sketch
+            d={PATHS.box}
+            viewBox="0 0 100 100"
+            className="cta-final__sketch"
+            delay={0.2}
+            duration={1.4}
+            strokeWidth={2}
+          />
           <Reveal>
-            <h2 className="heading heading--gradient cta-final__title">
-              Tell me about
-              <br />
-              your business.
+            <h2 className="heading cta-final__title">
+              Tell me about<br />your business.
             </h2>
             <p className="cta-final__sub">
               I&apos;ll tell you exactly what I&apos;d build &mdash; no pitch
@@ -524,17 +492,8 @@ export default function Page() {
               business needs.
             </p>
             <div className="cta-final__ctas">
-              <a href={TEXT_LINK} className="btn btn--lg">
-                Text Me
-              </a>
-              <a
-                href={CAL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn--ghost"
-              >
-                Book a Call
-              </a>
+              <a href={TEXT_LINK} className="btn btn--lg">Text Me</a>
+              <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn btn--ghost">Book a Call</a>
             </div>
           </Reveal>
         </div>
@@ -545,9 +504,7 @@ export default function Page() {
         <div className="container footer__top">
           <div>
             <p className="footer__brand">FOUNDOS</p>
-            <p className="mono footer__tagline">
-              Business architecture for the AI era.
-            </p>
+            <p className="footer__tagline hand">business architecture for the AI era</p>
           </div>
           <div className="footer__links">
             <a href="https://instagram.com/foundos.ai" target="_blank" rel="noopener noreferrer">Instagram</a>
