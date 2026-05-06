@@ -186,7 +186,7 @@ export default function Page() {
   const imgRef = useRef<HTMLDivElement>(null);
   const { link: ctaLink, label: ctaLabel } = useCTA();
 
-  /* Intro → site transition: sketch plays ~3s, then fades out */
+  /* Intro: sketch plays ~3s at center, then collapses to header */
   const [introDone, setIntroDone] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setIntroDone(true), 3200);
@@ -204,33 +204,19 @@ export default function Page() {
 
   return (
     <>
-      <a href="#top" className="logo" style={{ opacity: introDone ? 1 : 0, transition: "opacity 0.4s ease" }}>FOUNDOS</a>
-
-      {/* ── Hero with intro transition ──────────── */}
-      <section id="top" className="hero">
-        {/* Phase 1: Sketch animation (fades out after ~3s) */}
-        <div
-          className="hero__intro"
-          style={{
-            opacity: introDone ? 0 : 1,
-            transform: introDone ? "translateY(-30px) scale(0.96)" : "translateY(0)",
-            transition: "opacity 0.6s ease, transform 0.6s ease",
-            pointerEvents: introDone ? "none" : "auto",
-            position: introDone ? "absolute" : "relative",
-          }}
-        >
+      {/* ── Intro: draws at center, collapses to top-left header ── */}
+      <div className={`intro ${introDone ? "intro--done" : ""}`}>
+        <div className="intro__inner">
           <HeroSVGAnimation />
         </div>
+      </div>
 
-        {/* Phase 2: Real site content (fades in after sketch) */}
-        <div
-          className="hero__content"
-          style={{
-            opacity: introDone ? 1 : 0,
-            transform: introDone ? "translateY(0)" : "translateY(20px)",
-            transition: "opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s",
-          }}
-        >
+      {/* ── Site content: fades in after intro collapses ── */}
+      <div className={`site-content ${introDone ? "site-content--visible" : ""}`}>
+
+      {/* ── Hero ────────────────────────────────── */}
+      <section id="top" className="hero">
+        <div className="hero__content">
           <p className="mono hero__label">
             Business Architect &mdash; Atlanta, GA
           </p>
@@ -238,7 +224,7 @@ export default function Page() {
             I find what&apos;s broken.
             <br />
             Then I build the fix.
-            <Sketch d={PATHS.underline1} viewBox="0 0 200 20" className="hero__underline" delay={3.8} duration={1} stroke="var(--accent)" strokeWidth={3} />
+            <Sketch d={PATHS.underline1} viewBox="0 0 200 20" className="hero__underline" delay={0.5} duration={1} stroke="var(--accent)" strokeWidth={3} />
           </h1>
           <p className="hero__sub">
             AI agents. Automation. Custom software. Websites. I look at how your
@@ -249,8 +235,6 @@ export default function Page() {
             <a href="#work" className="btn btn--ghost">See the Work</a>
           </div>
         </div>
-
-        <Sketch d={PATHS.arrowDown} viewBox="0 0 24 44" className="hero__arrow" delay={4.2} duration={0.6} stroke="var(--sketch)" strokeWidth={2} preserveAspectRatio="xMidYMid meet" />
       </section>
 
       {/* ── Tiers ────────────────────────────────── */}
@@ -413,6 +397,8 @@ export default function Page() {
           </div>
         </div>
       </footer>
+
+      </div>{/* end site-content */}
 
       <BottomNav />
     </>
