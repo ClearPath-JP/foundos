@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
 import Image from "next/image";
+import HeroCanvas from "@/components/HeroCanvas";
 
+/* ─── Constants ──────────────────────────────────── */
 const CAL = "https://cal.com/foundos.ai/strategy-call";
-const PHONE = "4704898838"; // JP's number for text CTA
-const TEXT_MSG = "Hey Josh — I need a website.";
+const PHONE = "4704898838";
+const TEXT_MSG = "Hey Josh — interested in working together.";
 const TEXT_LINK = `sms:+1${PHONE}?body=${encodeURIComponent(TEXT_MSG)}`;
 
 /* ─── Scroll Reveal ──────────────────────────────── */
@@ -31,7 +33,7 @@ function Reveal({
           obs.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.08 }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -43,8 +45,8 @@ function Reveal({
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(24px)",
-        transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`,
+        transform: visible ? "translateY(0)" : "translateY(32px)",
+        transition: `opacity 0.8s ease ${delay}s, transform 0.8s ease ${delay}s`,
       }}
     >
       {children}
@@ -52,235 +54,137 @@ function Reveal({
   );
 }
 
-/* ─── Dot Grid Background ────────────────────────── */
-function DotGrid() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+/* ─── Bottom Nav ─────────────────────────────────── */
+function BottomNav() {
+  const [visible, setVisible] = useState(false);
+  const [active, setActive] = useState("");
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animId: number;
-    let mouseX = -1000;
-    let mouseY = -1000;
-    const DOT_SPACING = 32;
-    const DOT_RADIUS = 1;
-    const INFLUENCE = 120;
-
-    const resize = () => {
-      canvas.width = canvas.offsetWidth * Math.min(devicePixelRatio, 2);
-      canvas.height = canvas.offsetHeight * Math.min(devicePixelRatio, 2);
-      ctx.scale(Math.min(devicePixelRatio, 2), Math.min(devicePixelRatio, 2));
-    };
-    resize();
-
-    const onMouse = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseX = e.touches[0].clientX - rect.left;
-      mouseY = e.touches[0].clientY - rect.top;
-    };
-
-    const onLeave = () => {
-      mouseX = -1000;
-      mouseY = -1000;
-    };
-
-    const draw = () => {
-      const w = canvas.offsetWidth;
-      const h = canvas.offsetHeight;
-      ctx.clearRect(0, 0, w, h);
-
-      const cols = Math.ceil(w / DOT_SPACING) + 1;
-      const rows = Math.ceil(h / DOT_SPACING) + 1;
-
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const x = c * DOT_SPACING;
-          const y = r * DOT_SPACING;
-          const dx = mouseX - x;
-          const dy = mouseY - y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const proximity = Math.max(0, 1 - dist / INFLUENCE);
-
-          const radius = DOT_RADIUS + proximity * 2.5;
-          const alpha = 0.12 + proximity * 0.6;
-
-          ctx.beginPath();
-          ctx.arc(x, y, radius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-          ctx.fill();
-        }
-      }
-
-      animId = requestAnimationFrame(draw);
-    };
-    draw();
-
-    canvas.addEventListener("mousemove", onMouse);
-    canvas.addEventListener("touchmove", onTouchMove, { passive: true });
-    canvas.addEventListener("mouseleave", onLeave);
-    window.addEventListener("resize", resize);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      canvas.removeEventListener("mousemove", onMouse);
-      canvas.removeEventListener("touchmove", onTouchMove);
-      canvas.removeEventListener("mouseleave", onLeave);
-      window.removeEventListener("resize", resize);
-    };
+    const timer = setTimeout(() => setVisible(true), 800);
+    return () => clearTimeout(timer);
   }, []);
 
-  return <canvas ref={canvasRef} className="dot-grid" />;
-}
-
-/* ─── Portfolio Carousel ─────────────────────────── */
-function Carousel({ projects }: { projects: typeof PROJECTS }) {
-  const [active, setActive] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval>>(null);
-  const touchStartRef = useRef(0);
-
-  const count = projects.length;
-
-  const goTo = useCallback(
-    (idx: number) => {
-      setActive(((idx % count) + count) % count);
-    },
-    [count]
-  );
-
-  // Auto-rotate every 4s
   useEffect(() => {
-    timerRef.current = setInterval(() => {
-      setActive((prev) => (prev + 1) % count);
-    }, 4000);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+    const ids = ["work", "ai", "about"];
+    const onScroll = () => {
+      let current = "";
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= window.innerHeight / 2) {
+          current = id;
+        }
+      }
+      setActive(current);
     };
-  }, [count]);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  const resetTimer = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setActive((prev) => (prev + 1) % count);
-    }, 4000);
-  }, [count]);
-
-  const next = useCallback(() => {
-    goTo(active + 1);
-    resetTimer();
-  }, [active, goTo, resetTimer]);
-
-  const prev = useCallback(() => {
-    goTo(active - 1);
-    resetTimer();
-  }, [active, goTo, resetTimer]);
-
-  const p = projects[active];
+  const lc = (id: string) =>
+    `bottom-nav__link${active === id ? " bottom-nav__link--active" : ""}`;
 
   return (
-    <div className="carousel">
-      {/* Screenshot display */}
-      <div
-        className="carousel__viewport"
-        onTouchStart={(e) => {
-          touchStartRef.current = e.touches[0].clientX;
-        }}
-        onTouchEnd={(e) => {
-          const diff = touchStartRef.current - e.changedTouches[0].clientX;
-          if (Math.abs(diff) > 50) {
-            diff > 0 ? next() : prev();
-          }
-        }}
-      >
-        {/* Arrows */}
-        <button
-          className="carousel__arrow carousel__arrow--left"
-          onClick={prev}
-          aria-label="Previous project"
-        >
-          &larr;
-        </button>
-        <button
-          className="carousel__arrow carousel__arrow--right"
-          onClick={next}
-          aria-label="Next project"
-        >
-          &rarr;
-        </button>
+    <nav className={`bottom-nav${visible ? " bottom-nav--visible" : ""}`}>
+      <a href="#work" className={lc("work")}>Work</a>
+      <a href="#ai" className={lc("ai")}>AI</a>
+      <a href="#about" className={lc("about")}>About</a>
+      <a href={TEXT_LINK} className="bottom-nav__cta">Let&apos;s Talk</a>
+    </nav>
+  );
+}
 
-        {/* Image */}
-        <div className="carousel__img-wrap">
-          {projects.map((proj, i) => (
-            <div
-              key={proj.title}
-              className="carousel__slide"
-              style={{
-                opacity: i === active ? 1 : 0,
-                zIndex: i === active ? 1 : 0,
-              }}
-            >
-              <Image
-                src={proj.image}
-                alt={proj.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 960px"
-                className="carousel__img"
-                priority={i === 0}
-              />
-            </div>
-          ))}
+/* ─── Tier Card with Hover Animation ─────────────── */
+function TierCard({
+  n,
+  title,
+  subtitle,
+  desc,
+  children,
+}: {
+  n: string;
+  title: string;
+  subtitle: string;
+  desc: string;
+  children: ReactNode;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      className="tier-card"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <p className="mono tier-card__number">{n}</p>
+      <h3 className="tier-card__title">{title}</h3>
+      <p className="tier-card__subtitle">{subtitle}</p>
+      <p className="tier-card__desc">{desc}</p>
+      <div className={`tier-viz ${hovered ? "tier-viz--active" : ""}`}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Tier Animations ────────────────────────────── */
+function TimelineViz() {
+  const steps = ["Discovery", "Design", "Build", "Launch"];
+  return (
+    <div className="viz-timeline">
+      {steps.map((s, i) => (
+        <div key={s} className="viz-timeline__step" style={{ animationDelay: `${i * 0.3}s` }}>
+          <div className={`viz-timeline__dot ${i === steps.length - 1 ? "viz-timeline__dot--launch" : ""}`} />
+          {i < steps.length - 1 && <div className="viz-timeline__line" style={{ animationDelay: `${i * 0.3 + 0.15}s` }} />}
+          <span className="viz-timeline__label">{s}</span>
         </div>
+      ))}
+    </div>
+  );
+}
 
-        {/* Browser chrome overlay */}
-        <div className="carousel__chrome">
-          <div className="carousel__dots-chrome">
-            <span />
-            <span />
-            <span />
+function FlowViz() {
+  const nodes = ["Lead", "Qualify", "Book", "Confirm", "Done"];
+  return (
+    <div className="viz-flow">
+      {nodes.map((n, i) => (
+        <div key={n} className="viz-flow__node" style={{ animationDelay: `${i * 0.4}s` }}>
+          <div className="viz-flow__circle">
+            <svg width="14" height="14" viewBox="0 0 14 14">
+              <path d="M3 7l3 3 5-5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
-          <div className="carousel__url">{p.url}</div>
+          <span className="viz-flow__label">{n}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DashViz() {
+  const bars = [60, 85, 45, 70, 55];
+  return (
+    <div className="viz-dash">
+      <div className="viz-dash__metrics">
+        <div className="viz-dash__metric">
+          <span className="viz-dash__num">147</span>
+          <span className="viz-dash__unit">leads</span>
+        </div>
+        <div className="viz-dash__metric">
+          <span className="viz-dash__num">$28k</span>
+          <span className="viz-dash__unit">revenue</span>
+        </div>
+        <div className="viz-dash__metric">
+          <span className="viz-dash__num">94%</span>
+          <span className="viz-dash__unit">response</span>
         </div>
       </div>
-
-      {/* Info bar */}
-      <div className="carousel__info">
-        <div className="carousel__meta">
-          <p className="mono carousel__tag">{p.tag}</p>
-          <h3 className="heading carousel__title">{p.title}</h3>
-          <p className="carousel__desc">{p.desc}</p>
-        </div>
-        <div className="carousel__actions">
-          <a
-            href={p.link}
-            target={p.external ? "_blank" : undefined}
-            rel={p.external ? "noopener noreferrer" : undefined}
-            className="btn btn--sm"
-          >
-            View Site
-          </a>
-        </div>
-      </div>
-
-      {/* Pagination dots */}
-      <div className="carousel__pips">
-        {projects.map((proj, i) => (
-          <button
-            key={proj.title}
-            className={`carousel__pip ${i === active ? "carousel__pip--active" : ""}`}
-            onClick={() => {
-              goTo(i);
-              resetTimer();
-            }}
-            aria-label={`View ${proj.title}`}
+      <div className="viz-dash__bars">
+        {bars.map((h, i) => (
+          <div
+            key={i}
+            className="viz-dash__bar"
+            style={{ "--bar-h": `${h}%`, animationDelay: `${0.6 + i * 0.1}s` } as React.CSSProperties}
           />
         ))}
       </div>
@@ -288,218 +192,135 @@ function Carousel({ projects }: { projects: typeof PROJECTS }) {
   );
 }
 
+function ConnectedViz() {
+  return (
+    <svg className="viz-connected" viewBox="0 0 160 120">
+      {/* Connecting lines */}
+      <line x1="80" y1="15" x2="30" y2="60" className="viz-connected__line" style={{ animationDelay: "0.8s" }} />
+      <line x1="80" y1="15" x2="130" y2="60" className="viz-connected__line" style={{ animationDelay: "0.9s" }} />
+      <line x1="30" y1="60" x2="80" y2="105" className="viz-connected__line" style={{ animationDelay: "1.0s" }} />
+      <line x1="130" y1="60" x2="80" y2="105" className="viz-connected__line" style={{ animationDelay: "1.1s" }} />
+      <line x1="30" y1="60" x2="130" y2="60" className="viz-connected__line" style={{ animationDelay: "1.2s" }} />
+      <line x1="80" y1="15" x2="80" y2="105" className="viz-connected__line" style={{ animationDelay: "1.3s" }} />
+      {/* Nodes */}
+      <circle cx="80" cy="15" r="6" className="viz-connected__node" style={{ animationDelay: "0.2s" }} />
+      <circle cx="30" cy="60" r="6" className="viz-connected__node" style={{ animationDelay: "0.4s" }} />
+      <circle cx="130" cy="60" r="6" className="viz-connected__node" style={{ animationDelay: "0.6s" }} />
+      <circle cx="80" cy="105" r="6" className="viz-connected__node" style={{ animationDelay: "0.8s" }} />
+      {/* Labels */}
+      <text x="80" y="35" className="viz-connected__text" style={{ animationDelay: "0.3s" }}>Web</text>
+      <text x="30" y="80" className="viz-connected__text" style={{ animationDelay: "0.5s" }}>AI</text>
+      <text x="130" y="80" className="viz-connected__text" style={{ animationDelay: "0.7s" }}>Data</text>
+      <text x="80" y="100" className="viz-connected__text" style={{ animationDelay: "0.9s" }}>OS</text>
+    </svg>
+  );
+}
+
+/* ─── AI Section Icons ───────────────────────────── */
+function PhoneIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="ai-card__icon">
+      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+    </svg>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="ai-card__icon">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  );
+}
+
+function BrainIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="ai-card__icon">
+      <path d="M12 2a4 4 0 014 4v1a3 3 0 012.83 2A3 3 0 0120 12.17 3 3 0 0118 16a4 4 0 01-2 3.46V21h-4v-1.54A4 4 0 0110 16a3 3 0 01-1.17-3.83A3 3 0 019 7V6a4 4 0 014-4z" />
+      <path d="M12 2v6M8 10h8" />
+    </svg>
+  );
+}
+
 /* ─── Data ───────────────────────────────────────── */
-const NAV_LINKS = [
-  { href: "#work", label: "Work" },
-  { href: "#services", label: "Services" },
-  { href: "#about", label: "About" },
+const TIERS = [
+  { n: "01", title: "Foundation", subtitle: "Website + Photography", desc: "Your digital front door. Custom-designed, built to convert, live in days. Professional photography included." },
+  { n: "02", title: "Operations", subtitle: "AI + Automation", desc: "An AI agent that answers your phone, books appointments, and follows up with leads. Systems that work while you sleep." },
+  { n: "03", title: "Intelligence", subtitle: "Dashboards + Data", desc: "See your business in real-time. Custom CRM, reporting, and analytics built around how you actually work." },
+  { n: "04", title: "Full System", subtitle: "Complete Business OS", desc: "Everything \u2014 website, AI, automation, and custom software \u2014 architected as one connected system." },
+];
+
+const AI_CARDS = [
+  { icon: PhoneIcon, title: "It answers your phone.", desc: "An AI voice agent picks up every call, qualifies the lead, books the appointment, and texts you a summary. You never miss a customer again." },
+  { icon: ClockIcon, title: "It runs your follow-ups.", desc: "Every new lead gets a response in seconds. Every past customer gets a check-in at the right time. Automatically. No CRM degree required." },
+  { icon: BrainIcon, title: "It learns your business.", desc: "Every system I build is configured around your actual workflow \u2014 your hours, your menu, your pricing, your voice. The AI represents you because it was built for you." },
 ];
 
 const PROJECTS = [
-  {
-    title: "Heirloom BBQ",
-    tag: "Restaurant",
-    desc: "Wood-fired barbecue spot. Full menu, catering info, and location details with an earthy, fire-inspired palette.",
-    link: "https://heirloom-bbq.vercel.app",
-    external: true,
-    image: "/portfolio/heirloom.png",
-    url: "heirloombbq.com",
-  },
-  {
-    title: "FRAMELOCK",
-    tag: "Photography",
-    desc: "Dark, cinematic portfolio for an Atlanta car photographer. Masonry gallery with tiered pricing.",
-    link: "https://shutter-city.vercel.app",
-    external: true,
-    image: "/portfolio/framelock.png",
-    url: "framelock.co",
-  },
-  {
-    title: "Babygirl",
-    tag: "Bar & Lounge",
-    desc: "Upscale brunch and cocktail spot in East Lake. Seasonal menu tabs, photo gallery, and walk-in details.",
-    link: "/demo/babygirl",
-    external: false,
-    image: "/portfolio/babygirl.png",
-    url: "babygirlatl.com",
-  },
-  {
-    title: "Clahvay",
-    tag: "Barbershop",
-    desc: "Premium barbershop with online booking, service menu, and brand photography. Clean, modern, mobile-first.",
-    link: "https://clahvay.vercel.app",
-    external: true,
-    image: "/portfolio/clahvay.png",
-    url: "clahvay.com",
-  },
-  {
-    title: "Amistad Coffee",
-    tag: "Coffee Shop",
-    desc: "Latin-inspired cafe in Midtown. Menu, hours, and story page designed to match their warm, community energy.",
-    link: "https://amistad-coffee.vercel.app",
-    external: true,
-    image: "/portfolio/amistad.png",
-    url: "amistadcoffee.com",
-  },
-  {
-    title: "Station 11",
-    tag: "Café",
-    desc: "Caribbean-Asian café in a historic Midtown firehouse. Menu, reservations, and interior photography.",
-    link: "https://station11-atl.vercel.app",
-    external: true,
-    image: "/portfolio/station11.png",
-    url: "station11atl.com",
-  },
+  { title: "Heirloom BBQ", tag: "Restaurant", link: "https://heirloom-bbq.vercel.app", image: "/portfolio/heirloom.png", external: true },
+  { title: "FRAMELOCK", tag: "Photography", link: "https://shutter-city.vercel.app", image: "/portfolio/framelock.png", external: true },
+  { title: "Babygirl", tag: "Bar & Lounge", link: "/demo/babygirl", image: "/portfolio/babygirl.png", external: false },
+  { title: "Clahvay", tag: "Barbershop", link: "https://clahvay.vercel.app", image: "/portfolio/clahvay.png", external: true },
+  { title: "Amistad Coffee", tag: "Coffee Shop", link: "https://amistad-coffee.vercel.app", image: "/portfolio/amistad.png", external: true },
+  { title: "Station 11", tag: "Caf\u00e9", link: "https://station11-atl.vercel.app", image: "/portfolio/station11.png", external: true },
 ];
 
-const SERVICES = [
-  {
-    title: "Custom Website",
-    desc: "Designed and built from scratch around your brand. No templates. Mobile-first, fast, and 100% yours.",
-  },
-  {
-    title: "Professional Photography",
-    desc: "My photographer comes to your space. We shoot your product, your interior, your team. Real images, not stock.",
-  },
-  {
-    title: "Monthly Support",
-    desc: "Content changes, updates, new photos \u2014 you text me, it gets done. No tickets. No waiting.",
-  },
-  {
-    title: "Growth Tools",
-    desc: "Booking systems, Google reviews, email capture, SEO. Added when you\u2019re ready, not forced upfront.",
-  },
-];
-
-const STEPS = [
-  {
-    n: "01",
-    title: "You Text Me",
-    desc: "Tell me about your business. I\u2019ll tell you exactly what I\u2019d build. No forms. No waiting.",
-  },
-  {
-    n: "02",
-    title: "I Build It",
-    desc: "Custom site designed and coded in days, not months. You see progress and give feedback the whole way.",
-  },
-  {
-    n: "03",
-    title: "You Go Live",
-    desc: "Your site launches on your own domain. I handle hosting, updates, and support. You own everything.",
-  },
+const STACK = [
+  "Next.js", "React", "TypeScript", "Tailwind CSS", "Vercel",
+  "Supabase", "Claude AI", "n8n", "Stripe", "Vapi",
 ];
 
 /* ─── Page ───────────────────────────────────────── */
 export default function Page() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [showSticky, setShowSticky] = useState(false);
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
+  const imgRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 50);
-      setShowSticky(window.scrollY > window.innerHeight * 0.7);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+  const onMouseMove = useCallback((e: React.MouseEvent) => {
+    if (imgRef.current) {
+      imgRef.current.style.left = `${e.clientX}px`;
+      imgRef.current.style.top = `${e.clientY}px`;
+    }
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [menuOpen]);
+  const onProjectEnter = useCallback((i: number, e: React.MouseEvent) => {
+    setHoverIdx(i);
+    if (imgRef.current) {
+      imgRef.current.style.left = `${e.clientX}px`;
+      imgRef.current.style.top = `${e.clientY}px`;
+    }
+  }, []);
 
   return (
     <>
-      {/* ── Nav ─────────────────────────────────── */}
-      <nav className={`nav ${scrolled ? "nav--scrolled" : ""}`}>
-        <a href="#top" className="nav__logo">
-          FOUNDOS
-        </a>
-        <div className="nav__links">
-          {NAV_LINKS.map((l) => (
-            <a key={l.label} href={l.href} className="nav__link">
-              {l.label}
-            </a>
-          ))}
-          <a
-            href={TEXT_LINK}
-            className="btn btn--sm"
-          >
-            Text Me
-          </a>
-        </div>
-        <button
-          className="nav__hamburger"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-        >
-          <span
-            className={`hamburger ${menuOpen ? "hamburger--open" : ""}`}
-          />
-        </button>
-      </nav>
+      {/* ── Floating Logo ───────────────────────── */}
+      <a href="#top" className="logo">FOUNDOS</a>
 
-      {/* ── Mobile Menu ────────────────────────── */}
-      {menuOpen && (
-        <div className="mobile-menu" onClick={() => setMenuOpen(false)}>
-          <div
-            className="mobile-menu__inner"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {NAV_LINKS.map((l) => (
-              <a
-                key={l.label}
-                href={l.href}
-                className="mobile-menu__link"
-                onClick={() => setMenuOpen(false)}
-              >
-                {l.label}
-              </a>
-            ))}
-            <a
-              href={TEXT_LINK}
-              className="btn"
-              style={{ marginTop: 16 }}
-            >
-              Text Me
-            </a>
-          </div>
-        </div>
-      )}
-
-      {/* ── Hero ────────────────────────────────── */}
+      {/* ── Hero (Isometric Building Canvas) ───── */}
       <section id="top" className="hero">
-        <DotGrid />
+        <HeroCanvas />
         <div className="hero__content">
           <p className="mono hero__label">
-            Custom Web Design &mdash; Atlanta, GA
+            Business Architect &mdash; Atlanta, GA
           </p>
-          <h1 className="heading hero__title">
-            Your Website.
+          <h1 className="heading heading--gradient hero__title">
+            I find what&apos;s
             <br />
-            Live This Week.
+            broken. Then I<br />
+            build the fix.
           </h1>
           <p className="hero__sub">
-            Custom-built websites for local businesses. No templates. No
-            agencies. You talk directly to the person who builds it.
+            AI agents. Automation. Custom software. Websites. I look at how your
+            business actually runs and build the technology that fills the gaps.
           </p>
           <div className="hero__ctas">
-            <a
-              href={TEXT_LINK}
-              className="btn"
-            >
-              Text Me
+            <a href={TEXT_LINK} className="btn">
+              Let&apos;s Talk
             </a>
             <a href="#work" className="btn btn--ghost">
               See the Work
             </a>
           </div>
-          <p className="mono hero__response">
-            I reply in minutes. Yes, really.
-          </p>
         </div>
         <div className="hero__scroll">
           <span className="mono">Scroll</span>
@@ -507,96 +328,203 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ── Work (Carousel) ─────────────────────── */}
-      <section id="work" className="section">
+      {/* ── What I Build — Tiers with Animations ── */}
+      <section className="section section--alt section--gradient-top">
+        <div className="container">
+          <Reveal>
+            <p className="mono section__label">What I Build</p>
+            <h2 className="heading section__title">
+              Four levels.
+              <br />
+              One architect.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.12}>
+            <div className="tiers-grid">
+              <TierCard {...TIERS[0]}>
+                <TimelineViz />
+              </TierCard>
+              <TierCard {...TIERS[1]}>
+                <FlowViz />
+              </TierCard>
+              <TierCard {...TIERS[2]}>
+                <DashViz />
+              </TierCard>
+              <TierCard {...TIERS[3]}>
+                <ConnectedViz />
+              </TierCard>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── Why AI — 3-Column Cards on Navy ─────── */}
+      <section id="ai" className="section section--deep-navy">
+        <div className="container">
+          <Reveal>
+            <p className="mono section__label">Why AI</p>
+            <h2 className="heading section__title ai-heading">
+              AI is here. But nobody&apos;s showing you{" "}
+              <span className="ai-heading__accent">what to do with it.</span>
+            </h2>
+            <div className="ai-heading__rule" />
+          </Reveal>
+          <div className="ai-cards">
+            {AI_CARDS.map((card, i) => (
+              <Reveal key={card.title} delay={i * 0.1} className="ai-card">
+                <card.icon />
+                <h3 className="ai-card__title">{card.title}</h3>
+                <p className="ai-card__desc">{card.desc}</p>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal delay={0.35}>
+            <div style={{ marginTop: "var(--s6)", textAlign: "center" }}>
+              <a href="/ai" className="btn btn--ghost btn--sm">
+                See How AI Works for Your Business &rarr;
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── Work — Project List + Cursor Image ──── */}
+      <section id="work" className="section section--alt">
         <div className="container">
           <Reveal>
             <p className="mono section__label">Work</p>
             <h2 className="heading section__title">
-              Real Work.
+              Real businesses.
               <br />
-              Real Businesses.
+              Real systems.
             </h2>
+          </Reveal>
+          <Reveal delay={0.12}>
+            <div
+              className="project-list"
+              onMouseMove={onMouseMove}
+              onMouseLeave={() => setHoverIdx(null)}
+            >
+              {PROJECTS.map((p, i) => (
+                <a
+                  key={p.title}
+                  href={p.link}
+                  target={p.external ? "_blank" : undefined}
+                  rel={p.external ? "noopener noreferrer" : undefined}
+                  className="project-row"
+                  onMouseEnter={(e) => onProjectEnter(i, e)}
+                >
+                  <span className="project-row__name">{p.title}</span>
+                  <span className="project-row__type">{p.tag}</span>
+                  <div className="project-row__mobile-img">
+                    <Image
+                      src={p.image}
+                      alt={p.title}
+                      fill
+                      sizes="100vw"
+                      style={{ objectFit: "cover", objectPosition: "top" }}
+                    />
+                  </div>
+                </a>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+
+        <div
+          ref={imgRef}
+          className="cursor-img"
+          style={{
+            opacity: hoverIdx !== null ? 1 : 0,
+            transform: `translate(-50%, -60%) scale(${hoverIdx !== null ? 1 : 0.85})`,
+          }}
+        >
+          {PROJECTS.map((p, i) => (
+            <Image
+              key={p.title}
+              src={p.image}
+              alt=""
+              fill
+              sizes="400px"
+              style={{
+                objectFit: "cover",
+                objectPosition: "top",
+                opacity: hoverIdx === i ? 1 : 0,
+                transition: "opacity 0.15s ease",
+              }}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* ── About ───────────────────────────────── */}
+      <section id="about" className="section">
+        <div className="container about">
+          <Reveal className="about__photo-wrap">
+            <Image
+              src="/josh.jpg"
+              alt="Josh Poteat"
+              fill
+              sizes="(max-width: 768px) 300px, 50vw"
+              className="about__photo"
+            />
           </Reveal>
           <Reveal delay={0.15}>
-            <Carousel projects={PROJECTS} />
+            <p className="mono section__label">About</p>
+            <h2 className="heading about__heading">
+              One person.
+              <br />
+              Full stack.
+            </h2>
+            <p className="about__bio">
+              I&apos;m Josh &mdash; a builder in Atlanta. I build custom AI
+              systems, wire automation into real business workflows, and ship
+              production software.{" "}
+              <strong>Not demos. Real products for real businesses.</strong>
+            </p>
+            <p className="about__bio">
+              Most agencies sell you a template and disappear. I look at how your
+              business actually runs, find the gaps, and build exactly what fills
+              them &mdash; using the same tools Fortune 500 companies use.
+            </p>
+            <p className="about__bio about__bio--dim">
+              No account managers. No junior devs. No handoffs. You talk directly
+              to the person who designs it, codes it, and maintains it.
+            </p>
           </Reveal>
         </div>
       </section>
 
-      {/* ── Services ────────────────────────────── */}
-      <section id="services" className="section section--alt">
+      {/* ── Tech Stack Strip ────────────────────── */}
+      <div className="stack-section">
         <div className="container">
           <Reveal>
-            <p className="mono section__label">What You Get</p>
-            <h2 className="heading section__title">
-              Everything Your
-              <br />
-              Business Needs Online.
-            </h2>
+            <p className="mono stack-label">Built With</p>
+            <div className="stack-strip">
+              {STACK.map((s) => (
+                <span key={s} className="stack-tag">{s}</span>
+              ))}
+            </div>
           </Reveal>
-
-          <div className="services-list">
-            {SERVICES.map((s, i) => (
-              <Reveal key={s.title} delay={i * 0.08} className="service-item">
-                <div className="service-item__number mono">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <div>
-                  <h3 className="service-item__title">{s.title}</h3>
-                  <p className="service-item__desc">{s.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
         </div>
-      </section>
+      </div>
 
-      {/* ── Process ─────────────────────────────── */}
-      <section className="section">
-        <div className="container">
+      {/* ── Final CTA ───────────────────────────── */}
+      <section className="section cta-final">
+        <div className="container cta-final__inner">
           <Reveal>
-            <p className="mono section__label">How It Works</p>
-            <h2 className="heading section__title">
-              Three Steps.
+            <h2 className="heading heading--gradient cta-final__title">
+              Tell me about
               <br />
-              That&apos;s It.
+              your business.
             </h2>
-          </Reveal>
-
-          <div className="process-list">
-            {STEPS.map((s, i) => (
-              <Reveal key={s.n} delay={i * 0.1} className="process-step">
-                <span className="process-step__n mono">{s.n}</span>
-                <div>
-                  <h3 className="process-step__title">{s.title}</h3>
-                  <p className="process-step__desc">{s.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Pricing ─────────────────────────────── */}
-      <section className="section section--alt pricing">
-        <div className="container pricing__inner">
-          <Reveal>
-            <p className="mono section__label">Pricing</p>
-            <h2 className="heading pricing__number">$2,000</h2>
-            <p className="pricing__includes">
-              Custom design. Professional photography. Your own domain.
-              <br />
-              Live in days, not months.
+            <p className="cta-final__sub">
+              I&apos;ll tell you exactly what I&apos;d build &mdash; no pitch
+              deck, no commitment. Just a real conversation about what your
+              business needs.
             </p>
-            <p className="pricing__retainer">
-              + $150/mo for hosting, updates, and direct support.
-            </p>
-            <p className="pricing__ownership mono">
-              You own your code. You own your domain. No lock-in.
-            </p>
-            <div className="hero__ctas" style={{ marginTop: "2rem" }}>
-              <a href={TEXT_LINK} className="btn">
+            <div className="cta-final__ctas">
+              <a href={TEXT_LINK} className="btn btn--lg">
                 Text Me
               </a>
               <a
@@ -612,124 +540,33 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ── About ───────────────────────────────── */}
-      <section id="about" className="section">
-        <div className="container about">
-          <Reveal className="about__photo-wrap">
-            <Image
-              src="/josh.jpg"
-              alt="Josh Poteat"
-              width={280}
-              height={280}
-              className="about__photo"
-            />
-          </Reveal>
-          <Reveal delay={0.15} className="about__text">
-            <p className="mono section__label">About</p>
-            <h2 className="heading about__heading">
-              One Person.
-              <br />
-              No Handoffs.
-            </h2>
-            <p className="about__bio">
-              I&apos;m Josh &mdash; a web developer in Atlanta. I build
-              custom websites for local businesses using the same tools agencies
-              use, at a fraction of the cost. You work directly with me &mdash;
-              the same person who designs, builds, and maintains your site.
-            </p>
-            <p className="about__bio about__bio--dim">
-              No account managers. No junior devs. No surprise invoices. You
-              text me, I respond in minutes. Your site stays fast, secure, and
-              up to date &mdash; every single month.
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── Final CTA ───────────────────────────── */}
-      <section className="section cta-final">
-        <div className="container cta-final__inner">
-          <Reveal>
-            <h2 className="heading cta-final__title">
-              Ready for a
-              <br />
-              Real Website?
-            </h2>
-            <p className="cta-final__sub">
-              Text me what your business does. I&apos;ll tell you exactly what
-              I&apos;d build &mdash; no pressure, no commitment. If it makes
-              sense, your site can be live this week.
-            </p>
-            <div className="hero__ctas">
-              <a href={TEXT_LINK} className="btn btn--lg">
-                Text Me Now
-              </a>
-              <a
-                href={CAL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn--ghost"
-              >
-                Or Book a Call
-              </a>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
       {/* ── Footer ──────────────────────────────── */}
       <footer className="footer">
         <div className="container footer__top">
           <div>
-            <p className="heading footer__brand">FOUNDOS</p>
+            <p className="footer__brand">FOUNDOS</p>
             <p className="mono footer__tagline">
-              Custom websites. Built fast. Owned by you.
+              Business architecture for the AI era.
             </p>
           </div>
           <div className="footer__links">
-            <a
-              href="https://instagram.com/foundos.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Instagram
-            </a>
-            <a
-              href="https://tiktok.com/@foundos.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              TikTok
-            </a>
-            <a href="mailto:josh@foundos.ai">josh@foundos.ai</a>
+            <a href="https://instagram.com/foundos.ai" target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href="https://tiktok.com/@foundos.ai" target="_blank" rel="noopener noreferrer">TikTok</a>
+            <a href="mailto:josh@foundos.ai"><strong>josh@foundos.ai</strong></a>
           </div>
         </div>
         <div className="container">
           <div className="footer__bottom">
             <p className="mono">&copy; 2026 FoundOS</p>
             <div style={{ display: "flex", gap: 24 }}>
-              <a
-                href="/privacy"
-                className="mono"
-                style={{ color: "var(--text-dim)", textDecoration: "none" }}
-              >
-                Privacy
-              </a>
+              <a href="/privacy" className="mono" style={{ color: "var(--text-dim)", textDecoration: "none" }}>Privacy</a>
               <p className="mono">Atlanta, GA</p>
             </div>
           </div>
         </div>
       </footer>
 
-      {/* ── Sticky Mobile CTA ───────────────────── */}
-      <div className={`sticky-cta ${showSticky ? "sticky-cta--show" : ""}`}>
-        <a
-          href={TEXT_LINK}
-          className="btn sticky-cta__btn"
-        >
-          Text Me
-        </a>
-      </div>
+      <BottomNav />
     </>
   );
 }

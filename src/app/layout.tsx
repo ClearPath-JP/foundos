@@ -14,22 +14,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FoundOS — Custom Websites + Photography for Restaurants | Atlanta",
+  title: "FoundOS — Business Architecture for the AI Era | Atlanta",
   description:
-    "Custom websites and professional photography for restaurants, cafes, and bars in Atlanta. Starting at $2,000. No templates. No agencies. Just great work.",
+    "I build the systems local businesses need — websites, AI agents, automation, and custom software. One architect. Direct communication. Atlanta, GA.",
   openGraph: {
-    title: "FoundOS — Websites That Fill Tables",
+    title: "FoundOS — Business Architecture for the AI Era",
     description:
-      "Custom websites and professional photography for restaurants, cafes, and bars. Built from scratch. Starting at $2,000.",
+      "Websites. AI agents. Custom software. I look at how your business runs and build the technology that fills the gaps.",
     url: "https://foundos.ai",
     siteName: "FoundOS",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "FoundOS — Websites That Fill Tables",
+    title: "FoundOS — Business Architecture for the AI Era",
     description:
-      "Custom websites and professional photography for restaurants, cafes, and bars in Atlanta. Starting at $2,000.",
+      "I build the systems local businesses need — websites, AI agents, automation, and custom software. One architect. Atlanta, GA.",
   },
 };
 
