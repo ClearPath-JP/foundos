@@ -358,7 +358,6 @@ export default function Page() {
       {/* ── CTA ──────────────────────────────────── */}
       <section className="section cta-final">
         <div className="container cta-final__inner">
-          <Sketch d={PATHS.box} viewBox="0 0 100 100" className="cta-final__sketch" delay={0.2} duration={1.4} strokeWidth={2} />
           <Reveal>
             <h2 className="heading cta-final__title">Tell me about<br />your business.</h2>
             <p className="cta-final__sub">

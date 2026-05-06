@@ -589,16 +589,10 @@ body {
   text-align: center;
   max-width: 640px;
   position: relative;
-  padding: var(--s4);
-}
-
-.cta-final__sketch {
-  position: absolute;
-  top: -12px;
-  left: -12px;
-  right: -12px;
-  bottom: -12px;
-  pointer-events: none;
+  padding: var(--s6);
+  border: 2.5px solid var(--sketch);
+  border-radius: 16px;
+  opacity: 0.9;
 }
 
 .cta-final__title {
@@ -763,14 +757,8 @@ body {
   .footer__top { flex-direction: column; gap: var(--s4); }
   .footer__links { align-items: flex-start; }
 
-  /* CTA sketch box — tighter on mobile */
-  .cta-final__sketch {
-    top: -8px;
-    left: -8px;
-    right: -8px;
-    bottom: -8px;
-  }
-  .cta-final__inner { padding: var(--s3); }
+  /* CTA box — tighter padding on mobile */
+  .cta-final__inner { padding: var(--s4); }
   .cta-final__title { font-size: clamp(28px, 8vw, 48px); }
   .cta-final__sub { font-size: 15px; }
 
