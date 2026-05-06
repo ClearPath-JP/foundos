@@ -590,6 +590,90 @@ body {
 .ai-cta__sub { font-size: 16px; color: var(--text-muted); line-height: 1.7; margin-bottom: var(--s4); }
 .ai-cta__btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
+/* ─── Hero SVG Animation ─────────────────────────── */
+.hero-svg-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: var(--s5);
+}
+
+.hero-house { display: block; }
+.hero-wordmark { display: block; }
+.hero-wordmark-line { display: block; margin-top: -2px; }
+
+/* ─── Tier Cards — Expandable ────────────────────── */
+.tier-card--interactive {
+  cursor: default;
+  transition: all 0.35s var(--spring);
+  overflow: hidden;
+}
+
+.tier-card--interactive:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+.tier-card__content {
+  position: relative;
+  z-index: 1;
+}
+
+.tier-card__expanded {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.5s var(--spring), opacity 0.3s ease;
+}
+
+.tier-card--expanded .tier-card__expanded {
+  max-height: 500px;
+  opacity: 1;
+}
+
+.tier-card__expanded-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-top: var(--s3);
+  margin-bottom: var(--s3);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--border);
+}
+
+.tier-card__workflow-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: var(--s2);
+}
+
+.tier-workflow-svg {
+  width: 100%;
+  height: auto;
+  min-width: 360px;
+}
+
+.tier-card__steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: var(--s2);
+}
+
+.tier-step {
+  font-size: 11px;
+  font-family: var(--font-geist-mono), monospace;
+  color: var(--text-dim);
+  letter-spacing: 0.03em;
+}
+
+.tier-step__arrow {
+  margin: 0 4px;
+  color: var(--accent);
+}
+
 /* ─── Responsive ─────────────────────────────────── */
 @media (max-width: 768px) {
   .tiers-grid { grid-template-columns: 1fr; }

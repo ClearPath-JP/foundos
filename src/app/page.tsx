@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
 import Image from "next/image";
+import HeroSVGAnimation from "@/components/animations/HeroSVGAnimation";
+import TierCards from "@/components/animations/TierCards";
 
 /* ─── Constants ──────────────────────────────────── */
 const CAL = "https://cal.com/foundos.ai/strategy-call";
@@ -251,6 +253,7 @@ export default function Page() {
 
       {/* ── Hero ────────────────────────────────── */}
       <section id="top" className="hero">
+        <HeroSVGAnimation />
         <div className="hero__content">
           <p className="mono hero__label">
             Business Architect &mdash; Atlanta, GA
@@ -307,27 +310,7 @@ export default function Page() {
               Four levels. One architect.
             </h2>
           </Reveal>
-          <div className="tiers-grid">
-            {TIERS.map((t, i) => (
-              <Reveal key={t.n} delay={i * 0.08}>
-                <div className="tier-card">
-                  {/* Sketch border draws on scroll */}
-                  <Sketch
-                    d={PATHS.box}
-                    viewBox="0 0 100 100"
-                    className="tier-card__sketch"
-                    delay={i * 0.15}
-                    duration={0.9}
-                    strokeWidth={1.8}
-                  />
-                  <p className="tier-card__number hand">{t.n}</p>
-                  <h3 className="tier-card__title">{t.title}</h3>
-                  <p className="tier-card__subtitle">{t.subtitle}</p>
-                  <p className="tier-card__desc">{t.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <TierCards />
         </div>
       </section>
 
