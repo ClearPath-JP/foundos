@@ -10,6 +10,21 @@ const CAL = "https://cal.com/foundos.ai/strategy-call";
 const PHONE = "4704898838";
 const TEXT_MSG = "Hey Josh — interested in working together.";
 const TEXT_LINK = `sms:+1${PHONE}?body=${encodeURIComponent(TEXT_MSG)}`;
+const EMAIL_LINK = "mailto:josh@foundos.ai";
+
+/* ─── Desktop Detection (SMS fails on desktop) ───── */
+function useCTA() {
+  const [link, setLink] = useState(CAL);
+  const [label, setLabel] = useState("Let\u2019s Talk");
+
+  useEffect(() => {
+    const mobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    setLink(mobile ? TEXT_LINK : EMAIL_LINK);
+    setLabel(mobile ? "Text Me" : "Email Me");
+  }, []);
+
+  return { link, label };
+}
 
 /* ─── SVG Sketch Draw-on-Scroll ──────────────────── */
 function Sketch({
@@ -57,12 +72,7 @@ function Sketch({
   }, []);
 
   return (
-    <svg
-      ref={svgRef}
-      viewBox={viewBox}
-      className={`sketch-svg ${className}`}
-      preserveAspectRatio={preserveAspectRatio}
-    >
+    <svg ref={svgRef} viewBox={viewBox} className={`sketch-svg ${className}`} preserveAspectRatio={preserveAspectRatio}>
       <path
         ref={pathRef}
         d={d}
@@ -82,44 +92,20 @@ function Sketch({
 }
 
 /* ─── Scroll Reveal ──────────────────────────────── */
-function Reveal({
-  children,
-  className = "",
-  delay = 0,
-}: {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
-}) {
+function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [vis, setVis] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVis(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.08 }
-    );
+    const obs = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { setVis(true); obs.disconnect(); } }, { threshold: 0.08 });
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
 
   return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        opacity: vis ? 1 : 0,
-        transform: vis ? "translateY(0)" : "translateY(24px)",
-        transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
-      }}
-    >
+    <div ref={ref} className={className} style={{ opacity: vis ? 1 : 0, transform: vis ? "translateY(0)" : "translateY(24px)", transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s` }}>
       {children}
     </div>
   );
@@ -129,20 +115,15 @@ function Reveal({
 function BottomNav() {
   const [visible, setVisible] = useState(false);
   const [active, setActive] = useState("");
+  const { link, label } = useCTA();
 
-  useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 600);
-    return () => clearTimeout(t);
-  }, []);
+  useEffect(() => { const t = setTimeout(() => setVisible(true), 600); return () => clearTimeout(t); }, []);
 
   useEffect(() => {
     const ids = ["work", "ai", "about"];
     const onScroll = () => {
       let cur = "";
-      for (const id of ids) {
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= window.innerHeight / 2) cur = id;
-      }
+      for (const id of ids) { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top <= window.innerHeight / 2) cur = id; }
       setActive(cur);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -150,60 +131,38 @@ function BottomNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const lc = (id: string) =>
-    `bottom-nav__link${active === id ? " bottom-nav__link--active" : ""}`;
+  const lc = (id: string) => `bottom-nav__link${active === id ? " bottom-nav__link--active" : ""}`;
 
   return (
     <nav className={`bottom-nav${visible ? " bottom-nav--visible" : ""}`}>
       <a href="#work" className={lc("work")}>Work</a>
       <a href="#ai" className={lc("ai")}>AI</a>
       <a href="#about" className={lc("about")}>About</a>
-      <a href={TEXT_LINK} className="bottom-nav__cta">Let&apos;s Talk</a>
+      <a href={link} className="bottom-nav__cta">{label}</a>
     </nav>
   );
 }
 
-/* ─── Sketch SVG Paths (hand-drawn) ──────────────── */
+/* ─── Sketch SVG Paths ───────────────────────────── */
 const PATHS = {
   underline1: "M 2,10 C 40,4 80,16 120,8 C 160,2 190,14 198,10",
-  underline2: "M 2,8 C 50,14 100,2 150,10 C 175,14 195,6 198,8",
   box: "M 3,4 C 25,-1 75,2 97,3 C 101,25 99,75 97,97 C 75,101 25,99 3,97 C -1,75 1,25 3,4",
   arrowDown: "M 12,4 C 11,12 13,24 12,36 M 5,28 L 12,39 L 19,28",
-  circle: "M 50,5 C 78,-2 102,22 97,50 C 102,78 78,102 50,97 C 22,102 -2,78 5,50 C -2,22 22,-2 50,5",
   topLine: "M 0,2 C 30,1 70,3 100,2",
 };
 
 /* ─── Icons ──────────────────────────────────────── */
 function PhoneIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="ai-card__icon">
-      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
-    </svg>
-  );
+  return (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="ai-card__icon"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" /></svg>);
 }
 function ClockIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="ai-card__icon">
-      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-    </svg>
-  );
+  return (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="ai-card__icon"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>);
 }
 function BrainIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="ai-card__icon">
-      <path d="M12 2a4 4 0 014 4v1a3 3 0 012.83 2A3 3 0 0120 12.17 3 3 0 0118 16a4 4 0 01-2 3.46V21h-4v-1.54A4 4 0 0110 16a3 3 0 01-1.17-3.83A3 3 0 019 7V6a4 4 0 014-4z" />
-    </svg>
-  );
+  return (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="ai-card__icon"><path d="M12 2a4 4 0 014 4v1a3 3 0 012.83 2A3 3 0 0120 12.17 3 3 0 0118 16a4 4 0 01-2 3.46V21h-4v-1.54A4 4 0 0110 16a3 3 0 01-1.17-3.83A3 3 0 019 7V6a4 4 0 014-4z" /></svg>);
 }
 
 /* ─── Data ───────────────────────────────────────── */
-const TIERS = [
-  { n: "01", title: "Foundation", subtitle: "Website + Photography", desc: "Your digital front door. Custom-designed, built to convert, live in days. Professional photography included." },
-  { n: "02", title: "Operations", subtitle: "AI + Automation", desc: "An AI agent that answers your phone, books appointments, and follows up with leads. Systems that work while you sleep." },
-  { n: "03", title: "Intelligence", subtitle: "Dashboards + Data", desc: "See your business in real-time. Custom CRM, reporting, and analytics built around how you actually work." },
-  { n: "04", title: "Full System", subtitle: "Complete Business OS", desc: "Everything \u2014 website, AI, automation, and custom software \u2014 architected as one connected system." },
-];
-
 const AI_CARDS = [
   { icon: PhoneIcon, title: "It answers your phone.", desc: "An AI voice agent picks up every call, qualifies the lead, books the appointment, and texts you a summary. You never miss a customer again." },
   { icon: ClockIcon, title: "It runs your follow-ups.", desc: "Every new lead gets a response in seconds. Every past customer gets a check-in at the right time. Automatically. No CRM degree required." },
@@ -211,12 +170,12 @@ const AI_CARDS = [
 ];
 
 const PROJECTS = [
-  { title: "Heirloom BBQ", tag: "Restaurant", link: "https://heirloom-bbq.vercel.app", image: "/portfolio/heirloom.png", external: true },
-  { title: "FRAMELOCK", tag: "Photography", link: "https://shutter-city.vercel.app", image: "/portfolio/framelock.png", external: true },
-  { title: "Babygirl", tag: "Bar & Lounge", link: "/demo/babygirl", image: "/portfolio/babygirl.png", external: false },
-  { title: "Clahvay", tag: "Barbershop", link: "https://clahvay.vercel.app", image: "/portfolio/clahvay.png", external: true },
-  { title: "Amistad Coffee", tag: "Coffee Shop", link: "https://amistad-coffee.vercel.app", image: "/portfolio/amistad.png", external: true },
-  { title: "Station 11", tag: "Caf\u00e9", link: "https://station11-atl.vercel.app", image: "/portfolio/station11.png", external: true },
+  { title: "Heirloom BBQ", tag: "Restaurant", desc: "Custom site + menu system + fire-inspired palette", link: "https://heirloom-bbq.vercel.app", image: "/portfolio/heirloom.png", external: true },
+  { title: "FRAMELOCK", tag: "Photography", desc: "Portfolio site + masonry gallery + tiered pricing", link: "https://shutter-city.vercel.app", image: "/portfolio/framelock.png", external: true },
+  { title: "Babygirl", tag: "Bar & Lounge", desc: "Full site + seasonal menu tabs + photo gallery", link: "/demo/babygirl", image: "/portfolio/babygirl.png", external: false },
+  { title: "Clahvay", tag: "Barbershop", desc: "Booking system + service menu + brand photography", link: "https://clahvay.vercel.app", image: "/portfolio/clahvay.png", external: true },
+  { title: "Amistad Coffee", tag: "Coffee Shop", desc: "Menu + hours + story page with community energy", link: "https://amistad-coffee.vercel.app", image: "/portfolio/amistad.png", external: true },
+  { title: "Station 11", tag: "Caf\u00e9", desc: "Menu + reservations + interior photography", link: "https://station11-atl.vercel.app", image: "/portfolio/station11.png", external: true },
 ];
 
 const STACK = ["Next.js", "React", "TypeScript", "Tailwind CSS", "Vercel", "Supabase", "Claude AI", "n8n", "Stripe", "Vapi"];
@@ -225,36 +184,53 @@ const STACK = ["Next.js", "React", "TypeScript", "Tailwind CSS", "Vercel", "Supa
 export default function Page() {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const imgRef = useRef<HTMLDivElement>(null);
-  const [heroReady, setHeroReady] = useState(false);
+  const { link: ctaLink, label: ctaLabel } = useCTA();
 
+  /* Intro → site transition: sketch plays ~3s, then fades out */
+  const [introDone, setIntroDone] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => setHeroReady(true), 300);
+    const t = setTimeout(() => setIntroDone(true), 3200);
     return () => clearTimeout(t);
   }, []);
 
   const onMouseMove = useCallback((e: React.MouseEvent) => {
-    if (imgRef.current) {
-      imgRef.current.style.left = `${e.clientX}px`;
-      imgRef.current.style.top = `${e.clientY}px`;
-    }
+    if (imgRef.current) { imgRef.current.style.left = `${e.clientX}px`; imgRef.current.style.top = `${e.clientY}px`; }
   }, []);
 
   const onProjectEnter = useCallback((i: number, e: React.MouseEvent) => {
     setHoverIdx(i);
-    if (imgRef.current) {
-      imgRef.current.style.left = `${e.clientX}px`;
-      imgRef.current.style.top = `${e.clientY}px`;
-    }
+    if (imgRef.current) { imgRef.current.style.left = `${e.clientX}px`; imgRef.current.style.top = `${e.clientY}px`; }
   }, []);
 
   return (
     <>
-      <a href="#top" className="logo">FOUNDOS</a>
+      <a href="#top" className="logo" style={{ opacity: introDone ? 1 : 0, transition: "opacity 0.4s ease" }}>FOUNDOS</a>
 
-      {/* ── Hero ────────────────────────────────── */}
+      {/* ── Hero with intro transition ──────────── */}
       <section id="top" className="hero">
-        <HeroSVGAnimation />
-        <div className="hero__content">
+        {/* Phase 1: Sketch animation (fades out after ~3s) */}
+        <div
+          className="hero__intro"
+          style={{
+            opacity: introDone ? 0 : 1,
+            transform: introDone ? "translateY(-30px) scale(0.96)" : "translateY(0)",
+            transition: "opacity 0.6s ease, transform 0.6s ease",
+            pointerEvents: introDone ? "none" : "auto",
+            position: introDone ? "absolute" : "relative",
+          }}
+        >
+          <HeroSVGAnimation />
+        </div>
+
+        {/* Phase 2: Real site content (fades in after sketch) */}
+        <div
+          className="hero__content"
+          style={{
+            opacity: introDone ? 1 : 0,
+            transform: introDone ? "translateY(0)" : "translateY(20px)",
+            transition: "opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s",
+          }}
+        >
           <p className="mono hero__label">
             Business Architect &mdash; Atlanta, GA
           </p>
@@ -262,53 +238,27 @@ export default function Page() {
             I find what&apos;s broken.
             <br />
             Then I build the fix.
-            {/* Hand-drawn underline draws on load */}
-            <Sketch
-              d={PATHS.underline1}
-              viewBox="0 0 200 20"
-              className="hero__underline"
-              delay={0.6}
-              duration={1}
-              stroke="var(--accent)"
-              strokeWidth={3}
-            />
+            <Sketch d={PATHS.underline1} viewBox="0 0 200 20" className="hero__underline" delay={3.8} duration={1} stroke="var(--accent)" strokeWidth={3} />
           </h1>
           <p className="hero__sub">
             AI agents. Automation. Custom software. Websites. I look at how your
             business actually runs and build the technology that fills the gaps.
           </p>
           <div className="hero__ctas">
-            <a href={TEXT_LINK} className="btn">Let&apos;s Talk</a>
+            <a href={ctaLink} className="btn">{ctaLabel}</a>
             <a href="#work" className="btn btn--ghost">See the Work</a>
           </div>
         </div>
 
-        {/* Hand-drawn arrow pointing down */}
-        <Sketch
-          d={PATHS.arrowDown}
-          viewBox="0 0 24 44"
-          className="hero__arrow"
-          delay={1.2}
-          duration={0.6}
-          stroke="var(--sketch)"
-          strokeWidth={2}
-          preserveAspectRatio="xMidYMid meet"
-        />
-
-        {/* Annotation scribble */}
-        <p className={`hero__annotation hand ${heroReady ? "hero__annotation--visible" : ""}`}>
-          &larr; yes, I actually build all of this
-        </p>
+        <Sketch d={PATHS.arrowDown} viewBox="0 0 24 44" className="hero__arrow" delay={4.2} duration={0.6} stroke="var(--sketch)" strokeWidth={2} preserveAspectRatio="xMidYMid meet" />
       </section>
 
-      {/* ── Tiers (sketch-bordered cards) ────────── */}
+      {/* ── Tiers ────────────────────────────────── */}
       <section className="section">
         <div className="container">
           <Reveal>
             <p className="mono section__label">What I Build</p>
-            <h2 className="heading section__title">
-              Four levels. One architect.
-            </h2>
+            <h2 className="heading section__title">Four levels. One architect.</h2>
           </Reveal>
           <TierCards />
         </div>
@@ -326,16 +276,7 @@ export default function Page() {
           <div className="ai-cards">
             {AI_CARDS.map((card, i) => (
               <Reveal key={card.title} delay={i * 0.1} className="ai-card">
-                {/* Sketch top line */}
-                <Sketch
-                  d={PATHS.topLine}
-                  viewBox="0 0 100 4"
-                  className="ai-card__sketch-top"
-                  delay={i * 0.15 + 0.2}
-                  duration={0.5}
-                  stroke="var(--accent)"
-                  strokeWidth={3}
-                />
+                <Sketch d={PATHS.topLine} viewBox="0 0 100 4" className="ai-card__sketch-top" delay={i * 0.15 + 0.2} duration={0.5} stroke="var(--accent)" strokeWidth={3} />
                 <card.icon />
                 <h3 className="ai-card__title">{card.title}</h3>
                 <p className="ai-card__desc">{card.desc}</p>
@@ -344,29 +285,21 @@ export default function Page() {
           </div>
           <Reveal delay={0.3}>
             <div style={{ marginTop: "var(--s6)", textAlign: "center" }}>
-              <a href="/ai" className="btn btn--ghost btn--sm">
-                See How AI Works for Your Business &rarr;
-              </a>
+              <a href="/ai" className="btn btn--ghost btn--sm">See How AI Works for Your Business &rarr;</a>
             </div>
           </Reveal>
         </div>
       </section>
 
-      {/* ── Work ─────────────────────────────────── */}
+      {/* ── Work (with descriptions) ─────────────── */}
       <section id="work" className="section">
         <div className="container">
           <Reveal>
             <p className="mono section__label">Work</p>
-            <h2 className="heading section__title">
-              Real businesses. Real systems.
-            </h2>
+            <h2 className="heading section__title">Real businesses. Real systems.</h2>
           </Reveal>
           <Reveal delay={0.12}>
-            <div
-              className="project-list"
-              onMouseMove={onMouseMove}
-              onMouseLeave={() => setHoverIdx(null)}
-            >
+            <div className="project-list" onMouseMove={onMouseMove} onMouseLeave={() => setHoverIdx(null)}>
               {PROJECTS.map((p, i) => (
                 <a
                   key={p.title}
@@ -376,7 +309,10 @@ export default function Page() {
                   className="project-row"
                   onMouseEnter={(e) => onProjectEnter(i, e)}
                 >
-                  <span className="project-row__name">{p.title}</span>
+                  <div className="project-row__left">
+                    <span className="project-row__name">{p.title}</span>
+                    <span className="project-row__desc">{p.desc}</span>
+                  </div>
                   <span className="project-row__type">{p.tag}</span>
                   <div className="project-row__mobile-img">
                     <Image src={p.image} alt={p.title} fill sizes="100vw" style={{ objectFit: "cover", objectPosition: "top" }} />
@@ -386,14 +322,7 @@ export default function Page() {
             </div>
           </Reveal>
         </div>
-        <div
-          ref={imgRef}
-          className="cursor-img"
-          style={{
-            opacity: hoverIdx !== null ? 1 : 0,
-            transform: `translate(-50%, -60%) scale(${hoverIdx !== null ? 1 : 0.85})`,
-          }}
-        >
+        <div ref={imgRef} className="cursor-img" style={{ opacity: hoverIdx !== null ? 1 : 0, transform: `translate(-50%, -60%) scale(${hoverIdx !== null ? 1 : 0.85})` }}>
           {PROJECTS.map((p, i) => (
             <Image key={p.title} src={p.image} alt="" fill sizes="400px" style={{ objectFit: "cover", objectPosition: "top", opacity: hoverIdx === i ? 1 : 0, transition: "opacity 0.15s ease" }} />
           ))}
@@ -407,17 +336,7 @@ export default function Page() {
             <div className="about__photo-inner">
               <Image src="/josh.jpg" alt="Josh Poteat" fill sizes="(max-width: 768px) 260px, 50vw" className="about__photo" />
             </div>
-            {/* Hand-drawn frame */}
-            <Sketch
-              d={PATHS.box}
-              viewBox="0 0 100 100"
-              className="about__frame"
-              delay={0.3}
-              duration={1.2}
-              stroke="var(--sketch)"
-              strokeWidth={1.5}
-              preserveAspectRatio="none"
-            />
+            <Sketch d={PATHS.box} viewBox="0 0 100 100" className="about__frame" delay={0.3} duration={1.2} stroke="var(--sketch)" strokeWidth={1.5} preserveAspectRatio="none" />
           </Reveal>
           <Reveal delay={0.15}>
             <p className="mono section__label">About</p>
@@ -425,8 +344,7 @@ export default function Page() {
             <p className="about__bio">
               I&apos;m Josh &mdash; a builder in Atlanta. I build custom AI
               systems, wire automation into real business workflows, and ship
-              production software.{" "}
-              <strong>Not demos. Real products for real businesses.</strong>
+              production software. <strong>Not demos. Real products for real businesses.</strong>
             </p>
             <p className="about__bio">
               Most agencies sell you a template and disappear. I look at how your
@@ -456,26 +374,16 @@ export default function Page() {
       {/* ── CTA ──────────────────────────────────── */}
       <section className="section cta-final">
         <div className="container cta-final__inner">
-          {/* Big hand-drawn frame */}
-          <Sketch
-            d={PATHS.box}
-            viewBox="0 0 100 100"
-            className="cta-final__sketch"
-            delay={0.2}
-            duration={1.4}
-            strokeWidth={2}
-          />
+          <Sketch d={PATHS.box} viewBox="0 0 100 100" className="cta-final__sketch" delay={0.2} duration={1.4} strokeWidth={2} />
           <Reveal>
-            <h2 className="heading cta-final__title">
-              Tell me about<br />your business.
-            </h2>
+            <h2 className="heading cta-final__title">Tell me about<br />your business.</h2>
             <p className="cta-final__sub">
               I&apos;ll tell you exactly what I&apos;d build &mdash; no pitch
               deck, no commitment. Just a real conversation about what your
               business needs.
             </p>
             <div className="cta-final__ctas">
-              <a href={TEXT_LINK} className="btn btn--lg">Text Me</a>
+              <a href={ctaLink} className="btn btn--lg">{ctaLabel}</a>
               <a href={CAL} target="_blank" rel="noopener noreferrer" className="btn btn--ghost">Book a Call</a>
             </div>
           </Reveal>
