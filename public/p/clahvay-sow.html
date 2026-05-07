@@ -161,6 +161,19 @@
       line-height: 1.5;
     }
 
+    .deliverable-item .tool-tag {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--red);
+      background: var(--red-dim);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
     .preview-link {
       display: inline-block;
       margin-top: 8px;
@@ -241,14 +254,14 @@
       color: var(--white);
     }
 
-    .payment-options {
+    .payment-note {
       background: var(--bg-card-alt);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 16px 18px;
     }
 
-    .payment-options .label {
+    .payment-note .label {
       font-size: 0.8rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -257,22 +270,15 @@
       font-weight: 600;
     }
 
-    .payment-option {
+    .payment-note .detail {
       font-size: 0.9rem;
       color: var(--white);
-      padding: 6px 0;
+      padding: 4px 0;
     }
 
-    .payment-option span {
+    .payment-note .detail span {
       color: var(--white-dim);
       font-size: 0.82rem;
-    }
-
-    .payment-divider {
-      font-size: 0.78rem;
-      color: var(--white-dim);
-      padding: 4px 0;
-      text-align: center;
     }
 
     /* ---- Ongoing ---- */
@@ -318,9 +324,8 @@
       font-size: 0.88rem;
       color: var(--white);
       font-style: italic;
-      padding-top: 4px;
-      border-top: 1px solid var(--border);
       padding-top: 12px;
+      border-top: 1px solid var(--border);
     }
 
     /* ---- Timeline ---- */
@@ -387,6 +392,47 @@
       font-weight: 600;
       color: var(--white);
       text-align: center;
+    }
+
+    /* ---- Process cards ---- */
+    .process-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .process-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .process-number {
+      font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--red);
+      line-height: 1;
+      min-width: 24px;
+      padding-top: 2px;
+    }
+
+    .process-item .label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 3px;
+    }
+
+    .process-item .desc {
+      font-size: 0.82rem;
+      color: var(--white-dim);
+      line-height: 1.5;
     }
 
     /* ---- Exclusions ---- */
@@ -498,6 +544,28 @@
       border-bottom-color: var(--white);
     }
 
+    /* ---- Print ---- */
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      body {
+        background: var(--bg) !important;
+      }
+
+      .container {
+        max-width: 100%;
+        padding: 20px;
+      }
+
+      .cta-primary {
+        background: var(--red) !important;
+      }
+    }
+
     /* ---- Responsive ---- */
     @media (min-width: 640px) {
       .container {
@@ -521,8 +589,8 @@
     <header class="header">
       <div class="header-label">Cuban Dance Soul</div>
       <h1>Scope of Work</h1>
-      <p class="header-sub">Website Design, Build &amp; Launch</p>
-      <p class="header-date">April 29, 2026</p>
+      <p class="header-sub">Custom Platform &mdash; Design, Build &amp; Launch</p>
+      <p class="header-date">May 6, 2026</p>
       <div class="header-parties">
         <strong>Prepared for:</strong> Emarlos &mdash; Cuban Dance Soul (Clahvay)<br>
         768 Concord Rd SE, Smyrna GA 30082<br><br>
@@ -537,166 +605,269 @@
     <section class="section">
       <div class="section-number">01</div>
       <h2>What You're Getting</h2>
-      <p>A complete premium website package &mdash; designed, built, photographed, and wired up so your students can find you, book classes, and stay connected.</p>
+      <p>One home base for your students. Everything lives on clahvay.com &mdash; booking, video library, merch, accounts. No more bouncing between platforms.</p>
+
       <ul class="deliverable-list">
         <li class="deliverable-item">
-          <div class="label">Custom-Designed Brand Website</div>
-          <div class="desc">Already built to match your brand. Dark, bold, premium &mdash; the way Clahvay should look online.</div>
+          <div class="label">Custom Website</div>
+          <div class="desc">The design you already saw &mdash; rebuilt on Cloudflare Pages. Dark, bold, fully branded to Clahvay. Hosting costs stay flat no matter how much traffic you get.</div>
+          <span class="tool-tag">Cloudflare Pages</span>
           <a href="https://clahvay.vercel.app" target="_blank" rel="noopener" class="preview-link">Preview your site &rarr;</a>
         </li>
+
         <li class="deliverable-item">
-          <div class="label">Professional Photography Session</div>
-          <div class="desc">On-site photo shoot at the studio &mdash; instructors, classes in action, the space itself. Real photos of your people, not stock images. These go directly into your new site.</div>
+          <div class="label">Backend &amp; Database</div>
+          <div class="desc">Handles all data behind the scenes &mdash; student accounts, bookings, video progress, content management. Real-time, fast, and reliable.</div>
+          <span class="tool-tag">Convex</span>
         </li>
+
         <li class="deliverable-item">
-          <div class="label">Pike13 Class Scheduling</div>
-          <div class="desc">Your existing Pike13 system, embedded right into the new site. Students book classes without leaving the page &mdash; no extra steps, no confusion. Already compatible with your current setup.</div>
-          <div class="desc" style="margin-top: 6px; font-size: 0.78rem; color: #888;">Down the road, if you ever want a fully custom booking experience built just for Clahvay, we can talk about that too.</div>
+          <div class="label">Student Accounts</div>
+          <div class="desc">Students create an account and log in to access their bookings, video library, and purchase history. One login for everything on your site.</div>
+          <span class="tool-tag">Convex + Secure Auth</span>
         </li>
+
         <li class="deliverable-item">
-          <div class="label">Contact Form Wired to Email</div>
-          <div class="desc">New leads land straight in your inbox. No messages falling through the cracks.</div>
+          <div class="label">Custom Booking Page</div>
+          <div class="desc">Your classes and availability pulled directly from Square into the site. No widget &mdash; fully custom, fully branded. Students pick a class, pick a time, and pay right on clahvay.com. Everything syncs back to your Square dashboard.</div>
+          <span class="tool-tag">Square Bookings API</span>
+          <span class="tool-tag">Square Payments</span>
         </li>
+
         <li class="deliverable-item">
-          <div class="label">Newsletter Email Capture</div>
-          <div class="desc">Build your list. Keep your community in the loop on events, classes, and festivals.</div>
+          <div class="label">CRM &amp; Student Management</div>
+          <div class="desc">Student profiles, groups, and purchase history &mdash; all managed from Square. See who's booking, what they're buying, how often they come. No extra tools to learn.</div>
+          <span class="tool-tag">Square Customers API</span>
         </li>
+
         <li class="deliverable-item">
-          <div class="label">Festival Ticket Integration</div>
-          <div class="desc">Link directly to your ticketing platform so fans can grab tickets without leaving the vibe.</div>
+          <div class="label">Video Platform</div>
+          <div class="desc">Your own Netflix-style video library, built right into the site. Videos organized in frames and categories &mdash; just like Uscreen, but custom-built for Clahvay. Search, filter by style or level, continue watching, progress tracking. Students log in and it's all there. Replaces Uscreen.</div>
+          <span class="tool-tag">Bunny.net Streaming</span>
         </li>
+
         <li class="deliverable-item">
-          <div class="label">Google Analytics + Meta Pixel</div>
-          <div class="desc">See who's visiting, where they come from, and what makes them convert.</div>
-        </li>
-        <li class="deliverable-item">
-          <div class="label">SEO Optimization</div>
-          <div class="desc">Rank for &ldquo;salsa classes Atlanta,&rdquo; &ldquo;Cuban dance Atlanta,&rdquo; and the searches your future students are making right now.</div>
+          <div class="label">Merch Store</div>
+          <div class="desc">Your gear and merchandise built right into the site. Product catalog, cart, checkout &mdash; all on clahvay.com. Replaces BigCommerce.</div>
+          <span class="tool-tag">Ecwid</span>
         </li>
       </ul>
     </section>
 
-    <!-- Section 2: The Investment -->
+    <!-- Section 2: How It Works -->
     <section class="section">
       <div class="section-number">02</div>
+      <h2>How It Works</h2>
+
+      <ul class="process-list">
+        <li class="process-item">
+          <div class="process-number">1</div>
+          <div>
+            <div class="label">Sign &amp; Start</div>
+            <div class="desc">You sign this scope and make the first payment. We lock in a start date and I get to work.</div>
+          </div>
+        </li>
+        <li class="process-item">
+          <div class="process-number">2</div>
+          <div>
+            <div class="label">Brand Discovery Zoom</div>
+            <div class="desc">30-minute recorded call. I ask you questions about your vision, your students, your content categories, your voice. This shapes the entire build.</div>
+          </div>
+        </li>
+        <li class="process-item">
+          <div class="process-number">3</div>
+          <div>
+            <div class="label">Weekly Builds</div>
+            <div class="desc">I build in weekly sprints. Each week you get an update with a live preview link showing exactly what's done. You see progress the whole way.</div>
+          </div>
+        </li>
+        <li class="process-item">
+          <div class="process-number">4</div>
+          <div>
+            <div class="label">Your Review</div>
+            <div class="desc">Once the build is complete, you review everything. One round of revisions included &mdash; we make sure it feels right before going live.</div>
+          </div>
+        </li>
+        <li class="process-item">
+          <div class="process-number">5</div>
+          <div>
+            <div class="label">Go Live</div>
+            <div class="desc">We point clahvay.com to the new site. Your students go to one place for everything. Old platforms get cancelled.</div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 3: Build Timeline -->
+    <section class="section">
+      <div class="section-number">03</div>
+      <h2>Build Timeline</h2>
+
+      <div class="timeline">
+        <div class="timeline-step">
+          <div class="step-title">Week 1 &mdash; Foundation</div>
+          <div class="step-desc">Site architecture on Cloudflare Pages, Convex backend setup, design system, core pages built out.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-title">Week 2 &mdash; Booking System</div>
+          <div class="step-desc">Custom Square booking integration. Pull your classes and availability, build the booking UI, wire up payments on-site.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-title">Week 3 &mdash; Student Accounts &amp; CRM</div>
+          <div class="step-desc">Login system, student profiles, Square CRM hookup. Students see their bookings and history in one place.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-title">Week 4 &mdash; Video Platform</div>
+          <div class="step-desc">Netflix-style video library. Bunny.net streaming, category frames, search, filters, progress tracking. The Uscreen replacement.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-title">Week 5 &mdash; Merch Store &amp; Polish</div>
+          <div class="step-desc">Ecwid integration, mobile optimization, cross-browser testing, performance tuning. Everything tightened up.</div>
+        </div>
+        <div class="timeline-step final">
+          <div class="step-title">Week 6 &mdash; Review &amp; Launch</div>
+          <div class="step-desc">Your review, revisions, final testing. Then we go live on clahvay.com.</div>
+        </div>
+      </div>
+
+      <div class="timeline-summary">6 weeks from kickoff to launch &mdash; weekly updates the whole way</div>
+    </section>
+
+    <!-- Section 4: Your Tech Stack -->
+    <section class="section">
+      <div class="section-number">04</div>
+      <h2>Your Tech Stack</h2>
+      <p>Every tool chosen for a reason. Fast, affordable, and built to scale with you.</p>
+
+      <ul class="deliverable-list">
+        <li class="deliverable-item">
+          <div class="label">Cloudflare Pages</div>
+          <div class="desc">Frontend hosting. Flat-rate pricing, global CDN, unlimited bandwidth. Your site loads fast everywhere, costs stay predictable.</div>
+        </li>
+        <li class="deliverable-item">
+          <div class="label">Convex</div>
+          <div class="desc">Backend and database. Handles student data, bookings, video progress, content management. Real-time updates, built-in security.</div>
+        </li>
+        <li class="deliverable-item">
+          <div class="label">Square</div>
+          <div class="desc">Bookings, payments, and CRM. Your existing Square Premium account &mdash; everything stays in your dashboard. No new tools to learn.</div>
+        </li>
+        <li class="deliverable-item">
+          <div class="label">Bunny.net</div>
+          <div class="desc">Video hosting and streaming. No ads, your branding, DRM protection. Affordable at any scale &mdash; pennies per GB.</div>
+        </li>
+        <li class="deliverable-item">
+          <div class="label">Ecwid</div>
+          <div class="desc">E-commerce for merch. Product catalog, cart, and checkout embedded directly on your site.</div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 5: The Investment -->
+    <section class="section">
+      <div class="section-number">05</div>
       <h2>The Investment</h2>
 
       <div class="pricing-table">
         <div class="pricing-row">
           <div>
-            <div class="item">Website Design &amp; Build</div>
-            <div class="item-desc">Completed</div>
+            <div class="item">Custom Website</div>
+            <div class="item-desc">Cloudflare Pages, design, core pages</div>
+          </div>
+          <div class="price">$600</div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="item">Backend &amp; Database</div>
+            <div class="item-desc">Convex setup, data architecture, auth</div>
+          </div>
+          <div class="price">$500</div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="item">Custom Booking System</div>
+            <div class="item-desc">Square integration, custom UI, on-site payments</div>
+          </div>
+          <div class="price">$1,200</div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="item">Student Accounts &amp; CRM</div>
+            <div class="item-desc">Login system, Square profiles, groups, history</div>
           </div>
           <div class="price">$800</div>
         </div>
         <div class="pricing-row">
           <div>
-            <div class="item">Professional Photography</div>
-            <div class="item-desc">On-site studio shoot, edited &amp; placed</div>
+            <div class="item">Video Platform</div>
+            <div class="item-desc">Netflix-style library, Bunny.net streaming, progress tracking</div>
           </div>
-          <div class="price">$400</div>
+          <div class="price">$1,500</div>
         </div>
         <div class="pricing-row">
           <div>
-            <div class="item">Integrations &amp; Wiring</div>
-            <div class="item-desc">Pike13, forms, analytics, ticketing</div>
-          </div>
-          <div class="price">$400</div>
-        </div>
-        <div class="pricing-row">
-          <div>
-            <div class="item">Year 1 Hosting &amp; Support</div>
-            <div class="item-desc">Vercel hosting, SSL, 2 content updates</div>
+            <div class="item">Merch Store</div>
+            <div class="item-desc">Ecwid e-commerce integration</div>
           </div>
           <div class="price">$400</div>
         </div>
       </div>
 
       <div class="pricing-total">
-        <div class="item">Total</div>
-        <div class="price">$2,000</div>
+        <div class="item">Platform Build</div>
+        <div class="price">$5,000</div>
       </div>
 
-      <div class="payment-options">
-        <div class="label">Payment Options</div>
-        <div class="payment-option"><strong>Option A:</strong> $2,000 upfront</div>
-        <div class="payment-divider">&mdash; or &mdash;</div>
-        <div class="payment-option"><strong>Option B:</strong> $1,000 now + $1,000 at launch</div>
+      <div class="payment-note">
+        <div class="label">Payment</div>
+        <div class="detail"><strong>$2,500</strong> <span>to start</span></div>
+        <div class="detail"><strong>$2,500</strong> <span>at delivery</span></div>
       </div>
     </section>
 
-    <!-- Section 3: After Year One -->
+    <!-- Section 6: After Launch -->
     <section class="section">
-      <div class="section-number">03</div>
-      <h2>After Year One</h2>
+      <div class="section-number">06</div>
+      <h2>After Launch</h2>
 
       <div class="ongoing-card">
-        <div class="ongoing-price">$50 &ndash; $75 / month</div>
+        <div class="ongoing-price">$150 / month</div>
         <ul class="ongoing-list">
-          <li>Hosting &amp; SSL</li>
-          <li>Uptime monitoring</li>
-          <li>Content swaps &mdash; event dates, pricing, new instructors</li>
+          <li>Hosting &amp; infrastructure</li>
+          <li>Platform maintenance &amp; updates</li>
+          <li>Bug fixes &amp; monitoring</li>
+          <li>Ongoing support &mdash; you text me, I handle it</li>
         </ul>
-        <div class="ongoing-quote">&ldquo;I update your site so you never have to.&rdquo;</div>
+        <div class="ongoing-quote">&ldquo;One monthly cost replaces all the platforms you're paying for now.&rdquo;</div>
       </div>
     </section>
 
-    <!-- Section 4: What Happens Next -->
+    <!-- Section 7: What's Not Included -->
     <section class="section">
-      <div class="section-number">04</div>
-      <h2>What Happens Next</h2>
-
-      <div class="timeline">
-        <div class="timeline-step">
-          <div class="step-title">Sign this scope</div>
-          <div class="step-desc">Then we hop on a 30-min brand discovery Zoom. I record it to capture your voice and vision.</div>
-        </div>
-        <div class="timeline-step">
-          <div class="step-title">Photo shoot at the studio</div>
-          <div class="step-desc">I come to the studio, shoot the space, the instructors, and a class in action. Real photos for a real site.</div>
-        </div>
-        <div class="timeline-step">
-          <div class="step-title">Integrations + real assets</div>
-          <div class="step-desc">I wire everything up, edit the photos, and swap them into the site. Takes 5&ndash;7 business days.</div>
-        </div>
-        <div class="timeline-step">
-          <div class="step-title">You review</div>
-          <div class="step-desc">One round of revisions included. We make sure it feels right.</div>
-        </div>
-        <div class="timeline-step final">
-          <div class="step-title">Go live</div>
-          <div class="step-desc">Your old site redirects to the new one. You're live.</div>
-        </div>
-      </div>
-
-      <div class="timeline-summary">~2 weeks from signature to launch</div>
-    </section>
-
-    <!-- Section 5: What's NOT Included -->
-    <section class="section">
-      <div class="section-number">05</div>
+      <div class="section-number">07</div>
       <h2>What's Not Included</h2>
 
       <ul class="exclusion-list">
-        <li>Custom booking system &mdash; replace Pike13, keep more of your money</li>
-        <li>Custom app / member portal</li>
-        <li>E-commerce / gear shop</li>
-        <li>Blog content writing</li>
-        <li>Studio rental booking page</li>
+        <li>Data &amp; client migration &mdash; transferring existing students from BigCommerce, Pike13, or other platforms into Square. We can discuss whether you want me to handle this or if you have a plan already.</li>
+        <li>Events &amp; festival ticketing (Zoho Backstage replacement)</li>
+        <li>Pike13 replacement or integration</li>
+        <li>Marketing automations &amp; email campaigns</li>
+        <li>Content creation or copywriting</li>
+        <li>Logo or brand identity design</li>
       </ul>
-      <p class="exclusion-note">&ldquo;Right now we work with your Pike13. When you&rsquo;re ready to own the whole system and stop paying monthly fees, we build that next.&rdquo;</p>
+      <p class="exclusion-note">&ldquo;These can all be added down the road. Let's get the core platform live first.&rdquo;</p>
     </section>
 
     <!-- Footer / CTA -->
     <footer class="footer">
-      <h2>Ready to Move?</h2>
+      <h2>Let's Build It</h2>
 
       <div class="cta-option">
         <a href="sms:+14044363393&body=I'm%20in" class="cta-primary">Text me "I'm in"</a>
         <div class="cta-secondary">(404) 436-3393</div>
       </div>
 
-      <div class="cta-divider">or reply to this doc</div>
+      <div class="cta-divider">or reply to this email</div>
 
       <div class="footer-brand">
         Built by <a href="https://foundos.ai" target="_blank" rel="noopener">FoundOS</a> &mdash; foundos.ai
