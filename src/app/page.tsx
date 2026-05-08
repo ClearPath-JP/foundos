@@ -170,12 +170,11 @@ const AI_CARDS = [
 ];
 
 const PROJECTS = [
-  { title: "Heirloom BBQ", tag: "Restaurant", desc: "Demo build \u2014 full menu system, catering page, fire-inspired palette", link: "https://heirloom-bbq.vercel.app", image: "/portfolio/heirloom.png", external: true },
-  { title: "FRAMELOCK", tag: "Photography", desc: "Demo build \u2014 masonry gallery, tiered pricing, dark cinematic theme", link: "https://shutter-city.vercel.app", image: "/portfolio/framelock.png", external: true },
-  { title: "Babygirl", tag: "Bar & Lounge", desc: "Demo build \u2014 seasonal menu tabs, photo gallery, walk-in details", link: "/demo/babygirl", image: "/portfolio/babygirl.png", external: false },
-  { title: "Clahvay", tag: "Barbershop", desc: "Demo build \u2014 online booking, service menu, brand photography", link: "https://clahvay.vercel.app", image: "/portfolio/clahvay.png", external: true },
-  { title: "Amistad Coffee", tag: "Coffee Shop", desc: "Demo build \u2014 menu, hours, story page with community energy", link: "https://amistad-coffee.vercel.app", image: "/portfolio/amistad.png", external: true },
-  { title: "Station 11", tag: "Caf\u00e9", desc: "Demo build \u2014 menu, reservations, interior photography", link: "https://station11-atl.vercel.app", image: "/portfolio/station11.png", external: true },
+  { title: "Sensei App", tag: "SaaS Platform", desc: "Coaching platform \u2014 video library, client portal, scheduling, Stripe billing", link: "https://coach.foundos.ai", image: "/portfolio/coach-dashboard.png", external: true },
+  { title: "Station 11", tag: "Caf\u00e9", desc: "Caribbean-Asian cafe \u2014 interactive menu, Resy booking, parallax design", link: "https://station11-atl.vercel.app", image: "/portfolio/station11.png", external: true },
+  { title: "Heirloom BBQ", tag: "Restaurant", desc: "BBQ restaurant \u2014 full menu system, catering page, fire-inspired palette", link: "https://heirloom-bbq.vercel.app", image: "/portfolio/heirloom.png", external: true },
+  { title: "Babygirl", tag: "Bar & Lounge", desc: "Upscale lounge \u2014 seasonal menu tabs, photo gallery, walk-in details", link: "/demo/babygirl", image: "/portfolio/babygirl.png", external: false },
+  { title: "FRAMELOCK", tag: "Photography", desc: "Photography portfolio \u2014 masonry gallery, tiered pricing, dark cinematic theme", link: "https://shutter-city.vercel.app", image: "/portfolio/framelock.png", external: true },
 ];
 
 const STACK = ["Next.js", "React", "TypeScript", "Tailwind CSS", "Vercel", "Supabase", "Claude AI", "n8n", "Stripe", "Vapi"];
