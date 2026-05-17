@@ -33,6 +33,15 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
+  if (pathname.startsWith("/api/")) {
+    const cookieNames = request.cookies.getAll().map((c) => c.name);
+    console.log("[proxy]", pathname, {
+      hasUser: !!user,
+      email: user?.email ?? null,
+      cookieCount: cookieNames.length,
+      sbCookies: cookieNames.filter((n) => n.startsWith("sb-")),
+    });
+  }
   if (pathname.startsWith(PROTECTED_PREFIX)) {
     if (!user) {
       const url = request.nextUrl.clone();

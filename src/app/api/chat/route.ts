@@ -25,6 +25,11 @@ type ChatPayload = {
 };
 
 export async function POST(request: Request) {
+  const cookieHeader = request.headers.get("cookie") ?? "";
+  const cookieNames = cookieHeader
+    .split(";")
+    .map((c) => c.trim().split("=")[0])
+    .filter(Boolean);
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
   const user = data.user;
@@ -34,6 +39,8 @@ export async function POST(request: Request) {
       email: user?.email ?? null,
       allowed: user ? isEmailAllowed(user.email) : false,
       authError: error?.message ?? null,
+      rawCookieCount: cookieNames.length,
+      sbCookiesInHeader: cookieNames.filter((n) => n.startsWith("sb-")),
     });
     return new Response("Unauthorized", { status: 401 });
   }
