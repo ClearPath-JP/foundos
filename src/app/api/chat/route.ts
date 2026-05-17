@@ -26,10 +26,15 @@ type ChatPayload = {
 
 export async function POST(request: Request) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
+  const user = data.user;
   if (!user || !isEmailAllowed(user.email)) {
+    console.error("[chat] 401:", {
+      hasUser: !!user,
+      email: user?.email ?? null,
+      allowed: user ? isEmailAllowed(user.email) : false,
+      authError: error?.message ?? null,
+    });
     return new Response("Unauthorized", { status: 401 });
   }
 
