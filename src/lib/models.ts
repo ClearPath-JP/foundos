@@ -37,8 +37,8 @@ export const MODELS: ModelChoice[] = [
     description: "Real-time web research with citations.",
   },
   {
-    id: "xai/grok-4",
-    label: "Grok 4",
+    id: "xai/grok-4.3",
+    label: "Grok 4.3",
     tier: "smart",
     description: "Native X/Twitter context. Sentiment.",
   },

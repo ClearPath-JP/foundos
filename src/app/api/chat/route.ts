@@ -1,6 +1,5 @@
 import { streamText, type ModelMessage } from "ai";
-import { createClient } from "@/lib/supabase/server";
-import { isEmailAllowed } from "@/lib/auth/allowlist";
+import { notFound } from "next/navigation";
 import { DEFAULT_MODEL_ID } from "@/lib/models";
 
 export const maxDuration = 60;
@@ -25,24 +24,8 @@ type ChatPayload = {
 };
 
 export async function POST(request: Request) {
-  const cookieHeader = request.headers.get("cookie") ?? "";
-  const cookieNames = cookieHeader
-    .split(";")
-    .map((c) => c.trim().split("=")[0])
-    .filter(Boolean);
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-  const user = data.user;
-  if (!user || !isEmailAllowed(user.email)) {
-    console.error("[chat] 401:", {
-      hasUser: !!user,
-      email: user?.email ?? null,
-      allowed: user ? isEmailAllowed(user.email) : false,
-      authError: error?.message ?? null,
-      rawCookieCount: cookieNames.length,
-      sbCookiesInHeader: cookieNames.filter((n) => n.startsWith("sb-")),
-    });
-    return new Response("Unauthorized", { status: 401 });
+  if (process.env.VERCEL) {
+    notFound();
   }
 
   const body = (await request.json()) as ChatPayload;

@@ -24,13 +24,7 @@ export function useDashboard() {
   return v;
 }
 
-export function DashboardShell({
-  userEmail,
-  children,
-}: {
-  userEmail: string | null;
-  children: ReactNode;
-}) {
+export function DashboardShell({ children }: { children: ReactNode }) {
   const [projects, setProjects] = useState<BridgeProject[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [bridgeOnline, setBridgeOnline] = useState(false);
@@ -77,7 +71,7 @@ export function DashboardShell({
           <div className="px-4 py-4 border-b border-neutral-900">
             <div className="text-sm font-semibold tracking-tight">FoundOS</div>
             <div className="text-[11px] text-neutral-500 mt-0.5">
-              {userEmail ?? "—"}
+              local command center
             </div>
           </div>
 
@@ -116,15 +110,6 @@ export function DashboardShell({
               </ul>
             )}
           </div>
-
-          <form action="/auth/sign-out" method="post" className="p-3 border-t border-neutral-900">
-            <button
-              type="submit"
-              className="w-full text-xs text-neutral-500 hover:text-neutral-200"
-            >
-              Sign out
-            </button>
-          </form>
         </aside>
 
         <main className="flex-1 min-w-0">{children}</main>
