@@ -20,22 +20,22 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: "FoundOS — Business Architecture for the AI Era | Atlanta",
+  title: "foundos.ai — AI automation for service businesses",
   description:
-    "I build the systems local businesses need — websites, AI agents, automation, and custom software. One architect. Direct communication. Atlanta, GA.",
+    "I help gym, studio, salon, and coaching owners automate their operations so their business runs on its own — and they get their time back.",
   openGraph: {
-    title: "FoundOS — Business Architecture for the AI Era",
+    title: "foundos.ai — AI automation for service businesses",
     description:
-      "Websites. AI agents. Custom software. I look at how your business runs and build the technology that fills the gaps.",
+      "Audit your software, connect your tools, and deploy an AI agent that runs your business 24/7. Your revenue grows. Your hours shrink.",
     url: "https://foundos.ai",
-    siteName: "FoundOS",
+    siteName: "foundos.ai",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "FoundOS — Business Architecture for the AI Era",
+    title: "foundos.ai — AI automation for service businesses",
     description:
-      "I build the systems local businesses need — websites, AI agents, automation, and custom software. One architect. Atlanta, GA.",
+      "I help service business owners automate their operations so their business runs on its own — and they get their time back.",
   },
 };
 
