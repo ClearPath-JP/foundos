@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Make Tailwind's font-sans use the Inter variable from next/font (layout.tsx) */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
 /* ─── Sketch Theme Tokens ────────────────────────── */
 :root {
   --bg: #ffffff;
@@ -24,7 +29,10 @@
 }
 
 /* ─── Reset ──────────────────────────────────────── */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+/* Scoped to the base layer so Tailwind utilities (px-*, py-*, m-*) win over it. */
+@layer base {
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+}
 html { scroll-behavior: smooth; }
 
 body {

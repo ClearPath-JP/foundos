@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
 
 const CAL = 'https://calendly.com/josh-potesta';
@@ -10,6 +11,10 @@ const btnPrimary =
   'inline-block bg-indigo-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-indigo-700 transition-colors';
 const btnGhost =
   'inline-block border border-gray-300 text-gray-900 px-8 py-4 rounded-lg font-semibold text-lg hover:border-gray-900 transition-colors';
+const cardCtaFilled =
+  'block w-full text-center bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors';
+const cardCtaOutline =
+  'block w-full text-center border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition-colors';
 
 /* Feature row with an indigo check (left-aligned, used inside cards) */
 function Feature({ children }: { children: React.ReactNode }) {
@@ -77,7 +82,7 @@ export default function FoundosLanding() {
             href={CAL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center gap-1 bg-indigo-600 text-white px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors"
           >
             Book a call →
           </a>
@@ -85,9 +90,9 @@ export default function FoundosLanding() {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-6 py-20 sm:py-28 space-y-24 sm:space-y-32">
+      <main className="max-w-5xl mx-auto px-6 py-14 sm:py-20 space-y-16 sm:space-y-20">
 
-        {/* Hero (centered, soft indigo glow on desktop) */}
+        {/* Hero — outcome-first, centered, soft indigo glow */}
         <motion.section
           {...heroAnim}
           id="top"
@@ -101,73 +106,49 @@ export default function FoundosLanding() {
             AI automation for service businesses
           </p>
           <h1 className="text-4xl sm:text-6xl font-bold leading-[1.08] tracking-tight">
-            🎯 What is foundos.ai?
+            Your business <span className="text-indigo-600">runs itself</span>.<br className="hidden sm:block" /> You get your <span className="text-indigo-600">time back</span>.
           </h1>
           <p className="text-xl leading-relaxed text-gray-700 max-w-2xl mx-auto">
-            I help service business owners automate their operations so their business runs on its own and they get their time back.
-          </p>
-          <p className="text-lg leading-relaxed text-gray-600 max-w-2xl mx-auto">
-            You own a gym, studio, coaching practice, or salon. You're working 60-hour weeks because your business needs you every day. Emails. Bookings. Follow-ups. Upsells. Member retention. It never stops.
-          </p>
-          <p className="text-2xl sm:text-3xl leading-snug font-bold text-gray-900 pt-1">
-            foundos.ai fixes this.
-          </p>
-          <p className="text-lg leading-relaxed text-gray-600 max-w-2xl mx-auto">
-            We audit your current software. We lower your costs. We connect your tools. We deploy an AI agent that runs your business 24/7. Your revenue grows. Your hours shrink.
+            foundos.ai is the AI operating system for gyms, studios, salons, and coaches. I automate the repetitive work — bookings, follow-ups, upsells, retention — so your business runs 24/7 without you.
           </p>
           <div className="flex flex-wrap gap-3 justify-center pt-4">
             <a href={CAL} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
               Book a 20-min call
             </a>
             <a href="#how-it-works" className={btnGhost}>
-              See how it works
+              Show me the 4-step system →
             </a>
           </div>
-        </motion.section>
-
-        {/* Philosophy (centered) */}
-        <motion.section {...reveal} className="text-center max-w-2xl mx-auto space-y-6">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">🧠 My Philosophy</h2>
-          <p className="text-xl font-semibold text-gray-900 leading-relaxed">
-            Systems run businesses. AI runs systems. Automation is freedom.
+          <p className="text-sm text-gray-500">
+            No pitch. No commitment. I'll tell you honestly if it's a fit.
           </p>
-          <p className="text-lg leading-relaxed text-gray-600">
-            I believe the best business is one that doesn't need you every day. Not because you built something and walked away—but because you built <em>systems</em> that make good decisions without you.
-          </p>
-          <p className="text-lg leading-relaxed text-gray-600">
-            I'm obsessed with clarity. With leverage. With doing less but getting more.
-          </p>
-          <p className="text-lg leading-relaxed text-gray-600">
-            Most business owners are trapped in urgency. Responding to emails. Putting out fires. Never building. I think that's broken.
-          </p>
-          <p className="text-lg leading-relaxed text-gray-900 font-semibold">
-            Your business should serve you. Not the other way around.
-          </p>
-          <p className="text-lg leading-relaxed text-gray-600">I built foundos.ai to change that.</p>
         </motion.section>
 
         {/* The Problem (centered) */}
         <motion.section {...reveal} id="problem" className="text-center max-w-2xl mx-auto space-y-6 scroll-mt-24">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">😫 The Problem (You Probably Know It)</h2>
           <p className="text-lg leading-relaxed text-gray-600">
-            You're paying for 5 different software subscriptions that don't talk to each other.
+            You own a gym, studio, coaching practice, or salon — and you're working 60-hour weeks because your business needs you every day. Emails. Bookings. Follow-ups. Upsells. Retention. It never stops.
           </p>
           <p className="text-lg leading-relaxed text-gray-600">
-            Your booking system doesn't trigger your payment system. Your payment system doesn't trigger your email system. Nothing is orchestrated. So you're manually doing what should be automated.
+            You're paying for 5 different software subscriptions that don't talk to each other. Your booking system doesn't trigger your payment system. Your payment system doesn't trigger your email system. Nothing is orchestrated. So you're manually doing what should be automated.
           </p>
           <p className="text-lg leading-relaxed text-gray-600">
             You're also leaving money on the table. Member books a class but forgets to show up? No proactive reminder. Member has 10 sessions left? No upsell. New member signs up? No personalized welcome.
           </p>
-          <p className="text-xl leading-relaxed font-bold text-red-600 pt-2">
+          <p className="text-xl leading-relaxed font-bold text-amber-800 pt-2">
             Result: You work 60 hours. Make less than you should. Spend more on software than you need to.
           </p>
-          <p className="text-lg leading-relaxed text-gray-900 font-semibold">It's fixable.</p>
+          <p className="text-xl font-bold text-indigo-600">It's fixable.</p>
         </motion.section>
 
         {/* How It Works (grid on desktop) */}
         <motion.section {...reveal} id="how-it-works" className="space-y-10 scroll-mt-24">
-          <div className="text-center max-w-2xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto space-y-3">
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">✅ Here's How foundos.ai Works</h2>
+            <p className="text-lg leading-relaxed text-gray-600">
+              We audit your software, lower your costs, connect your tools, and deploy an AI agent that runs your business 24/7. Your revenue grows. Your hours shrink.
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -208,7 +189,7 @@ export default function FoundosLanding() {
                 <h3 className="text-lg sm:text-xl font-bold leading-tight">Agent Deployment (We Automate Your Growth)</h3>
               </div>
               <p className="text-gray-600 leading-relaxed">An AI agent learns your business. It makes smart decisions 24/7:</p>
-              <ul className="space-y-2 text-gray-700">
+              <ul className="space-y-2 text-gray-700 bg-indigo-50/60 border-l-4 border-indigo-600 rounded-r-lg p-4 font-mono text-sm leading-relaxed">
                 <li>💬 "This member hasn't shown up in 2 weeks. Send them a personalized re-engagement message."</li>
                 <li>💰 "This person is ready for a PT upsell. Pitch them the 3-session package."</li>
                 <li>📈 "Your Wednesday class is at 60% capacity. Recommend a friend gets free week."</li>
@@ -226,50 +207,83 @@ export default function FoundosLanding() {
               <p className="text-gray-600 leading-relaxed">
                 You get a dashboard. Real data. What automations made you the most money? What upsells converted? What retention tactics worked?
               </p>
-              <p className="text-gray-600 leading-relaxed">We optimize based on results. Not guesses.</p>
+              <p className="text-gray-600 leading-relaxed">
+                We track which automations generated revenue, which ones got ignored, and replace the losers every 30 days. We optimize on results. Not guesses.
+              </p>
             </motion.div>
           </div>
+        </motion.section>
+
+        {/* Integrations */}
+        <motion.section {...reveal} className="text-center max-w-3xl mx-auto space-y-6">
+          <div className="space-y-3">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">🔌 Works With the Tools You Already Use</h2>
+            <p className="text-lg leading-relaxed text-gray-600">
+              No rip-and-replace. I connect the software you already run — and if a tool is costing you too much, I'll help you move off it.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2.5">
+            {['Pike13', 'Mindbody', 'Square', 'Toast', 'Stripe', 'Google', 'Calendly', 'Mailchimp', 'QuickBooks', 'Acuity', 'Vagaro', 'Twilio'].map((t) => (
+              <span key={t} className="px-4 py-2 rounded-full border border-gray-200 bg-white text-gray-700 text-sm font-medium">
+                {t}
+              </span>
+            ))}
+          </div>
+          <p className="text-sm text-gray-500">…and more. If you use it, there's a good chance we can connect it.</p>
         </motion.section>
 
         {/* Pricing (grid on desktop) */}
         <motion.section {...reveal} id="pricing" className="space-y-10 scroll-mt-24">
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">💰 Pricing</h2>
-            <p className="text-lg text-gray-600">Choose what fits your business.</p>
+            <p className="text-lg text-gray-600">Simple monthly pricing — no setup fees (except the Custom Agent). Every plan includes your website: built new, redesigned, or migrated off an overpriced tool.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto items-start text-left">
             <motion.div whileHover={cardHover} className="border border-gray-200 rounded-2xl p-8 space-y-5 bg-white transition-shadow hover:shadow-md">
-              <h3 className="text-2xl font-bold">Starter: $99/month</h3>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-indigo-600">Starter</p>
+                <p className="mt-1"><span className="text-4xl font-bold tracking-tight">$99</span><span className="text-base text-gray-500">/month</span></p>
+              </div>
               <p className="text-gray-600">For the owner testing it out.</p>
               <ul className="space-y-3 text-gray-700">
+                <Feature>Website setup or migration</Feature>
                 <Feature>Integration of your existing tools</Feature>
                 <Feature>Basic automations (reminders, follow-ups)</Feature>
                 <Feature>Unified dashboard</Feature>
                 <Feature>Email support</Feature>
               </ul>
               <p className="text-sm text-gray-500"><strong>Best for:</strong> Solo operators, simple workflows, tight budget.</p>
+              <a href={CAL} target="_blank" rel="noopener noreferrer" className={cardCtaOutline}>Book a call →</a>
             </motion.div>
 
             <motion.div whileHover={cardHover} className="relative border-2 border-indigo-600 rounded-2xl p-8 space-y-5 bg-indigo-50/40 shadow-sm transition-shadow hover:shadow-lg">
-              <span className="absolute -top-3 left-8 bg-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full shadow-sm">
                 Most Popular
               </span>
-              <h3 className="text-2xl font-bold">Professional: $249/month</h3>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-indigo-600">Professional</p>
+                <p className="mt-1"><span className="text-4xl font-bold tracking-tight">$249</span><span className="text-base text-gray-500">/month</span></p>
+              </div>
               <p className="text-gray-600">For the owner ready to scale.</p>
               <ul className="space-y-3 text-gray-700">
                 <Feature>Everything in Starter +</Feature>
+                <Feature>Custom website — built or redesigned</Feature>
                 <Feature>Smart Agent (personalization, recommendations)</Feature>
                 <Feature>Revenue tracking (see what's making money)</Feature>
                 <Feature>Lead capture + nurture automation</Feature>
                 <Feature>Priority support</Feature>
               </ul>
               <p className="text-sm text-gray-500"><strong>Best for:</strong> Growing business, want automation to drive revenue.</p>
-              <p className="text-base font-semibold text-gray-900">This is where most owners land. This is where the magic happens.</p>
+              <p className="text-base font-semibold text-gray-900">This is where most owners land — where automation starts driving real revenue, not just saving time.</p>
+              <a href={CAL} target="_blank" rel="noopener noreferrer" className={cardCtaFilled}>Book a call →</a>
             </motion.div>
 
             <motion.div whileHover={cardHover} className="border border-gray-200 rounded-2xl p-8 space-y-5 bg-white transition-shadow hover:shadow-md">
-              <h3 className="text-2xl font-bold">Founder: $499/month</h3>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-indigo-600">Founder</p>
+                <p className="mt-1"><span className="text-4xl font-bold tracking-tight">$499</span><span className="text-base text-gray-500">/month</span></p>
+              </div>
               <p className="text-gray-600">For the owner ready to go all-in.</p>
               <ul className="space-y-3 text-gray-700">
                 <Feature>Everything in Professional +</Feature>
@@ -279,10 +293,14 @@ export default function FoundosLanding() {
                 <Feature>Direct access (text/Slack when you need me)</Feature>
               </ul>
               <p className="text-sm text-gray-500"><strong>Best for:</strong> Serious operator, complex business, ready to scale hard.</p>
+              <a href={CAL} target="_blank" rel="noopener noreferrer" className={cardCtaFilled}>Book a call →</a>
             </motion.div>
 
             <motion.div whileHover={cardHover} className="border border-gray-200 rounded-2xl p-8 space-y-5 bg-white transition-shadow hover:shadow-md">
-              <h3 className="text-2xl font-bold">Custom Agent: $1,400 setup + $499/month</h3>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-indigo-600">Custom Agent</p>
+                <p className="mt-1"><span className="text-4xl font-bold tracking-tight">$1,400</span><span className="text-base text-gray-500"> setup + $499/mo</span></p>
+              </div>
               <p className="text-gray-600">For the owner who wants a true operating system.</p>
               <ul className="space-y-3 text-gray-700">
                 <Feature>Everything above +</Feature>
@@ -293,27 +311,39 @@ export default function FoundosLanding() {
                 <Feature>Ongoing evolution as your business grows</Feature>
               </ul>
               <p className="text-sm text-gray-500"><strong>Best for:</strong> High-revenue business, want me involved in your growth.</p>
+              <a href={CAL} target="_blank" rel="noopener noreferrer" className={cardCtaFilled}>Let's talk →</a>
             </motion.div>
           </div>
         </motion.section>
 
-        {/* About (centered) */}
+        {/* About (centered, photo + folded-in philosophy) */}
         <motion.section {...reveal} id="about" className="text-center max-w-2xl mx-auto space-y-6 scroll-mt-24">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">👋 About Me</h2>
+          <div className="flex justify-center">
+            <div className="relative w-44 h-44 sm:w-52 sm:h-52 rounded-full overflow-hidden ring-4 ring-indigo-100 shadow-sm">
+              <Image
+                src="/josh.png"
+                alt="Josh, founder of foundos.ai"
+                fill
+                sizes="208px"
+                className="object-cover object-[center_28%]"
+              />
+            </div>
+          </div>
           <p className="text-lg leading-relaxed text-gray-600">
             I'm Josh. 19-year-old founder building operating systems for service businesses.
           </p>
           <p className="text-lg leading-relaxed text-gray-600">
-            I believe most business owners are working too hard for what they're making. I think that's fixable with the right systems + the right AI.
+            I've been building for service businesses — gyms, studios, salons, coaches — for the past few years. Every one has the same problem: they're too dependent on their owner. I solve that. I believe most business owners are working too hard for what they're making, and that's fixable with the right systems and the right AI.
+          </p>
+          <p className="text-xl font-semibold text-gray-900 leading-relaxed">
+            Systems run businesses. AI runs systems. Automation is freedom.
           </p>
           <p className="text-lg leading-relaxed text-gray-600">
-            I've been building for service businesses (gyms, studios, salons, coaches) for the past few years. Every business has the same problem: they're too dependent on their owner. I solve that.
-          </p>
-          <p className="text-lg leading-relaxed text-gray-900 font-semibold">
-            My philosophy: Clarity is power. Systems are leverage. Automation is freedom.
+            The best business is one that doesn't need you every day — not because you built something and walked away, but because you built <em>systems</em> that make good decisions without you. Most owners are trapped in urgency: answering emails, putting out fires, never building. Your business should serve you, not the other way around. I built foundos.ai to change that.
           </p>
           <p className="text-lg leading-relaxed text-gray-600">
-            I'm also a martial artist, salsa dancer, and obsessed with Stoic philosophy. I think like a systems builder. I operate like an entrepreneur. I coach like a martial artist—focus on the fundamentals, iterate relentlessly, never stop improving.
+            I'm also a martial artist, salsa dancer, and obsessed with Stoic philosophy. I think like a systems builder, operate like an entrepreneur, and coach like a martial artist — fundamentals first, iterate relentlessly, never stop improving.
           </p>
         </motion.section>
 
@@ -338,7 +368,7 @@ export default function FoundosLanding() {
             <div className="space-y-4">
               <h3 className="text-xl sm:text-2xl font-bold">Option 2: Send Me a Message</h3>
               <p className="text-lg leading-relaxed text-gray-600">
-                Tell me what you do + what takes the most time. This opens your email so you can send it straight to me — I'll respond with next steps.
+                Tell me what you do and what's eating your time. Hit send — it opens your email, addressed to me, ready to go.
               </p>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
@@ -364,6 +394,7 @@ export default function FoundosLanding() {
                   Send Message
                 </button>
               </form>
+              <p className="text-sm text-gray-500">I reply within 24 hours — usually faster.</p>
             </div>
           </div>
         </motion.section>
@@ -393,16 +424,30 @@ export default function FoundosLanding() {
           <p className="text-lg text-gray-600">Pick whichever you prefer. I read everything and respond fast.</p>
         </motion.section>
 
+        {/* Final CTA */}
+        <motion.section {...reveal} className="text-center max-w-2xl mx-auto space-y-5">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Ready to get your time back?</h2>
+          <p className="text-lg text-gray-600">
+            A 20-minute call. I'll tell you exactly what I'd automate first — no pitch.
+          </p>
+          <div className="pt-2">
+            <a href={CAL} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
+              Book your free 20-min call →
+            </a>
+          </div>
+          <p className="text-sm text-gray-500">No pitch. No obligation. If I can't help you, I'll tell you.</p>
+        </motion.section>
+
         {/* Final Thought (centered) */}
         <motion.section {...reveal} className="text-center max-w-3xl mx-auto space-y-5 border-t border-gray-100 pt-16">
           <p className="text-3xl sm:text-5xl font-bold leading-tight tracking-tight">
-            Your business should work for you.
+            Your business should <span className="text-indigo-600">work for you</span>.
           </p>
           <p className="text-3xl sm:text-5xl font-bold leading-tight tracking-tight">
             Not the other way around.
           </p>
           <p className="text-xl font-semibold text-gray-600 pt-2">Let's build that together.</p>
-          <p className="text-xl text-gray-600">— Josh</p>
+          <p className="hand text-3xl text-gray-900">— Josh</p>
         </motion.section>
       </main>
     </div>
