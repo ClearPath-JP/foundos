@@ -331,20 +331,27 @@ export default function FoundosLanding() {
             </div>
           </div>
           <p className="text-lg leading-relaxed text-gray-600">
-            I'm Josh. 19-year-old founder building operating systems for service businesses.
+            I'm Josh. I build operating systems for service businesses — gyms, studios, salons, coaches.
           </p>
           <p className="text-lg leading-relaxed text-gray-600">
-            I've been building for service businesses — gyms, studios, salons, coaches — for the past few years. Every one has the same problem: they're too dependent on their owner. I solve that. I believe most business owners are working too hard for what they're making, and that's fixable with the right systems and the right AI.
+            Most business owners are trapped. They're working 60-hour weeks because their business needs them every day. Emails. Bookings. Follow-ups. Upsells. Retention. Nothing is automated. Nothing talks to anything else. So they're manually doing what should be orchestrated.
+          </p>
+          <p className="text-lg leading-relaxed text-gray-600">
+            I solve that. I audit your software stack, consolidate your tools, and deploy an AI agent that makes smart decisions 24/7 — booking reminders, personalized upsells, retention campaigns, revenue optimization. Your business runs while you sleep.
+          </p>
+          <p className="text-lg leading-relaxed text-gray-600">
+            I think in systems. I code fast. I obsess over results — not features, not effort, results. I've spent the last few years studying how service businesses actually work, and I've learned one thing: most of what's eating your time is fixable with the right automation and the right AI.
+          </p>
+          <p className="text-lg leading-relaxed text-gray-600">
+            I'm also a martial artist, salsa dancer, and student of Stoic philosophy. Those disciplines taught me that fundamentals matter, iteration compounds, and clarity beats perfection every time. That's how I build.
           </p>
           <p className="text-xl font-semibold text-gray-900 leading-relaxed">
-            Systems run businesses. AI runs systems. Automation is freedom.
+            Your business should work for you. Not the other way around.
           </p>
           <p className="text-lg leading-relaxed text-gray-600">
-            The best business is one that doesn't need you every day — not because you built something and walked away, but because you built <em>systems</em> that make good decisions without you. Most owners are trapped in urgency: answering emails, putting out fires, never building. Your business should serve you, not the other way around. I built foundos.ai to change that.
+            Let's build that together.
           </p>
-          <p className="text-lg leading-relaxed text-gray-600">
-            I'm also a martial artist, salsa dancer, and obsessed with Stoic philosophy. I think like a systems builder, operate like an entrepreneur, and coach like a martial artist — fundamentals first, iterate relentlessly, never stop improving.
-          </p>
+          <p className="hand text-3xl text-gray-900">— Josh</p>
         </motion.section>
 
         {/* How to Start (two columns on desktop) */}
