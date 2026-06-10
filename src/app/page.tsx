@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
+import GradientBackground from '@/components/GradientBackground';
 
 const CAL = 'https://calendly.com/josh-potesta';
 const EMAIL = 'hello@foundos.ai';
@@ -71,7 +72,10 @@ export default function FoundosLanding() {
     'border border-gray-200 rounded-2xl p-7 space-y-3 bg-white text-left transition-shadow hover:shadow-md';
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans antialiased">
+    <div className="min-h-screen text-gray-900 font-sans antialiased">
+      {/* Animated, very-soft indigo/violet gradient behind everything */}
+      <GradientBackground />
+
       {/* Navigation */}
       <nav className="sticky top-0 z-20 bg-white/90 backdrop-blur-sm border-b border-gray-100">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
