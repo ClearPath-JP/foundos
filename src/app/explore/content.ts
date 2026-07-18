@@ -19,13 +19,13 @@ export const brand = {
 
 /** A few interchangeable hero headlines (directions pick what fits). */
 export const heroline = {
-  eyebrow: "AI automation for service businesses",
+  eyebrow: "Done-for-you systems for local business",
   // outcome-first
   headline: "Your business runs itself.",
   headlineAccent: "You get your time back.",
   // verbs that the agent does — good for morphing / rotating text
-  rotating: ["books clients", "follows up", "upsells", "retains members", "never sleeps"],
-  sub: "foundos.ai is the AI operating system for gyms, studios, salons, and coaches. I automate the repetitive work — bookings, follow-ups, upsells, retention — so your business runs 24/7 without you.",
+  rotating: ["takes orders", "books clients", "follows up", "gets reviews", "never sleeps"],
+  sub: "foundos.ai is the done-for-you operating system for local business — restaurants, studios, salons, shops, and coaches. I build your whole online presence and automate the busywork — orders, bookings, follow-ups, reviews — so your business runs without you.",
   ctaPrimary: "Book a 20-min call",
   ctaSecondary: "See the 4-step system",
   reassure: "No pitch. No commitment. I'll tell you honestly if it's a fit.",
@@ -34,7 +34,7 @@ export const heroline = {
 export const problem = {
   title: "You didn't start a business to become its employee.",
   body: [
-    "You own a gym, studio, coaching practice, or salon — and you're working 60-hour weeks because the business needs you every day. Emails. Bookings. Follow-ups. Upsells. Retention. It never stops.",
+    "You own a restaurant, studio, salon, or shop — and you're working 60-hour weeks because the business needs you every day. Calls. Orders. Bookings. Follow-ups. Reviews. It never stops.",
     "You're paying for 5 different tools that don't talk to each other. Your booking system doesn't trigger your payments. Your payments don't trigger your emails. Nothing is orchestrated — so you do by hand what should be automatic.",
     "And you're leaving money on the table. A member no-shows? No reminder. Someone's down to their last sessions? No upsell. New sign-up? No welcome.",
   ],
@@ -66,7 +66,7 @@ export const steps: Step[] = [
     n: "03",
     title: "Deploy the agent",
     short: "I automate your growth.",
-    body: "An AI agent learns your business and makes smart calls 24/7: re-engage the member who's gone quiet, pitch the upsell to the person who's ready, fill the class that's half empty. Your invisible employee, working while you sleep.",
+    body: "An AI agent learns your business and makes smart calls 24/7: win back the customer who hasn't come in, pitch the upsell to the regular who's ready, fill the slow shift before it happens. Your invisible employee, working while you sleep.",
   },
   {
     n: "04",
@@ -76,12 +76,43 @@ export const steps: Step[] = [
   },
 ];
 
+export type Service = { title: string; body: string };
+
+/** The concrete "what I build" menu — mirrors the business card, broad enough
+ *  for any local business (restaurant, studio, salon, shop). */
+export const services: Service[] = [
+  {
+    title: "Website & online ordering",
+    body: "A fast, modern site that turns visitors into customers — with commission-free online ordering and payments built in, so you keep 100%.",
+  },
+  {
+    title: "Booking & scheduling",
+    body: "Reservations, appointments, and events your customers book themselves, 24/7 — synced straight to your calendar.",
+  },
+  {
+    title: "AI receptionist · 24/7",
+    body: "An AI that answers every call, takes orders, and books tables — so a ringing phone never turns into a lost customer.",
+  },
+  {
+    title: "Reviews & follow-ups",
+    body: "Automatic texts that turn happy customers into 5-star Google reviews — and quietly win back the ones who drifted away.",
+  },
+  {
+    title: "Local marketing & ads",
+    body: "Google Business, local SEO, and ads that make you the obvious choice the moment someone searches nearby.",
+  },
+  {
+    title: "One connected dashboard",
+    body: "Every order, call, review, and dollar in a single screen — so you finally see what's working and what's not.",
+  },
+];
+
 /** Sample agent "decisions" — great for a console / chat motif. */
 export const agentMessages = [
-  { icon: "💬", text: "This member hasn't shown up in 2 weeks. Sending a personal re-engagement message." },
-  { icon: "💰", text: "This client is ready for a PT upsell — pitching the 3-session package." },
-  { icon: "📈", text: "Wednesday's 6pm class is at 60%. Offering a bring-a-friend free week." },
-  { icon: "🔁", text: "Membership renews in 3 days. Confirmed payment method on file, reminder sent." },
+  { icon: "💬", text: "A regular hasn't come in for 3 weeks. Sending a personal 'we miss you' offer." },
+  { icon: "💰", text: "This customer is ready for the next tier — pitching the upsell now." },
+  { icon: "📈", text: "Tonight's looking slow. Pushing a limited-time promo to fill the tables." },
+  { icon: "🔁", text: "A new 5-star review just came in. Thanking them and asking them to post it to Google." },
 ];
 
 export const integrations = [
@@ -118,7 +149,7 @@ export const plans: Plan[] = [
       "Email support",
     ],
     best: "Solo operators, simple workflows, tight budget.",
-    anchor: "Usually pays for itself by saving one member from quietly canceling.",
+    anchor: "Usually pays for itself by saving one customer from quietly slipping away.",
     cta: "Book a call",
   },
   {
@@ -135,7 +166,7 @@ export const plans: Plan[] = [
       "Priority support",
     ],
     best: "Growing business that wants automation driving revenue.",
-    anchor: "Most owners recover this in a single saved member or recovered upsell each month.",
+    anchor: "Most owners recover this in a single saved customer or recovered order each month.",
     popular: true,
     cta: "Book a call",
   },
@@ -215,7 +246,7 @@ export const about = {
   name: "Josh",
   photo: "/josh.png",
   lines: [
-    "I'm Josh. I build operating systems for service businesses — gyms, studios, salons, coaches.",
+    "I'm Josh. I build done-for-you systems for local businesses — restaurants, studios, salons, shops, and coaches.",
     "Most owners are trapped: working 60-hour weeks because the business needs them every day. Nothing is automated, nothing talks to anything else. So they do by hand what should be orchestrated.",
     "I fix that. I audit your stack, consolidate your tools, and deploy an AI agent that makes smart decisions 24/7 — reminders, personalized upsells, retention, revenue. Your business runs while you sleep.",
     "I care about one thing: getting you more revenue and more of your time back. Not features, not buzzwords — results you can see in your dashboard.",
