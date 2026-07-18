@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import GradientBackground from '@/components/GradientBackground';
 import {
   CAL, EMAIL, brand, heroline, problem, steps, agentMessages,
-  integrations, plans, trust, about, closing,
+  integrations, plans, trust, about, closing, services,
 } from '../content';
 
 /* Direction 1 — "Aurora", Stripe edition.
@@ -29,6 +29,16 @@ const AGENT_ICONS = [
   <svg key="d" {...ICON}><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>,
   <svg key="t" {...ICON}><path d="M23 6l-9.5 9.5-5-5L1 18" /><path d="M17 6h6v6" /></svg>,
   <svg key="r" {...ICON}><path d="M23 4v6h-6M1 20v-6h6" /><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" /></svg>,
+];
+
+// Line icons for the "what I build" services grid.
+const SERVICE_ICONS = [
+  <svg key="web" {...ICON}><rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" /></svg>,
+  <svg key="cal" {...ICON}><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>,
+  <svg key="phone" {...ICON}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" /></svg>,
+  <svg key="star" {...ICON}><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>,
+  <svg key="pin" {...ICON}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>,
+  <svg key="grid" {...ICON}><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /></svg>,
 ];
 
 const planHref = (name: string) =>
@@ -139,6 +149,24 @@ export default function Aurora() {
               <p className="aur-p">{problem.body[1]}</p>
               <p className="aur-punch">{problem.punch}</p>
               <p className="aur-fix">{problem.fix}</p>
+            </div>
+          </section>
+
+          {/* what I build — concrete services menu (mirrors the business card) */}
+          <section id="build" className="aur-section">
+            <div className="aur-section-head">
+              <p className="aur-kicker">What I build</p>
+              <h2 className="aur-h2">Everything I build for your business</h2>
+              <p className="aur-p aur-trust-sub">Take what you need — it all runs from one place, and I set it up for you.</p>
+            </div>
+            <div className="aur-services-grid">
+              {services.map((s, i) => (
+                <div key={s.title} className="aur-glass aur-service">
+                  <span className="aur-service-ico">{SERVICE_ICONS[i % SERVICE_ICONS.length]}</span>
+                  <h3 className="aur-service-title">{s.title}</h3>
+                  <p className="aur-service-body">{s.body}</p>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -274,7 +302,7 @@ export default function Aurora() {
           <div className="aur-wrap aur-footer-inner">
             <div className="aur-footer-brand">
               <span className="aur-logo">{brand.name}<span className="aur-logo-dot">{brand.tld}</span></span>
-              <p className="aur-footer-tag">The AI operating system for service businesses.</p>
+              <p className="aur-footer-tag">The done-for-you operating system for local business.</p>
             </div>
             <div className="aur-footer-links">
               <a href="#system">System</a>
@@ -368,6 +396,13 @@ const CSS = `
 .aur-step-short{font-size:15px;font-weight:600;color:#6d28d9;margin-top:6px;}
 .aur-step-body{font-size:15px;line-height:1.65;color:#605d75;margin-top:12px;}
 
+.aur-services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.aur-service{padding:28px 26px;}
+.aur-service-ico{display:flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:13px;background:rgba(124,58,237,.09);color:#7c3aed;margin-bottom:16px;}
+.aur-service-ico svg{width:23px;height:23px;}
+.aur-service-title{font-size:18px;font-weight:800;letter-spacing:-.015em;line-height:1.2;}
+.aur-service-body{font-size:14.5px;line-height:1.62;color:#605d75;margin-top:9px;}
+
 .aur-console{max-width:760px;margin:0 auto;border-radius:20px;overflow:hidden;box-shadow:0 24px 70px rgba(40,30,90,.22);border:1px solid rgba(124,58,237,.18);}
 .aur-console-bar{display:flex;align-items:center;gap:8px;padding:14px 18px;background:#1a1530;}
 .aur-dot{width:11px;height:11px;border-radius:50%;background:#3b3458;}
@@ -443,6 +478,7 @@ const CSS = `
 
 @media(max-width:980px){
   .aur-promises{grid-template-columns:repeat(2,1fr);}
+  .aur-services-grid{grid-template-columns:repeat(2,1fr);}
 }
 @media(max-width:880px){
   .aur-nav-links{display:none;}
@@ -455,6 +491,7 @@ const CSS = `
 }
 @media(max-width:560px){
   .aur-promises{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto;}
+  .aur-services-grid{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto;}
   .aur-cta-row{flex-direction:column;}
   .aur-btn-lg{width:100%;}
   .aur-footer-bottom{flex-direction:column;gap:6px;}
