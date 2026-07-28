@@ -233,8 +233,18 @@ the Places API, so "N reviews unanswered" cannot appear as a finding.
 - **Cache** — keyed by Places `id`, 30 days. Repeat scans are instant and free.
 - **Rate limit** — per IP, 5 reports/hour.
 
-**Cost** ≈ 3¢ per report, inside Google's $200/month Maps Platform credit — effectively
-free at JP's volume.
+**Cost** ≈ 3¢ per report beyond the free tier. Google retired the universal $200/month
+credit in March 2025; it is now a per-SKU monthly free allowance that does not pool.
+Because the report needs `rating` and `userRatingCount`, Place Details bills at the
+Enterprise tier — **1,000 free reports/month**, with Text Search free on top of that. Far
+beyond expected volume, so effectively free, but the ceiling is a request count now, not a
+dollar amount.
+
+**Key restriction** — the key is called server-side from a Vercel function, which sends no
+HTTP referrer, so a website/referrer restriction would reject every request. Vercel
+function IPs are dynamic, so IP restriction is impractical too. Correct configuration:
+*Application restriction: None; API restriction: Places API (New) only*, plus a Google
+Cloud budget alert as the backstop.
 
 ### 6.1 Failure modes — the page never shows an error
 
@@ -257,8 +267,11 @@ There is always a report.
 - Homepage rewritten to the six sections in §4
 - Report engine per §5 and §6, including the 3-tap fallback
 - Process section deleted
-- One browser task for JP: create a Google Cloud project, enable Places API (New), create
-  a key, restrict it, add `GOOGLE_PLACES_API_KEY` to Vercel and `.env.local` (~10 min)
+- One browser task for JP: create a Google Cloud project, enable billing (a card is
+  required even to use the free tier), enable Places API (New), create a key restricted as
+  described in §6, set a budget alert, then add `GOOGLE_PLACES_API_KEY` to Vercel and
+  `.env.local` (~10 min). JP handles the key himself — it must not pass through a chat
+  transcript, and per project rules Claude does not touch `.env` files.
 
 **v2 — deliberately excluded**
 
