@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Geist_Mono, Caveat } from "next/font/google";
+import { Inter, Geist_Mono, Caveat, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -19,23 +19,32 @@ const caveat = Caveat({
   display: "swap",
 });
 
+// Crafted display face for headlines on the dark "velvet" homepage —
+// gives the hand-made, editorial feel (escapes the default-Inter SaaS look).
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-display",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const TITLE = "foundos.ai — see exactly what I'd build for your business";
+const DESC =
+  "Type your business name and get a free report on what's costing you customers right now — pulled from your Google listing and your own site. Websites, online ordering, booking, and an AI receptionist for local businesses in Atlanta.";
+
 export const metadata: Metadata = {
-  title: "foundos.ai — AI automation for service businesses",
-  description:
-    "I help gym, studio, salon, and coaching owners automate their operations so their business runs on its own — and they get their time back.",
+  title: TITLE,
+  description: DESC,
   openGraph: {
-    title: "foundos.ai — AI automation for service businesses",
-    description:
-      "Audit your software, connect your tools, and deploy an AI agent that runs your business 24/7. Your revenue grows. Your hours shrink.",
+    title: TITLE,
+    description: DESC,
     url: "https://foundos.ai",
     siteName: "foundos.ai",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "foundos.ai — AI automation for service businesses",
-    description:
-      "I help service business owners automate their operations so their business runs on its own — and they get their time back.",
+    title: TITLE,
+    description: DESC,
   },
 };
 
@@ -45,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${geistMono.variable} ${caveat.variable}`}>
+    <html lang="en" className={`${inter.variable} ${geistMono.variable} ${caveat.variable} ${bricolage.variable}`}>
       <body>{children}</body>
     </html>
   );

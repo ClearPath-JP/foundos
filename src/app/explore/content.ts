@@ -25,7 +25,7 @@ export const heroline = {
   headlineAccent: "You get your time back.",
   // verbs that the agent does — good for morphing / rotating text
   rotating: ["takes orders", "books clients", "follows up", "gets reviews", "never sleeps"],
-  sub: "foundos.ai is the done-for-you operating system for local business — restaurants, studios, salons, shops, and coaches. I build your whole online presence and automate the busywork — orders, bookings, follow-ups, reviews — so your business runs without you.",
+  sub: "foundos.ai is the done-for-you operating system for local business — salons, restaurants, studios, and shops. I build your whole online presence and automate the busywork — bookings, orders, follow-ups, reviews — so your business runs without you.",
   ctaPrimary: "Book a 20-min call",
   ctaSecondary: "See the 4-step system",
   reassure: "No pitch. No commitment. I'll tell you honestly if it's a fit.",
@@ -83,7 +83,7 @@ export type Service = { title: string; body: string };
 export const services: Service[] = [
   {
     title: "Website & online ordering",
-    body: "A fast, modern site that turns visitors into customers — with commission-free online ordering and payments built in, so you keep 100%.",
+    body: "A fast, modern site that turns visitors into customers — with online ordering and payments built in, so you're not handing a cut of every ticket to the apps.",
   },
   {
     title: "Booking & scheduling",
@@ -204,6 +204,28 @@ export const plans: Plan[] = [
     bespoke: true,
   },
 ];
+
+/**
+ * Single price anchor — replaces the old self-serve tier ladder.
+ * Every build is scoped on the call; this is the honest *floor* that
+ * pre-qualifies a visitor without capping the real quote. Studios land
+ * near the floor; restaurants (site + ordering + AI phone) land higher —
+ * that number gets set on the call, after value is built.
+ */
+export const pricing = {
+  eyebrow: "Pricing",
+  title: "Priced around your business — not off a menu.",
+  anchor: "Custom to you",
+  anchorSub: "No fixed price — because no two builds are the same",
+  body: "Your website, your automations, your systems — built, installed, and run for you. On a quick call we scope exactly what your business needs, and I quote it there, tied to what it'll actually make you. It all comes as one simple arrangement — no DIY, no stacking per-tool fees.",
+  points: [
+    "Everything built and set up for you — no DIY, no piecing tools together",
+    "One simple arrangement covers the build, the hosting, the updates, and running it",
+    "You own your website and data — cancel anytime, keep what we built",
+  ],
+  cta: "Book a 20-min call",
+  reassure: "No pitch, no obligation. If it's not a fit, I'll tell you honestly.",
+};
 
 /** Risk-reversal line — repeat near CTAs. */
 export const guarantee =

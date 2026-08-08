@@ -1,0 +1,61 @@
+# Keeps the deploy payload to what the site actually needs.
+# Without this the upload was 72MB and timed out mid-transfer; ~46MB of that
+# was working material that is never served — screenshots, PDFs, print assets.
+#
+# Deploy-time only — this does not affect git, and everything listed still runs
+# locally. Two kinds of entry live here: working material that is never served
+# (screenshots, PDFs, print assets), and whole routes deliberately kept off the
+# public site. Anything still imported by a shipped page must NOT be listed —
+# see the note above src/app/explore/content.ts below.
+
+# Reference screenshots + design captures
+explore-shots/
+IMG_*.png
+IMG_*.jpg
+
+# Print + sales collateral
+business-card/
+pitch/
+info.pdf
+*.pdf
+
+# Working docs and notes
+docs/
+NOTES.md
+DEPLOY.md
+AGENTS.md
+CLAUDE.md
+
+# Tooling state
+.serena/
+.claude/
+tsconfig.tsbuildinfo
+
+# ── Routes kept off the public site ───────────────────────────────────────────
+# "One really good site." These all still build and run locally; they just don't
+# become public pages. Only routes that were NOT already live are listed here —
+# aurora / ember / nocturne and the older demos stay deployed so no existing
+# link breaks.
+#
+# /studios and /truck are the important ones: they are sales pages carrying the
+# full price ladder ($1,200 + $279, $500 + $149). Publishing a price lets a
+# prospect disqualify himself before the diagnosis.
+#
+# NOTE: src/app/explore/content.ts is deliberately NOT excluded — the homepage
+# imports `services` from it and the build fails without it.
+src/app/studios/
+src/app/truck/
+src/app/clahvay/
+src/app/explore/page.tsx
+src/app/explore/bento/
+src/app/explore/editorial/
+src/app/explore/ledger/
+src/app/explore/midnight/
+src/app/explore/spectrum/
+src/app/explore/velvet/
+src/app/explore/warm/
+
+# Deployed from its own Vercel project (istanbul-demo-sigma) — not from here.
+src/app/demo/istanbul/
+public/demo/istanbul/
+public/explore-thumbs/
