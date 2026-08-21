@@ -68,7 +68,9 @@ export default function HomePage() {
 
       {/* ── Hero ──────────────────────────────────────────────────────── */}
       <header className="cs-hero" id="top">
-        <div className="cs-glow" aria-hidden="true" />
+        <div className="cs-glow" aria-hidden="true">
+          <span />
+        </div>
         <div className="cs-wrap">
           <h1 className="cs-h1">
             I build and run the online side of local businesses in Atlanta.
@@ -327,16 +329,42 @@ html { scroll-behavior:smooth; }
 
 /* hero */
 .cs-hero { position:relative; padding:40px 0 52px; overflow:hidden; }
-.cs-glow { position:absolute; top:-180px; left:50%; transform:translateX(-50%);
-  width:min(760px,150vw); height:420px; pointer-events:none;
-  background:radial-gradient(ellipse at center, rgba(139,92,246,.17), rgba(219,39,119,.07) 45%, transparent 72%);
-  filter:blur(18px); }
+/* Liquid wash — three soft blobs drifting on different clocks.
+   Deliberately CSS, not the WebGL version in components/GradientBackground.tsx:
+   that one gates itself to min-width 768px, so on the phones every prospect
+   actually holds it never runs at all.
+   Two rules keep this cheap enough for a mid-range Android:
+     1. NO filter: blur(). A radial-gradient is already soft, and a large blur
+        filter is one of the most expensive things you can put on a phone GPU.
+     2. Transform and opacity only, so each blob stays on the compositor and
+        never triggers layout or paint while the page scrolls. */
+.cs-glow { position:absolute; inset:-150px 0 -30px 0; pointer-events:none;
+  overflow:hidden; }
+.cs-glow::before, .cs-glow::after, .cs-glow > span { content:""; position:absolute;
+  display:block; border-radius:50%; will-change:transform; }
+.cs-glow::before { width:min(620px,128vw); height:min(620px,128vw); top:-14%; left:-26%;
+  background:radial-gradient(closest-side, rgba(116,51,226,.30), rgba(116,51,226,0) 100%); }
+.cs-glow::after { width:min(520px,106vw); height:min(520px,106vw); top:2%; right:-22%;
+  background:radial-gradient(closest-side, rgba(217,36,115,.20), rgba(217,36,115,0) 100%); }
+.cs-glow > span { width:min(600px,124vw); height:min(600px,124vw); top:40%; left:10%;
+  background:radial-gradient(closest-side, rgba(138,84,244,.24), rgba(138,84,244,0) 100%); }
+
 @media (prefers-reduced-motion: no-preference) {
-  .cs-glow { animation:cs-drift 19s ease-in-out infinite alternate; }
+  .cs-glow::before { animation:cs-blob-a 21s ease-in-out infinite alternate; }
+  .cs-glow::after  { animation:cs-blob-b 27s ease-in-out infinite alternate; }
+  .cs-glow > span  { animation:cs-blob-c 33s ease-in-out infinite alternate; }
 }
-@keyframes cs-drift {
-  from { transform:translateX(-50%) translateY(0) scale(1); opacity:.9; }
-  to   { transform:translateX(-46%) translateY(22px) scale(1.09); opacity:1; }
+@keyframes cs-blob-a {
+  from { transform:translate3d(0,0,0) scale(1); }
+  to   { transform:translate3d(14%,9%,0) scale(1.16); }
+}
+@keyframes cs-blob-b {
+  from { transform:translate3d(0,0,0) scale(1.08); }
+  to   { transform:translate3d(-13%,14%,0) scale(.9); }
+}
+@keyframes cs-blob-c {
+  from { transform:translate3d(0,0,0) scale(.94); opacity:.75; }
+  to   { transform:translate3d(-11%,-13%,0) scale(1.2); opacity:1; }
 }
 .cs-h1 { position:relative; font-family:var(--display); font-size:clamp(2.05rem,8.8vw,3.15rem);
   font-weight:800; letter-spacing:-.035em; line-height:1.05; text-wrap:balance; }
@@ -372,6 +400,43 @@ html { scroll-behavior:smooth; }
 @media (min-width:721px) {
   .cs-dock { display:none; }
   .cs-foot { padding-bottom:34px !important; }
+}
+
+/* ── Touch feel ───────────────────────────────────────────────────────────
+   Two things make a site feel dead on a phone, and this page had both.
+
+   1. Nothing responds to a tap. Every affordance here was hover-only, and a
+      phone has no hover — so a tap produced no feedback at all before the
+      next page did something. Every control now scales on :active.
+   2. Sticky hover. On touch, :hover latches after a tap and stays applied
+      until you tap elsewhere, so buttons sat lifted and cards stayed hovered.
+      Under (hover: none) the movement is neutralised and :active carries it.
+
+   The default tap highlight goes too — that grey flash is the single most
+   "unfinished web page" tell on Android. */
+.cs a, .cs button, .cs-dock a { -webkit-tap-highlight-color:transparent; }
+
+.cs-btn:active, .cs-btn-2:active, .cs-dock-btn:active, .cs-dock-call:active,
+.cs-nav-cta:active, .cs-demo:active, .cs-builds a:active {
+  transform:scale(.972); transition-duration:.06s; }
+.cs-grid li:active { transform:scale(.99); transition-duration:.06s; }
+.cs-btn-alt:active, .cs-foot a:active { opacity:.55; }
+
+@media (hover: none) {
+  .cs-btn:hover, .cs-btn-2:hover, .cs-grid li:hover, .cs-demo:hover,
+  .cs-builds a:hover { transform:none; }
+  .cs-grid li:hover { box-shadow:none; }
+  .cs-nav-cta:hover { background:transparent; color:var(--v);
+    border-color:rgba(116,51,226,.28); }
+}
+
+/* The dock is the last thing to arrive, so it slides rather than snaps. */
+@media (prefers-reduced-motion: no-preference) {
+  .cs-dock { animation:cs-dock-in .5s .35s cubic-bezier(.22,1,.36,1) both; }
+}
+@keyframes cs-dock-in {
+  from { transform:translateY(100%); }
+  to   { transform:none; }
 }
 
 /* sections */
