@@ -106,6 +106,14 @@ export default function HomePage() {
               Atlanta.
             </p>
           </div>
+
+          {/* Three claims the About section already makes, surfaced where a
+              first-time visitor actually decides whether to keep reading. */}
+          <ul className="cs-trust">
+            <li>Atlanta</li>
+            <li>One person, not an agency</li>
+            <li>You own everything I build</li>
+          </ul>
         </div>
       </header>
 
@@ -250,22 +258,65 @@ export default function HomePage() {
           <a href="/privacy">Privacy</a>
         </div>
       </footer>
+
+      {/* Phone-only sticky bar. The page is ~9000px tall on a phone; without
+          this the number is only reachable at the very top or the very bottom.
+          The footer carries matching bottom padding so it never covers text. */}
+      <div className="cs-dock" aria-hidden="false">
+        <a className="cs-dock-btn" href={`sms:${PHONE}`}>
+          Text me — {PHONE_PRETTY}
+        </a>
+        <a className="cs-dock-call" href={`tel:${PHONE}`} aria-label="Call Josh">
+          Call
+        </a>
+      </div>
     </div>
   );
 }
 
 const CSS = `
+html { scroll-behavior:smooth; }
+
 .cs { --v:#7433e2; --v2:#8a54f4; --pink:#d92473; --ink:#15131f; --ink2:#403c54;
   --mut:#5b5870; --dim:#8f8ca3; --line:rgba(21,19,31,.10); --soft:#faf9fe;
+  /* Two radii, not six. Anything round is either a control (--r) or a
+     surface (--r-lg); pills and circles are shape, not part of the scale. */
+  --r:12px; --r-lg:16px;
+  /* Bricolage Grotesque is loaded in layout.tsx as --font-display precisely so
+     this page isn't Inter-on-Inter. Headings take it; body stays Inter. */
+  --display:var(--font-display), var(--font-inter), system-ui, sans-serif;
   color:var(--ink); }
 .cs-wrap { width:100%; max-width:680px; margin:0 auto; padding:0 20px; }
+
+/* Scroll-driven settle — no JavaScript.
+   ⚠️ TRANSFORM ONLY. Never animate opacity here. With an
+   animation-timeline of view(), an element sitting before its range renders at
+   the FIRST keyframe, so a 'from { opacity:0 }' leaves everything below the
+   fold invisible to any
+   renderer that doesn't scroll — screenshots, crawlers, social-preview bots.
+   That is exactly how a page "renders invisible". A pure translate keeps every
+   word readable at all times and only adds the movement. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .cs-sec > .cs-wrap {
+      animation:cs-settle linear both;
+      animation-timeline:view();
+      animation-range:entry 0% entry 55%;
+    }
+  }
+}
+@keyframes cs-settle {
+  from { transform:translateY(14px); }
+  to   { transform:none; }
+}
 
 /* nav */
 .cs-nav { position:sticky; top:0; z-index:20; display:flex; align-items:center;
   justify-content:space-between; gap:16px; padding:14px 20px;
   background:rgba(255,255,255,.86); backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line); }
-.cs-mark { font-size:1.06rem; font-weight:800; letter-spacing:-.03em; color:var(--ink);
+.cs-mark { font-family:var(--display); font-size:1.1rem; font-weight:800;
+  letter-spacing:-.03em; color:var(--ink);
   text-decoration:none; display:inline-flex; align-items:center; min-height:44px; }
 .cs-mark span { color:var(--v); }
 .cs-nav-cta { font-size:.86rem; font-weight:650; color:var(--v); text-decoration:none;
@@ -280,8 +331,15 @@ const CSS = `
   width:min(760px,150vw); height:420px; pointer-events:none;
   background:radial-gradient(ellipse at center, rgba(139,92,246,.17), rgba(219,39,119,.07) 45%, transparent 72%);
   filter:blur(18px); }
-.cs-h1 { position:relative; font-size:clamp(2rem,8.6vw,3rem); font-weight:850;
-  letter-spacing:-.045em; line-height:1.04; }
+@media (prefers-reduced-motion: no-preference) {
+  .cs-glow { animation:cs-drift 19s ease-in-out infinite alternate; }
+}
+@keyframes cs-drift {
+  from { transform:translateX(-50%) translateY(0) scale(1); opacity:.9; }
+  to   { transform:translateX(-46%) translateY(22px) scale(1.09); opacity:1; }
+}
+.cs-h1 { position:relative; font-family:var(--display); font-size:clamp(2.05rem,8.8vw,3.15rem);
+  font-weight:800; letter-spacing:-.035em; line-height:1.05; text-wrap:balance; }
 .cs-sub { position:relative; margin-top:14px; font-size:clamp(1rem,4vw,1.12rem);
   line-height:1.55; color:var(--mut); max-width:34ch; }
 .cs-report { position:relative; margin-top:26px; }
@@ -290,45 +348,82 @@ const CSS = `
 .cs-avatar { border-radius:50%; object-fit:cover; flex:0 0 52px; }
 .cs-byline p { font-size:.9rem; line-height:1.45; color:var(--mut); }
 
+.cs-trust { list-style:none; display:flex; flex-wrap:wrap; gap:7px; margin-top:18px; }
+.cs-trust li { font-size:.78rem; font-weight:600; color:var(--ink2); white-space:nowrap;
+  padding:6px 11px; border:1px solid var(--line); border-radius:999px;
+  background:rgba(116,51,226,.045); }
+
+/* Phone-only dock. Hidden ≥721px, where the page is short enough that the
+   header CTA is never far away. */
+.cs-dock { position:fixed; left:0; right:0; bottom:0; z-index:30; display:flex; gap:8px;
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.9); backdrop-filter:blur(14px);
+  border-top:1px solid var(--line); }
+.cs-dock-btn { flex:1; display:inline-flex; align-items:center; justify-content:center;
+  min-height:48px; padding:0 16px; font-size:.95rem; font-weight:680; color:#fff;
+  background:var(--ink); border-radius:var(--r); text-decoration:none;
+  box-shadow:0 8px 20px -12px rgba(21,19,31,.6); }
+.cs-dock-call { display:inline-flex; align-items:center; justify-content:center;
+  min-width:76px; min-height:48px; padding:0 14px; font-size:.95rem; font-weight:660;
+  color:var(--v); background:#fff; border:1.5px solid rgba(116,51,226,.3);
+  border-radius:var(--r); text-decoration:none; }
+/* The dock floats over the page, so the last section needs room beneath it. */
+.cs-foot { padding-bottom:calc(96px + env(safe-area-inset-bottom)) !important; }
+@media (min-width:721px) {
+  .cs-dock { display:none; }
+  .cs-foot { padding-bottom:34px !important; }
+}
+
 /* sections */
 .cs-sec { padding:52px 0; border-top:1px solid var(--line); }
 .cs-kick { font-size:.73rem; font-weight:700; text-transform:uppercase; letter-spacing:.13em;
   color:var(--v); margin-bottom:12px; }
 .cs-kick-l { color:var(--v2); }
-.cs-h2 { font-size:clamp(1.4rem,5.4vw,1.85rem); font-weight:800; letter-spacing:-.035em;
-  line-height:1.16; }
+.cs-h2 { font-family:var(--display); font-size:clamp(1.45rem,5.6vw,1.95rem); font-weight:800;
+  letter-spacing:-.028em; line-height:1.18; text-wrap:balance; }
 .cs-h2-l { color:#fff; }
 
 .cs-grid { list-style:none; margin-top:26px; display:grid; gap:12px;
   grid-template-columns:1fr; }
-.cs-grid li { padding:18px; background:var(--soft); border:1px solid var(--line);
-  border-radius:14px; }
-.cs-grid h3 { font-size:1rem; font-weight:700; letter-spacing:-.015em; }
+.cs-grid li { position:relative; padding:20px 18px 18px; background:var(--soft);
+  border:1px solid var(--line); border-radius:var(--r); overflow:hidden;
+  transition:border-color .2s, transform .2s, box-shadow .2s; }
+/* A short violet rule at the top of each card: six bordered boxes read as a
+   template, six boxes with a hand-placed accent read as designed. */
+.cs-grid li::before { content:""; position:absolute; top:0; left:18px; width:26px; height:3px;
+  border-radius:0 0 3px 3px; background:linear-gradient(90deg,var(--v),var(--v2)); }
+.cs-grid li:hover { border-color:rgba(116,51,226,.34); transform:translateY(-2px);
+  box-shadow:0 10px 26px -14px rgba(21,19,31,.28); }
+/* The first service is the one most owners come for — let it lead instead of
+   sitting in an even grid. */
+.cs-grid li:first-child { background:linear-gradient(160deg,rgba(116,51,226,.06),var(--soft) 62%); }
+.cs-grid h3 { font-family:var(--display); font-size:1.04rem; font-weight:700;
+  letter-spacing:-.015em; }
 .cs-grid p { margin-top:6px; font-size:.91rem; line-height:1.55; color:var(--mut); }
 
 /* proof */
 .cs-dark { background:var(--ink); border-top-color:transparent; }
 .cs-demo { display:flex; flex-direction:column; gap:4px; margin-top:24px; padding:20px;
   text-decoration:none; background:rgba(255,255,255,.05);
-  border:1.5px solid rgba(139,92,246,.34); border-radius:16px; transition:all .18s; }
+  border:1.5px solid rgba(138,84,244,.34); border-radius:var(--r-lg); transition:all .18s; }
 .cs-demo:hover { background:rgba(139,92,246,.14); border-color:var(--v2); }
 .cs-demo-k { font-size:.82rem; font-weight:650; color:#c3bfe0; }
-.cs-demo-n { font-size:clamp(1.6rem,7vw,2.1rem); font-weight:850; letter-spacing:-.03em;
-  color:#fff; }
+.cs-demo-n { font-family:var(--display); font-size:clamp(1.65rem,7.2vw,2.2rem); font-weight:800;
+  letter-spacing:-.025em; color:#fff; }
 .cs-demo-f { font-size:.86rem; line-height:1.5; color:#9a98ab; }
 .cs-builds-k { margin-top:30px; font-size:.73rem; font-weight:700; text-transform:uppercase;
   letter-spacing:.13em; color:#6b6784; }
 .cs-builds { list-style:none; margin-top:12px; display:flex; flex-direction:column; gap:8px; }
 .cs-builds a { display:flex; flex-direction:column; gap:2px; padding:14px 16px;
   text-decoration:none; background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.09); border-radius:12px; transition:all .18s; }
+  border:1px solid rgba(255,255,255,.09); border-radius:var(--r); transition:all .18s; }
 .cs-builds a:hover { border-color:var(--v2); background:rgba(139,92,246,.1); }
 .cs-builds strong { font-size:.97rem; font-weight:650; color:#fff; }
 .cs-builds span { font-size:.83rem; color:#9a98ab; }
 
 /* about */
 .cs-about { display:flex; flex-direction:column; gap:24px; }
-.cs-portrait { position:relative; width:100%; max-width:300px; border-radius:18px;
+.cs-portrait { position:relative; width:100%; max-width:300px; border-radius:var(--r-lg);
   overflow:hidden; background:var(--soft); }
 .cs-portrait img { width:100%; height:auto; display:block; }
 .cs-about-copy p { margin-top:12px; font-size:.95rem; line-height:1.6; color:var(--mut); }
@@ -340,7 +435,8 @@ const CSS = `
 .cs-book { background:var(--soft); }
 .cs-actions { margin-top:26px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
 .cs-btn { padding:16px 26px; font-size:1rem; font-weight:680; color:#fff; background:var(--ink);
-  border-radius:12px; text-decoration:none; transition:all .18s; }
+  border-radius:var(--r); text-decoration:none; transition:all .2s;
+  box-shadow:0 8px 20px -10px rgba(21,19,31,.5); }
 .cs-btn:hover { background:var(--v); transform:translateY(-1px); }
 .cs-btn-alt { padding:16px 4px; font-size:.94rem; font-weight:620; color:var(--v);
   text-decoration:none; }
@@ -348,8 +444,8 @@ const CSS = `
 /* Outline sibling to .cs-btn — a real second button, not a text link, so the
    phone gets two equally tappable targets. */
 .cs-btn-2 { padding:16px 26px; font-size:1rem; font-weight:660; color:var(--ink);
-  background:#fff; border:1.5px solid var(--line); border-radius:12px;
-  text-decoration:none; transition:all .18s; }
+  background:#fff; border:1.5px solid var(--line); border-radius:var(--r);
+  text-decoration:none; transition:all .2s; }
 .cs-btn-2:hover { border-color:var(--v); color:var(--v); transform:translateY(-1px); }
 /* Calendly is the third-choice CTA now, but it still has to clear 44px on a
    phone — so it's a block link with real padding, not text inside a <p>. */
