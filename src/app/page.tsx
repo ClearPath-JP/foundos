@@ -60,11 +60,38 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(SCHEMA) }}
       />
 
+      {/* ── Splash ────────────────────────────────────────────────────────
+          Purely decorative and purely CSS. Three rules keep it from ever
+          becoming a trap:
+            - aria-hidden, so a screen reader never announces it
+            - pointer-events:none from the first frame, so it cannot swallow a
+              tap even mid-fade
+            - the animation ends at visibility:hidden with fill `both`, so a
+              dropped frame or a paused tab can't leave it stuck over the page
+          The letter underneath is in the DOM the whole time; crawlers and
+          previews never see this. */}
+      <div className="lt-splash" aria-hidden="true">
+        <span className="lt-splash-mark">
+          foundos<span>.ai</span>
+        </span>
+        <span className="lt-splash-track">
+          <span className="lt-splash-fill" />
+        </span>
+      </div>
+
       {/* ── The mark ──────────────────────────────────────────────────── */}
       <header className="lt-top" id="top">
         <a className="lt-mark" href="#top" aria-label="foundos.ai">
           foundos<span>.ai</span>
         </a>
+        {/* Banner bars — the one piece of pure colour on a white page. */}
+        <div className="lt-bars" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
       </header>
 
       {/* ── The letter ────────────────────────────────────────────────────
@@ -256,6 +283,64 @@ const CSS = `
   max-width:33rem; margin:0 auto; padding:0 22px; }
 
 .lt a, .lt button { -webkit-tap-highlight-color:transparent; }
+
+/* ── Splash ─────────────────────────────────────────────────────────────
+   Total life is 1.15s. It is never interactive and it always ends hidden.
+   If motion is reduced it never appears at all. */
+.lt-splash { position:fixed; inset:0; z-index:60; display:flex;
+  flex-direction:column; align-items:center; justify-content:center; gap:20px;
+  background:#fff; pointer-events:none;
+  animation:lt-splash-out .4s .75s cubic-bezier(.4,0,.2,1) both; }
+.lt-splash-mark { font-family:var(--display); font-size:1.9rem; font-weight:800;
+  letter-spacing:-.04em; color:var(--v);
+  animation:lt-splash-mark-in .5s cubic-bezier(.22,1,.36,1) both; }
+.lt-splash-mark span { color:var(--ink); }
+.lt-splash-track { width:104px; height:3px; border-radius:999px;
+  background:rgba(116,51,226,.16); overflow:hidden; }
+.lt-splash-fill { display:block; width:100%; height:100%; border-radius:999px;
+  background:var(--v); transform-origin:left center;
+  animation:lt-splash-fill .7s cubic-bezier(.5,0,.2,1) both; }
+@keyframes lt-splash-mark-in {
+  from { opacity:0; transform:translateY(7px) scale(.97); filter:blur(4px); }
+  to   { opacity:1; transform:none; filter:none; }
+}
+@keyframes lt-splash-fill {
+  from { transform:scaleX(0); }
+  to   { transform:scaleX(1); }
+}
+@keyframes lt-splash-out {
+  from { opacity:1; visibility:visible; }
+  99%  { opacity:0; visibility:visible; }
+  to   { opacity:0; visibility:hidden; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lt-splash { display:none; }
+}
+
+/* ── Banner bars ────────────────────────────────────────────────────────
+   Five violet rules of falling width and weight, sitting under the mark.
+   Transform-only entrance so they cost nothing, staggered so they arrive as
+   a gesture rather than a block. */
+.lt-bars { display:flex; flex-direction:column; gap:5px; margin-top:20px; }
+.lt-bars span { display:block; height:6px; border-radius:999px;
+  background:var(--v); transform-origin:left center; }
+.lt-bars span:nth-child(1) { width:100%;  opacity:1; }
+.lt-bars span:nth-child(2) { width:72%;   opacity:.62; }
+.lt-bars span:nth-child(3) { width:50%;   opacity:.4; }
+.lt-bars span:nth-child(4) { width:31%;   opacity:.24; }
+.lt-bars span:nth-child(5) { width:17%;   opacity:.13; }
+@media (prefers-reduced-motion: no-preference) {
+  .lt-bars span { animation:lt-bar-in .62s cubic-bezier(.22,1,.36,1) both; }
+  .lt-bars span:nth-child(1) { animation-delay:1.14s; }
+  .lt-bars span:nth-child(2) { animation-delay:1.21s; }
+  .lt-bars span:nth-child(3) { animation-delay:1.28s; }
+  .lt-bars span:nth-child(4) { animation-delay:1.35s; }
+  .lt-bars span:nth-child(5) { animation-delay:1.42s; }
+}
+@keyframes lt-bar-in {
+  from { transform:scaleX(0); }
+  to   { transform:scaleX(1); }
+}
 
 /* ── The mark ───────────────────────────────────────────────────────────
    It arrives before the words do. Opacity is safe to animate here because
