@@ -279,7 +279,7 @@ export default function InstantReport() {
               type="text"
               inputMode="text"
               autoComplete="organization"
-              placeholder="Caribbean Spice, Marietta"
+              placeholder="Your business name and city"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               disabled={phase === 'running'}
@@ -348,8 +348,8 @@ export default function InstantReport() {
               </button>
             ))}
           </div>
-          <button type="button" className="ir-link" onClick={() => setPhase('idle')}>
-            None of these — try again
+          <button type="button" className="ir-link" onClick={() => setPhase('tap')}>
+            None of these is my business
           </button>
         </div>
       )}
@@ -416,6 +416,9 @@ export default function InstantReport() {
 
           <button type="button" className="ir-go ir-go-wide" onClick={submitTap} disabled={!tapCategory}>
             Show me →
+          </button>
+          <button type="button" className="ir-link" onClick={() => setPhase('idle')}>
+            Search a different name
           </button>
         </div>
       )}
@@ -536,7 +539,7 @@ export default function InstantReport() {
 }
 
 const CSS = `
-.ir { --v:#7c3aed; --v2:#8b5cf6; --ink:#15131f; --mut:#5b5870; --dim:#8f8ca3;
+.ir { --v:#7433e2; --v2:#8a54f4; --ink:#15131f; --mut:#5b5870; --dim:#8f8ca3;
   --line:rgba(21,19,31,.10); --soft:#faf9fe; width:100%; }
 
 /* form */

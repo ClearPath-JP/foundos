@@ -15,9 +15,15 @@ import { services } from './explore/content';
  * 2026-07-28-homepage-instant-report-design.md).
  *
  * The QR on the back of JP's v2 card encodes the bare root, so this page *is*
- * the after-handshake moment. The H1 is verbatim the sentence printed on the
- * card, and the photo confirms the face they just met. Light skin on white with
- * violet accents to match the card's front.
+ * the after-handshake moment, and the photo confirms the face they just met.
+ * Light skin on white with violet accents to match the card's front.
+ *
+ * ⚠️ The card's back reads "Scan to see exactly what I'd build for your
+ * business →". That sentence WAS the H1; as of 2026-08-21 the page leads with
+ * what JP does and a phone number instead (a card-holder already has the
+ * number, but a stranger needs to know what he sells). The card's promise is
+ * now kept verbatim by the #report section's H2 — do not reword that H2 while
+ * v2 cards are still in circulation.
  *
  * The old Aurora design is still browsable at /explore/aurora. There is
  * deliberately no numbered process section — see §4.7 of the spec.
@@ -55,26 +61,36 @@ export default function HomePage() {
         <a className="cs-mark" href="#top">
           foundos<span>.ai</span>
         </a>
-        <a className="cs-nav-cta" href={CAL} target="_blank" rel="noreferrer">
-          Book a call
+        <a className="cs-nav-cta" href={`sms:${PHONE}`}>
+          Text me
         </a>
       </nav>
 
-      {/* ── Hero + report ─────────────────────────────────────────────── */}
+      {/* ── Hero ──────────────────────────────────────────────────────── */}
       <header className="cs-hero" id="top">
         <div className="cs-glow" aria-hidden="true" />
         <div className="cs-wrap">
           <h1 className="cs-h1">
-            See exactly what I&apos;d build for your business.
+            I build and run the online side of local businesses in Atlanta.
           </h1>
           <p className="cs-sub">
-            Type your business name. I&apos;ll show you what&apos;s costing you customers right
-            now — and what I&apos;d do about it.
+            Websites, online ordering, booking, AI phone answering, reviews. I build
+            it, I run it, and I keep it growing — you don&apos;t have to learn any of
+            it.
           </p>
 
-          <div className="cs-report">
-            <InstantReport />
+          <div className="cs-actions cs-hero-actions">
+            <a className="cs-btn" href={`sms:${PHONE}`}>
+              Text me — {PHONE_PRETTY}
+            </a>
+            <a className="cs-btn-2" href={`tel:${PHONE}`}>
+              Or call
+            </a>
           </div>
+          <p className="cs-fine">
+            A text is fine. Tell me what business you run and I&apos;ll tell you
+            straight whether I can help.
+          </p>
 
           <div className="cs-byline">
             <Image
@@ -109,6 +125,27 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      {/* ── Instant report ────────────────────────────────────────────────
+          The v2 card's back reads "Scan to see exactly what I'd build for your
+          business →" and its QR encodes the bare root. That promise is kept by
+          this section's H2, verbatim — a card-scanner finds it one scroll down.
+          The `report` id means a future card can point the QR at /#report and
+          land on it directly, without a reprint changing anything else. */}
+      <section className="cs-sec cs-reportsec" id="report">
+        <div className="cs-wrap">
+          <p className="cs-kick">See it on your own business</p>
+          <h2 className="cs-h2">See exactly what I&apos;d build for your business.</h2>
+          <p className="cs-lede">
+            Type your business name. I&apos;ll show you what&apos;s costing you customers
+            right now — and what I&apos;d do about it.
+          </p>
+
+          <div className="cs-report">
+            <InstantReport />
+          </div>
         </div>
       </section>
 
@@ -188,19 +225,22 @@ export default function HomePage() {
       <section className="cs-sec cs-book">
         <div className="cs-wrap">
           <p className="cs-kick">Next step</p>
-          <h2 className="cs-h2">Twenty minutes, and you&apos;ll know exactly what I&apos;d do.</h2>
+          <h2 className="cs-h2">Text me and you&apos;ll know today whether I can help.</h2>
 
           <div className="cs-actions">
-            <a className="cs-btn" href={CAL} target="_blank" rel="noreferrer">
-              Book a 20-min call
+            <a className="cs-btn" href={`sms:${PHONE}`}>
+              Text me — {PHONE_PRETTY}
             </a>
-            <a className="cs-btn-alt" href={`sms:${PHONE}`}>
-              Or text me — {PHONE_PRETTY}
+            <a className="cs-btn-2" href={`tel:${PHONE}`}>
+              Or call
             </a>
           </div>
           <p className="cs-fine">
-            No pitch, no obligation. If I can&apos;t help you, I&apos;ll say so on the call.
+            No pitch, no obligation. If I can&apos;t help you, I&apos;ll say so.
           </p>
+          <a className="cs-btn-alt cs-alt-block" href={CAL} target="_blank" rel="noreferrer">
+            Or book twenty minutes instead
+          </a>
         </div>
       </section>
 
@@ -215,7 +255,7 @@ export default function HomePage() {
 }
 
 const CSS = `
-.cs { --v:#7c3aed; --v2:#8b5cf6; --pink:#db2777; --ink:#15131f; --ink2:#403c54;
+.cs { --v:#7433e2; --v2:#8a54f4; --pink:#d92473; --ink:#15131f; --ink2:#403c54;
   --mut:#5b5870; --dim:#8f8ca3; --line:rgba(21,19,31,.10); --soft:#faf9fe;
   color:var(--ink); }
 .cs-wrap { width:100%; max-width:680px; margin:0 auto; padding:0 20px; }
@@ -226,11 +266,12 @@ const CSS = `
   background:rgba(255,255,255,.86); backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line); }
 .cs-mark { font-size:1.06rem; font-weight:800; letter-spacing:-.03em; color:var(--ink);
-  text-decoration:none; }
+  text-decoration:none; display:inline-flex; align-items:center; min-height:44px; }
 .cs-mark span { color:var(--v); }
 .cs-nav-cta { font-size:.86rem; font-weight:650; color:var(--v); text-decoration:none;
-  padding:8px 14px; border:1.5px solid rgba(124,58,237,.28); border-radius:999px;
-  transition:all .18s; white-space:nowrap; }
+  padding:0 16px; border:1.5px solid rgba(116,51,226,.28); border-radius:999px;
+  transition:all .18s; white-space:nowrap; display:inline-flex; align-items:center;
+  min-height:44px; }
 .cs-nav-cta:hover { background:var(--v); border-color:var(--v); color:#fff; }
 
 /* hero */
@@ -304,13 +345,31 @@ const CSS = `
 .cs-btn-alt { padding:16px 4px; font-size:.94rem; font-weight:620; color:var(--v);
   text-decoration:none; }
 .cs-btn-alt:hover { text-decoration:underline; text-underline-offset:3px; }
+/* Outline sibling to .cs-btn — a real second button, not a text link, so the
+   phone gets two equally tappable targets. */
+.cs-btn-2 { padding:16px 26px; font-size:1rem; font-weight:660; color:var(--ink);
+  background:#fff; border:1.5px solid var(--line); border-radius:12px;
+  text-decoration:none; transition:all .18s; }
+.cs-btn-2:hover { border-color:var(--v); color:var(--v); transform:translateY(-1px); }
+/* Calendly is the third-choice CTA now, but it still has to clear 44px on a
+   phone — so it's a block link with real padding, not text inside a <p>. */
+.cs-alt-block { display:inline-block; margin-top:2px; padding:14px 4px; }
+
+/* hero actions sit tighter to the sub than a section's actions do */
+.cs-hero-actions { margin-top:22px; }
+/* the report is now a section, so it needs the lede the hero used to carry */
+.cs-lede { margin-top:10px; font-size:clamp(.98rem,3.8vw,1.06rem); line-height:1.55;
+  color:var(--mut); }
+.cs-reportsec { background:var(--soft); }
+.cs-reportsec .cs-report { margin-top:22px; }
 .cs-fine { margin-top:14px; font-size:.84rem; color:var(--dim); }
 
 /* footer */
 .cs-foot { padding:26px 0 34px; border-top:1px solid var(--line); }
 .cs-foot .cs-wrap { display:flex; flex-wrap:wrap; gap:12px; align-items:center;
   justify-content:space-between; font-size:.82rem; color:var(--dim); }
-.cs-foot a { color:var(--dim); text-decoration:none; }
+.cs-foot a { color:var(--dim); text-decoration:none; display:inline-flex;
+  align-items:center; min-height:44px; padding:0 2px; }
 .cs-foot a:hover { color:var(--v); }
 
 /* wider screens */
