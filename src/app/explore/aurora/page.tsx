@@ -2,17 +2,15 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import GradientBackground from '@/components/GradientBackground';
 import {
   CAL, EMAIL, brand, heroline, problem, steps, agentMessages,
-  integrations, plans, trust, about, closing, services,
+  integrations, pricing, trust, about, closing, services,
 } from '../content';
 
-/* Direction 1 — "Aurora", Stripe edition.
-   Soft WebGL "liquid" gradient through an angled hero (the Stripe diagonal),
-   then clean white sections. Dark text, glassmorphism, honest founding-client
-   trust band, a live agent console, line-icons (no emoji). */
+/* foundos.ai homepage — "Aurora" (the live homepage, re-exported by src/app/page.tsx).
+   Clean white body, solid ink headlines, one gradient accent — disciplined to
+   match the printed business card: no liquid-gradient wash, no glassmorphism,
+   no fake terminal. Static soft glows behind an angled hero; line-icons, no emoji. */
 
 const ICON = {
   viewBox: '0 0 24 24',
@@ -41,20 +39,12 @@ const SERVICE_ICONS = [
   <svg key="grid" {...ICON}><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /></svg>,
 ];
 
-const planHref = (name: string) =>
-  `${CAL}?plan=${encodeURIComponent(name.toLowerCase().replace(/\s+/g, '-'))}`;
-
 export default function Aurora() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const monthly = plans.filter((p) => !p.bespoke);
-  const bespoke = plans.find((p) => p.bespoke);
 
   return (
     <div className="aur-root">
       <style>{CSS}</style>
-
-      {/* The soft WebGL "liquid" gradient we built — lives behind the hero */}
-      <GradientBackground />
 
       {/* nav */}
       <nav className="aur-nav">
@@ -95,35 +85,18 @@ export default function Aurora() {
             <span className="aur-stripe-blob aur-sb1" />
             <span className="aur-stripe-blob aur-sb2" />
             <span className="aur-stripe-blob aur-sb3" />
-            <span className="aur-stripe-blob aur-sb4" />
           </div>
           <section className="aur-hero">
-            <motion.p
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }} className="aur-eyebrow"
-            >
-              {heroline.eyebrow}
-            </motion.p>
-            <motion.h1
-              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.05 }} className="aur-h1"
-            >
-              Your business <span className="aur-grad">runs itself.</span>
+            <p className="aur-eyebrow">{heroline.eyebrow}</p>
+            <h1 className="aur-h1">
+              Your business runs itself.
               <br />You get your <span className="aur-grad">time back.</span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.12 }} className="aur-sub"
-            >
-              {heroline.sub}
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.18 }} className="aur-cta-row"
-            >
+            </h1>
+            <p className="aur-sub">{heroline.sub}</p>
+            <div className="aur-cta-row">
               <a href={CAL} className="aur-btn aur-btn-lg">{heroline.ctaPrimary} →</a>
               <a href="#system" className="aur-btn aur-btn-ghost aur-btn-lg">{heroline.ctaSecondary}</a>
-            </motion.div>
+            </div>
             <p className="aur-reassure">{heroline.reassure}</p>
 
             <div className="aur-trust">
@@ -188,32 +161,20 @@ export default function Aurora() {
             </div>
           </section>
 
-          {/* agent console — "live" feel: pulsing status + an in-progress row */}
+          {/* what the agent does — light, honest cards (clearly illustrative) */}
           <section className="aur-section">
             <div className="aur-section-head">
               <p className="aur-kicker">Your invisible employee</p>
-              <h2 className="aur-h2">The agent makes smart calls 24/7</h2>
+              <h2 className="aur-h2">The kind of calls it makes for you</h2>
+              <p className="aur-p aur-trust-sub">Here's the sort of decision your agent makes on its own, day and night — every one aimed at more revenue or a happier customer.</p>
             </div>
-            <div className="aur-console">
-              <div className="aur-console-bar">
-                <span className="aur-dot" /><span className="aur-dot" /><span className="aur-dot" />
-                <span className="aur-console-title">foundos agent · live</span>
-                <span className="aur-live"><span className="aur-live-dot" />working</span>
-              </div>
-              <div className="aur-console-body">
-                {agentMessages.map((m, i) => (
-                  <div key={i} className="aur-msg">
-                    <span className="aur-msg-ico">{AGENT_ICONS[i % AGENT_ICONS.length]}</span>
-                    <span className="aur-msg-text">{m.text}</span>
-                    <span className="aur-msg-done">done</span>
-                  </div>
-                ))}
-                <div className="aur-msg aur-msg-working">
-                  <span className="aur-msg-ico aur-msg-ico-live"><span className="aur-pulse-dot" /></span>
-                  <span className="aur-msg-text">Scanning 1,204 members for renewals at risk this week<span className="aur-cursor">▍</span></span>
-                  <span className="aur-msg-now">now</span>
+            <div className="aur-calls">
+              {agentMessages.map((m, i) => (
+                <div key={i} className="aur-call">
+                  <span className="aur-call-ico">{AGENT_ICONS[i % AGENT_ICONS.length]}</span>
+                  <p className="aur-call-text">{m.text}</p>
                 </div>
-              </div>
+              ))}
             </div>
           </section>
 
@@ -251,39 +212,26 @@ export default function Aurora() {
             </div>
           </section>
 
-          {/* pricing — 3 monthly tiers + bespoke callout */}
+          {/* pricing — one honest floor anchor; real scope is set on the call */}
           <section id="pricing" className="aur-section">
             <div className="aur-section-head">
-              <p className="aur-kicker">Pricing</p>
-              <h2 className="aur-h2">Simple monthly pricing. Your website included.</h2>
+              <p className="aur-kicker">{pricing.eyebrow}</p>
+              <h2 className="aur-h2">{pricing.title}</h2>
             </div>
-            <div className="aur-grid-3">
-              {monthly.map((p) => (
-                <div key={p.name} className={`aur-glass aur-plan ${p.popular ? 'aur-plan-pop' : ''}`}>
-                  {p.popular && <span className="aur-plan-badge">Most popular</span>}
-                  <p className="aur-plan-name">{p.name}</p>
-                  <p className="aur-plan-price">{p.price}<span className="aur-plan-cad">{p.cadence}</span></p>
-                  <p className="aur-plan-tag">{p.tagline}</p>
-                  <ul className="aur-plan-feats">
-                    {p.features.map((f) => (
-                      <li key={f}><span className="aur-check">✓</span>{f}</li>
-                    ))}
-                  </ul>
-                  {p.anchor && <p className="aur-plan-anchor">{p.anchor}</p>}
-                  <a href={planHref(p.name)} className={`aur-btn ${p.popular ? '' : 'aur-btn-ghost'} aur-plan-cta`}>{p.cta} →</a>
-                </div>
-              ))}
-            </div>
-            <p className="aur-guarantee">Not sure which plan fits? We figure that out together on the call — and you can move tiers anytime.</p>
-            {bespoke && (
-              <div className="aur-bespoke">
-                <div className="aur-bespoke-copy">
-                  <p className="aur-bespoke-name">{bespoke.name} — {bespoke.price} {bespoke.cadence}</p>
-                  <p className="aur-bespoke-tag">For high-revenue owners who want a true operating system — with me hands-on in the growth.</p>
-                </div>
-                <a href={planHref(bespoke.name)} className="aur-btn">{bespoke.cta} →</a>
+            <div className="aur-price">
+              <div className="aur-price-head">
+                <p className="aur-price-anchor">{pricing.anchor}</p>
+                <p className="aur-price-anchor-sub">{pricing.anchorSub}</p>
               </div>
-            )}
+              <p className="aur-price-body">{pricing.body}</p>
+              <ul className="aur-price-points">
+                {pricing.points.map((pt) => (
+                  <li key={pt}><span className="aur-check">✓</span>{pt}</li>
+                ))}
+              </ul>
+              <a href={CAL} className="aur-btn aur-btn-lg aur-price-cta">{pricing.cta} →</a>
+              <p className="aur-price-reassure">{pricing.reassure}</p>
+            </div>
           </section>
 
           {/* final cta */}
@@ -334,16 +282,12 @@ const CSS = `
 /* Stripe-style soft gradient band — pastel + heavily blurred so dark text stays readable */
 .aur-stripe-band{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
 .aur-stripe-band::after{content:"";position:absolute;inset:0;background:radial-gradient(72% 64% at 50% 30%,rgba(255,255,255,.55),transparent 74%);}
-.aur-stripe-blob{position:absolute;border-radius:50%;filter:blur(80px);}
-.aur-sb1{width:46vw;height:46vw;left:-6vw;top:-14vw;background:radial-gradient(circle at 35% 35%,rgba(99,102,241,.46),transparent 68%);animation:aurDrift1 22s ease-in-out infinite;}
-.aur-sb2{width:42vw;height:42vw;right:-6vw;top:-10vw;background:radial-gradient(circle at 60% 40%,rgba(168,85,247,.40),transparent 68%);animation:aurDrift2 26s ease-in-out infinite;}
-.aur-sb3{width:44vw;height:44vw;left:34vw;top:12vw;background:radial-gradient(circle at 50% 50%,rgba(236,72,153,.28),transparent 70%);animation:aurDrift3 28s ease-in-out infinite;}
-.aur-sb4{width:48vw;height:48vw;left:4vw;top:18vw;background:radial-gradient(circle at 50% 50%,rgba(56,189,248,.26),transparent 70%);animation:aurDrift1 30s ease-in-out infinite;}
-@keyframes aurDrift1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(5vw,3vw) scale(1.08);}}
-@keyframes aurDrift2{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-4vw,2vw) scale(1.1);}}
-@keyframes aurDrift3{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-3vw,-3vw) scale(.94);}}
+.aur-stripe-blob{position:absolute;border-radius:50%;filter:blur(90px);}
+.aur-sb1{width:42vw;height:42vw;left:-4vw;top:-12vw;background:radial-gradient(circle at 40% 40%,rgba(99,102,241,.30),transparent 68%);}
+.aur-sb2{width:38vw;height:38vw;right:-4vw;top:-8vw;background:radial-gradient(circle at 55% 40%,rgba(139,92,246,.26),transparent 68%);}
+.aur-sb3{width:40vw;height:40vw;left:32vw;top:14vw;background:radial-gradient(circle at 50% 50%,rgba(219,39,119,.14),transparent 72%);}
 
-.aur-nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(255,255,255,.62);border-bottom:1px solid rgba(99,102,241,.08);}
+.aur-nav{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(21,19,31,.07);}
 .aur-nav-inner{display:flex;align-items:center;justify-content:space-between;height:66px;}
 .aur-logo{font-weight:800;font-size:21px;letter-spacing:-.03em;}
 .aur-logo-dot{background:linear-gradient(90deg,#6366f1,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
@@ -361,7 +305,7 @@ const CSS = `
 .aur-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(99,102,241,.36);}
 .aur-btn-sm{padding:0 18px;min-height:44px;font-size:14px;border-radius:11px;}
 .aur-btn-lg{padding:16px 30px;font-size:16.5px;}
-.aur-btn-ghost{background:rgba(255,255,255,.7);color:#3b2f6b;border:1px solid rgba(99,102,241,.25);box-shadow:none;backdrop-filter:blur(8px);}
+.aur-btn-ghost{background:#fff;color:#3b2f6b;border:1px solid rgba(109,40,217,.28);box-shadow:none;}
 .aur-btn-ghost:hover{border-color:#8b5cf6;box-shadow:0 6px 18px rgba(99,102,241,.12);}
 
 .aur-hero{position:relative;z-index:1;text-align:center;padding:92px 24px 40px;max-width:820px;margin:0 auto;}
@@ -376,7 +320,7 @@ const CSS = `
 .aur-trust{margin-top:56px;}
 .aur-trust-label{display:block;font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b6880;margin-bottom:16px;}
 .aur-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
-.aur-pill{padding:8px 16px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid rgba(99,102,241,.14);font-size:13.5px;font-weight:500;color:#4a4860;backdrop-filter:blur(6px);}
+.aur-pill{padding:8px 16px;border-radius:999px;background:#fff;border:1px solid rgba(21,19,31,.1);font-size:13.5px;font-weight:500;color:#4a4860;}
 
 .aur-section{padding:60px 0;}
 .aur-section-head{text-align:center;max-width:680px;margin:0 auto 40px;}
@@ -384,7 +328,7 @@ const CSS = `
 .aur-h2{font-size:clamp(28px,3.8vw,42px);font-weight:800;letter-spacing:-.03em;line-height:1.12;}
 .aur-p{font-size:16.5px;line-height:1.7;color:#56536b;margin-top:14px;}
 
-.aur-glass{background:rgba(255,255,255,.64);border:1px solid rgba(120,110,190,.12);box-shadow:0 6px 26px rgba(80,70,160,.06);border-radius:24px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
+.aur-glass{background:#ffffff;border:1px solid rgba(21,19,31,.08);box-shadow:0 1px 2px rgba(21,19,31,.04),0 8px 30px rgba(80,70,160,.05);border-radius:18px;}
 .aur-problem{padding:44px;max-width:760px;margin:0 auto;text-align:center;}
 .aur-punch{font-size:19px;font-weight:700;color:#b45309;margin-top:22px;line-height:1.5;}
 .aur-fix{font-size:20px;font-weight:800;color:#6d28d9;margin-top:10px;}
@@ -403,26 +347,8 @@ const CSS = `
 .aur-service-title{font-size:18px;font-weight:800;letter-spacing:-.015em;line-height:1.2;}
 .aur-service-body{font-size:14.5px;line-height:1.62;color:#605d75;margin-top:9px;}
 
-.aur-console{max-width:760px;margin:0 auto;border-radius:20px;overflow:hidden;box-shadow:0 24px 70px rgba(40,30,90,.22);border:1px solid rgba(124,58,237,.18);}
-.aur-console-bar{display:flex;align-items:center;gap:8px;padding:14px 18px;background:#1a1530;}
-.aur-dot{width:11px;height:11px;border-radius:50%;background:#3b3458;}
-.aur-dot:nth-child(1){background:#ef6a5e;}.aur-dot:nth-child(2){background:#f5bd4f;}.aur-dot:nth-child(3){background:#61c454;}
-.aur-console-title{margin-left:10px;font-size:13px;font-family:var(--font-geist-mono),monospace;color:#b7b1d8;}
-.aur-live{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#7ee787;font-weight:600;}
-.aur-live-dot{width:8px;height:8px;border-radius:50%;background:#7ee787;box-shadow:0 0 0 0 rgba(126,231,135,.6);animation:aurPulse 1.8s ease-out infinite;}
-@keyframes aurPulse{0%{box-shadow:0 0 0 0 rgba(126,231,135,.5);opacity:1;}70%{box-shadow:0 0 0 7px rgba(126,231,135,0);opacity:.55;}100%{box-shadow:0 0 0 0 rgba(126,231,135,0);opacity:1;}}
-.aur-console-body{background:#221c3d;padding:10px;}
-.aur-msg{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.04);margin:8px;}
-.aur-msg-working{background:rgba(165,180,252,.08);border:1px solid rgba(165,180,252,.14);}
-.aur-msg-ico{width:36px;height:36px;border-radius:10px;background:rgba(165,180,252,.13);color:#a5b4fc;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.aur-msg-ico svg{width:19px;height:19px;}
-.aur-msg-ico-live{position:relative;}
-.aur-pulse-dot{width:10px;height:10px;border-radius:50%;background:#a5b4fc;animation:aurPulse 1.8s ease-out infinite;}
-.aur-msg-text{flex:1;font-size:14.5px;line-height:1.5;color:#e7e3fb;}
-.aur-cursor{display:inline-block;margin-left:2px;color:#a5b4fc;animation:aurBlink 1.1s step-end infinite;}
-@keyframes aurBlink{0%,100%{opacity:1;}50%{opacity:.25;}}
-.aur-msg-done{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7ee787;background:rgba(126,231,135,.12);padding:5px 10px;border-radius:8px;}
-.aur-msg-now{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fbbf6b;background:rgba(251,191,107,.12);padding:5px 10px;border-radius:8px;}
+/* pulse halo — used by the founding-clients scarcity dot */
+@keyframes aurPulse{0%{box-shadow:0 0 0 0 rgba(124,58,237,.45);opacity:1;}70%{box-shadow:0 0 0 7px rgba(124,58,237,0);opacity:.55;}100%{box-shadow:0 0 0 0 rgba(124,58,237,0);opacity:1;}}
 
 .aur-scarcity{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-size:13px;font-weight:600;color:#6d28d9;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.16);padding:8px 16px;border-radius:999px;}
 .aur-scarcity-dot{width:7px;height:7px;border-radius:50%;background:#7c3aed;box-shadow:0 0 0 0 rgba(124,58,237,.5);animation:aurPulse 2s ease-out infinite;}
@@ -433,24 +359,7 @@ const CSS = `
 .aur-promise-title{font-size:17.5px;font-weight:800;letter-spacing:-.01em;margin-top:14px;}
 .aur-promise-body{font-size:14px;line-height:1.6;color:#605d75;margin-top:8px;}
 
-.aur-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch;}
-.aur-plan{padding:30px 26px;position:relative;display:flex;flex-direction:column;gap:14px;}
-.aur-plan-pop{border:1.5px solid #8b5cf6;box-shadow:0 16px 50px rgba(124,58,237,.18);}
-.aur-plan-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#6366f1,#a855f7);color:#fff;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:5px 14px;border-radius:999px;white-space:nowrap;}
-.aur-plan-name{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8b5cf6;}
-.aur-plan-price{font-size:36px;font-weight:800;letter-spacing:-.03em;}
-.aur-plan-cad{font-size:13px;font-weight:500;color:#9b99ad;margin-left:4px;}
-.aur-plan-tag{font-size:14.5px;color:#605d75;}
-.aur-plan-feats{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1;}
-.aur-plan-feats li{display:flex;gap:9px;font-size:14px;line-height:1.45;color:#4a4860;}
 .aur-check{color:#8b5cf6;font-weight:800;flex-shrink:0;}
-.aur-plan-anchor{font-size:12.5px;line-height:1.5;color:#6d4ec9;background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.1);border-radius:10px;padding:10px 12px;}
-.aur-plan-cta{justify-content:center;margin-top:4px;}
-
-.aur-guarantee{text-align:center;max-width:600px;margin:24px auto 0;font-size:15px;line-height:1.6;color:#5c5976;}
-.aur-bespoke{display:flex;align-items:center;justify-content:space-between;gap:24px;max-width:900px;margin:24px auto 0;padding:24px 30px;border:1px dashed rgba(99,102,241,.32);border-radius:18px;background:rgba(255,255,255,.55);}
-.aur-bespoke-name{font-size:17px;font-weight:800;letter-spacing:-.01em;}
-.aur-bespoke-tag{font-size:14px;color:#605d75;margin-top:4px;}
 
 .aur-about{display:grid;grid-template-columns:200px 1fr;gap:40px;padding:44px;align-items:center;}
 .aur-about-photo{position:relative;width:200px;height:200px;border-radius:24px;overflow:hidden;box-shadow:0 12px 36px rgba(80,70,160,.2);}
@@ -472,8 +381,26 @@ const CSS = `
 .aur-footer-links a.aur-btn{color:#fff;padding:0 18px;}
 .aur-footer-bottom{display:flex;justify-content:space-between;margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:#6f6c85;}
 
+/* what-the-agent-does — light, honest cards (replaced the dark terminal) */
+.aur-calls{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:820px;margin:0 auto;}
+.aur-call{display:flex;align-items:flex-start;gap:16px;padding:24px;background:#fff;border:1px solid rgba(21,19,31,.08);border-radius:18px;box-shadow:0 1px 2px rgba(21,19,31,.04),0 8px 30px rgba(80,70,160,.05);}
+.aur-call-ico{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:rgba(124,58,237,.09);color:#7c3aed;}
+.aur-call-ico svg{width:21px;height:21px;}
+.aur-call-text{font-size:15px;line-height:1.55;color:#403c54;margin:0;padding-top:3px;}
+
+/* pricing — single floor-anchor card */
+.aur-price{max-width:640px;margin:0 auto;background:#fff;border:1px solid rgba(21,19,31,.08);border-radius:22px;box-shadow:0 1px 2px rgba(21,19,31,.04),0 14px 44px rgba(80,70,160,.08);padding:44px 44px 40px;text-align:center;}
+.aur-price-head{padding-bottom:22px;margin-bottom:24px;border-bottom:1px solid rgba(21,19,31,.08);}
+.aur-price-anchor{font-size:clamp(30px,4.4vw,40px);font-weight:800;letter-spacing:-.03em;color:#15131f;line-height:1.05;}
+.aur-price-anchor-sub{font-size:16px;font-weight:600;color:#6d28d9;margin-top:8px;}
+.aur-price-body{font-size:15.5px;line-height:1.65;color:#56536b;max-width:520px;margin:0 auto;}
+.aur-price-points{list-style:none;display:flex;flex-direction:column;gap:12px;max-width:470px;margin:24px auto 0;text-align:left;}
+.aur-price-points li{display:flex;gap:10px;font-size:14.5px;line-height:1.5;color:#403c54;}
+.aur-price-cta{margin-top:28px;}
+.aur-price-reassure{font-size:13.5px;color:#8b8aa0;margin-top:16px;}
+
 @media(prefers-reduced-motion:reduce){
-  .aur-stripe-blob,.aur-live-dot,.aur-pulse-dot,.aur-scarcity-dot,.aur-cursor{animation:none;}
+  .aur-scarcity-dot{animation:none;}
 }
 
 @media(max-width:980px){
@@ -484,16 +411,16 @@ const CSS = `
   .aur-nav-links{display:none;}
   .aur-nav-toggle{display:inline-flex;}
   .aur-grid-2{grid-template-columns:1fr;}
-  .aur-grid-3{grid-template-columns:1fr;max-width:440px;margin-left:auto;margin-right:auto;}
   .aur-about{grid-template-columns:1fr;text-align:center;justify-items:center;}
-  .aur-bespoke{flex-direction:column;text-align:center;}
   .aur-footer-inner{flex-direction:column;gap:22px;}
 }
 @media(max-width:560px){
   .aur-promises{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto;}
   .aur-services-grid{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto;}
+  .aur-calls{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto;}
   .aur-cta-row{flex-direction:column;}
   .aur-btn-lg{width:100%;}
+  .aur-price{padding:32px 22px 30px;}
   .aur-footer-bottom{flex-direction:column;gap:6px;}
 }
 `;
