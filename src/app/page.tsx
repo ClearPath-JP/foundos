@@ -1006,7 +1006,7 @@ function Wordmark({ px }: { px: number }) {
 export default function EmberPage() {
   return (
     <div className={`eb ${display.variable} ${body.variable} ${mono.variable}`} id="top">
-      <style>{CSS}</style>
+      <style>{shipCss(CSS)}</style>
 
       {/* Renders nothing. It watches the eight highlighted phrases and decides
           when each one sweeps in — see components/MarkReveal.tsx. It sits here
@@ -1658,6 +1658,38 @@ export default function EmberPage() {
    Scoped to `.eb`. No backticks anywhere in here — the whole thing is a
    template literal. Read the file header before changing a value; most of
    these numbers were chosen against a measurement, not a preference. */
+/**
+ * Strips comments and collapses whitespace on the way to the browser.
+ *
+ * The stylesheet below is heavily commented on purpose — it is the only record
+ * of why the tracking is directional, why the ledger numerals are not mono, why
+ * the mobile bar uses a scroll-driven animation instead of JS. Those notes are
+ * for whoever edits this next and they should stay.
+ *
+ * They just should not be DOWNLOADED. Measured on the live page: the inline
+ * stylesheet was 53.7KB, of which 27.8KB — 99 comments, 52% of the CSS and 15%
+ * of the whole HTML document — was prose explaining the CSS to a person who
+ * will never read it in a browser. Check 05 on this very page tells an owner to
+ * turn wifi off and count while their own site loads. Shipping 27KB of my own
+ * commentary to a restaurant owner on two bars in a parking lot is exactly the
+ * thing being complained about, on the page doing the complaining.
+ *
+ * Deliberately conservative: block comments, then runs of whitespace, then the
+ * space around the punctuation that cannot be ambiguous. It does NOT touch
+ * quoted strings or url() values, and there are no data: URIs in this sheet
+ * (checked — a base64 payload containing the comment terminator is the usual
+ * way a naive stripper corrupts a stylesheet). If a data URI is ever added
+ * here, this needs to become a real minifier rather than four regexes.
+ */
+function shipCss(css: string): string {
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([{}:;,>])\s*/g, '$1')
+    .replace(/;}/g, '}')
+    .trim();
+}
+
 const CSS = `
 .eb{
   /* the five values, and nothing else is ever written as a hex below */
