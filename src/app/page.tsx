@@ -185,9 +185,25 @@ import { DEMOS } from '@/lib/contact';
  * ── COPY ──────────────────────────────────────────────────────────────────
  *
  * Every word comes from src/app/page.tsx or docs/site-content-2026-09-03.md,
- * with two exceptions recorded below. Where a paragraph is split (the "Check
+ * with three exceptions recorded below. Where a paragraph is split (the "Check
  * it:" line, the "$18 plate" arithmetic), the split is formatting: the
  * characters either side are untouched.
+ *
+ * THE THIRD EXCEPTION — two new blocks, 2026-09-04, both written for this file.
+ *
+ *   • WAIT, the coda on §05. The page named the pain in five checks and never
+ *     named the cost of leaving it, so a reader could agree with all five and
+ *     still have no reason to act this month. ⚠️ It contains no statistic, and
+ *     it may never contain one: every consequence in it is a restatement of one
+ *     the five checks have already argued, with no multiplier attached. The
+ *     full constraint, including the paragraph that keeps it from becoming
+ *     fear-selling, is on the constant.
+ *   • The truck-location row in BUILDS. ⚠️ It describes something that already
+ *     runs — the SPOTS picker in /demo/truckos, which a visitor can open from
+ *     §08 — and it is written to what that code actually does, not to what the
+ *     feature could be. It was NOT added to HOW: every step there is a step in
+ *     foundos-system-rulebook.md §6 and the runbook has no location step, so
+ *     putting one in would have broken the rule that section is built on.
  *
  * THE SECOND EXCEPTION — the grammar pass on §BUILDS, 2026-09-04. Four of the
  * six "systems I provide" rows were re-set as complete sentences and the fifth
@@ -557,6 +573,34 @@ const BUILDS = [
     rest: 'They book at midnight and it lands straight in your calendar.',
   },
   {
+    /**
+     * ⚠️ THIS ROW IS A TRUE CLAIM, NOT A ROADMAP ITEM, AND THAT IS WHY IT IS
+     * ALLOWED TO BE HERE. It is built and a visitor can go and use it: the
+     * truck concept at /demo/truckos has SPOTS — four saved pitches, each with
+     * a name, a street address and a window. The staff screen asks "Where are
+     * you today?", the owner taps one, and the customer view's "Today · we're
+     * parked at" block changes to that name, that address and that window with
+     * a directions button under it. A second control on the same screen cycles
+     * each day of the week through the same saved spots, and that is the "Where
+     * we'll be this week" list the customer sees. Nothing here describes
+     * anything the demo does not already do.
+     *
+     * The sentence covers the three cases Josh named — a truck that parks in
+     * one place, one that rotates a few regulars, one that moves constantly —
+     * because the same control serves all three: a truck with one spot taps the
+     * same tile every morning.
+     *
+     * Placed third rather than appended so the length rhythm holds. Counted off
+     * the rendered DOM, the seven descriptions now run 29 / 11 / 29 / 20 / 20 /
+     * 26 / 15 words: this row ties the longest, so it goes where the shortest
+     * row separates the two of them. Appending it would have put 26 and 29 side
+     * by side at the bottom of the list. See the note above on why evening the
+     * lengths out puts the template tell back.
+     */
+    lead: 'Where your truck is parked today',
+    rest: 'Park in one spot, rotate a few, or move every day. You tap it on your phone and the site follows — today, and the rest of the week.',
+  },
+  {
     lead: 'An AI that answers every call',
     rest: 'It takes the order and books the table or the catering date. A ringing phone stops being a lost customer.',
   },
@@ -607,6 +651,49 @@ const CHECKS = [
     check: 'Check it: turn wifi off on your phone and count out loud while your own site loads.',
   },
 ] as const;
+
+/**
+ * THE COST OF DOING NOTHING — the beat the page was missing.
+ *
+ * It named the pain in five checks and then went straight to the delivery
+ * apps, so a reader could finish §05 agreeing that all five things were true
+ * about his place and still have no reason to do anything about it this month.
+ *
+ * ⚠️ NOT ONE INVENTED NUMBER, AND THAT IS THE WHOLE CONSTRAINT. There is no
+ * "restaurants lose 30% of…" here and there must never be one. The page's
+ * credibility rests on the fact that every figure on it is checkable — §06
+ * ends by telling the owner to go find his own commission rate "before you
+ * believe anybody's math about your place. Mine included." A fabricated
+ * multiplier in this block would spend that, four screens before it is earned.
+ *
+ * So every clause in `paras[1]` is a restatement of a consequence the page has
+ * ALREADY argued directly above it, with no multiplier attached:
+ *   • the locked door is check 02 ("finds the lights off")
+ *   • the dishes not coming up is check 01 ("don't come up when somebody
+ *     searches for them by name")
+ *   • the number the app has and you don't is check 04 ("The app knows who
+ *     ordered and how to reach them. You don't.")
+ * The only new idea is the FRAME: these are not events, they are a rate. That
+ * is an argument, not a statistic, and a reader can check it himself.
+ *
+ * ⚠️ `paras[2]` IS NOT OPTIONAL. Take it out and this becomes fear-selling,
+ * which would undo §06 — the section that earns the trust — from four screens
+ * away. "Plenty of places run like this for years and do fine" is the line
+ * that keeps the whole block honest. Do not cut it to tighten the section.
+ *
+ * It renders as prose with no heading, like the tail of §06 and for the same
+ * reason: §05 above it and §06 below it are both label / h2 / rule / standfirst
+ * / enumerated list, and a third one between them would make the page texture
+ * instead of chapters.
+ */
+const WAIT = {
+  lede: "None of those five breaks. That's the whole problem with them.",
+  paras: [
+    "A fryer that quits, you fix the same day. A menu that's a photo doesn't quit. Wrong hours don't quit. A phone that rang while your hands were full never tells you it rang. Nothing on that list sets off an alarm, so it sits there, working exactly the same way tomorrow as it did today.",
+    "Which is why I can't hand you one number for what it costs. It isn't a bill. It's a rate. Every week the hours stay wrong is another week of people driving over to a locked door. Every week the menu is a picture is another week your own dishes don't come up when somebody searches them by name. Every order that goes through the app is one more regular whose number the app has and you don't.",
+    "I'm not telling you the sky is falling. Plenty of places run like this for years and do fine. I'm telling you it's the one cost that never shows up on a statement, and it keeps running whether anybody looks at it or not.",
+  ],
+} as const;
 
 /** docs/site-content-2026-09-03.md — "About the delivery apps", part one. */
 const APPS_BEFORE = [
@@ -847,53 +934,81 @@ const SCHEMA = {
   sameAs: ['https://instagram.com/josh.potesta'],
 };
 
-/* ── the highlighted phrases ──────────────────────────────────────────────
+/* ── the skim path ────────────────────────────────────────────────────────
  *
- * NINE SPANS, EIGHT CLAIMS, AND THE COUNT IS THE DESIGN. A page that
- * highlights everything has highlighted nothing, so the budget is roughly one
- * per screenful over a twenty-screen document and it is spent on the eight
- * sentences that are the actual argument. Every string below is a verbatim
- * slice of the copy constants above — nothing here is a second copy of a
- * sentence, and nothing here can be edited into one, because <Marked /> finds
- * the phrase inside the real string at render and simply does not mark it if
- * the copy has moved on. A drifted phrase costs a highlight; it never costs a
- * word of Josh's writing and it can never crash the page.
+ * ⚠️ THIS IS NOT DECORATION AND IT IS NOT A HIGHLIGHTER. It used to be one —
+ * eight phrases with a translucent wash sweeping in behind them, chosen because
+ * they were the strongest claims on the page. Josh's brief for the change is
+ * the spec, verbatim: "if someone is looking through my site quickly i want
+ * them to be able to pick up all the important info quickly while skimming,
+ * where they see the color change on a sentence is becuase its the most
+ * important".
  *
- * ⚠️ FOUR RULES. They are the difference between classy and gimmicky and the
- * next person to add one has to hold all four:
+ * So the test the eight below have to pass is not "is this a good sentence".
+ * It is: READ ONLY THE COLOURED PHRASES, TOP TO BOTTOM, AND YOU GET THE WHOLE
+ * ARGUMENT. In page order they run:
  *
- *   • NEVER INSIDE THE H1. It is 96px on a desktop. It does not need help, and
- *     a highlighter behind display type reads as a mistake.
+ *   1 hoursWrong   what is happening to you now
+ *   2 costingNow   what that is doing to you, said beside the box that shows it
+ *   3 chicken      what it costs on every ticket
+ *   4 everyWeek    what it keeps costing while nothing is done  ← the new beat
+ *   5 renting      the same cost, compounding, on the apps
+ *   6 moneyLands   what changes
+ *   7 sevenDays    how fast it changes
+ *   8 tellYou      what you risk, which is nothing
+ *
+ * That order is load bearing. `oweNothing` — "you owe nothing and you never
+ * hear from me again" — was marked and is now NOT, and the reason is only its
+ * position: it lives in §04, four screens in, and reading a risk-reversal as
+ * the second beat of the story breaks the sequence before it starts. The
+ * sentence is still there, still bold, still beside the CTA. It just is not on
+ * the skim path. `figures` (the oxtail comparison) and `dollarTwenty` came off
+ * for the ground reason below; `ownAll` came off because §07 does not need two.
+ *
+ * Every string below is a verbatim slice of the copy constants above — nothing
+ * here is a second copy of a sentence, and nothing here can be edited into one,
+ * because <Marked /> finds the phrase inside the real string at render and
+ * simply does not mark it if the copy has moved on. A drifted phrase costs a
+ * mark; it never costs a word of Josh's writing and it can never crash the page.
+ *
+ * ⚠️ FIVE RULES. The fifth is new and it is the one that will get broken:
+ *
+ *   • NEVER INSIDE THE H1. It is 96px on a desktop. It does not need help.
  *   • ONLY ON CLAIMS. Not on a label, not on a heading, not on an instruction.
  *     Every phrase below is something a reader could disagree with.
- *   • ABOUT ONE PER SCREENFUL. The one place two share a section is §07, where
- *     `moneyLands` opens the ledger and `ownAll` closes it — six rows apart on
- *     a phone, and on a tall desktop the 90ms stagger in MarkReveal keeps them
- *     from reading as a single flash.
- *   • NOT ON EMBER. See --mark in the stylesheet: an ember wash on the ember
- *     field is invisible. The grounds each carry their own tint and the two
- *     ember bands carry no marked phrases at all.
- *
- * `figures` is one claim in two spans on purpose: $31.99 and $18 are the same
- * comparison and marking only half of it would be marking half a sentence.
+ *   • ABOUT ONE PER SCREENFUL. Eight over a twenty-screen document. Nine starts
+ *     reading as "this site has a highlighter" instead of "this is the point".
+ *   • IT HAS TO BE A SENTENCE THAT SURVIVES ALONE. A skimmer reads it with no
+ *     paragraph around it. "the money lands in your account" works; "and that
+ *     is the part I build" does not.
+ *   • ⚠️ CHECK THE GROUND BEFORE YOU ADD ONE. This is a colour change now, so a
+ *     mark on the wrong field is either invisible or a contrast regression on
+ *     the most important sentence in the section. Measured, and the numbers are
+ *     on --mark-fg in the stylesheet: NOTHING can reach 4.5:1 on the wood band
+ *     (white itself is only 4.17:1 there) and nothing can reach it on ember, so
+ *     both fields degrade the mark to weight-only and NO PHRASE MAY BE PUT ON
+ *     THEM. That is why the wood band's `dollarTwenty` is gone: the reveal
+ *     there could only have moved that line from 4.18:1 down to 3.39:1.
  */
 const MARKS = {
-  /** §05, check 04. */
+  /** §03. What is happening to you now. The first beat, and the page comes
+   *  back to it twice — in check 02 and again in the waiting coda. */
+  hoursWrong: 'Your hours are wrong on Google.',
+  /** §04, inside the cream card. The one mark on a light ground. */
+  costingNow: "what's costing you customers right now",
+  /** §05, check 04. What it costs, per ticket. */
   chicken: "a cut of every ticket leaves the building before you've paid for the chicken",
-  /** §06, the Atlanta oxtail comparison. One claim, both halves of it. */
-  figures: ['$31.99 on DoorDash', 'around $18 at the counter'],
-  /** The wood band. The whole point of the arithmetic, in six words. */
-  dollarTwenty: 'you finished a dollar twenty under it',
+  /** The waiting coda. The beat the page did not have: a rate, not an event. */
+  everyWeek:
+    'Every week the hours stay wrong is another week of people driving over to a locked door.',
   /** §06, after the band. The line the section is built to earn. */
   renting: 'You are renting them back by the plate.',
-  /** §07, the first build row. */
+  /** §07, the first build row. What changes. */
   moneyLands: 'the money lands in your account',
-  /** §07, the tail. */
-  ownAll: 'You own all of it',
-  /** §04, the risk reversal inside the cream pad. */
-  oweNothing: 'you owe nothing and you never hear from me again',
-  /** The seven-day promise. */
+  /** How it works. How fast it changes. */
   sevenDays: 'Seven days from your payment to the site being live.',
+  /** §12, the last line of ABOUT. What you risk, which is nothing. */
+  tellYou: "If I can't help you, I'll tell you that too.",
 } as const;
 
 /** Nothing to mark. A named constant so the identity is stable across renders. */
@@ -905,11 +1020,11 @@ const NO_MARKS: readonly string[] = [];
  * Wraps one or more verbatim phrases inside a string in `.eb-mark` spans.
  *
  * It walks the phrases in order and consumes the string as it goes, so a
- * phrase list can safely be handed to every paragraph in a block — the two
- * dollar figures live in one of the three paragraphs of APPS_BEFORE and the
- * other two come out untouched. A phrase that is not found is skipped, which
- * is the whole safety story: if a copy edit changes a sentence, the sentence
- * renders exactly as written and only loses its highlight.
+ * phrase list can safely be handed to every paragraph in a block — `everyWeek`
+ * lives in the middle one of WAIT's three paragraphs and the other two come out
+ * untouched. A phrase that is not found is skipped, which is the whole safety
+ * story: if a copy edit changes a sentence, the sentence renders exactly as
+ * written and only loses its mark.
  *
  * Keys are on the spans because they sit in an array; the plain string
  * segments between them do not need them.
@@ -978,9 +1093,9 @@ function LedgerHead({ label, heading = false }: { label: string; heading?: boole
  * `foundos` and the dot. The dot is decorative, so the link reads as one word.
  *
  * ⚠️ THE CLASS IS `.eb-wm`, NOT `.eb-mark`, AND THE RENAME WAS NOT COSMETIC.
- * `.eb-mark` is now the highlighter behind eight sentences of body copy — see
- * MARKS above and `--mark` in the stylesheet — and the wordmark held that name
- * first. Two things called "mark" in one 2,000-line file is how a logo ends up
+ * `.eb-mark` is now the skim path — the eight phrases that change colour — see
+ * MARKS above and `--mark-fg` in the stylesheet, and the wordmark held that
+ * name first. Two things called "mark" in one 2,000-line file is how a logo ends up
  * inline-flex in the middle of a paragraph. If a later edit needs a third
  * "mark", it needs a third word.
  *
@@ -1008,11 +1123,11 @@ export default function EmberPage() {
     <div className={`eb ${display.variable} ${body.variable} ${mono.variable}`} id="top">
       <style>{shipCss(CSS)}</style>
 
-      {/* Renders nothing. It watches the eight highlighted phrases and decides
-          when each one sweeps in — see components/MarkReveal.tsx. It sits here
-          rather than beside the marks because there is one observer for all of
-          them, and here is the one place on the page that is neither a section
-          nor a piece of copy. */}
+      {/* Renders nothing. It watches the eight skim-path phrases and decides
+          when each one turns colour — see components/MarkReveal.tsx. It sits
+          here rather than beside the marks because there is one observer for
+          all of them, and here is the one place on the page that is neither a
+          section nor a piece of copy. */}
       <MarkReveal />
 
       {/* Escaping `<` is the documented guard against injection through a
@@ -1107,10 +1222,14 @@ export default function EmberPage() {
         <section aria-label="The problem">
           <div className={`${SHELL} eb-sec eb-sec--tight`}>
             <p className="eb-lede">
+              {/* The first beat of the skim path, and the only one on a lede
+                  rather than in body copy. One of three parallel lines carries
+                  it on purpose — it is the line check 02 and the waiting coda
+                  both come back to, so it is the one the page is arguing. */}
               {PROBLEM.lines.map((line, i) => (
                 <span key={line}>
                   {i > 0 && <br />}
-                  {line}
+                  <Marked text={line} phrases={i === 0 ? [MARKS.hoursWrong] : NO_MARKS} />
                 </span>
               ))}
             </p>
@@ -1137,17 +1256,24 @@ export default function EmberPage() {
                 <LedgerHead label={LABELS.audit} />
                 <h2 className="eb-d eb-h2 eb-pad-h">{AUDIT.h2}</h2>
                 <div className="eb-rule eb-rule--inset" aria-hidden="true" />
-                <p className="eb-pad-p">{AUDIT.p}</p>
+                {/* The one mark on a light ground, and the only reason the
+                    light value of --mark-fg exists. See the note on .eb-pad:
+                    the reveal here is ember darkened toward rich, because plain
+                    ember on cream is 3.35:1 and would be a regression on the
+                    sentence it is supposed to be pointing at. */}
+                <p className="eb-pad-p">
+                  <Marked text={AUDIT.p} phrases={[MARKS.costingNow]} />
+                </p>
                 <div className="eb-pad-widget">
                   <InstantReport />
                 </div>
                 <div className="eb-rule eb-rule--inset" aria-hidden="true" />
-                {/* The promise belongs beside the ask, not four screens below it.
-                    Its highlight is the one that sits on cream, where the wash
-                    is ember rather than bone — see --mark on .eb-pad. */}
-                <p className="eb-pad-p eb-pad-p--risk">
-                  <Marked text={AUDIT.risk} phrases={[MARKS.oweNothing]} />
-                </p>
+                {/* The promise belongs beside the ask, not four screens below
+                    it. It is NOT on the skim path any more and that is a
+                    sequencing decision, not a demotion — see the note on MARKS.
+                    It is still the whole paragraph in bold, right under the
+                    box. Do not re-mark it without moving it. */}
+                <p className="eb-pad-p eb-pad-p--risk">{AUDIT.risk}</p>
               </div>
             </div>
           </div>
@@ -1196,6 +1322,28 @@ export default function EmberPage() {
                 </li>
               ))}
             </ol>
+
+            {/* ── What waiting costs ─────────────────────────────────────
+                A coda on the five checks, not a section of its own. It runs
+                as prose with no label, no heading and no numerals — the same
+                shape as the tail of §06 and for the same reason: §05 above
+                and §06 below are both label / h2 / rule / standfirst / list,
+                and a third one wedged between them turns the page into
+                texture. It is also why it sits INSIDE §05's div: the reader
+                has just been handed five things that are probably wrong at
+                his own place, and the next thing he needs is not another
+                chapter, it is the answer to "so what if I leave it".
+                See the note on WAIT for what may and may not be claimed here. */}
+            <div className="eb-block eb-mt">
+              <p className="eb-lede">{WAIT.lede}</p>
+              <div className="eb-mt">
+                {WAIT.paras.map((p) => (
+                  <p key={p} className="eb-p">
+                    <Marked text={p} phrases={[MARKS.everyWeek]} />
+                  </p>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
         <Rule />
@@ -1217,13 +1365,16 @@ export default function EmberPage() {
             {APPS_BEFORE.map((block) => (
               <div key={block.lead} className="eb-block">
                 <h3 className="eb-h3">{block.lead}</h3>
-                {/* The pair of figures lives in one of these four paragraphs.
-                    Handing the list to all of them is safe — a phrase that is
-                    not in the string is skipped — and it keeps the render site
-                    from having to know which paragraph the oxtail is in. */}
+                {/* ⚠️ NO MARK HERE ANY MORE. The oxtail comparison ($31.99 on
+                    DoorDash / around $18 at the counter) used to carry one and
+                    it is still the most concrete number in the section — but it
+                    is a claim about somebody else's restaurant, and the skim
+                    path is eight sentences about the reader's. The ledger on
+                    the wood band directly below sets the same figures out in a
+                    table, which is the better job for numbers anyway. */}
                 {block.paras.map((p) => (
                   <p key={p} className="eb-p">
-                    <Marked text={p} phrases={MARKS.figures} />
+                    {p}
                   </p>
                 ))}
               </div>
@@ -1252,12 +1403,20 @@ export default function EmberPage() {
                 </div>
               ))}
             </dl>
-            {/* The one highlight on a saturated field. The wash is bone here,
-                not ember — see --mark on .eb-g-wood — and it raises the marked
-                line's contrast rather than spending it. */}
+            {/* ⚠️ NO MARK ON THIS BAND, AND NOTHING MAY EVER BE PUT ON IT.
+                "you finished a dollar twenty under it" was marked here while
+                the device was a translucent wash, which could LIFT contrast.
+                A colour change cannot. Measured against wood #b76745: the ink
+                these lines are set in is 4.18:1, bone is 3.39:1, rich is
+                3.91:1, and pure white — the ceiling — is 4.17:1. There is no
+                colour, in or out of the palette, that reaches 4.5:1 on this
+                field, so every available reveal makes the most important
+                sentence in the section harder to read than the ones around it.
+                The ledger above and the two rules framing the band do the
+                pointing here instead. See the fifth rule on MARKS. */}
             {APPS_MATH.map((p) => (
               <p key={p} className="eb-math-p">
-                <Marked text={p} phrases={[MARKS.dollarTwenty]} />
+                {p}
               </p>
             ))}
           </div>
@@ -1323,13 +1482,12 @@ export default function EmberPage() {
               ))}
             </ul>
             <p className="eb-lede eb-lede--strong eb-mt">{BUILD_TAIL.strong}</p>
-            {/* The section's two marks are its first row and its last line, six
-                rows apart. On a phone they never share a screen; on a tall
-                desktop MarkReveal staggers them 90ms so they read as sequence
-                rather than as a flash. */}
-            <p className="eb-p">
-              <Marked text={BUILD_TAIL.own} phrases={[MARKS.ownAll]} />
-            </p>
+            {/* ONE MARK IN THIS SECTION NOW, NOT TWO. "You own all of it" was
+                the second, and it is a good sentence — but the skim path is a
+                sequence and this section's job in it is a single beat, "what
+                changes". Two marks in one section made §07 the one place on the
+                page where the device stopped meaning "this is the point". */}
+            <p className="eb-p">{BUILD_TAIL.own}</p>
           </div>
         </section>
         <Rule />
@@ -1563,10 +1721,16 @@ export default function EmberPage() {
           <div className={`${SHELL} eb-sec`}>
             <LedgerHead label={LABELS.about} />
             <h2 className="eb-d eb-h2">{HEADINGS.about}</h2>
+            {/* The last beat of the skim path, and the only one where the mark
+                is the whole paragraph — it is one seven-word sentence standing
+                on its own, so marking a slice of it would be marking a slice of
+                a slice. The ground here is rich #231f20 rather than the ink
+                spine; the reveal colour is inherited unchanged and measures
+                5.62:1 on it, against 6.00:1 on ink. Both clear the floor. */}
             <div className="eb-about">
               {ABOUT.map((p) => (
                 <p key={p} className="eb-p eb-p--wide">
-                  {p}
+                  <Marked text={p} phrases={[MARKS.tellYou]} />
                 </p>
               ))}
             </div>
@@ -1710,17 +1874,27 @@ const CSS = `
      Atlanta". 5.9:1 on the ink spine, which is the only ground it appears on. */
   --dot-away:#c98b2b;
 
-  /* ── THE HIGHLIGHTER TINT, PER GROUND ─────────────────────────────────
+  /* ── THE SKIM COLOUR, PER GROUND ──────────────────────────────────────
      One role, re-pointed by every ground class below exactly like --fg and
-     --rule, because the alternative does not work: an ember wash on the ember
-     field is invisible, and a bone wash on the cream card is invisible the
-     other way round. So the ground decides, and the eight marked phrases in
-     the copy never have to know which field they landed on.
-     The dark spine gets bone at 16% — enough to read as a highlighter, light
-     enough that .eb-p stays at 7.2:1 on it, down from 11:1 and still well
-     past 4.5. Every tint below was checked against the text that sits on it;
-     none of them drops a paragraph under the floor. */
-  --mark:color-mix(in srgb, var(--bone) 16%, transparent);
+     --rule, so the eight marked phrases in the copy never have to know which
+     field they landed on.
+
+     ⚠️ THIS USED TO BE A TRANSLUCENT WASH AND IT IS NOW AN OPAQUE TEXT
+     COLOUR. The variable was renamed --mark → --mark-fg for exactly that
+     reason: same name, different KIND of value is how a highlighter ends up
+     painted over a sentence. If you see --mark anywhere, it is stale.
+
+     The dark spine gets ember lightened with bone. Plain ember is not an
+     option and this is the measurement that decided it: #d94f2b on #1a1a1a is
+     4.23:1, which is legal for the 40px demo number in §10 and NOT legal for a
+     17px paragraph. Mixing 30% bone into it gives #e07d5e at 6.00:1 — the same
+     hue, no sixth value, and 1.5x the headroom the floor asks for. The default
+     body colour it replaces is 11.17:1, so the marked phrase is still the
+     lower-contrast text on the line; 6.00 is where that stops mattering.
+
+     It also has to survive the rich field under §12 (#231f20), which the ABOUT
+     mark sits on: 5.62:1 there. Both clear 4.5. */
+  --mark-fg:color-mix(in srgb, var(--ember) 70%, var(--bone));
 
   --f-display:var(--font-eb-display),var(--font-inter),ui-sans-serif,system-ui,sans-serif;
   --f-body:var(--font-eb-body),var(--font-inter),ui-sans-serif,system-ui,sans-serif;
@@ -1797,8 +1971,12 @@ const CSS = `
   --btn-b-bg:transparent; --btn-b-fg:var(--rich); --btn-b-bd:var(--rich);
   --color-ink:var(--rich);
   --color-paper:var(--bone);
-  /* ember on cream. The reverse of the spine, for the same reason. */
-  --mark:color-mix(in srgb, var(--ember) 34%, transparent);
+  /* Ember DARKENED with rich, the mirror of the spine's ember lightened with
+     bone. Plain ember on cream is 3.35:1 and would be a contrast regression on
+     the marked sentence; 60/40 gives #903c27 at 5.97:1. No mark lives on this
+     field today (§08 is two screenshots) — the value is here so that one
+     landing here later cannot inherit the spine's light ember onto cream. */
+  --mark-fg:color-mix(in srgb, var(--ember) 60%, var(--rich));
 }
 .eb-g-ember{
   background:var(--ember);
@@ -1815,11 +1993,14 @@ const CSS = `
   /* the ring: bone clears 3:1 against both the ember field and the ink slab */
   --color-ink:var(--bone);
   --color-paper:var(--ember);
-  /* ⚠️ NO MARKED PHRASE MAY LIVE ON EMBER — the h1 and the close are the only
-     copy here and the h1 is explicitly off limits. This value exists so that
-     if one ever does land here it is an ink wash and not the invisible ember
-     on ember an unset variable would inherit from the spine. */
-  --mark:color-mix(in srgb, var(--ink) 20%, transparent);
+  /* ⚠️ NO MARKED PHRASE MAY LIVE ON EMBER, and now there is no colour that
+     could rescue one. Ink — the colour the copy here is already set in — is
+     4.23:1 on this field, and bone is 3.35:1; there is nothing above the
+     first and the second is worse. So the reveal is pinned to the text colour
+     the ground already uses, which makes it a no-op: a phrase landing here
+     keeps its 700 weight and changes colour by nothing, which is the only
+     honest failure mode. It is not an invitation to put one here. */
+  --mark-fg:var(--ink);
 }
 .eb-g-wood{
   background:var(--wood);
@@ -1829,12 +2010,15 @@ const CSS = `
   --strong:var(--ink);
   --rule:var(--ink);
   --color-ink:var(--ink);
-  /* Bone, and heavier than the spine's, because this band carries ink text on
-     a saturated field at 4.24:1 — the floor the whole section was designed
-     around. A light wash LIFTS the marked line to about 6.1:1 rather than
-     eating into the margin, which is the only direction a highlight is allowed
-     to move contrast here. */
-  --mark:color-mix(in srgb, var(--bone) 30%, transparent);
+  /* ⚠️ SAME NO-OP AS EMBER, AND THIS BAND IS THE HARDER CASE OF THE TWO.
+     A wash could raise the marked line's contrast here and one used to. A
+     colour change can only lower it: measured against wood #b76745, the ink
+     these lines are set in is 4.18:1, rich is 3.91:1, bone is 3.39:1, and pure
+     white — the arithmetic ceiling for anything lighter than the field — is
+     4.17:1. Nothing reaches 4.5:1 on wood, in the palette or out of it. So the
+     reveal is pinned to ink and does nothing, and the band carries no marked
+     phrase. See the fifth rule on MARKS before you try to put one back. */
+  --mark-fg:var(--ink);
 }
 
 /* ---- the two voices ----------------------------------------------------- */
@@ -1876,47 +2060,63 @@ const CSS = `
 }
 .eb-mono{font-family:var(--f-mono);}
 
-/* ── THE HIGHLIGHTER ──────────────────────────────────────────────────────
-   Eight claims on a twenty-screen page get a wash behind them. Nine spans,
-   because the oxtail comparison is one claim in two numbers. The full rules —
-   never in the h1, only on claims, about one per screenful, fire once — are on
-   MARKS in the copy block, which is where the next person adding one will be
-   standing.
+/* ── THE SKIM PATH ────────────────────────────────────────────────────────
+   Eight phrases, one span each, and they are NOT decoration. Josh's reason is
+   quoted in full on MARKS in the copy block: a reader going fast should be
+   able to read only the coloured phrases and come away with the argument. The
+   rules for choosing one live there too. This block is only how it paints.
 
-   ⚠️ A GRADIENT ON THE TEXT'S OWN BACKGROUND, NOT A PSEUDO-ELEMENT BAR, AND
-   THE DIFFERENCE IS THE WHOLE TECHNIQUE. The obvious build is an ::after with
-   a width that animates 0 to 100%; it is one absolutely positioned rectangle,
-   so the moment its phrase wraps to a second line the bar stays on line one
-   and the rest of the sentence sits outside its own highlight. At 390px, which
-   is where this page is mostly read, nearly every phrase below wraps. A
-   background-image belongs to the inline box, and box-decoration-break:clone
-   gives every wrapped fragment its own copy of it, so a three-line phrase gets
-   three correct highlights and the animation sweeps all three together.
+   ⚠️ THE WEIGHT IS PERMANENT AND THE COLOUR IS THE REVEAL, AND THAT SPLIT IS
+   DELIBERATE. Two reasons, and neither is taste.
+   (1) A colour change alone is invisible to a reader with a red-green colour
+   vision deficiency, and this device is a comprehension aid — the one thing on
+   the page that must not depend on hue. 400 → 700 carries the whole skim path
+   with the colour switched off.
+   (2) font-weight is animatable on a variable face and Chivo is one, so it
+   COULD have been part of the reveal. It must not be: interpolating weight
+   re-measures the text every frame, which reflows the paragraph around it, and
+   eight paragraphs twitching as you scroll is a worse bug than no animation.
+   Setting it once, up front, also means the skim path is fully readable before
+   IntersectionObserver has fired and on any browser where it never does.
+   So: color is the only animated property, and it does not affect layout.
 
-   The 58% stop is the highlighter's own geometry: the wash starts just below
-   the x-height so it sits behind the letters like a marker pen rather than
-   boxing them like a table cell. --mark is re-pointed by every ground — see
-   the note where it is declared — so the tint is bone on the dark spine, ember
-   on the cream card, and a heavier bone on the wood band.
+   The old build was a translucent wash swept in behind the words with a
+   background gradient. Do not reach for background-size here again — it is not
+   what --mark-fg holds any more, and MarkReveal's stagger is timed to a colour
+   transition.
 
-   Under reduced motion the marks are simply painted, at full size, with no
-   transition at all: the highlight is information about which sentence
-   matters, and information is not what a reduced-motion request is asking to
-   have removed. MarkReveal still adds .is-in and it is a no-op here. */
+   --mark-fg is re-pointed by every ground exactly like --fg. Measured, on the
+   grounds these eight phrases actually sit on:
+     ink spine  #e07d5e on #1a1a1a  6.00:1   (five of the eight)
+     rich §12   #e07d5e on #231f20  5.62:1   (tellYou)
+     cream card #903c27 on #f0e7d4  5.97:1   (costingNow; 4.56:1 where the
+                                              card's 1px ruled line crosses)
+   Ember and wood pin --mark-fg to the text colour they already use, so a mark
+   landing on either changes nothing but its weight. See the notes there: on
+   those two fields no colour on earth reaches 4.5:1, which is why neither
+   carries a phrase.
+
+   Under reduced motion the mark is simply painted in its final colour with no
+   transition. Which sentence matters is information, and information is not
+   what a reduced-motion request is asking to have removed. MarkReveal still
+   adds .is-in and it is a no-op here. */
 .eb-mark{
-  background-image:linear-gradient(transparent 58%, var(--mark) 58%);
-  background-repeat:no-repeat;
-  background-size:0% 100%;
-  -webkit-box-decoration-break:clone;
-  box-decoration-break:clone;
+  font-weight:700;
+  color:inherit;
 }
-.eb-mark.is-in{background-size:100% 100%;}
+.eb-mark.is-in{color:var(--mark-fg);}
 @media (prefers-reduced-motion:no-preference){
-  .eb-mark{transition:background-size .55s cubic-bezier(.22,.61,.36,1);}
+  .eb-mark{transition:color .5s cubic-bezier(.22,.61,.36,1);}
 }
 @media (prefers-reduced-motion:reduce){
-  .eb-mark{background-size:100% 100%;}
+  .eb-mark,.eb-mark.is-in{color:var(--mark-fg);}
 }
+/* The risk paragraph in the cream card is set 700 outright, so a mark inside
+   it would have no weight step left and would be leaning on hue alone. It has
+   no mark today — see the note at that render site — and this rule is what
+   keeps the rule above honest if one is ever put back. Chivo's variable axis
+   runs to 900. */
+.eb-pad-p--risk .eb-mark{font-weight:800;}
 
 /* Body copy and the only sub-heading style. There is no mid-size heading on
    this page and adding one undoes device 5 — see the file header. */
@@ -2020,8 +2220,8 @@ const CSS = `
 .eb-head{position:sticky;top:0;z-index:50;background:var(--ink);}
 .eb-head-row{display:flex;align-items:center;justify-content:space-between;height:64px;}
 .eb-head-mark{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;}
-/* ⚠️ RENAMED FROM .eb-mark. That name now belongs to the highlighter behind
-   eight sentences of body copy (see .eb-mark, up in "the two voices"), and the
+/* ⚠️ RENAMED FROM .eb-mark. That name now belongs to the skim path, the eight
+   phrases that change colour (see .eb-mark, up in "the two voices"), and the
    wordmark cannot share it: display:inline-flex plus the display face on a
    phrase mid-paragraph turns that phrase into an unwrappable bone-coloured
    box. Two things called "mark" in one file is the bug waiting to happen. */
@@ -2159,9 +2359,17 @@ const CSS = `
   --btn-a-bg:var(--rich); --btn-a-fg:var(--bone);
   --btn-b-bg:transparent; --btn-b-fg:var(--rich); --btn-b-bd:var(--rich);
   /* The card is a light ground inside a dark section, so it has to re-point
-     the highlighter as well or the risk-reversal line in it would be washed
-     with bone-on-cream and disappear. Same value as .eb-g-bone. */
-  --mark:color-mix(in srgb, var(--ember) 34%, transparent);
+     the skim colour or the marked phrase in it would be painted the spine's
+     light ember onto cream. Same value as .eb-g-bone, and the ONE mark on a
+     light ground actually lives here — "what's costing you customers right
+     now", in the standfirst above the box.
+     #903c27 is 5.97:1 on the cream. It also has to hold over the card's ruled
+     lines, which are rgba(35,31,32,.14) on bone — a 1px band every 28px that
+     effectively darkens the ground to #d3cbbb where it crosses a line of type.
+     The mark measures 4.56:1 there, which is why the mix is 60/40 and not the
+     70/30 an earlier pass used: 70/30 was 5.14:1 on the cream and 3.92:1 on
+     the hairline. If you ever lighten this, check it against BOTH grounds. */
+  --mark-fg:color-mix(in srgb, var(--ember) 60%, var(--rich));
   /* the six tokens the widget speaks in */
   --color-paper:var(--bone);
   --color-ink:var(--rich);

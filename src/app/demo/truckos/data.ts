@@ -379,8 +379,14 @@ export const WEEKLY_CANDIDATES: Omit<Item, "soldOut" | "countLeft">[] = [
 export type Spot = {
   id: string;
   name: string;
+  /** May be blank for a spot typed in on the fly — the card copes. */
   address: string;
   window: string;
+  /**
+   * Typed in from the truck, live right now, not yet in the saved list. The
+   * owner keeps it with one more tap or lets it fall away after today.
+   */
+  oneOff?: boolean;
 };
 
 /**
@@ -398,7 +404,9 @@ export type Spot = {
  * Atlanta-area street, so it reads as a place a truck would actually go, with a
  * street number and a business name that don't exist. Believable, and nobody's.
  *
- * If you add a spot, invent it. Do not reach for somewhere you know.
+ * If you add a spot, invent it. Do not reach for somewhere you know. The same
+ * rule binds the placeholder text in the staff screen's "somewhere else today"
+ * form, because a placeholder is still a name on a page.
  */
 export const SPOTS: Spot[] = [
   {
@@ -426,6 +434,17 @@ export const SPOTS: Spot[] = [
     window: "12:00pm – 8:00pm",
   },
 ];
+
+/**
+ * Offered when the owner is somewhere that isn't on the saved list and is
+ * typing it in from the truck. Three chips beat a time picker when you're
+ * standing at a serving window with one hand free.
+ */
+export const WINDOW_PRESETS = [
+  "11:00am – 2:30pm",
+  "5:00pm – 9:00pm",
+  "11:00am – 8:00pm",
+] as const;
 
 /* ── Hours & weekly schedule ───────────────────────── */
 

@@ -37,6 +37,14 @@ type State = {
   orders: Record<BusinessKey, Order[]>;
   cart: Record<BusinessKey, CartLine[]>;
   spot: Spot;
+  /** Saved spots, plus anything the owner typed in during this session. */
+  spots: Spot[];
+  /**
+   * Minutes since the owner last set today's spot, or null if they never have.
+   * The customer's location card reads it back as "Updated just now" — which is
+   * the whole point of the feature, so the site has to be able to say it.
+   */
+  spotAge: number | null;
   subscribers: Record<BusinessKey, number>;
   blasts: Blast[];
   /** Order the visitor placed during the demo, so the customer view can track it. */
@@ -55,6 +63,12 @@ type Store = State & {
   addWeeklyItem: (candidateId: string) => void;
   removeItem: (itemId: string) => void;
   setSpot: (spot: Spot) => void;
+  /** Somewhere new, typed from the truck. Live immediately, saved only if asked. */
+  addSpot: (draft: { name: string; address: string; window: string }) => void;
+  /** Promote a one-off into the saved list so next time it's one tap. */
+  keepSpot: (spotId: string) => void;
+  /** The truck that never moves: fill every day it's out with today's spot. */
+  sameSpotAllWeek: () => void;
   setDayStop: (dayIndex: number, spotId: string | null) => void;
   sendBlast: (body: string) => void;
   addToCart: (itemId: string) => void;
@@ -72,6 +86,7 @@ type Store = State & {
   cartCount: number;
   myOrder: Order | null;
   itemById: (id: string) => Item | undefined;
+  spotById: (id: string | null) => Spot | undefined;
 };
 
 const StoreContext = createContext<Store | null>(null);
@@ -112,6 +127,8 @@ export function StoreProvider({
     bakery: [],
   });
   const [spot, setSpotState] = useState<Spot>(SPOTS[0]);
+  const [spots, setSpots] = useState<Spot[]>(SPOTS);
+  const [spotAge, setSpotAge] = useState<number | null>(null);
   const [subscribers, setSubscribers] = useState<Record<BusinessKey, number>>({
     truck: BUSINESSES.truck.subscribers,
     bakery: BUSINESSES.bakery.subscribers,
@@ -128,6 +145,7 @@ export function StoreProvider({
   // Counters live in refs so nothing time- or random-based runs during render.
   const orderSeq = useRef(106);
   const blastSeq = useRef(0);
+  const spotSeq = useRef(0);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showToast = useCallback((msg: string) => {
@@ -181,6 +199,7 @@ export function StoreProvider({
   // Order age ticks on the client only.
   useEffect(() => {
     const t = setInterval(() => {
+      setSpotAge((a) => (a === null ? a : a + 1));
       setOrders((prev) => {
         const next: Record<BusinessKey, Order[]> = { truck: [], bakery: [] };
         (Object.keys(prev) as BusinessKey[]).forEach((k) => {
@@ -269,10 +288,55 @@ export function StoreProvider({
   const setSpot = useCallback(
     (next: Spot) => {
       setSpotState(next);
-      showToast(`Location updated — the website changed instantly.`);
+      setSpotAge(0);
+      showToast("Location updated — the website changed instantly.");
     },
     [showToast],
   );
+
+  const addSpot = useCallback(
+    (draft: { name: string; address: string; window: string }) => {
+      const name = draft.name.trim();
+      if (!name) return;
+      spotSeq.current += 1;
+      const next: Spot = {
+        id: `s-typed-${spotSeq.current}`,
+        name,
+        address: draft.address.trim(),
+        window: draft.window,
+        oneOff: true,
+      };
+      // Held in `spots` even though it isn't saved, because the week list looks
+      // stops up by id — leave it out and today's row reads "Not out" while the
+      // hero card says the opposite.
+      setSpots((prev) => [...prev, next]);
+      setSpotState(next);
+      setSpotAge(0);
+      showToast("Live on the website. Nothing else to do.");
+    },
+    [showToast],
+  );
+
+  const keepSpot = useCallback(
+    (spotId: string) => {
+      setSpots((prev) =>
+        prev.map((sp) => (sp.id === spotId ? { ...sp, oneOff: false } : sp)),
+      );
+      setSpotState((cur) => (cur.id === spotId ? { ...cur, oneOff: false } : cur));
+      showToast("Saved. One tap next time.");
+    },
+    [showToast],
+  );
+
+  const sameSpotAllWeek = useCallback(() => {
+    // Days already marked "not out" stay not out. A truck that parks in one lot
+    // still takes Mondays off, and quietly opening it for them would be a lie
+    // on the customer's schedule.
+    setWeek((prev) =>
+      prev.map((d) => (d.spotId === null ? d : { ...d, spotId: spot.id })),
+    );
+    showToast(`Every day you're out is set to ${spot.name}.`);
+  }, [spot.id, spot.name, showToast]);
 
   const sendBlast = useCallback(
     (body: string) => {
@@ -402,6 +466,11 @@ export function StoreProvider({
     showToast("You're on the list. That number is theirs to keep.");
   }, [business, showToast]);
 
+  const spotById = useCallback(
+    (id: string | null) => (id ? spots.find((sp) => sp.id === id) : undefined),
+    [spots],
+  );
+
   const myOrder = useMemo(
     () => orders[business].find((o) => o.id === myOrderId) ?? null,
     [orders, business, myOrderId],
@@ -414,6 +483,8 @@ export function StoreProvider({
     orders,
     cart,
     spot,
+    spots,
+    spotAge,
     subscribers,
     blasts,
     myOrderId,
@@ -429,6 +500,9 @@ export function StoreProvider({
     addWeeklyItem,
     removeItem,
     setSpot,
+    addSpot,
+    keepSpot,
+    sameSpotAllWeek,
     sendBlast,
     addToCart,
     removeFromCart,
@@ -444,6 +518,7 @@ export function StoreProvider({
     cartCount,
     myOrder,
     itemById,
+    spotById,
   };
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

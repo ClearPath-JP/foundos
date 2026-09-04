@@ -4,8 +4,8 @@ import { useState } from "react";
 import {
   BAKERY_HOURS,
   BUSINESSES,
-  SPOTS,
   WEEKLY_CANDIDATES,
+  WINDOW_PRESETS,
   isOpenAt,
   money,
   type Order,
@@ -126,55 +126,220 @@ function Card({
 }
 
 /* ── Where are you parked today ────────────────────── */
+/**
+ * The location control — and the thing the homepage is claiming, so this card
+ * has to carry the claim on its own.
+ *
+ * Three kinds of truck have to get what they need out of it in one look:
+ *
+ *   • Parks in the same lot every day. They should not have to think about this
+ *     screen at all, so "Use this spot every day I'm out" fills the week once
+ *     and they are done.
+ *   • Rotates a handful of regulars. That's the saved grid — one tap, and the
+ *     tapped tile says it is live on the site.
+ *   • Somewhere different every day. "Somewhere else today" takes a name, an
+ *     address and a window and pushes it live without saving anything, because
+ *     a lot you will never park at again should not end up in your list.
+ *
+ * The row after the grid is the one that closes it: once the spot has been
+ * changed, a button that carries the prospect straight to the customer view to
+ * watch it land.
+ */
 function SpotPicker() {
   const s = useStore();
   const biz = BUSINESSES[s.business];
+  const [adding, setAdding] = useState(false);
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [openWindow, setOpenWindow] = useState<string>(WINDOW_PRESETS[0]);
+
+  const saved = s.spots.filter((sp) => !sp.oneOff);
+
+  const reset = () => {
+    setAdding(false);
+    setName("");
+    setAddress("");
+    setOpenWindow(WINDOW_PRESETS[0]);
+  };
 
   return (
     <Card
       title="Where are you today?"
-      hint="Tap a spot. The website changes before you put the phone down."
+      hint="One tap. The website changes before you put the phone down."
     >
-      <div className="grid gap-2 sm:grid-cols-2">
-        {SPOTS.map((spot) => {
-          const active = s.spot.id === spot.id;
-          return (
-            <button
-              key={spot.id}
-              type="button"
-              onClick={() => s.setSpot(spot)}
-              className="rounded-xl border-2 p-3 text-left transition active:scale-[0.98]"
-              style={{
-                borderColor: active ? biz.accent : "rgba(0,0,0,0.09)",
-                background: active ? biz.accentSoft : "#fff",
-              }}
-            >
-              <p className="text-sm font-bold leading-tight">{spot.name}</p>
-              <p className="mt-0.5 text-xs text-black/45">{spot.window}</p>
-              {active ? (
-                <p
-                  className="mt-1.5 text-[10px] font-bold uppercase tracking-wider"
-                  style={{ color: biz.accent }}
+      {/* A spot typed in from the truck: live, but not in the list until asked. */}
+      {s.spot.oneOff ? (
+        <div
+          className="mb-3 rounded-xl border-2 p-3"
+          style={{ borderColor: biz.accent, background: biz.accentSoft }}
+        >
+          <p
+            className="text-[10px] font-bold uppercase tracking-wider"
+            style={{ color: biz.accent }}
+          >
+            ● Live on the site · today only
+          </p>
+          <p className="mt-1 text-sm font-bold leading-tight">{s.spot.name}</p>
+          <p className="mt-0.5 text-xs text-black/45">
+            {s.spot.address ? `${s.spot.address} · ` : ""}
+            {s.spot.window}
+          </p>
+          <button
+            type="button"
+            onClick={() => s.keepSpot(s.spot.id)}
+            className="mt-2.5 rounded-lg border border-black/15 bg-white px-3 py-2 text-xs font-bold transition active:scale-95"
+          >
+            Keep it in your spots
+          </button>
+        </div>
+      ) : null}
+
+      {adding ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            s.addSpot({ name, address, window: openWindow });
+            reset();
+          }}
+          className="space-y-2"
+        >
+          {/* Placeholders are invented, on real Marietta streets — the same rule
+              the SPOTS block in data.ts spells out. A placeholder is still a
+              name on a page. Do not put a business you know in here. */}
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Where are you? e.g. Winnow Lot"
+            aria-label="Where are you"
+            className="w-full rounded-xl border border-black/10 bg-[#faf9f8] px-3 py-3 text-sm focus:border-black/30 focus:outline-none"
+          />
+          <input
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="Address, optional. e.g. 415 Powder Springs St"
+            aria-label="Address, optional"
+            className="w-full rounded-xl border border-black/10 bg-[#faf9f8] px-3 py-3 text-sm focus:border-black/30 focus:outline-none"
+          />
+          <div className="flex flex-wrap gap-1.5">
+            {WINDOW_PRESETS.map((w) => {
+              const on = openWindow === w;
+              return (
+                <button
+                  key={w}
+                  type="button"
+                  onClick={() => setOpenWindow(w)}
+                  className="rounded-lg border-2 px-2.5 py-2 text-xs font-bold transition active:scale-95"
+                  style={{
+                    borderColor: on ? biz.accent : "rgba(0,0,0,0.09)",
+                    background: on ? biz.accentSoft : "#fff",
+                    color: on ? biz.accent : "rgba(0,0,0,0.55)",
+                  }}
                 >
-                  ● Live on the site
-                </p>
-              ) : null}
+                  {w}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex gap-2 pt-0.5">
+            <button
+              type="submit"
+              disabled={name.trim().length === 0}
+              className="flex-1 rounded-xl py-3.5 text-sm font-bold text-white transition active:scale-[0.99] disabled:opacity-40"
+              style={{ background: biz.accent }}
+            >
+              Put it live
             </button>
-          );
-        })}
-      </div>
+            <button
+              type="button"
+              onClick={reset}
+              className="rounded-xl px-4 py-3.5 text-sm font-semibold text-black/40 transition hover:text-black/70"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : (
+        <div className="grid gap-2 sm:grid-cols-2">
+          {saved.map((spot) => {
+            const active = s.spot.id === spot.id;
+            return (
+              <button
+                key={spot.id}
+                type="button"
+                onClick={() => s.setSpot(spot)}
+                className="rounded-xl border-2 p-3 text-left transition active:scale-[0.98]"
+                style={{
+                  borderColor: active ? biz.accent : "rgba(0,0,0,0.09)",
+                  background: active ? biz.accentSoft : "#fff",
+                }}
+              >
+                <p className="text-sm font-bold leading-tight">{spot.name}</p>
+                <p className="mt-0.5 text-xs text-black/45">{spot.window}</p>
+                {active ? (
+                  <p
+                    className="mt-1.5 text-[10px] font-bold uppercase tracking-wider"
+                    style={{ color: biz.accent }}
+                  >
+                    ● Live on the site
+                  </p>
+                ) : null}
+              </button>
+            );
+          })}
+          <button
+            type="button"
+            onClick={() => setAdding(true)}
+            className="rounded-xl border-2 border-dashed border-black/15 p-3 text-left transition active:scale-[0.98]"
+          >
+            <p className="text-sm font-bold leading-tight text-black/55">
+              + Somewhere else today
+            </p>
+            <p className="mt-0.5 text-xs text-black/40">
+              Type it, it goes live. Nothing to save.
+            </p>
+          </button>
+        </div>
+      )}
+
+      {/* Changing the spot is only half of it. Seeing the customer side already
+          changed is the half that sells, so hand them the door to it. */}
+      {s.spotAge !== null ? (
+        <button
+          type="button"
+          onClick={() => s.setView("customer")}
+          className="mt-3 w-full rounded-xl border-2 py-3 text-sm font-bold transition active:scale-[0.99]"
+          style={{ borderColor: biz.accent, color: biz.accent }}
+        >
+          See it on the website →
+        </button>
+      ) : null}
+
       <button
         type="button"
         onClick={() =>
           s.sendBlast(
-            `${biz.name}: We're at ${s.spot.name} today, ${s.spot.window}. Come hungry 🔥`,
+            `${biz.name}: We're at ${s.spot.name} today, ${s.spot.window}. Come see us.`,
           )
         }
-        className="mt-3 w-full rounded-xl py-3.5 text-sm font-bold text-white transition active:scale-[0.99]"
+        className="mt-2 w-full rounded-xl py-3.5 text-sm font-bold text-white transition active:scale-[0.99]"
         style={{ background: biz.accent }}
       >
         Text today&apos;s spot to {s.subscribers[s.business].toLocaleString()} regulars
       </button>
+
+      {/* The truck that never moves. Set it once, never open this card again. */}
+      <div className="mt-3 border-t border-black/8 pt-3">
+        <p className="text-xs leading-snug text-black/45">
+          Same lot every day? Set it once and you never open this card again.
+        </p>
+        <button
+          type="button"
+          onClick={s.sameSpotAllWeek}
+          className="mt-2 w-full rounded-xl border-2 border-black/10 py-3 text-sm font-bold text-black/70 transition active:scale-[0.99]"
+        >
+          Use this spot every day I&apos;m out
+        </button>
+      </div>
     </Card>
   );
 }
@@ -184,16 +349,18 @@ function WeekEditor() {
   const s = useStore();
   const biz = BUSINESSES[s.business];
   // null = not out that day, then each spot in turn.
-  const cycle: (string | null)[] = [null, ...SPOTS.map((sp) => sp.id)];
+  // Everything in the list, one-offs included. Leave a typed-in spot out and
+  // tapping today’s row would silently drop the truck to "Not out".
+  const cycle: (string | null)[] = [null, ...s.spots.map((sp) => sp.id)];
 
   return (
     <Card
       title="This week"
-      hint="Tap a day to cycle through your spots. Customers see this on the site."
+      hint="Tap a day to cycle through your spots. This is the list customers see."
     >
       <div className="space-y-1.5">
         {s.week.map((d, i) => {
-          const spot = SPOTS.find((sp) => sp.id === d.spotId);
+          const spot = s.spotById(d.spotId);
           const today = s.todayIndex === i;
           return (
             <button

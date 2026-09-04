@@ -1,14 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  BAKERY_HOURS,
-  BUSINESSES,
-  SPOTS,
-  isOpenAt,
-  money,
-  type Item,
-} from "./data";
+import { BAKERY_HOURS, BUSINESSES, isOpenAt, money, type Item } from "./data";
 import { Photo } from "./photo";
 import { useStore } from "./store";
 
@@ -119,7 +112,7 @@ function LocationCard() {
         borderColor: "rgba(255,255,255,0.1)",
       }}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <span className="relative flex h-2 w-2">
           <span
             className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-70"
@@ -133,9 +126,30 @@ function LocationCard() {
         <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/50">
           Today · we&apos;re parked at
         </span>
+        {/*
+          The stamp the whole location feature is for. A customer checking at
+          11:40 needs to know this line is from today and not from a website
+          nobody has touched since March — so the moment the owner sets the
+          spot, the site says when.
+
+          Deliberately absent until they do: `spotAge` is null on a cold load,
+          which is also the state public/work/truck.png is captured in, so the
+          card renders exactly as it did before.
+        */}
+        {s.spotAge !== null ? (
+          <span
+            className="ml-auto text-[10px] font-bold uppercase tracking-[0.18em]"
+            style={{ color: biz.accent }}
+          >
+            Updated {s.spotAge === 0 ? "just now" : `${s.spotAge} min ago`}
+          </span>
+        ) : null}
       </div>
       <p className="mt-2 text-xl font-bold leading-tight">{s.spot.name}</p>
-      <p className="mt-0.5 text-sm text-white/50">{s.spot.address}</p>
+      {/* Typed-in spots can arrive with no street address. Don't leave a gap. */}
+      {s.spot.address ? (
+        <p className="mt-0.5 text-sm text-white/50">{s.spot.address}</p>
+      ) : null}
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <span
           className="rounded-lg px-2.5 py-1.5 text-sm font-semibold"
@@ -199,7 +213,7 @@ function WeekSchedule() {
       </h2>
       <div className="space-y-1">
         {s.week.map((d, i) => {
-          const spot = SPOTS.find((sp) => sp.id === d.spotId);
+          const spot = s.spotById(d.spotId);
           const today = s.todayIndex === i;
           return (
             <div

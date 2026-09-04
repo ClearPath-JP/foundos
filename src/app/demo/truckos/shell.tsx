@@ -5,11 +5,22 @@ import { CustomerView } from "./customer";
 import { StaffView } from "./staff";
 import { useStore } from "./store";
 
+/**
+ * The one line most visitors read, so it spends itself on the feature being
+ * sold rather than the one that's easiest to find.
+ *
+ * The demo opens on the customer view, and ordering is self-evident there —
+ * there's a menu, there's a cart bar, people know what to do with those. The
+ * parking spot at the top reads as a static fact unless something says it
+ * isn't, and moving the truck from a phone is the whole claim, so that is what
+ * the truck's hints point at. The bakery doesn't move; its hints stay on the
+ * counter work.
+ */
 const HINTS: Record<BusinessKey, { customer: string; staff: string }> = {
   truck: {
     customer:
-      "Add a burger, send the order — then switch to Your screen and mark it ready.",
-    staff: "Tap a burger to sell it out, then switch to Customer view.",
+      "That parking spot up top is set from a phone. Open Your screen and move the truck.",
+    staff: "Tap a different spot, then Customer view — the site already moved.",
   },
   bakery: {
     customer:
