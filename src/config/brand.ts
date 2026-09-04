@@ -83,19 +83,52 @@ export const WORDMARK = {
 } as const;
 
 /**
- * Prices. §2.8 of the spec, and the only prices allowed on the site.
+ * Prices — a floor per level of build, not a menu.
+ *
+ * Every number here is a "from". They are the honest bottom of what Josh has
+ * actually quoted in the field, so a visitor can work out roughly where he
+ * lands without the page setting a ceiling the room then has to argue against:
+ *
+ *   site      $500    a page on its own, nothing connected
+ *   ordering  $1,500  Taste of Istanbul and Dogos El Sonora were both quoted here
+ *   system    $4,900  Williamson Bros, site + ordering across two locations
+ *   running   $150    the floor; a two-location build with a phone agent is $549
+ *
+ * This replaced a flat "$500 one time / from $150 a month", which was 3-10x
+ * under everything being said out loud in the room. A prospect who reads a
+ * number here and hears a bigger one at the table has caught us, and the page
+ * has anchored the negotiation against us before anyone opens their mouth.
+ *
+ * The real quote is scoped on the call, because what moves it is what gets
+ * connected and how much runs through it — one location or three, forty plates
+ * a day or four hundred. The page says that in as many words.
  *
  * Change a number here and the homepage follows. `display` is what a visitor
  * reads; `amount` is what Stripe will charge in phase 6.
  */
 export const PRICES = {
-  /** The door. */
+  /** A site on its own. The floor of the whole ladder. */
   site: {
     amount: 500,
     display: '$500',
     cadence: 'one time',
+    prefix: 'from',
   },
-  /** The business. */
+  /** A site that takes its own orders. */
+  ordering: {
+    amount: 1500,
+    display: '$1,500',
+    cadence: 'one time',
+    prefix: 'from',
+  },
+  /** Everything connected and running. */
+  system: {
+    amount: 4900,
+    display: '$4,900',
+    cadence: 'one time',
+    prefix: 'from',
+  },
+  /** The business. Moves with what is actually running. */
   running: {
     amount: 150,
     display: '$150',
@@ -103,12 +136,6 @@ export const PRICES = {
     /** Reads "from $150 a month" — the floor, not the ceiling. */
     prefix: 'from',
   },
-  /**
-   * Ordering, bookings, and the AI receptionist are deliberately unpriced on
-   * the site. Publishing that number lets an owner disqualify himself before
-   * the conversation. Quoted when we talk.
-   */
-  addons: null,
 } as const;
 
 /** Where he is. Used in the footer and the JSON-LD. */

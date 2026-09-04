@@ -635,32 +635,46 @@ const FUNNEL = [
  */
 const COSTS = [
   {
-    label: 'The site',
-    amount: `${PRICES.site.display}, ${PRICES.site.cadence}.`,
-    body: 'Built from your real menu, photos, and hours. You own it outright.',
+    label: 'A site on its own',
+    amount: `${PRICES.site.prefix} ${PRICES.site.display}`,
+    body: 'Your menu, your photos, your hours, on a page that opens properly on a phone. Nothing wired to it yet. This is the floor and some places genuinely do not need more than it.',
   },
   {
-    label: 'Running it',
-    amount: `${PRICES.running.prefix} ${PRICES.running.display} ${PRICES.running.cadence}.`,
-    body: 'Hosting, Google listing kept correct, review requests, menu changes, a monthly one-page report. Cancel any time; you keep the site.',
+    label: 'A site that takes orders',
+    amount: `${PRICES.ordering.prefix} ${PRICES.ordering.display}`,
+    body: 'Ordering and payment on your own site, at your counter prices. The order comes to you and the phone number comes with it, which is the part the apps keep.',
   },
   {
-    label: 'Online ordering, bookings, the AI receptionist',
-    amount: null,
-    /**
-     * ⚠️ This line used to end "Most pay for themselves in saved delivery-app
-     * fees the first month." There is no client population to say "most" about
-     * — and §09 volunteers, four screens up, that he has never managed a
-     * dollar of anybody else's spend. A reader who takes §09 seriously catches
-     * the whiplash immediately, and it costs him the section that earned the
-     * trust. The promise is replaced by the mechanism: the owner is handed the
-     * one number that decides it and told he can get it without us, which is
-     * the same move §06 already closes on. Do not put an outcome back here
-     * until there is a named client whose bill it actually happened to.
-     */
-    body: 'Added when you want them, priced when we talk. Find your real commission rate in your merchant portal first and work out what a month of app orders costs you. That number decides whether any of this is worth it, and you can get it without me.',
+    label: 'The whole thing running',
+    amount: `${PRICES.system.prefix} ${PRICES.system.display}`,
+    body: 'Ordering, bookings, the phone answered, your Google listing kept right, and the review asks and win-back texts going out without you touching them.',
+  },
+  {
+    label: 'Running it every month',
+    amount: `${PRICES.running.prefix} ${PRICES.running.display} ${PRICES.running.cadence}`,
+    body: 'This one moves with what is actually running. A truck with a site and a text list sits at the floor. Two locations with ordering and a phone agent sits nearer five hundred. Cancel any month and you keep the site.',
   },
 ] as const;
+
+/**
+ * The standfirst and the closing note are the point of this section, not the
+ * numbers. Josh prices on what gets connected and how much runs through it, so
+ * a flat figure was never true — and the flat figure that used to be here
+ * ($500 one time, from $150 a month) sat 3-10x under everything he says out
+ * loud in the room, which anchored the negotiation against him before he
+ * opened his mouth.
+ *
+ * Every figure is a "from". The ladder shows a visitor roughly where he lands
+ * and pre-qualifies him out if he was never going to spend it, without capping
+ * the real quote. The closing note names the three things that move it and
+ * commits to quoting on the call, which is how he actually sells: no proposal
+ * documents, no second meeting.
+ */
+const COSTS_STAND =
+  "There isn't one price, and I would rather tell you why than make one up. A site for a truck doing forty plates a day is not the same job as two locations doing four hundred. What moves the number is how much you connect to it and how much runs through it.";
+
+const COSTS_NOTE =
+  'Three things decide where you land: how many places you run, how busy you actually get, and how much of it you want me running instead of you. Tell me those on a twenty minute call and I will give you the number on the call. I do not send proposals.';
 
 /**
  * §2.9 of page.tsx. No photo, and that is the settled decision.
@@ -1182,6 +1196,7 @@ export default function EmberPage() {
           </div>
           <Rule />
           <div className={SHELL}>
+            <p className="eb-stand">{COSTS_STAND}</p>
             <dl className="eb-ledger">
               {COSTS.map((row) => (
                 <div key={row.label} className="eb-row">
@@ -1193,6 +1208,7 @@ export default function EmberPage() {
                 </div>
               ))}
             </dl>
+            <p className="eb-p eb-mt">{COSTS_NOTE}</p>
           </div>
         </section>
         <Rule />
