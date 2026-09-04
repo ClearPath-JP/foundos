@@ -26,6 +26,30 @@ import type {
 
 export const REPORT_MODEL = 'anthropic/claude-sonnet-5';
 
+/**
+ * The model pass is OFF unless someone turns it on. Set REPORT_MODEL_ENABLED=1
+ * to re-enable it.
+ *
+ * Two reasons, and the second is the important one.
+ *
+ * First: it isn't working anyway. The Vercel AI Gateway rejects this model with
+ * "Free tier users do not have access to this model" (403,
+ * no_providers_available), so every call already throws and every visitor
+ * already gets the deterministic report. Turning it off changes nothing a
+ * visitor sees — it just stops us making a request we know will fail.
+ *
+ * Second: leaving it on is a trap. It costs nothing *because* the account has no
+ * credits. The day credits are added for any unrelated reason, this silently
+ * starts billing per report, with no deploy and nothing to notice it. Josh has
+ * no capital; a cost that switches itself on is exactly the wrong shape of risk.
+ *
+ * The deterministic report is not a fallback in the apologetic sense — it is
+ * specific, sourced from measured facts, and it is what the site has been
+ * shipping. The model only ever re-phrased it. When there's revenue to pay for
+ * polish, set the flag.
+ */
+const MODEL_ENABLED = process.env.REPORT_MODEL_ENABLED === '1';
+
 type ModelShape = {
   findings: Array<{
     code: string;
@@ -89,7 +113,7 @@ const outputSchema = jsonSchema<ModelShape>({
   },
 });
 
-const SYSTEM = `You write the "instant business report" on foundos.ai for Josh, who builds and runs websites, online ordering, booking, and AI phone answering for local businesses in Atlanta.
+const SYSTEM = `You write the "instant business report" on foundos.ai for Josh, who builds and runs websites, online ordering, booking, and AI phone answering for restaurants and food businesses in Atlanta.
 
 The person reading this owns the business you are describing. They know their own review count, their own hours, and their own menu better than you ever will. One invented detail destroys their trust in Josh permanently.
 
@@ -224,6 +248,14 @@ export async function* generateReport(
   const fallback = deterministicReport(facts, findings);
 
   if (findings.length === 0) {
+    yield fallback;
+    return;
+  }
+
+  // The billable pass is opt-in. Off by default — see MODEL_ENABLED above.
+  // Returning here means no request is made at all, so there is nothing to be
+  // charged for and nothing to fail. The visitor still gets a full report.
+  if (!MODEL_ENABLED) {
     yield fallback;
     return;
   }

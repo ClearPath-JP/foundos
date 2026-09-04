@@ -69,6 +69,49 @@ function rateLimited(key: string): boolean {
   return false;
 }
 
+/**
+ * A hard ceiling on billable Google Places calls per day.
+ *
+ * `rateLimited()` above is PER IP — five an hour each. That stops one person
+ * hammering the box; it does nothing about a hundred people, or a crawler on a
+ * hundred addresses. Every report that reaches Google costs two billable calls
+ * (Text Search + Place Details), so without a global stop the bill is a
+ * function of traffic, and traffic is the thing we're trying to attract.
+ *
+ * Josh has no capital. A spend cap that can be exceeded isn't a cap, so this is
+ * a wall, not a warning: past the ceiling the box stops calling Google entirely
+ * and visitors fall through to the 3-tap panel, which costs nothing and still
+ * produces a report. Degraded beats a bill.
+ *
+ * This is the LAST line of defence, not the first. The real cap belongs in the
+ * Google Cloud console as an API quota, because this counter is per-instance
+ * and resets when the instance recycles — several warm instances could each
+ * count separately. Set both.
+ *
+ * MAX_PLACES_LOOKUPS_PER_DAY can be raised with an env var once something is
+ * actually earning; the default is deliberately conservative.
+ */
+const MAX_PLACES_LOOKUPS_PER_DAY = Number(process.env.MAX_PLACES_LOOKUPS_PER_DAY ?? 150);
+const DAY_MS = 24 * 60 * 60 * 1000;
+const placesBudget = { windowStart: 0, used: 0 };
+
+function placesBudgetExhausted(): boolean {
+  const now = Date.now();
+  if (now - placesBudget.windowStart > DAY_MS) {
+    placesBudget.windowStart = now;
+    placesBudget.used = 0;
+  }
+  if (placesBudget.used >= MAX_PLACES_LOOKUPS_PER_DAY) {
+    console.warn(
+      `[report] daily Places ceiling hit (${MAX_PLACES_LOOKUPS_PER_DAY}) — ` +
+        'falling back to the no-cost 3-tap panel until the window resets.'
+    );
+    return true;
+  }
+  placesBudget.used += 1;
+  return false;
+}
+
 function emptySiteFacts(): SiteFacts {
   return {
     checked: false,
@@ -173,6 +216,16 @@ export async function POST(request: Request) {
             type: 'notice',
             message: "You've run a few of these already — text me and I'll just tell you.",
           });
+          controller.close();
+          return;
+        }
+
+        // The daily ceiling on billable Google calls. Checked here, after the
+        // per-IP limit and before anything reaches Places. The visitor is not
+        // told a budget ran out — they drop to the 3-tap panel, which asks
+        // three questions and produces a real report for free.
+        if (placesBudgetExhausted()) {
+          send({ type: 'notice', message: 'needs_tap_fallback' });
           controller.close();
           return;
         }
