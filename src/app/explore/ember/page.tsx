@@ -976,7 +976,7 @@ export default function EmberPage() {
                 wood is 4.24:1. The two rules that frame the band do the
                 announcing instead. */}
             {APPS_MATH.map((p) => (
-              <p key={p} className="eb-math-p eb-mono">
+              <p key={p} className="eb-math-p">
                 {p}
               </p>
             ))}
@@ -1029,10 +1029,18 @@ export default function EmberPage() {
           <div className={`${SHELL} eb-sec--after-rule`}>
             <ul className="eb-builds" role="list">
               {BUILDS.map((item) => (
-                <li key={item.lead} className="eb-build">
+                <li
+                  key={item.lead}
+                  className={`eb-build${item.rest ? '' : ' eb-build--solo'}`}
+                >
                   <span className="eb-build-lead">{item.lead}</span>
-                  {/* The four-word row has no second half. Rendering an empty
-                      span there would put the row's grammar back. */}
+                  {/* The four-word row has no second half — that asymmetry is the
+                      point, it stops six rows sharing one grammar. But on the
+                      desktop two-column grid an absent second child leaves an
+                      empty cell, and a fresh-eyes review read that as an
+                      unfinished field rather than a short row. --solo makes the
+                      lead span both columns, so the row is deliberately short
+                      instead of apparently broken. */}
                   {item.rest && <span className="eb-build-rest">{item.rest}</span>}
                 </li>
               ))}
@@ -1642,6 +1650,13 @@ const CSS = `
    large-scale floor (18.66px bold) at both ends — which is the only reason ink
    is legal on wood at all (4.24:1). Do not drop the weight, and do not shrink
    --t-lede without re-checking this one block. */
+/* Deliberately NOT monospace, though a ledger panel full of arithmetic is
+   exactly where a designer reaches for it. Mono reads as "data" to someone who
+   works in software and as a typewriter to everyone else, and a fresh-eyes
+   review called this the single hardest block on the page to read — in the one
+   block whose whole job is a 55-year-old following six numbers on a phone.
+   Mono stays on the labels and the ledger amounts, where it is a texture rather
+   than something anybody has to read a sentence in. */
 .eb-math-p{font-size:var(--t-lede);line-height:1.5;font-weight:700;color:var(--ink);max-width:56ch;}
 .eb-math-p+.eb-math-p{margin-top:20px;}
 @media (min-width:640px){
@@ -1654,6 +1669,7 @@ const CSS = `
 .eb-build-lead{display:block;font-size:var(--t-body);font-weight:700;line-height:1.35;color:var(--strong);}
 .eb-build-rest{display:block;margin-top:5px;font-size:var(--t-body);line-height:1.55;color:var(--fg);}
 @media (min-width:640px){
+  .eb-build--solo{display:block;}
   .eb-build{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:28px;
     align-items:baseline;padding:22px 0;max-width:none;}
   .eb-build-rest{margin-top:0;max-width:52ch;}
