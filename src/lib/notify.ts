@@ -31,8 +31,21 @@ export type LeadAlert = {
   categoryLabel?: string | null;
   rating?: number | null;
   reviewCount?: number | null;
-  /** From the Google listing — this is the number to actually call. */
+  /**
+   * The BUSINESS's number, off the Google listing. Nobody typed it in.
+   *
+   * ⚠️ Not the same thing as `capturedPhone` below, and the two must never be
+   * conflated in the message. One is a number we looked up; the other is a
+   * number a human chose to hand over. Mixing them up means Josh rings the
+   * hostess stand instead of the owner who just raised his hand.
+   */
   phone?: string | null;
+  /**
+   * The VISITOR's number, typed into the capture form under the report.
+   * Only ever set on the /api/lead path. Its presence is the entire signal:
+   * this is a person, not another page view.
+   */
+  capturedPhone?: string | null;
   website?: string | null;
   /** Finding headlines, already ranked most-expensive-first. */
   findings?: string[];
@@ -42,12 +55,32 @@ export type LeadAlert = {
   dedupeKey?: string | null;
   /** True on the 3-tap path, where nothing was looked up. */
   fallback?: boolean;
+  /**
+   * Things that degraded on the server while handling this one alert — the
+   * Supabase insert was skipped, the n8n webhook is dead. Rendered at the
+   * bottom of the message.
+   *
+   * The build order's rule is "a workflow that can fail silently is not done."
+   * A lead that never reached the database has to be visible to Josh in the
+   * one place he actually reads, which is this message — otherwise the only
+   * record of the failure is a log line nobody opens.
+   */
+  warnings?: string[];
 };
 
 function compose(lead: LeadAlert): string {
   const lines: string[] = [];
 
   lines.push(`🔔 <b>${esc(lead.name)}</b>`);
+
+  // The highest-value line in the whole message, so it sits directly under the
+  // name: a report run is a stranger, a captured number is a lead. Labelled so
+  // it can't be read as the listing's phone number two lines further down.
+  // esc() is not optional — parse_mode is HTML and one stray '<' in a pasted
+  // number fails the entire send with a 400.
+  if (lead.capturedPhone) {
+    lines.push(`📲 <b>Left their number:</b> ${esc(lead.capturedPhone)}`);
+  }
 
   const where = [lead.categoryLabel, lead.address].filter(Boolean).join(' · ');
   if (where) lines.push(esc(where));
@@ -74,6 +107,15 @@ function compose(lead: LeadAlert): string {
   if (lead.fallback) {
     lines.push('');
     lines.push('<i>Typed by hand — nothing was looked up. Verify before quoting.</i>');
+  }
+
+  // Last, because it's operations rather than the lead. Present at all only
+  // when something didn't work; an alert with no warnings block means the row
+  // landed and the workflow fired.
+  if (lead.warnings?.length) {
+    lines.push('');
+    lines.push('<b>Heads up</b>');
+    for (const w of lead.warnings.slice(0, 4)) lines.push(`⚠️ ${esc(w)}`);
   }
 
   return lines.join('\n');
