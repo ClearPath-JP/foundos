@@ -1,7 +1,11 @@
+import type { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Archivo, Chivo, Chivo_Mono } from 'next/font/google';
 
+import MarkReveal from '@/components/MarkReveal';
+import { PresenceDot, PresenceNote } from '@/components/Presence';
+import type { PresenceCopy } from '@/components/Presence';
 import InstantReport from '@/components/report/InstantReport';
 import {
   CAL,
@@ -68,9 +72,14 @@ import { DEMOS } from '@/lib/contact';
  *     the next editor believes the comment and adds a fifth on top of
  *     thirteen. The six live as tokens at the top of the stylesheet
  *     (--t-label --t-fine --t-body --t-lede --t-lead --t-num), all stepping
- *     together at 640px, plus the three display clamps (h1, h2, the demo
- *     number). Nothing in the stylesheet sets a raw px font-size. Change a
- *     token; do not add a seventh.
+ *     together at 640px, plus FOUR display clamps: h1, the hero subhead, h2,
+ *     and the demo number. The subhead's clamp is the newest and it was added
+ *     against this rule on purpose, not in spite of it — the hero hierarchy was
+ *     inverted, with the generic line at 128px and the line that sells at 24px
+ *     underneath, and no token in the scale reaches the size the fix needed.
+ *     Four is still checkable. Five would want the same argument made again.
+ *     Nothing in the stylesheet sets a raw px font-size. Change a token; do not
+ *     add a seventh step.
  *
  *     One thing is outside the scale and stays outside it: the wordmark, 22px
  *     in the header and 16px in the footer, set as an inline style because the
@@ -89,18 +98,23 @@ import { DEMOS } from '@/lib/contact';
  *     Everything else is the spine.
  *
  *  7. GROUND SWAPS AS NAVIGATION. Measured with the document laid out, not
- *     guessed: 15,271px tall at 1440 and 18,401px at 390. An earlier version
- *     of this comment said "~7,000px", which was out by half a page and made
- *     four field changes sound like plenty. They are not: the fields have to
- *     do the chapter work over that distance. There are five of them now, and
- *     the gaps between them matter more than the count. The bone
- *     field at section 08 is there because without it the ink runs unbroken
- *     from the end of the wood band at 5,751px to the rich shift at 14,237px:
- *     8,486px, more than half the page, on one colour. With it the longest
- *     single-ground run is 5,132px. `.eb-g-rich` under "One person." is
- *     a sixth, near-black shift, but be honest about what it is worth: #231f20
- *     on #1a1a1a is 1.06:1 and invisible on a phone in daylight. It is warmth,
- *     not navigation, and it is not load-bearing.
+ *     guessed. Re-measured 2026-09-04 after the vertical rhythm was cut by
+ *     about a third: 13,702px at 1440 (was 15,271) and 18,386px at 390 (was
+ *     18,401). An earlier version of this comment said "~7,000px", which was
+ *     out by half a page and made four field changes sound like plenty. They
+ *     are not: the fields have to do the chapter work over that distance.
+ *     There are five of them, and the gaps between them matter more than the
+ *     count. The bone field at section 08 is there because without it the ink
+ *     runs unbroken from the end of the wood band to the rich shift for more
+ *     than half the page on one colour. With it the longest single-ground run
+ *     is 4,673px at 1440 and 6,945px at 390 — the phone is still the harder
+ *     case, and it is worth knowing that the phone page is nearly all copy: at
+ *     390 the document height is set by the word count, not by the padding, so
+ *     there is no more air in it to take out.
+ *     `.eb-g-rich` under "One person." is a sixth, near-black shift, but be
+ *     honest about what it is worth: #231f20 on #1a1a1a is 1.06:1 and
+ *     invisible on a phone in daylight. It is warmth, not navigation, and it
+ *     is not load-bearing.
  *
  * ── THE MECHANISM: GROUNDS ARE VARIABLE SETS ──────────────────────────────
  *
@@ -161,17 +175,30 @@ import { DEMOS } from '@/lib/contact';
  * TEXT. That is a hard constraint, not a preference, and it decided the
  * layout: the ember fields carry only display type and button slabs, and the
  * long delivery-apps argument stays on the dark spine where prose is 11:1.
- * The one thing that sits on wood is the worked arithmetic, set at 21px/700
- * mono — which is WCAG large-scale text, where the bar is 3:1 and 4.24
- * clears it. If someone later drops a 17px paragraph onto ember or wood, it
- * is a real accessibility regression, not a style note.
+ * The one thing that sits on wood is the worked arithmetic — the four-row
+ * ledger at 19-21px/700 and 26-32px/700, and the paragraphs under it at
+ * 19-21px/700 — all of which is WCAG large-scale text, where the bar is 3:1
+ * and 4.24 clears it. If someone later drops a 17px paragraph onto ember or
+ * wood, it is a real accessibility regression, not a style note. The hero
+ * subhead is the same constraint: ink on ember, floored at 22px and bold.
  *
  * ── COPY ──────────────────────────────────────────────────────────────────
  *
  * Every word comes from src/app/page.tsx or docs/site-content-2026-09-03.md,
- * with one exception recorded below. Where a paragraph is split (the "Check
+ * with two exceptions recorded below. Where a paragraph is split (the "Check
  * it:" line, the "$18 plate" arithmetic), the split is formatting: the
  * characters either side are untouched.
+ *
+ * THE SECOND EXCEPTION — the grammar pass on §BUILDS, 2026-09-04. Four of the
+ * six "systems I provide" rows were re-set as complete sentences and the fifth
+ * was given a description it did not have. This was a layout bug reported as a
+ * copy problem: the rows render as two columns on desktop, and a lower-case
+ * fragment sitting alone in the right column reads as text that broke rather
+ * than as a continuation of the bold label opposite it. The full reasoning is
+ * on the constant. Nothing was invented — row five is assembled from HOW step
+ * 04 and CHECKS 02, both of which are Josh's. The four ledger labels above the
+ * wood band (APPS_FIGURES) are the only other new strings on the page, and
+ * they are labels on numbers he already wrote, not claims.
  *
  * THE EXCEPTION — the honesty pass. Six strings were rewritten because they
  * described a business that does not exist yet: a client population ("Most pay
@@ -249,8 +276,20 @@ const mono = Chivo_Mono({
   variable: '--font-eb-mono',
 });
 
-/** The one column. Rules are allowed outside it; nothing else is. */
-const SHELL = 'mx-auto w-full max-w-[1200px] px-5 sm:px-10';
+/**
+ * The one column. Rules are allowed outside it; nothing else is.
+ *
+ * ⚠️ 1080, not 1200, and the 120px came off for a measured reason. At 1440 a
+ * 1200 shell gave a 1140px content box holding a 720px measure, so 37% of every
+ * band was empty and the eyebrow hairline ran 420px past the last word it had
+ * anything to do with — a rule pointing at nothing, in an audit's words, and
+ * worse at 1920. 1080 puts the measure at 72% of the column instead of 63%.
+ * The other half of that fix is in .eb-lh, which now stops at the text column
+ * rather than at the screen edge. The full-bleed section dividers stay full
+ * bleed: those separate bands, and a divider that stops mid-page reads as a
+ * broken rule rather than a considered one.
+ */
+const SHELL = 'mx-auto w-full max-w-[1080px] px-5 sm:px-10';
 
 /* ── copy ─────────────────────────────────────────────────────────────────
    All of it lifted verbatim. Held in constants rather than inline JSX so an
@@ -449,20 +488,63 @@ const CLOSE = "Tell me what you run and I'll tell you straight whether I can hel
 const NAV = { text: 'Text me', book: 'Book 20 minutes' };
 
 /**
+ * The presence line beside the header CTA — the only copy on this page that is
+ * not a fixed string, and the only new copy this change introduces.
+ *
+ * ⚠️ IT EXISTS BECAUSE A BLINKING DOT ON ITS OWN IS DECORATION. The green
+ * circle after the wordmark has been on foundos.ai and on the printed cards
+ * since brand.ts was written, where its stated meaning is "running" — the
+ * visual version of "I run it every week". A dot that pulses and says nothing
+ * is just a pulsing dot; the same dot with four words beside it is a reader
+ * finding out that the person who wrote all this is awake right now. That is
+ * the difference between a decoration and a reason to text, and it is why the
+ * line may not be dropped to "save space in the header". If it ever has to go
+ * somewhere else, it goes WITH the dot, not instead of it.
+ *
+ * Both `sr` sentences are what a screen reader actually hears, so they say the
+ * window in words rather than leaving a colour to carry it. "You text me, I
+ * answer" is lifted from ABOUT — the same promise, not a new one.
+ *
+ * The 9-to-9 window and the America/New_York clock live in
+ * components/Presence.tsx. Nothing here claims he is at a desk; it claims what
+ * time it is where he is, which is the only part a page can know.
+ */
+const PRESENCE: PresenceCopy = {
+  around: {
+    note: 'Around now',
+    sr: 'It is between 9am and 9pm in Atlanta right now. You text me, I answer.',
+  },
+  away: {
+    note: 'Back in the morning',
+    sr: 'It is outside 9am to 9pm in Atlanta right now. Text me anyway — I answer in the morning.',
+  },
+};
+
+/**
  * §2.5 of page.tsx. Bold lead-in, plain sentence, no icons.
  *
- * ⚠️ THE ROWS ARE DELIBERATELY UNEVEN. This block sits dead centre of the page
- * and it was the most template-shaped thing on it: six rows of one grammar and
- * near-identical length, three of them turning on the same "so you…" hinge,
- * with "actually" and "finally" doing marketing-filler work and "the obvious
- * choice" arriving out of a stock-phrase drawer. All of that is gone.
+ * ⚠️ ONE GRAMMAR, SIX LENGTHS. This is the second attempt at the anti-template
+ * problem and the first one broke the block. The original six rows shared one
+ * grammar and one length; the fix for that was to vary the GRAMMAR — three rows
+ * finished the bold lead as a lower-case fragment, one row carried no second
+ * half at all. On a phone that reads as prose and it worked. On the desktop
+ * two-column grid it does not: the lead and the rest are two visually separate
+ * columns with 28px between them, so "Bookings customers make themselves" sat
+ * in one column and "at midnight, straight into your calendar." in the other,
+ * and a fragment starting lower-case in its own column reads as broken text
+ * rather than as a continuation. The empty row was worse — a blank right column
+ * next to a four-word label reads as a field that failed to render.
  *
- * What replaced it is asymmetry: one row is four words and carries no second
- * half at all, one runs past thirty, and the rest sit between. Two rows finish
- * the lead as a lower-case continuation; two answer it with a whole sentence.
- * A future edit that evens these back out, or gives every row a `rest`, puts
- * the tell straight back. `rest: null` on row five is the point, not an
- * oversight — see the render, which omits the span entirely.
+ * So: every row is now a noun phrase in the left column and one or two COMPLETE
+ * sentences in the right, and the anti-template job is carried entirely by
+ * length — 9 words on row two, 30 on row one, and the rest spread between. A
+ * future edit that evens the lengths out puts the tell back. A future edit that
+ * returns to mixed grammar puts the bug back.
+ *
+ * Row five used to be the empty one. Its description is assembled from what
+ * Josh already says elsewhere on this page — HOW step 04 names the four things
+ * he fixes on the listing, and CHECKS 02 is where "somebody searching at 9pm"
+ * comes from — so it is his sentence, not a new claim.
  */
 const BUILDS = [
   {
@@ -470,21 +552,21 @@ const BUILDS = [
     rest: 'Ordering and payment on your own site, at your own prices, so the money lands in your account instead of a cut of every ticket going to the app.',
   },
   {
+    /** The short row. It carries the rhythm the empty row used to. */
     lead: 'Bookings customers make themselves',
-    rest: 'at midnight, straight into your calendar.',
+    rest: 'They book at midnight and it lands straight in your calendar.',
   },
   {
     lead: 'An AI that answers every call',
-    rest: 'takes the order, books the table or the catering date. A ringing phone stops being a lost customer.',
+    rest: 'It takes the order and books the table or the catering date. A ringing phone stops being a lost customer.',
   },
   {
     lead: 'Reviews asked for automatically',
-    rest: 'and the regulars who drifted away quietly brought back.',
+    rest: 'The ask goes out on its own, and the regulars who drifted away get a text that brings them back.',
   },
   {
-    /** The four-word row. It needs no second half and must not be given one. */
     lead: 'Your Google listing, fixed',
-    rest: null,
+    rest: 'Hours, photos, categories and the link back to your site, all correct, so you come up for somebody two miles away searching at nine at night.',
   },
   {
     lead: 'Every order, call, and dollar on one screen',
@@ -545,9 +627,34 @@ const APPS_BEFORE = [
 ] as const;
 
 /**
- * The worked arithmetic. Set in mono on the wood field — the one place a
- * saturated field carries running text, at 21px/700 so it is WCAG
- * large-scale. It is the most teachable thing on the page; keep all three.
+ * The four numbers the wood band turns on, pulled out of the prose and set as a
+ * ledger above it.
+ *
+ * ⚠️ THE PARAGRAPHS BELOW ARE UNCHANGED AND THIS DOES NOT REPLACE THEM. An
+ * audit called the arithmetic the best content on the page and said it was
+ * buried in three paragraphs of prose — on a phone, four dollar figures and two
+ * percentages arrive inside 120 words of running text and a 55-year-old has to
+ * hold all six in his head to see the point. The table gives him the comparison
+ * in one glance; the paragraphs still carry the argument, which is the half a
+ * table cannot do. Every number here also appears verbatim below.
+ *
+ * The labels are the only new words in this block and they are deliberately
+ * flat — no claim, no adjective, nothing that is not already true two sentences
+ * later. Do not add a fifth row; the fifth number in this argument is the
+ * commission rate itself, and §APPS_AFTER's whole point is that the owner has
+ * to go and look his own rate up rather than take one from this page.
+ */
+const APPS_FIGURES = [
+  { k: 'Your counter price', v: '$18' },
+  { k: 'Listed on the app', v: '$24' },
+  { k: 'You keep on the 30% plan', v: '$16.80' },
+  { k: 'You keep on the 15% plan', v: '$20.40' },
+] as const;
+
+/**
+ * The worked arithmetic. Set on the wood field — the one place a saturated
+ * field carries running text, at 21px/700 so it is WCAG large-scale. It is the
+ * most teachable thing on the page; keep all three.
  */
 const APPS_MATH = [
   'Say a plate is $18 at your counter and you list it at $24 on the app to cover the cut. On the 30% plan you keep $16.80 of that $24. The customer paid six dollars more than your regular price, and you finished a dollar twenty under it.',
@@ -740,7 +847,93 @@ const SCHEMA = {
   sameAs: ['https://instagram.com/josh.potesta'],
 };
 
+/* ── the highlighted phrases ──────────────────────────────────────────────
+ *
+ * NINE SPANS, EIGHT CLAIMS, AND THE COUNT IS THE DESIGN. A page that
+ * highlights everything has highlighted nothing, so the budget is roughly one
+ * per screenful over a twenty-screen document and it is spent on the eight
+ * sentences that are the actual argument. Every string below is a verbatim
+ * slice of the copy constants above — nothing here is a second copy of a
+ * sentence, and nothing here can be edited into one, because <Marked /> finds
+ * the phrase inside the real string at render and simply does not mark it if
+ * the copy has moved on. A drifted phrase costs a highlight; it never costs a
+ * word of Josh's writing and it can never crash the page.
+ *
+ * ⚠️ FOUR RULES. They are the difference between classy and gimmicky and the
+ * next person to add one has to hold all four:
+ *
+ *   • NEVER INSIDE THE H1. It is 96px on a desktop. It does not need help, and
+ *     a highlighter behind display type reads as a mistake.
+ *   • ONLY ON CLAIMS. Not on a label, not on a heading, not on an instruction.
+ *     Every phrase below is something a reader could disagree with.
+ *   • ABOUT ONE PER SCREENFUL. The one place two share a section is §07, where
+ *     `moneyLands` opens the ledger and `ownAll` closes it — six rows apart on
+ *     a phone, and on a tall desktop the 90ms stagger in MarkReveal keeps them
+ *     from reading as a single flash.
+ *   • NOT ON EMBER. See --mark in the stylesheet: an ember wash on the ember
+ *     field is invisible. The grounds each carry their own tint and the two
+ *     ember bands carry no marked phrases at all.
+ *
+ * `figures` is one claim in two spans on purpose: $31.99 and $18 are the same
+ * comparison and marking only half of it would be marking half a sentence.
+ */
+const MARKS = {
+  /** §05, check 04. */
+  chicken: "a cut of every ticket leaves the building before you've paid for the chicken",
+  /** §06, the Atlanta oxtail comparison. One claim, both halves of it. */
+  figures: ['$31.99 on DoorDash', 'around $18 at the counter'],
+  /** The wood band. The whole point of the arithmetic, in six words. */
+  dollarTwenty: 'you finished a dollar twenty under it',
+  /** §06, after the band. The line the section is built to earn. */
+  renting: 'You are renting them back by the plate.',
+  /** §07, the first build row. */
+  moneyLands: 'the money lands in your account',
+  /** §07, the tail. */
+  ownAll: 'You own all of it',
+  /** §04, the risk reversal inside the cream pad. */
+  oweNothing: 'you owe nothing and you never hear from me again',
+  /** The seven-day promise. */
+  sevenDays: 'Seven days from your payment to the site being live.',
+} as const;
+
+/** Nothing to mark. A named constant so the identity is stable across renders. */
+const NO_MARKS: readonly string[] = [];
+
 /* ── pieces ───────────────────────────────────────────────────────────── */
+
+/**
+ * Wraps one or more verbatim phrases inside a string in `.eb-mark` spans.
+ *
+ * It walks the phrases in order and consumes the string as it goes, so a
+ * phrase list can safely be handed to every paragraph in a block — the two
+ * dollar figures live in one of the three paragraphs of APPS_BEFORE and the
+ * other two come out untouched. A phrase that is not found is skipped, which
+ * is the whole safety story: if a copy edit changes a sentence, the sentence
+ * renders exactly as written and only loses its highlight.
+ *
+ * Keys are on the spans because they sit in an array; the plain string
+ * segments between them do not need them.
+ */
+function Marked({ text, phrases }: { text: string; phrases: readonly string[] }) {
+  const out: ReactNode[] = [];
+  let rest = text;
+
+  phrases.forEach((phrase, i) => {
+    const at = rest.indexOf(phrase);
+    if (at === -1) return;
+    out.push(rest.slice(0, at));
+    out.push(
+      <span key={i} className="eb-mark">
+        {phrase}
+      </span>,
+    );
+    rest = rest.slice(at + phrase.length);
+  });
+
+  if (out.length === 0) return <>{text}</>;
+  out.push(rest);
+  return <>{out}</>;
+}
 
 /**
  * A 1px line, edge to edge.
@@ -781,14 +974,25 @@ function LedgerHead({ label, heading = false }: { label: string; heading?: boole
   );
 }
 
-/** `foundos` and the dot. The dot is decorative, so the link reads as one word. */
+/**
+ * `foundos` and the dot. The dot is decorative, so the link reads as one word.
+ *
+ * ⚠️ THE CLASS IS `.eb-wm`, NOT `.eb-mark`, AND THE RENAME WAS NOT COSMETIC.
+ * `.eb-mark` is now the highlighter behind eight sentences of body copy — see
+ * MARKS above and `--mark` in the stylesheet — and the wordmark held that name
+ * first. Two things called "mark" in one 2,000-line file is how a logo ends up
+ * inline-flex in the middle of a paragraph. If a later edit needs a third
+ * "mark", it needs a third word.
+ *
+ * The dot is a client leaf now (components/Presence.tsx) because it is wired
+ * to a clock. Its size and gap are still computed here, from brand.ts, because
+ * they are the logo's proportions and not the component's business.
+ */
 function Wordmark({ px }: { px: number }) {
   return (
-    <span className="eb-mark" style={{ fontSize: `${px}px` }}>
+    <span className="eb-wm" style={{ fontSize: `${px}px` }}>
       {WORDMARK.text}
-      <span
-        aria-hidden="true"
-        className="eb-dot"
+      <PresenceDot
         style={{
           width: `${WORDMARK.dotSize / px}em`,
           height: `${WORDMARK.dotSize / px}em`,
@@ -803,6 +1007,13 @@ export default function EmberPage() {
   return (
     <div className={`eb ${display.variable} ${body.variable} ${mono.variable}`} id="top">
       <style>{CSS}</style>
+
+      {/* Renders nothing. It watches the eight highlighted phrases and decides
+          when each one sweeps in — see components/MarkReveal.tsx. It sits here
+          rather than beside the marks because there is one observer for all of
+          them, and here is the one place on the page that is neither a section
+          nor a piece of copy. */}
+      <MarkReveal />
 
       {/* Escaping `<` is the documented guard against injection through a
           stringified payload. Nothing here is user input today; the escape
@@ -823,6 +1034,11 @@ export default function EmberPage() {
             <Wordmark px={22} />
           </a>
           <nav className="eb-nav">
+            {/* The presence line sits immediately before the CTA it is arguing
+                for, in the label voice, so the row reads left to right as
+                "foundos ● — around now — text me". The dot at the far left and
+                the words at the right are the same 64px bar and one glance. */}
+            <PresenceNote copy={PRESENCE} />
             <a href={`sms:${PHONE}`} className="eb-nav-a eb-lab">
               {NAV.text}
             </a>
@@ -854,9 +1070,25 @@ export default function EmberPage() {
               <br />
               {HERO.subB}
             </p>
+            {/* The number is wrapped so the button's +.06em label tracking does
+                not apply to the parentheses: tracked, "(404)" renders as
+                "( 404 )" because the space is added after the opening bracket
+                and before the closing one. .eb-num turns tracking off for the
+                digits and nothing else. Same span in the closing CTA.
+
+                ⚠️ THE NON-BREAKING SPACE IS LOAD-BEARING AND A PLAIN SPACE DOES
+                NOT WORK HERE. .eb-btn is display:inline-flex, so each run of
+                text becomes an anonymous flex item and CSS strips the leading
+                and trailing whitespace of every one of them. With an ordinary
+                space the run "Text me — " was trimmed to "Text me —" and the
+                button rendered "TEXT ME —(404) 436-3393", measured at 107.9px
+                of lead where 118.8px is one space wider. A no-break space is
+                not white space as far as that trimming is concerned, so it
+                survives — and it also stops a phone number ever being split
+                from the dash that introduces it. */}
             <div className="eb-btns">
               <a className="eb-btn eb-btn--a" href={`sms:${PHONE}`}>
-                {NAV.text} — {PHONE_PRETTY}
+                {NAV.text} —&nbsp;<span className="eb-num">{PHONE_PRETTY}</span>
               </a>
               <a className="eb-btn eb-btn--b" href="#report">
                 {HERO.cta}
@@ -910,8 +1142,12 @@ export default function EmberPage() {
                   <InstantReport />
                 </div>
                 <div className="eb-rule eb-rule--inset" aria-hidden="true" />
-                {/* The promise belongs beside the ask, not four screens below it. */}
-                <p className="eb-pad-p eb-pad-p--risk">{AUDIT.risk}</p>
+                {/* The promise belongs beside the ask, not four screens below it.
+                    Its highlight is the one that sits on cream, where the wash
+                    is ember rather than bone — see --mark on .eb-pad. */}
+                <p className="eb-pad-p eb-pad-p--risk">
+                  <Marked text={AUDIT.risk} phrases={[MARKS.oweNothing]} />
+                </p>
               </div>
             </div>
           </div>
@@ -947,7 +1183,14 @@ export default function EmberPage() {
                   </span>
                   <div className="eb-check-body">
                     <h3 className="eb-h3">{c.title}</h3>
-                    <p className="eb-p">{c.body}</p>
+                    {/* One of the five, and it is the one this whole page is
+                        about. The other four render untouched. */}
+                    <p className="eb-p">
+                      <Marked
+                        text={c.body}
+                        phrases={c.n === '04' ? [MARKS.chicken] : NO_MARKS}
+                      />
+                    </p>
                     <p className="eb-do eb-mono">{c.check}</p>
                   </div>
                 </li>
@@ -974,9 +1217,13 @@ export default function EmberPage() {
             {APPS_BEFORE.map((block) => (
               <div key={block.lead} className="eb-block">
                 <h3 className="eb-h3">{block.lead}</h3>
+                {/* The pair of figures lives in one of these four paragraphs.
+                    Handing the list to all of them is safe — a phrase that is
+                    not in the string is skipped — and it keeps the render site
+                    from having to know which paragraph the oxtail is in. */}
                 {block.paras.map((p) => (
                   <p key={p} className="eb-p">
-                    {p}
+                    <Marked text={p} phrases={MARKS.figures} />
                   </p>
                 ))}
               </div>
@@ -990,10 +1237,27 @@ export default function EmberPage() {
           <div className={`${SHELL} eb-math`}>
             {/* No label, for the same contrast reason as the hero: 11px ink on
                 wood is 4.24:1. The two rules that frame the band do the
-                announcing instead. */}
+                announcing instead.
+
+                The ledger goes FIRST and the argument follows it. Both halves
+                are load bearing — see the note on APPS_FIGURES — and both are
+                set large and bold because ink on wood is 4.24:1 and only legal
+                above the WCAG large-scale floor. Nothing in this band may drop
+                below 19px/700. */}
+            <dl className="eb-figs">
+              {APPS_FIGURES.map((f) => (
+                <div key={f.k} className="eb-fig">
+                  <dt className="eb-fig-k">{f.k}</dt>
+                  <dd className="eb-fig-v eb-num">{f.v}</dd>
+                </div>
+              ))}
+            </dl>
+            {/* The one highlight on a saturated field. The wash is bone here,
+                not ember — see --mark on .eb-g-wood — and it raises the marked
+                line's contrast rather than spending it. */}
             {APPS_MATH.map((p) => (
               <p key={p} className="eb-math-p">
-                {p}
+                <Marked text={p} phrases={[MARKS.dollarTwenty]} />
               </p>
             ))}
           </div>
@@ -1007,7 +1271,7 @@ export default function EmberPage() {
                 <h3 className="eb-h3">{block.lead}</h3>
                 {block.paras.map((p) => (
                   <p key={p} className="eb-p">
-                    {p}
+                    <Marked text={p} phrases={[MARKS.renting]} />
                   </p>
                 ))}
               </div>
@@ -1044,25 +1308,28 @@ export default function EmberPage() {
           <Rule />
           <div className={`${SHELL} eb-sec--after-rule`}>
             <ul className="eb-builds" role="list">
+              {/* Every row has both halves now, and --solo is gone with the
+                  empty one — see the note on BUILDS. If a future row ever needs
+                  to be short, make its sentence short; do not leave the cell
+                  empty, because an empty right column here reads as a field
+                  that failed to render rather than as an intentional silence. */}
               {BUILDS.map((item) => (
-                <li
-                  key={item.lead}
-                  className={`eb-build${item.rest ? '' : ' eb-build--solo'}`}
-                >
+                <li key={item.lead} className="eb-build">
                   <span className="eb-build-lead">{item.lead}</span>
-                  {/* The four-word row has no second half — that asymmetry is the
-                      point, it stops six rows sharing one grammar. But on the
-                      desktop two-column grid an absent second child leaves an
-                      empty cell, and a fresh-eyes review read that as an
-                      unfinished field rather than a short row. --solo makes the
-                      lead span both columns, so the row is deliberately short
-                      instead of apparently broken. */}
-                  {item.rest && <span className="eb-build-rest">{item.rest}</span>}
+                  <span className="eb-build-rest">
+                    <Marked text={item.rest} phrases={[MARKS.moneyLands]} />
+                  </span>
                 </li>
               ))}
             </ul>
             <p className="eb-lede eb-lede--strong eb-mt">{BUILD_TAIL.strong}</p>
-            <p className="eb-p">{BUILD_TAIL.own}</p>
+            {/* The section's two marks are its first row and its last line, six
+                rows apart. On a phone they never share a screen; on a tall
+                desktop MarkReveal staggers them 90ms so they read as sequence
+                rather than as a flash. */}
+            <p className="eb-p">
+              <Marked text={BUILD_TAIL.own} phrases={[MARKS.ownAll]} />
+            </p>
           </div>
         </section>
         <Rule />
@@ -1091,17 +1358,32 @@ export default function EmberPage() {
               {DEMOS.map((demo, i) => (
                 <li key={demo.href}>
                   <Link href={demo.href} className="eb-work-a">
-                    {/* The span is the crop frame — see .eb-work-shot. `sizes`
-                        is the frame width times the 208.7% magnification, not
-                        the frame width, or the optimizer serves a source too
-                        small for the crop and it comes out soft. */}
+                    {/* `sizes` is the CARD's width, which is what the browser
+                        actually needs to pick a variant from. It used to be
+                        1140px / 210vw — the frame width times a 208.7% CSS
+                        magnification that no longer exists — and it made the
+                        softness it was meant to prevent: quoting a slot far
+                        wider than the card meant the browser picked its
+                        candidate against the wrong number, and an audit
+                        measured the result as an image being painted about 1.6x
+                        larger than the pixels behind it, 3.2x on a retina
+                        screen. Verified after the change, with the served file
+                        decoded rather than inferred: at 1440/1dpr the browser
+                        takes the 750x500 variant for a 480x325 slot, and at
+                        390/3dpr it takes the 1080x720 variant for a slot
+                        needing 1038x702 device pixels. Both are downscales.
+                        Nothing is enlarged.
+                        46vw covers the widest the card ever gets (at 900px,
+                        before the shell caps, each card is 44vw). See
+                        .eb-work-shot for the object-fit that replaced the
+                        margin-top crop. */}
                     <span className="eb-work-shot">
                       <Image
                         src={WORK[i].src}
                         alt={WORK[i].alt}
                         width={1200}
                         height={800}
-                        sizes="(min-width: 900px) 1140px, 210vw"
+                        sizes="(min-width: 900px) 46vw, 92vw"
                         className="eb-work-img"
                       />
                     </span>
@@ -1179,7 +1461,7 @@ export default function EmberPage() {
                 number can be the largest mono string on the page. */}
             <a className="eb-tel" href={`tel:${DEMO_LINE}`}>
               <span className="eb-lab eb-tel-lab">{PROOF.verb}</span>
-              <span className="eb-tel-n eb-mono">{DEMO_LINE_PRETTY}</span>
+              <span className="eb-tel-n">{DEMO_LINE_PRETTY}</span>
             </a>
           </div>
         </section>
@@ -1202,7 +1484,7 @@ export default function EmberPage() {
                 <div key={row.label} className="eb-row">
                   <dt className="eb-row-l">
                     <span className="eb-lab eb-row-lab">{row.label}</span>
-                    {row.amount && <span className="eb-row-amt eb-mono">{row.amount}</span>}
+                    {row.amount && <span className="eb-row-amt">{row.amount}</span>}
                   </dt>
                   <dd className="eb-row-r">{row.body}</dd>
                 </div>
@@ -1233,18 +1515,32 @@ export default function EmberPage() {
             <h2 className="eb-d eb-h2">{HOW.h2}</h2>
           </div>
           <Rule />
+          {/* ⚠️ A TRACK, NOT A THIRD NUMBERED LIST, AND THE DIFFERENCE IS THE
+              POINT. "Five things I check first" (01-05), "How a stranger
+              becomes a regular" (01-04) and this one (01-06) were built from
+              one component: a 26-32px wood numeral in a left gutter, a bold
+              lead, a paragraph, a hairline between rows. Three of those inside
+              one scroll and by the third a reader cannot tell he has moved —
+              the page stops having chapters and starts having texture.
+              So this one runs across instead of down: the numeral sits ON the
+              rule above its own paragraph instead of in a gutter beside it, at
+              19-21px rather than 26-32px, and at 900px the six steps lay out
+              three-across in two rows, which reads as a schedule. It is the
+              only list on the page that does. Do not fold it back into
+              .eb-checks — and see .eb-step-n before shrinking the numeral,
+              because its size is holding a contrast floor. */}
           <div className={`${SHELL} eb-sec--after-rule`}>
-            <ol className="eb-checks" role="list">
+            <ol className="eb-steps" role="list">
               {HOW.steps.map((s) => (
-                <li key={s.n} className="eb-check">
-                  <span className="eb-check-n eb-mono">{s.n}</span>
-                  <div className="eb-check-body">
-                    <p className="eb-p">{s.para}</p>
-                  </div>
+                <li key={s.n} className="eb-step">
+                  <span className="eb-step-n eb-mono">{s.n}</span>
+                  <p className="eb-step-p">{s.para}</p>
                 </li>
               ))}
             </ol>
-            <p className="eb-lede eb-lede--strong eb-mt">{HOW.deadline}</p>
+            <p className="eb-lede eb-lede--strong eb-mt">
+              <Marked text={HOW.deadline} phrases={[MARKS.sevenDays]} />
+            </p>
             <p className="eb-p eb-mt">{HOW.late}</p>
           </div>
         </section>
@@ -1288,8 +1584,9 @@ export default function EmberPage() {
             <p className="eb-d eb-h2 eb-close-h">{CLOSE}</p>
             <Rule bleed />
             <div className="eb-btns">
+              {/* The no-break space is required — see the note in the hero. */}
               <a className="eb-btn eb-btn--a" href={`sms:${PHONE}`}>
-                {NAV.text} — {PHONE_PRETTY}
+                {NAV.text} —&nbsp;<span className="eb-num">{PHONE_PRETTY}</span>
               </a>
               <a className="eb-btn eb-btn--b" href={CAL} target="_blank" rel="noreferrer">
                 {NAV.book}
@@ -1300,33 +1597,59 @@ export default function EmberPage() {
       </main>
 
       {/* ── Footer ────────────────────────────────────────────────────────
-          One row, wrapping cleanly at 360px. Each separator is bound to the
-          item that FOLLOWS it, inside the same flex child, so a dot can never
-          be left dangling at the end of a wrapped line. */}
+          ⚠️ NO SEPARATOR CHARACTERS. There were interpuncts between the four
+          items, each bound to the item that followed it so a dot could not be
+          orphaned at the end of a wrapped line — and that binding worked, but
+          it only moved the problem: at 375px the last item wrapped and the line
+          it started read "· Privacy", a dot with nothing before it. There is no
+          arrangement of four items and three dots that survives every width.
+          The gap does the separating instead (8px down, 20px across), which
+          cannot wrap wrong at any width because there is nothing left to wrap.
+          Do not put the dots back; if the items ever need stronger separation,
+          widen the column gap. */}
       <footer>
         <Rule />
         <div className={`${SHELL} eb-foot`}>
           <Wordmark px={16} />
-          <span className="eb-foot-i">
-            <span aria-hidden="true">·</span>
-            <a href={`mailto:${EMAIL}`} className="eb-foot-a">
-              {EMAIL}
-            </a>
+          <a href={`mailto:${EMAIL}`} className="eb-foot-a">
+            {EMAIL}
+          </a>
+          <span className="eb-foot-s">
+            {LOCATION.city}, {LOCATION.region}
           </span>
-          <span className="eb-foot-i">
-            <span aria-hidden="true">·</span>
-            <span>
-              {LOCATION.city}, {LOCATION.region}
-            </span>
-          </span>
-          <span className="eb-foot-i">
-            <span aria-hidden="true">·</span>
-            <Link href="/privacy" className="eb-foot-a">
-              Privacy
-            </Link>
-          </span>
+          <Link href="/privacy" className="eb-foot-a">
+            Privacy
+          </Link>
         </div>
       </footer>
+
+      {/* ── The phone action bar ──────────────────────────────────────────
+          Below 640px only, and it is the single change on this page most
+          likely to produce a text message. The whole funnel is "text me" and
+          until now the only ways to do it were a header link 19,000px above
+          the fold and two buttons at either end of a 23-screen scroll. In
+          between — the five checks, the delivery-app argument, the prices,
+          the seven days — there was nothing to act on.
+
+          It never covers content: .eb carries a matching bottom padding, so
+          the last line of the footer clears it at rest.
+
+          THE HIDE IS OPTIONAL AND THAT IS DELIBERATE. The bar's base state is
+          visible. A scroll-driven animation then holds it off-screen over the
+          hero and again over the closing CTA — both places where a duplicate
+          "Text me" would be arguing with a full-size one on screen. Any
+          browser without animation-timeline, and anybody who asked for reduced
+          motion, simply gets the bar the whole way down, which is the correct
+          fallback rather than a broken one. It animates transform and opacity
+          and nothing else. */}
+      <nav className="eb-bar" aria-label="Quick actions">
+        <a className="eb-bar-a eb-bar-a--p" href={`sms:${PHONE}`}>
+          {NAV.text}
+        </a>
+        <a className="eb-bar-a" href="#report">
+          Free report
+        </a>
+      </nav>
     </div>
   );
 }
@@ -1347,6 +1670,26 @@ const CSS = `
      Radius zero is a rule about the layout; it does not reach the wordmark. */
   --dot:#1D9E75;
 
+  /* The dot's night state, and the ONLY new colour this page has taken on. It
+     is not a palette value and nothing but .eb-dot may use it. It is warm on
+     purpose — a step yellower than wood, well clear of ember so the two never
+     read as the same thing — because a grey dot reads as broken and a red one
+     reads as an error, and the honest meaning here is only "it is late in
+     Atlanta". 5.9:1 on the ink spine, which is the only ground it appears on. */
+  --dot-away:#c98b2b;
+
+  /* ── THE HIGHLIGHTER TINT, PER GROUND ─────────────────────────────────
+     One role, re-pointed by every ground class below exactly like --fg and
+     --rule, because the alternative does not work: an ember wash on the ember
+     field is invisible, and a bone wash on the cream card is invisible the
+     other way round. So the ground decides, and the eight marked phrases in
+     the copy never have to know which field they landed on.
+     The dark spine gets bone at 16% — enough to read as a highlighter, light
+     enough that .eb-p stays at 7.2:1 on it, down from 11:1 and still well
+     past 4.5. Every tint below was checked against the text that sits on it;
+     none of them drops a paragraph under the floor. */
+  --mark:color-mix(in srgb, var(--bone) 16%, transparent);
+
   --f-display:var(--font-eb-display),var(--font-inter),ui-sans-serif,system-ui,sans-serif;
   --f-body:var(--font-eb-body),var(--font-inter),ui-sans-serif,system-ui,sans-serif;
   --f-mono:var(--font-eb-mono),ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -1363,7 +1706,7 @@ const CSS = `
   --t-body:17px;   /* everything that is a sentence, h3s included             */
   --t-lede:19px;   /* standfirsts, the arithmetic, the ads note               */
   --t-lead:21px;   /* the hero subhead and the two section ledes              */
-  --t-num:26px;    /* the wood numerals and the ledger amounts                */
+  --t-num:26px;    /* the 01-05 numerals, the ledger amounts, the app figures */
 
   /* per-ground roles. Every ground class below re-points these. */
   --fg:color-mix(in srgb, var(--bone) 88%, var(--ink));
@@ -1408,8 +1751,8 @@ const CSS = `
    run of unbroken ink from the wood band to the close is otherwise about
    6,000px, half the page on one colour. Roles are the cream card's, because
    the constraint is the same one — ink prose on bone, never the reverse.
-   Measured at 1440: it cuts the longest single-ground run from 8,486px to
-   5,132px of a 15,271px page. */
+   Re-measured at 1440 on 2026-09-04: it cuts the longest single-ground run to
+   4,673px of a 13,702px page. */
 .eb-g-bone{
   background:var(--bone);
   color:var(--rich);
@@ -1422,6 +1765,8 @@ const CSS = `
   --btn-b-bg:transparent; --btn-b-fg:var(--rich); --btn-b-bd:var(--rich);
   --color-ink:var(--rich);
   --color-paper:var(--bone);
+  /* ember on cream. The reverse of the spine, for the same reason. */
+  --mark:color-mix(in srgb, var(--ember) 34%, transparent);
 }
 .eb-g-ember{
   background:var(--ember);
@@ -1438,6 +1783,11 @@ const CSS = `
   /* the ring: bone clears 3:1 against both the ember field and the ink slab */
   --color-ink:var(--bone);
   --color-paper:var(--ember);
+  /* ⚠️ NO MARKED PHRASE MAY LIVE ON EMBER — the h1 and the close are the only
+     copy here and the h1 is explicitly off limits. This value exists so that
+     if one ever does land here it is an ink wash and not the invisible ember
+     on ember an unset variable would inherit from the spine. */
+  --mark:color-mix(in srgb, var(--ink) 20%, transparent);
 }
 .eb-g-wood{
   background:var(--wood);
@@ -1447,6 +1797,12 @@ const CSS = `
   --strong:var(--ink);
   --rule:var(--ink);
   --color-ink:var(--ink);
+  /* Bone, and heavier than the spine's, because this band carries ink text on
+     a saturated field at 4.24:1 — the floor the whole section was designed
+     around. A light wash LIFTS the marked line to about 6.1:1 rather than
+     eating into the margin, which is the only direction a highlight is allowed
+     to move contrast here. */
+  --mark:color-mix(in srgb, var(--bone) 30%, transparent);
 }
 
 /* ---- the two voices ----------------------------------------------------- */
@@ -1457,7 +1813,26 @@ const CSS = `
   line-height:.85;
   letter-spacing:-.035em;
 }
-.eb-h1{font-size:clamp(2.75rem,10.6vw,8rem);}
+/* ── THE HERO IS REBALANCED, AND THE RATIO IS THE WHOLE FIX ────────────────
+   This was clamp(2.75rem,10.6vw,8rem): 128px at 1440, 44px at 390. Three
+   things were wrong with that and they were all the same thing.
+   (1) The 128px line is the generic one. "I build and run the online side of
+   restaurants and food businesses in Atlanta" is a job description. The line
+   that actually sells — "You're good at what you do. The internet doesn't show
+   it." — sat 24px underneath it, so the page shouted the boring half and
+   whispered the half that lands. (2) Under a 128px headline, an 11-13px mono
+   button reads as a footnote, not as the thing to do next. (3) At 390 the 44px
+   floor forced the h1 to five lines in a 350px column, which pushed the subhead
+   to 365px and the first button to 456px — most of an iPhone SE screen spent
+   before anything sellable appears.
+   The words did not change. The weight they are given did: the h1 comes down
+   to 96px / 36px, the subhead goes up to 38px / 22px, and the buttons go up a
+   step to body size. 96:38 is a real hierarchy; 128:24 was a shout followed by
+   a mumble. text-wrap:balance stops the h1 leaving a two-word last line.
+   ⚠️ The subhead is ink on ember at 4.24:1, which is legal ONLY above the WCAG
+   large-scale floor (18.66px bold). Its clamp floor is 22px and its weight is
+   700. Do not lower either. */
+.eb-h1{font-size:clamp(2.25rem,9.2vw,6rem);text-wrap:balance;}
 .eb-h2{font-size:clamp(1.625rem,5.4vw,2.75rem);line-height:.88;letter-spacing:-.03em;}
 .eb-lab{
   font-family:var(--f-mono);
@@ -1468,6 +1843,48 @@ const CSS = `
   color:var(--dim);
 }
 .eb-mono{font-family:var(--f-mono);}
+
+/* ── THE HIGHLIGHTER ──────────────────────────────────────────────────────
+   Eight claims on a twenty-screen page get a wash behind them. Nine spans,
+   because the oxtail comparison is one claim in two numbers. The full rules —
+   never in the h1, only on claims, about one per screenful, fire once — are on
+   MARKS in the copy block, which is where the next person adding one will be
+   standing.
+
+   ⚠️ A GRADIENT ON THE TEXT'S OWN BACKGROUND, NOT A PSEUDO-ELEMENT BAR, AND
+   THE DIFFERENCE IS THE WHOLE TECHNIQUE. The obvious build is an ::after with
+   a width that animates 0 to 100%; it is one absolutely positioned rectangle,
+   so the moment its phrase wraps to a second line the bar stays on line one
+   and the rest of the sentence sits outside its own highlight. At 390px, which
+   is where this page is mostly read, nearly every phrase below wraps. A
+   background-image belongs to the inline box, and box-decoration-break:clone
+   gives every wrapped fragment its own copy of it, so a three-line phrase gets
+   three correct highlights and the animation sweeps all three together.
+
+   The 58% stop is the highlighter's own geometry: the wash starts just below
+   the x-height so it sits behind the letters like a marker pen rather than
+   boxing them like a table cell. --mark is re-pointed by every ground — see
+   the note where it is declared — so the tint is bone on the dark spine, ember
+   on the cream card, and a heavier bone on the wood band.
+
+   Under reduced motion the marks are simply painted, at full size, with no
+   transition at all: the highlight is information about which sentence
+   matters, and information is not what a reduced-motion request is asking to
+   have removed. MarkReveal still adds .is-in and it is a no-op here. */
+.eb-mark{
+  background-image:linear-gradient(transparent 58%, var(--mark) 58%);
+  background-repeat:no-repeat;
+  background-size:0% 100%;
+  -webkit-box-decoration-break:clone;
+  box-decoration-break:clone;
+}
+.eb-mark.is-in{background-size:100% 100%;}
+@media (prefers-reduced-motion:no-preference){
+  .eb-mark{transition:background-size .55s cubic-bezier(.22,.61,.36,1);}
+}
+@media (prefers-reduced-motion:reduce){
+  .eb-mark{background-size:100% 100%;}
+}
 
 /* Body copy and the only sub-heading style. There is no mid-size heading on
    this page and adding one undoes device 5 — see the file header. */
@@ -1481,16 +1898,16 @@ const CSS = `
 .eb-h3{font-size:var(--t-body);line-height:1.5;font-weight:700;color:var(--strong);margin-bottom:10px;max-width:62ch;}
 .eb-lede{font-size:var(--t-lead);line-height:1.45;color:var(--fg);max-width:52ch;}
 .eb-lede--strong{margin-top:22px;font-weight:700;color:var(--strong);}
-.eb-stand{font-size:var(--t-lede);line-height:1.5;color:var(--dim);max-width:60ch;margin-bottom:44px;}
+.eb-stand{font-size:var(--t-lede);line-height:1.5;color:var(--dim);max-width:60ch;margin-bottom:30px;}
 /* The flush variant is the one used where no full-bleed rule separates the h2
    from its standfirst (08 and 10). Without a top margin the two sat 0px apart
    — .eb-h2 has no margin-bottom, by design, because everywhere else a rule and
    64px of section padding do the separating. */
-.eb-stand--flush{margin-top:26px;margin-bottom:32px;}
+.eb-stand--flush{margin-top:22px;margin-bottom:24px;}
 .eb-fine{margin-top:18px;font-size:var(--t-fine);line-height:1.6;color:var(--dim);}
-.eb-mt{margin-top:36px;}
+.eb-mt{margin-top:30px;}
 @media (min-width:640px){
-  .eb-stand--flush{margin-top:34px;}
+  .eb-stand--flush{margin-top:26px;}
 }
 
 /* ---- rules -------------------------------------------------------------- */
@@ -1518,9 +1935,28 @@ const CSS = `
    calc(50% - 50vw) is measured off the column's own content box, the same
    arithmetic as .eb-rule--bleed, with the same over-bleed by the scrollbar
    width that main's overflow-x:clip absorbs. */
-.eb-lh{display:flex;align-items:center;gap:14px;margin-bottom:20px;
+.eb-lh{display:flex;align-items:center;gap:14px;margin-bottom:18px;
   margin-right:calc(50% - 50vw);}
 .eb-lh-line{flex:1 1 auto;height:1px;background:var(--rule);}
+/* ── WHERE THE EYEBROW RULE STOPS, ONCE THE COLUMN STOPS MOVING ───────────
+   Below 1024px the shell gutter IS the screen edge, so running to the viewport
+   is the same thing as running to the column and the device reads as intended.
+   Above it the two come apart, and running to the edge means the hairline
+   travels 300px past the last word of a 64ch measure with nothing on the other
+   side of it. That is the "rule pointing at nothing" an audit found in every
+   band. So at 1024 and up the eyebrow stops where the prose stops. The
+   full-bleed section dividers are untouched: they separate bands, they are not
+   pointing at a column, and a divider that stopped mid-page would read as a
+   rule that failed rather than one that was placed. */
+@media (min-width:1024px){
+  /* 44rem is the same 704px the prose measure resolves to, so the hairline and
+     the right edge of the paragraphs below it land on one line. Not a ch value,
+     for the reason spelled out at .eb-do: this element's own font is 16px Chivo
+     and a ch here means something different from a ch three rules down. */
+  .eb-lh{margin-right:0;max-width:44rem;}
+  /* the two bounded instances keep their own panel-relative behaviour */
+  .eb-pad-in>.eb-lh,.eb-note>.eb-lh{max-width:none;}
+}
 /* The two BOUNDED instances, named rather than inferred. Inside a padded panel
    the hairline should stop at the panel, so the negative margin equals that
    panel's own padding — 20px, 40px from 640 up, which is what both of them
@@ -1530,27 +1966,86 @@ const CSS = `
 @media (min-width:640px){.eb-pad-in>.eb-lh,.eb-note>.eb-lh{margin-right:-40px;}}
 
 /* ---- shell rhythm ------------------------------------------------------- */
-.eb-sec{padding-top:64px;padding-bottom:64px;}
-.eb-sec--tight{padding-top:56px;padding-bottom:56px;}
-.eb-sec--after-rule{padding-top:44px;padding-bottom:72px;}
+/* ⚠️ CUT ~35% FROM EVERY BAND, AND THE PAGE IS BETTER FOR IT, NOT WORSE.
+   At 1440 the document was 15,705px and a scroll-through found the same shape
+   over and over: a heading, a rule, six lines of type, then 200-270px of empty
+   ink before the next rule. That is not restraint, it is a page with nothing in
+   the lower two thirds of most viewports — and it is paid for by the reader,
+   who scrolls a third further to read the same words. The band separations here
+   are doing a job the 1px rules already do on their own.
+   Every number below is the old one times roughly 0.65. If a future edit wants
+   air back, take it in one place that earns it rather than everywhere. */
+.eb-sec{padding-top:44px;padding-bottom:44px;}
+.eb-sec--tight{padding-top:38px;padding-bottom:38px;}
+.eb-sec--after-rule{padding-top:30px;padding-bottom:48px;}
 @media (min-width:640px){
-  .eb-sec{padding-top:96px;padding-bottom:96px;}
-  .eb-sec--tight{padding-top:80px;padding-bottom:80px;}
-  .eb-sec--after-rule{padding-top:64px;padding-bottom:112px;}
+  .eb-sec{padding-top:62px;padding-bottom:62px;}
+  .eb-sec--tight{padding-top:52px;padding-bottom:52px;}
+  .eb-sec--after-rule{padding-top:42px;padding-bottom:72px;}
 }
 
 /* ---- header ------------------------------------------------------------- */
 .eb-head{position:sticky;top:0;z-index:50;background:var(--ink);}
 .eb-head-row{display:flex;align-items:center;justify-content:space-between;height:64px;}
 .eb-head-mark{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;}
-.eb-mark{display:inline-flex;align-items:baseline;font-family:var(--f-display);font-weight:700;
+/* ⚠️ RENAMED FROM .eb-mark. That name now belongs to the highlighter behind
+   eight sentences of body copy (see .eb-mark, up in "the two voices"), and the
+   wordmark cannot share it: display:inline-flex plus the display face on a
+   phrase mid-paragraph turns that phrase into an unwrappable bone-coloured
+   box. Two things called "mark" in one file is the bug waiting to happen. */
+.eb-wm{display:inline-flex;align-items:baseline;font-family:var(--f-display);font-weight:700;
   font-stretch:86%;letter-spacing:-.03em;color:var(--bone);}
-/* The one radius and the one green on the page, and both are correct. This is
+
+/* ── THE PRESENCE DOT ──────────────────────────────────────────────────────
+   The one radius and the one green on the page, and both are correct. This is
    the mark from brand.ts — a circle, #1D9E75 — the same one on foundos.ai and
    on the cards already handed out. A square ember dot is a different logo. It
    sits on the ink spine in the header and the footer, never on ember, so the
-   green has room and clashes with nothing. */
-.eb-dot{display:inline-block;flex:0 0 auto;border-radius:50%;background:var(--dot);}
+   green has room and clashes with nothing.
+
+   It now breathes, and it now MEANS something: components/Presence.tsx flips
+   data-state to "away" outside 9am-9pm Atlanta time, and PRESENCE puts the
+   words beside it. What the dot must never become is an alarm — 2.4s is slow
+   enough to read as breathing, and anything under about 1.5s reads as an
+   error state on a device somebody is holding.
+
+   THE AMBER IS THE ONE NEW COLOUR ON THE PAGE and it is deliberately inside
+   the warm family, a step yellower than wood, so that a night visitor sees a
+   different state rather than a different brand. It is not a palette value and
+   nothing else may use it. Both states are decorative: the sentence a screen
+   reader hears is in .eb-sr, not in the colour. */
+.eb-dot{
+  --now:var(--dot);
+  display:inline-block;flex:0 0 auto;position:relative;
+  border-radius:50%;background:var(--now);
+}
+.eb-dot[data-state="away"]{--now:var(--dot-away);}
+/* transform and opacity only, and the ring does not exist at all when reduced
+   motion is asked for — no content, no pseudo-element, nothing to stop. */
+@media (prefers-reduced-motion:no-preference){
+  .eb-dot{animation:eb-breathe 2.4s ease-in-out infinite;}
+  .eb-dot::after{
+    content:"";position:absolute;inset:0;border-radius:50%;
+    background:var(--now);opacity:.45;
+    animation:eb-ring 2.4s ease-out infinite;
+  }
+}
+@keyframes eb-breathe{0%,100%{opacity:1} 50%{opacity:.62}}
+@keyframes eb-ring{0%{transform:scale(1);opacity:.45} 70%,100%{transform:scale(2.8);opacity:0}}
+
+/* The line that makes the dot a conversion element instead of a decoration.
+   Label voice, because the page has no third small-type style, and nowrap
+   because a two-line fragment in a 64px header row is worse than a tight one.
+   The 44px min-height matches the nav links either side of it so the row does
+   not shift when the state changes. */
+.eb-presence{display:inline-flex;align-items:center;min-height:44px;}
+.eb-presence-t{white-space:nowrap;}
+/* The screen-reader sentence. Not Tailwind's .sr-only: this page's stylesheet
+   is self-contained inside .eb and does not otherwise depend on a utility
+   surviving a content scan. */
+.eb-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap;border:0;}
+
 .eb-nav{display:flex;align-items:center;gap:22px;}
 .eb-nav-a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;color:var(--dim);}
 .eb-nav-a:hover{color:var(--bone);}
@@ -1558,22 +2053,40 @@ const CSS = `
 @media (min-width:640px){.eb-nav-a--wide{display:inline-flex;}}
 
 /* ---- hero --------------------------------------------------------------- */
-.eb-hero{padding-top:56px;padding-bottom:56px;}
-.eb-hero-h{color:var(--bone);margin-bottom:28px;}
-.eb-hero-sub{margin-top:28px;font-size:var(--t-lead);line-height:1.35;font-weight:700;color:var(--ink);}
+.eb-hero{padding-top:32px;padding-bottom:44px;}
+.eb-hero-h{color:var(--bone);margin-bottom:22px;}
+/* The fourth display clamp, and the reason there is one — see .eb-h1. It is
+   set in the BODY face on purpose: it is a sentence a person says, not a
+   headline, and at 1.2 leading it stays a lede rather than becoming a second
+   type wall arguing with the first. */
+.eb-hero-sub{margin-top:22px;font-size:clamp(1.375rem,3.4vw,2.375rem);line-height:1.2;
+  font-weight:700;letter-spacing:-.01em;color:var(--ink);text-wrap:balance;}
 @media (min-width:640px){
-  .eb-hero{padding-top:88px;padding-bottom:88px;}
+  .eb-hero{padding-top:60px;padding-bottom:64px;}
 }
 
 /* ---- buttons ------------------------------------------------------------ */
-.eb-btns{display:flex;flex-direction:column;gap:12px;margin-top:34px;align-items:stretch;}
+.eb-btns{display:flex;flex-direction:column;gap:12px;margin-top:30px;align-items:stretch;}
 @media (min-width:560px){.eb-btns{flex-direction:row;align-items:flex-start;}}
+/* Body size, not --t-fine. .eb-btn is used in exactly two places — the hero and
+   the close — and at 13px under a display headline both of them read as small
+   print rather than as the next thing to do. This is the other half of the hero
+   rebalance described at .eb-h1. */
 .eb-btn{
   display:inline-flex;align-items:center;justify-content:center;
-  min-height:54px;padding:0 22px;border-radius:0;border:1px solid transparent;
-  font-family:var(--f-mono);font-size:var(--t-fine);font-weight:600;letter-spacing:.06em;
+  min-height:58px;padding:0 24px;border-radius:0;border:1px solid transparent;
+  font-family:var(--f-mono);font-size:var(--t-body);font-weight:600;letter-spacing:.06em;
   text-transform:uppercase;text-decoration:none;text-align:center;cursor:pointer;
 }
+/* ── NUMERALS OPT OUT OF TRACKING ─────────────────────────────────────────
+   +.06em is right for a tracked uppercase label and wrong for every character
+   that is not a letter. Applied to "(404) 436-3393" it puts the added space
+   INSIDE the brackets, so the button reads "( 404 ) 436-3393", and the same
+   tracking on a mono ledger amount opens "$1,500" into "$1 , 500" because a
+   monospaced comma already sits in a full-width advance with the ink in the
+   middle of it. tabular-nums keeps the digits on a common width so a column of
+   amounts still lines up. */
+.eb-num{letter-spacing:normal;font-variant-numeric:tabular-nums;}
 .eb-btn--a{background:var(--btn-a-bg);color:var(--btn-a-fg);border-color:var(--btn-a-bg);}
 .eb-btn--b{background:var(--btn-b-bg);color:var(--btn-b-fg);border-color:var(--btn-b-bd);}
 /* Hover swaps the two treatments. A flat swap keeps every state above 4.5:1,
@@ -1591,7 +2104,15 @@ const CSS = `
 }
 
 /* ---- the cream order pad ------------------------------------------------ */
-.eb-report-anchor{scroll-margin-top:64px;}
+/* 88, not 64. The sticky header is 65px tall including its own rule, so a 64px
+   scroll margin lands the top edge of the card exactly underneath it: tapping
+   "See what I'd build for you" from the hero, or "Free report" from the phone
+   bar, put the label and the first line of the heading behind the header. 88
+   clears it with 23px to spare. The id and the class are on the same element;
+   the id selector is here as well because the anchor is what the browser is
+   actually scrolling to and a future refactor that drops the class should not
+   silently take the margin with it. */
+#report,.eb-report-anchor{scroll-margin-top:88px;}
 .eb-pad{
   background:var(--bone);
   background-image:repeating-linear-gradient(to bottom,transparent 0 27px,rgba(35,31,32,.14) 27px 28px);
@@ -1605,6 +2126,10 @@ const CSS = `
   --rule-soft:color-mix(in srgb, var(--rich) 24%, var(--bone));
   --btn-a-bg:var(--rich); --btn-a-fg:var(--bone);
   --btn-b-bg:transparent; --btn-b-fg:var(--rich); --btn-b-bd:var(--rich);
+  /* The card is a light ground inside a dark section, so it has to re-point
+     the highlighter as well or the risk-reversal line in it would be washed
+     with bone-on-cream and disappear. Same value as .eb-g-bone. */
+  --mark:color-mix(in srgb, var(--ember) 34%, transparent);
   /* the six tokens the widget speaks in */
   --color-paper:var(--bone);
   --color-ink:var(--rich);
@@ -1625,7 +2150,14 @@ const CSS = `
    (0,2,0) wins on specificity and no !important is needed. */
 .eb-pad .ir *{border-radius:0;}
 .eb-pad .ir :is(.ir-tick,.ir-spin){border-radius:50%;}
-.eb-pad .ir-input{background:transparent;}
+/* Transparent so the ruled lines of the paper run behind it — and capped,
+   because nobody's business name is 820px long. .ir-input is flex:1 1 220px, so
+   inside a full-width card at 1440 it grew to 897px: a field eleven inches wide
+   asking for four words reads as an unfinished layout and, worse, makes the
+   button that follows it look like an afterthought floating in the middle of
+   the card. 420px holds about 45 characters of 17px type, which is longer than
+   any restaurant name plus its city. */
+.eb-pad .ir-input{background:transparent;max-width:420px;}
 .eb-pad .ir-label{font-family:var(--f-mono);font-size:var(--t-label);letter-spacing:.06em;text-transform:uppercase;}
 .eb-pad .ir-go,.eb-pad .ir-alt{font-family:var(--f-mono);font-size:var(--t-fine);letter-spacing:.04em;}
 /* size only, not family: .ir-fine was the last string on the page rendering
@@ -1635,27 +2167,61 @@ const CSS = `
 
 /* ---- five checks / four steps ------------------------------------------- */
 .eb-checks{list-style:none;margin:0;padding:0;}
-.eb-check{display:flex;gap:18px;padding:30px 0;border-top:1px solid var(--rule-soft);}
+.eb-check{display:flex;gap:18px;padding:24px 0;border-top:1px solid var(--rule-soft);}
 .eb-check:first-child{border-top:0;padding-top:0;}
 .eb-check-n{flex:0 0 auto;width:2.4ch;font-size:var(--t-num);font-weight:700;line-height:1;color:var(--wood);
   letter-spacing:-.02em;}
 .eb-check-body{min-width:0;}
-.eb-do{margin-top:14px;font-size:var(--t-fine);line-height:1.6;color:var(--strong);max-width:62ch;}
+/* ⚠️ 44rem, NOT A ch VALUE, AND THAT IS THE WHOLE FIX. The ch unit resolves
+   against the element's OWN font. This one is Chivo Mono at 13-14px where a
+   character advances 0.6em, so the 62ch it used to carry measured 546px on a
+   phone and 588px at desktop — while the .eb-p directly above it, at 64ch of
+   17-18px Chivo, measured 669px and 708px. The instruction wrapped 120px
+   narrower than the paragraph it belongs to, and because they sit in the same
+   left-aligned column the difference showed as two ragged right edges in one
+   block. Both are now a measured 704-708px. If .eb-p's measure ever moves,
+   move this with it; do not translate it back into ch. */
+.eb-do{margin-top:14px;font-size:var(--t-fine);line-height:1.6;color:var(--strong);max-width:44rem;}
 @media (min-width:640px){
-  .eb-check{gap:32px;padding:38px 0;}
+  .eb-check{gap:32px;padding:30px 0;}
+}
+
+/* ---- from yes to live: the track ---------------------------------------- */
+/* The third enumerated run on the page, set as a schedule rather than as a
+   third copy of .eb-checks — see the note above the markup. The numeral is a
+   mono marker sitting on the hairline instead of a 32px slab in a left gutter,
+   which is the whole visual difference at a glance, and at 900px the six steps
+   go three-across so the eye reads two rows of a timetable rather than six more
+   rows of a list. */
+.eb-steps{list-style:none;margin:0;padding:0;display:grid;}
+.eb-step{padding:16px 0 22px;border-top:1px solid var(--rule);}
+/* ⚠️ --t-lede, NOT --t-fine, AND THE REASON IS CONTRAST NOT TASTE. Wood on ink
+   measures 4.18:1. That clears the 3:1 bar for WCAG large-scale text and fails
+   the 4.5:1 bar for everything else, so a wood numeral is legal at 19px bold
+   and illegal at 14px bold. The first draft of this marker was 13/14px and was
+   a real accessibility regression sitting inside a comment about how careful
+   this page is. The 01-05 numerals in .eb-check-n are safe for the same reason
+   at 26/32px. If a future edit wants a smaller marker here, it has to change
+   the colour to --dim (5.6:1) at the same time. */
+.eb-step-n{display:block;margin-bottom:8px;font-size:var(--t-lede);font-weight:700;
+  letter-spacing:.04em;line-height:1;color:var(--wood);}
+.eb-step-p{font-size:var(--t-body);line-height:1.6;color:var(--fg);}
+@media (min-width:900px){
+  .eb-steps{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:30px;}
+  .eb-step{padding:14px 0 30px;}
 }
 
 /* ---- prose blocks ------------------------------------------------------- */
-.eb-block{padding-top:34px;}
+.eb-block{padding-top:26px;}
 .eb-block:first-child{padding-top:0;}
-@media (min-width:640px){.eb-block{padding-top:46px;}}
+@media (min-width:640px){.eb-block{padding-top:32px;}}
 
 /* The one recessed block on the page. Flat stacking, no shadow, no blur. */
-.eb-note{margin-top:44px;padding:30px 20px;background:var(--rich);border:1px solid var(--rule-soft);}
+.eb-note{margin-top:34px;padding:26px 20px;background:var(--rich);border:1px solid var(--rule-soft);}
 .eb-note-p{font-size:var(--t-lede);line-height:1.5;font-weight:700;color:var(--strong);max-width:56ch;
   margin-bottom:18px;}
 @media (min-width:640px){
-  .eb-note{padding:40px;}
+  .eb-note{padding:32px 40px;}
 }
 .eb-g-rich .eb-note{background:var(--ink);}
 .eb-inline-a{color:inherit;text-decoration:underline;text-underline-offset:3px;
@@ -1678,18 +2244,34 @@ const CSS = `
 .eb-math-p{font-size:var(--t-lede);line-height:1.5;font-weight:700;color:var(--ink);max-width:56ch;}
 .eb-math-p+.eb-math-p{margin-top:20px;}
 @media (min-width:640px){
-  .eb-math{padding-top:80px;padding-bottom:80px;}
+  .eb-math{padding-top:56px;padding-bottom:56px;}
+}
+
+/* The four numbers, as a ledger above the argument. See APPS_FIGURES.
+   ⚠️ EVERY SIZE IN HERE IS ABOVE THE WCAG LARGE-SCALE FLOOR AND HAS TO STAY
+   THERE. Ink on wood is 4.24:1, which fails the 4.5:1 body-text bar and clears
+   the 3:1 large-text bar. --t-lede is 19px at 700 (large-scale starts at
+   18.66px bold) and --t-num is 26px. Drop either weight, or either token, and
+   this becomes a real accessibility regression rather than a style note. */
+.eb-figs{margin:0 0 26px;max-width:32rem;border-top:1px solid var(--rule);}
+.eb-fig{display:flex;align-items:baseline;justify-content:space-between;gap:18px;
+  padding:11px 0;border-bottom:1px solid var(--rule);}
+.eb-fig-k{margin:0;font-size:var(--t-lede);line-height:1.3;font-weight:700;color:var(--ink);}
+.eb-fig-v{margin:0;flex:0 0 auto;font-family:var(--f-display);font-stretch:86%;
+  font-size:var(--t-num);font-weight:700;line-height:1;letter-spacing:-.02em;color:var(--ink);}
+@media (min-width:640px){
+  .eb-figs{margin-bottom:34px;}
+  .eb-fig{padding:13px 0;}
 }
 
 /* ---- what I build ------------------------------------------------------- */
 .eb-builds{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule);}
-.eb-build{display:block;padding:20px 0;border-bottom:1px solid var(--rule-soft);max-width:72ch;}
+.eb-build{display:block;padding:18px 0;border-bottom:1px solid var(--rule-soft);max-width:72ch;}
 .eb-build-lead{display:block;font-size:var(--t-body);font-weight:700;line-height:1.35;color:var(--strong);}
 .eb-build-rest{display:block;margin-top:5px;font-size:var(--t-body);line-height:1.55;color:var(--fg);}
 @media (min-width:640px){
-  .eb-build--solo{display:block;}
   .eb-build{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:28px;
-    align-items:baseline;padding:22px 0;max-width:none;}
+    align-items:baseline;padding:19px 0;max-width:none;}
   .eb-build-rest{margin-top:0;max-width:52ch;}
 }
 
@@ -1698,24 +2280,28 @@ const CSS = `
 @media (min-width:900px){.eb-work{grid-template-columns:1fr 1fr;gap:32px;}}
 .eb-work-a{display:block;text-decoration:none;color:inherit;border:1px solid var(--rule-soft);}
 .eb-work-a:hover{border-color:var(--rule);}
-/* THE CROP, AND WHY THERE IS ONE.
-   public/work/*.png are 1200x800@2x captures of a whole page. Shown entire at
-   a 544px card they render at 0.23 scale, which put the demo's own body copy
-   at four or five pixels: two dark rectangles, on the one section whose job is
-   "open something I've built". They are the only two images we are allowed to
-   use, so the fix is magnification, not replacement.
-   The window is x 0-1150, y 500-1280 of the 2400x1600 capture — the business
-   name, the strapline and the today card, with the browser-chrome strip and
-   the empty right third dropped. Both captures share a layout, so one window
-   serves both. The arithmetic: the image is laid at 2400/1150 = 208.7% of the
-   frame, so 1150 source px span the frame exactly; the top offset is
-   500/1150 = 43.48% of the frame width, because a percentage margin resolves
-   against the containing block's INLINE size; and the frame's ratio is
-   1150/780. Effective scale is 0.30 at 390 and 0.47 at 1440 — 2.1x and 2.0x
-   what shipped, which is the difference between a texture and a screenshot you
-   can read. Re-crop by changing these three numbers together. */
+/* THE CROP, AND WHY IT IS NOW A REAL ONE.
+   public/work/*.png are 1200x800@2x captures (2400x1600 actual) of a whole
+   page. This used to magnify them with width:208.7% and margin-top:-43.48%,
+   which showed the source window x 0-1150, y 500-1280 — and that window slices
+   the demo's own layout down the middle. The today card spans x 564-1838 of
+   the capture and the week panel sits under it, so what a visitor actually saw
+   was the "Directions" button, "WHERE WE'LL BE THIS WEEK" and "HOURS" cut in
+   half at a hard vertical edge. That does not read as a crop. It reads as CSS
+   that failed, on the one section whose job is "open something I've built".
+   It also cost the sharpness it was buying: the sizes attribute had to be quoted at the
+   magnified width, the optimizer answered with a variant that was then laid
+   out 1.6x larger than its own pixels, and the result was soft as well as
+   sliced.
+   So: no magnification, no percentage margin, and object-fit does the framing.
+   The frame is 1150/780 (1.474) against a 3:2 source, so cover trims 21px from
+   each side and nothing else — the capture arrives whole. The demo's body copy
+   is small at this scale and that is correct; a thumbnail of a website should
+   read as a website, and the label, the note and "Open →" underneath say which
+   one. Change the frame ratio and object-position together if you re-frame;
+   never reintroduce a width above 100%. */
 .eb-work-shot{display:block;overflow:hidden;aspect-ratio:1150/780;border:1px solid var(--rule);}
-.eb-work-img{display:block;width:208.7%;max-width:none;height:auto;margin-top:-43.48%;}
+.eb-work-img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center;}
 .eb-work-meta{display:block;padding:20px;}
 .eb-work-t{display:block;font-size:var(--t-body);font-weight:700;color:var(--strong);}
 .eb-work-n{display:block;margin-top:6px;font-size:var(--t-body);line-height:1.5;color:var(--fg);}
@@ -1726,8 +2312,18 @@ const CSS = `
   min-height:54px;text-decoration:none;border:1px solid var(--rule);color:inherit;}
 .eb-tel:hover{background:var(--rich);border-color:var(--strong);}
 .eb-tel-lab{color:var(--dim);}
-/* ember as type rather than as a field — legal because this is 40px+ */
-.eb-tel-n{font-size:clamp(2rem,8vw,3.25rem);font-weight:700;line-height:1;letter-spacing:-.03em;
+/* ember as type rather than as a field — legal because this is 40px+.
+   ⚠️ SET IN THE DISPLAY FACE, NOT IN MONO, AND THAT IS A BUG FIX RATHER THAN
+   A PREFERENCE. In a monospaced font every glyph occupies the same advance, so
+   a bracket — which is a thin mark — is centred inside a full-width slot with
+   half a character of white on each side of it. At 52px that is roughly 15px
+   of air inside each bracket, and the demo line rendered as "( 276 ) 295-1209".
+   Turning tracking off does not touch it; the space is the font's own metric.
+   Archivo sets the brackets against the digits. The mono texture is not lost:
+   it stays on every label, on Open →, on the buttons and on the 01-05 numerals,
+   none of which contain a bracket or a comma. */
+.eb-tel-n{font-family:var(--f-display);font-stretch:86%;font-size:clamp(2rem,8vw,3.25rem);
+  font-weight:700;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;
   color:var(--ember);}
 
 /* ---- the ledger table --------------------------------------------------- */
@@ -1739,38 +2335,89 @@ const CSS = `
    string on the page. balance splits it near the middle instead of leaving a
    two-word widow. */
 .eb-row-lab{display:block;line-height:1.55;text-wrap:balance;color:var(--dim);}
-.eb-row-amt{display:block;margin-top:8px;font-size:var(--t-num);font-weight:700;line-height:1.1;
-  letter-spacing:-.02em;color:var(--strong);}
+/* Display face, same reason as .eb-tel-n: "$1,500" in a monospaced font puts
+   the comma alone in a full-width advance and the amount reads "$1 , 500" at
+   32px. Archivo closes it. tabular-nums keeps the four amounts on a common
+   digit width so the column still lines up. */
+.eb-row-amt{display:block;margin-top:8px;font-family:var(--f-display);font-stretch:86%;
+  font-size:var(--t-num);font-weight:700;line-height:1.1;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;color:var(--strong);}
 .eb-row-r{margin:14px 0 0;font-size:var(--t-body);line-height:1.6;color:var(--fg);max-width:52ch;}
 /* THE TRACK IS 24rem, AND IT IS MEASURED, NOT CHOSEN.
-   Chivo Mono advances 0.58em per character. The longest amount is
-   "from $150 a month." — 18 characters, so 18 x 0.58 x 32px = 334px of type.
-   The old 20rem track less 32px of padding left 288px, so the line wrapped and
-   orphaned "month." on a second line. 24rem less the same padding is 352px,
-   which clears it by 18px and also pulls the third row's 45-character label
-   (317px at 11px tracked) back onto one line.
-   The two columns now start at 900px rather than 768px for the same reason:
-   at 768 a 384px left track leaves the body column 272px, which is too narrow
-   to set 18px prose in. Below 900 the row stacks, which it already did. */
+   It was measured against Chivo Mono at 0.58em per character: the longest
+   amount, "from $150 a month." at 18 characters, needed 334px and 24rem less
+   32px of padding gives 352px. The amounts are now set in Archivo, which is
+   narrower still, so the track has more room than it needs rather than less —
+   it stays at 24rem because the binding constraint is the other column: the
+   third row's 45-character label is 317px at 11px tracked and wraps below
+   about 22rem, and 52ch of body prose wants what is left.
+   The two columns start at 900px rather than 768px for the same reason: at 768
+   a 384px left track leaves the body column 272px, which is too narrow to set
+   18px prose in. Below 900 the row stacks, which it already did. */
 @media (min-width:900px){
-  .eb-row{display:grid;grid-template-columns:minmax(0,24rem) minmax(0,1fr);gap:0;padding:30px 0;}
+  .eb-row{display:grid;grid-template-columns:minmax(0,24rem) minmax(0,1fr);gap:0;padding:26px 0;}
   /* the vertical 1px rule that divides the two columns */
   .eb-row-r{margin:0;padding-left:32px;border-left:1px solid var(--rule-soft);}
   .eb-row-l{padding-right:32px;}
 }
 
 /* ---- about -------------------------------------------------------------- */
-.eb-about{margin-top:34px;display:flex;flex-direction:column;gap:18px;}
+.eb-about{margin-top:28px;display:flex;flex-direction:column;gap:18px;}
 
 /* ---- close -------------------------------------------------------------- */
-.eb-close{padding-top:64px;padding-bottom:64px;}
-.eb-close-h{color:var(--ink);margin-bottom:28px;max-width:20ch;}
-@media (min-width:640px){.eb-close{padding-top:96px;padding-bottom:96px;}}
+.eb-close{padding-top:48px;padding-bottom:48px;}
+/* 18ch and balanced. At 20ch the closing line broke after "I" — "Tell me what
+   you run and I" / "'ll tell you straight…" — which is the worst available
+   break in the sentence and it was the last thing on the page. balance splits
+   it near the middle instead of filling line one and orphaning the remainder. */
+.eb-close-h{color:var(--ink);margin-bottom:24px;max-width:18ch;text-wrap:balance;}
+@media (min-width:640px){.eb-close{padding-top:66px;padding-bottom:66px;}}
 
 /* ---- footer ------------------------------------------------------------- */
-.eb-foot{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;padding-top:26px;
-  padding-bottom:26px;font-size:var(--t-fine);line-height:1.6;color:var(--dim);}
-.eb-foot-i{display:inline-flex;align-items:center;gap:12px;}
+/* No separator glyphs — see the note on the markup. The row gap is what
+   separates the items, so nothing can be orphaned onto a wrapped line. */
+.eb-foot{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.25rem;padding-top:22px;
+  padding-bottom:22px;font-size:var(--t-fine);line-height:1.6;color:var(--dim);}
 .eb-foot-a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;color:inherit;}
 .eb-foot-a:hover{color:var(--bone);}
+.eb-foot-s{display:inline-flex;align-items:center;min-height:44px;}
+
+/* ---- the phone action bar ----------------------------------------------- */
+/* Hidden by default so no desktop rule has to undo it. Below 640px the header
+   already drops "Book 20 minutes", which is the same breakpoint at which a
+   visitor stops having a persistent way to act at all. */
+.eb-bar{display:none;}
+@media (max-width:639px){
+  .eb-bar{position:fixed;left:0;right:0;bottom:0;z-index:60;
+    display:grid;grid-template-columns:1fr 1fr;gap:1px;
+    background:var(--bone);border-top:1px solid var(--bone);
+    padding-bottom:env(safe-area-inset-bottom);}
+  .eb-bar-a{display:flex;align-items:center;justify-content:center;min-height:56px;padding:0 12px;
+    font-family:var(--f-mono);font-size:var(--t-fine);font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;text-decoration:none;text-align:center;
+    background:var(--ink);color:var(--bone);}
+  .eb-bar-a--p{background:var(--bone);color:var(--ink);}
+  /* The bar must never sit on top of the last line of the footer. This is the
+     bar's own height plus whatever the device reserves for the home indicator,
+     and it has to move if .eb-bar-a's min-height ever does. */
+  .eb{padding-bottom:calc(57px + env(safe-area-inset-bottom));}
+}
+/* Progressive enhancement, and the base state above is the fallback: a browser
+   without scroll-driven animations, and anybody who asked for reduced motion,
+   gets the bar the whole way down. Where it is supported the bar stays off
+   screen over the hero — where two full-size buttons are already on screen —
+   and again over the closing CTA, for the same reason. Percentages rather than
+   pixels because the document is 15,000px on one phone and 20,000px on
+   another; 4% and 94% of the scroll range land on the two CTA blocks at both.
+   transform and opacity only, which is the whole of what is animated here. */
+@supports (animation-timeline:scroll()){
+  @media (max-width:639px) and (prefers-reduced-motion:no-preference){
+    .eb-bar{animation:eb-bar-peek linear both;animation-timeline:scroll(root block);}
+    @keyframes eb-bar-peek{
+      0%,4%{opacity:0;transform:translateY(100%);}
+      7%,94%{opacity:1;transform:translateY(0);}
+      97%,100%{opacity:0;transform:translateY(100%);}
+    }
+  }
+}
 `;

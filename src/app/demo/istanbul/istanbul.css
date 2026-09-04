@@ -1,0 +1,323 @@
+/* ============================================================================
+   Taste of Istanbul — warm/light direction
+
+   Rebuilt 2026-08-04 against four real food-truck sites JP picked:
+   craftmeatsaustin, gorillacheesenyc, curryupnow, bonmetruck.
+
+   The decisive finding: ALL FOUR are light and warm. Not one is dark. A dark
+   page reads as software; a warm cream page reads as food. The shared playbook
+   is also consistent — enormous blocky display type, a full-width pill CTA in a
+   hot accent, a scrolling marquee, a sticker roundel, and organic edges rather
+   than straight rules.
+
+   Colours still come off THEIR truck: body red, lettering gold, badge green.
+   Now on cream instead of black.
+
+   Radii are a two-value system, held: pills for actions, one soft radius for
+   photo cards. (Pills are idiomatic in this category — all four use them. The
+   AI tell is pill + icon + arrow, which none of these do and neither do we.)
+   ========================================================================== */
+
+.istanbul {
+  /* base — warm light, per every reference */
+  --cream:      #fdf6ec;
+  --cream-2:    #f7ead6;
+  --ink:        #1b1210;
+  /* --ink-faint carries every menu description. At #8d8078 it measured 3.57:1
+     on cream — under AA, and the hardest thing to read on a phone at a truck
+     window in sunlight. Both darkened to clear 4.5:1. */
+  --ink-dim:    #5f5349;
+  --ink-faint:  #6b6157;
+
+  /* their truck */
+  --truck:      #c8221c;
+  --truck-hot:  #e0332b;
+  --gold:       #e9a733;
+  --gold-deep:  #d18f1c;
+  --green:      #2f6b47;
+  /* Their logo badge is a deep green shield — so the page's dark field is that
+     green, not a neutral near-black. All three truck colours now carry weight:
+     red for action, gold for the pitch field, green for the dark field. */
+  --green-deep: #1c4a31;
+
+  --istanbul:   var(--truck);
+  --caracas:    var(--green);
+
+  --line:       rgba(27, 18, 16, 0.14);
+  --r-pill:     999px;
+  --r-card:     14px;
+  --ease:       cubic-bezier(.2, .8, .2, 1);
+
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+
+  /* A Turkish tile lattice at ~2.5% — the Ottoman diamond geometry from their
+     own logo, present as texture rather than decoration. Every fill on the page
+     was solid colour, which is the flat-vector tell; this is the cheapest
+     possible fix and it's culturally theirs rather than a generic noise layer. */
+  background-color: var(--cream);
+  background-image:
+    repeating-linear-gradient(45deg,  transparent 0 17px, rgba(200, 34, 28, .028) 17px 18px),
+    repeating-linear-gradient(-45deg, transparent 0 17px, rgba(47, 107, 71, .028) 17px 18px);
+}
+
+/* ── type ─────────────────────────────────────────────────────────────────
+   Anton is the Gorilla Cheese move: one blocky face, enormous, doing all the
+   shouting. Body stays a clean workhorse at a light weight, like Craft and
+   Bon Me (both lean on 300).                                                */
+
+.istanbul .display {
+  font-family: var(--font-display), "Arial Black", sans-serif;
+  font-weight: 400;
+  /* 0.95, NOT 0.8. Anton has a tall ascender, so at 0.8 the second line of any
+     wrapped title crashes into the first — which on a 390px phone is nearly
+     every menu item ("CHICKEN / SHAWARMA PLATE", "CLASSIC / BEEF BURGER"). The
+     tight single-line look is only safe where the text cannot wrap; see
+     .display-hero for the one place that's true. */
+  line-height: 0.95;
+  /* The Ñ in TEQUEÑOS: its tilde sits above the cap height and was being cut
+     off by overflow-hidden ancestors. */
+  padding-bottom: 0.08em;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  /* Even line lengths instead of one long line and one orphan word. */
+  text-wrap: balance;
+}
+
+/* The hero lockup only — "Taste of / Istanbul" is a hand-set two-line lockup
+   that never reflows, so it can carry the tight stack safely. */
+.istanbul .display-hero { line-height: 0.85; }
+
+.istanbul .display-md {
+  font-family: var(--font-display), "Arial Black", sans-serif;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+}
+
+.istanbul .eyebrow {
+  font-family: var(--font-body), sans-serif;
+  font-weight: 700;
+  font-size: 0.875rem; /* 14px floor — was 0.78rem ≈ 12.5px */
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--truck);
+}
+.istanbul .eyebrow-istanbul { color: var(--truck); }
+.istanbul .eyebrow-caracas  { color: var(--green); }
+
+.istanbul .body-lg {
+  font-size: 1.06rem;
+  line-height: 1.65;
+  font-weight: 300;
+  color: var(--ink-dim);
+}
+
+/* ── the marquee ──────────────────────────────────────────────────────────
+   Three of the four references run a scrolling ticker. Ours writes itself:
+   "Shawarma · Empanadas · Tequeños · Burgers" is painted on the truck.      */
+
+.istanbul .marquee {
+  /* `clip` clips without creating a scroll container, which is what this
+     actually wants — the 1706px track never needs to be scrollable. `hidden`
+     stays first as the fallback.
+     (For the record: this was NOT the cause of the 4px overflow gate failure on
+     2026-08-18. That was the FeatureBand price span — see PriceSlot in
+     menu.tsx. The marquee was innocent.) */
+  overflow: hidden;
+  overflow: clip;
+  white-space: nowrap;
+  background: var(--truck);
+  color: var(--cream);
+  padding: 0.6rem 0;
+  border-block: 2px solid var(--ink);
+}
+.istanbul .marquee-track {
+  display: inline-flex;
+  gap: 2.2rem;
+  padding-right: 2.2rem;
+  animation: istanbul-scroll 26s linear infinite;
+  will-change: transform;
+}
+@keyframes istanbul-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── surfaces ─────────────────────────────────────────────────────────── */
+
+/* Was pure #fff, which made the page read as mostly white. Cream keeps the
+   warmth and lets the truck's red/gold/green carry the page. */
+.istanbul .card {
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-card);
+  position: relative;
+}
+
+/* Tinted section bands so the menu isn't one uninterrupted light field. */
+.istanbul .band-gold  { background: rgba(233, 167, 51, .22); }
+.istanbul .band-green { background: rgba(47, 107, 71, .13); }
+
+/* Section-jump chips. Body face, not display — this is navigation furniture and
+   must not compete with the four coloured band headings it points at. */
+.istanbul .chip {
+  font-family: var(--font-body), sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: rgba(233, 167, 51, 0.28);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-pill);
+  padding: 0.45rem 0.8rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  transition: background 0.18s var(--ease);
+}
+.istanbul .chip:hover { background: var(--gold); }
+
+/* ── section bands ────────────────────────────────────────────────────────
+   Every menu section gets its own solid colour off the truck's own palette,
+   so scrolling the board moves through red → gold → green → deep green rather
+   than four identical headings on cream. Previously only the Venezuelan
+   section had a colour and the other three were cream, which made them read
+   as the same section repeated.                                            */
+.istanbul .sec-spit    { background: var(--truck);      color: var(--cream); }
+.istanbul .sec-grill   { background: var(--gold);       color: var(--ink); }
+.istanbul .sec-caracas { background: var(--green);      color: var(--cream); }
+.istanbul .sec-cold    { background: var(--green-deep); color: var(--cream); }
+
+/* Gold on red/green/deep-green clears AA at this size; on the gold band the
+   eyebrow has to flip to ink or it's gold-on-gold. */
+.istanbul .sec-spit    .eyebrow,
+.istanbul .sec-caracas .eyebrow,
+.istanbul .sec-cold    .eyebrow { color: var(--gold); }
+.istanbul .sec-grill   .eyebrow { color: var(--ink); }
+
+/* The "we're here tonight" card — Bon Me's white box over a photo. */
+.istanbul .card-live {
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--truck);
+}
+
+/* Gold field section, Gorilla-style: a solid colour block, not a tinted dark. */
+.istanbul .field-gold  { background: var(--gold); color: var(--ink); }
+.istanbul .field-green { background: var(--green-deep); color: var(--cream); }
+
+/* Organic edge instead of a straight rule. */
+.istanbul .wave-top {
+  display: block;
+  width: 100%;
+  height: 26px;
+  color: inherit;
+}
+
+/* ── controls ─────────────────────────────────────────────────────────────
+   Full-width pills, type only. No icon, no arrow — that combination is the
+   tell; the pill by itself is this category's vernacular.                   */
+
+.istanbul .btn {
+  min-height: 52px;
+  min-width: 44px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 2px solid var(--ink);
+  transition: transform .16s var(--ease), background-color .16s var(--ease);
+  cursor: pointer;
+}
+.istanbul .btn:active { transform: translateY(2px); }
+
+.istanbul .btn-primary { background: var(--truck); color: #fff; }
+.istanbul .btn-primary:hover { background: var(--truck-hot); }
+
+.istanbul .btn-ghost { background: transparent; color: var(--ink); }
+.istanbul .btn-ghost:hover { background: var(--cream-2); }
+
+/* Small add control on menu lines — still 44px min, still a pill. */
+.istanbul .btn-add {
+  min-height: 44px;
+  padding-inline: 1.1rem;
+  border-radius: var(--r-pill);
+  border: 2px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-display), sans-serif;
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color .16s var(--ease);
+}
+.istanbul .btn-add:hover { background: var(--gold); }
+
+/* ── the sticker ──────────────────────────────────────────────────────────
+   Bon Me and Curry both hang a circular badge over a photo edge. Theirs is
+   their real differentiator: open till midnight, every day.                 */
+.istanbul .sticker {
+  display: grid;
+  place-content: center;
+  width: 96px;
+  height: 96px;
+  padding: 0 9px;
+  border-radius: 50%;
+  background: var(--truck);
+  color: #fff;
+  border: 3px solid var(--ink);
+  /* Sits INSIDE the photo, top-right, anchored to the frame — not hung off a
+     hard-coded top-[126px] that was tuned at a wider breakpoint. At 390px the
+     photo is only ~186px tall, so the magic pixel value pushed the roundel down
+     over the card's "Parked every day" eyebrow. */
+  transform: rotate(-9deg);
+  transform-origin: center;
+  text-align: center;
+  line-height: 1.05;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* ── photography ─────────────────────────────────────────────────────────
+   Curry's menu pattern: full-width photo, name underneath. Photos get the
+   card border so they read as objects on the cream, not holes in it.       */
+.istanbul .photo-frame {
+  border: 2px solid var(--ink);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  position: relative;
+}
+
+/* The "photo coming" reserved-slot styles lived here. Removed with the slots
+   themselves — 17 of them ran to roughly half the page and read as holes, which
+   is the opposite of the intended effect. The two-state preview (a finished
+   board vs. the same board with photographs) makes the same argument without
+   ever showing an unfinished page. */
+
+/* ── open indicator ─────────────────────────────────────────────────────── */
+.istanbul .pulse {
+  background: var(--green);
+  animation: istanbul-pulse 2.6s var(--ease) infinite;
+}
+@keyframes istanbul-pulse {
+  0%, 100% { opacity: 1;   box-shadow: 0 0 0 0 rgba(47, 107, 71, .5); }
+  50%      { opacity: .8;  box-shadow: 0 0 0 7px rgba(47, 107, 71, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .istanbul .pulse { animation: none; }
+  .istanbul .marquee-track { animation: none; }
+  .istanbul * { transition-duration: .01ms !important; }
+}
+
+.istanbul a:focus-visible,
+.istanbul button:focus-visible {
+  outline: 3px solid var(--truck);
+  outline-offset: 2px;
+}

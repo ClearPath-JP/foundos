@@ -310,8 +310,12 @@ function FreshRail({ items }: { items: Item[] }) {
 
   return (
     <section className="mt-7">
+      {/* The gap between the words and the badge is flex `gap-2` — a visual gap,
+          not a character. Without the explicit space JSX joins the two text
+          nodes and a screen reader announces the heading as "Fresh this
+          weeknew". `{" "}` is the separator the accessible name needs. */}
       <h2 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-white/40">
-        Fresh this week
+        Fresh this week{" "}
         <span
           className="rounded-full px-2 py-0.5 text-[9px] tracking-[0.12em]"
           style={{ background: biz.accent, color: "#fff" }}

@@ -25,7 +25,7 @@ import {
   type WeekStop,
 } from "./data";
 
-type View = "customer" | "staff";
+export type View = "customer" | "staff";
 type CartLine = { id: string; qty: number };
 
 type Blast = { id: number; body: string; sent: number };
@@ -83,9 +83,25 @@ const NEXT_STATUS: Record<OrderStatus, OrderStatus> = {
   "picked-up": "picked-up",
 };
 
-export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [business, setBusinessState] = useState<BusinessKey>("truck");
-  const [view, setView] = useState<View>("customer");
+export function StoreProvider({
+  children,
+  initialBusiness = "truck",
+  initialView = "customer",
+}: {
+  children: React.ReactNode;
+  /**
+   * Which business and which screen the URL asked for. Resolved on the server
+   * in page.tsx from `?biz=` and `?view=` so the prerendered HTML is already
+   * the right business — the tab title, the link preview and the no-JS render
+   * used to say "food truck" no matter which demo you opened.
+   *
+   * These seed state once. The in-demo toggle owns it from then on.
+   */
+  initialBusiness?: BusinessKey;
+  initialView?: View;
+}) {
+  const [business, setBusinessState] = useState<BusinessKey>(initialBusiness);
+  const [view, setView] = useState<View>(initialView);
   const [items, setItems] = useState<Record<BusinessKey, Item[]>>({
     truck: TRUCK_ITEMS,
     bakery: BAKERY_ITEMS,
@@ -157,16 +173,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
-  // Deep links: ?biz=bakery&view=staff — handy for opening straight to the
-  // screen you want to show a prospect. Read after mount so prerendering and
-  // hydration stay identical.
-  useEffect(() => {
-    const p = new URLSearchParams(window.location.search);
-    const b = p.get("biz");
-    const v = p.get("view");
-    if (b === "truck" || b === "bakery") setBusinessState(b);
-    if (v === "customer" || v === "staff") setView(v);
-  }, []);
+  // Deep links (?biz=bakery&view=staff) used to be read here, after mount. That
+  // meant every visitor got the food truck in the server HTML and a corrected
+  // screen one frame later — wrong tab title, wrong link preview, wrong page
+  // with JS off. They are read on the server now and arrive as props above.
 
   // Order age ticks on the client only.
   useEffect(() => {
