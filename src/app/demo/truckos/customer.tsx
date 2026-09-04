@@ -170,8 +170,10 @@ function StoreCard() {
             Open today
           </p>
           <p className="mt-1.5 text-xl font-bold leading-tight">8:00am – 9:00pm</p>
+          {/* Invented address on a real road, same rule as SPOTS in data.ts —
+              believable enough to read as a real bakery, attached to nobody. */}
           <p className="mt-0.5 text-sm text-white/50">
-            12 Cobb Pkwy S · Marietta, GA
+            884 Cobb Pkwy S · Marietta, GA
           </p>
         </div>
         <span

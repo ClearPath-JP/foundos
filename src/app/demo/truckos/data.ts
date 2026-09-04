@@ -57,7 +57,24 @@ export const BUSINESSES: Record<BusinessKey, Business> = {
     accent: "#d9412a",
     accentSoft: "rgba(217, 65, 42, 0.12)",
     ink: "#1a1210",
-    heroSrc: "/demo/truckos/hero.jpg",
+    /**
+     * ⚠️ heroSrc REMOVED 2026-09-03. Do not restore /demo/truckos/hero.jpg.
+     *
+     * That file is a photograph of a REAL food truck — "Jake's Drive-In
+     * Burgers" — with the business's real phone number (954-849-0704) painted
+     * on the side, their real menu and prices on the board, and roughly six
+     * identifiable people in frame, customers and staff, faces visible.
+     *
+     * It was the hero of a fictional Atlanta business called El Fuego Smash, on
+     * a page linked from foundos.ai. That is a real business's identity and six
+     * strangers' faces used as someone else's portfolio piece — the same thing
+     * src/lib/contact.ts warns about for spec builds, with the added problem of
+     * people who never agreed to be there.
+     *
+     * With no heroSrc the hero falls back to the generated art, exactly like the
+     * bakery. If a hero photo is wanted here it must be licensed stock with no
+     * identifiable business and no identifiable faces.
+     */
     mobile: true,
     pickupLabel: "Order ahead — skip the line",
     subscribers: 412,
@@ -102,7 +119,10 @@ export const TRUCK_ITEMS: Item[] = [
     price: 12,
     section: "Smash Burgers",
     glyph: "burger",
-    src: `${P}/chorizo.jpg`,
+    // src pulled 2026-09-03: chorizo.jpg is shot inside a real restaurant with
+    // that venue's own neon sign filling the background, and it is the only
+    // file in this folder carrying no creator or rights metadata at all — so
+    // its source and licence can't be confirmed. Falls back to generated art.
     seed: "chorizo",
     soldOut: false,
     countLeft: 24,
@@ -174,7 +194,10 @@ export const TRUCK_ITEMS: Item[] = [
     price: 3,
     section: "Drinks",
     glyph: "cup",
-    src: `${P}/jarritos.jpg`,
+    // src pulled 2026-09-03: jarritos.jpg has dc:rights = "TODOS LOS DERECHOS
+    // RESERVADOS" — the photographer explicitly reserving all rights. Separately
+    // it shows unlabelled bottles, not Jarritos, so it was never the right photo
+    // for this item anyway. Falls back to generated art.
     seed: "jarritos",
     soldOut: false,
     countLeft: null,
@@ -360,30 +383,46 @@ export type Spot = {
   window: string;
 };
 
-/** The owner taps one of these instead of typing. Two seconds, done. */
+/**
+ * The owner taps one of these instead of typing. Two seconds, done.
+ *
+ * ⚠️ EVERY VENUE HERE IS INVENTED. Keep it that way.
+ *
+ * These were four real Atlanta-area businesses — a gym, a brewery, an office
+ * park and a food hall — named with their real street addresses, in a demo for
+ * a food truck that does not exist. None of them agreed to appear in someone
+ * else's sales material, and a fictional truck "parked at" a real business puts
+ * words in that business's mouth.
+ *
+ * The replacements follow the rebrand rule in the brand spec §3.5: a real
+ * Atlanta-area street, so it reads as a place a truck would actually go, with a
+ * street number and a business name that don't exist. Believable, and nobody's.
+ *
+ * If you add a spot, invent it. Do not reach for somewhere you know.
+ */
 export const SPOTS: Spot[] = [
   {
-    id: "s-x3",
-    name: "X3 Sports — Windy Hill",
-    address: "1775 Windy Hill Rd SE, Smyrna",
+    id: "s-gym",
+    name: "Kestrel Athletic Club",
+    address: "1890 Windy Hill Rd SE, Smyrna",
     window: "11:00am – 2:30pm",
   },
   {
     id: "s-brewery",
-    name: "Glover Park Brewery",
-    address: "65 Powder Springs St, Marietta",
+    name: "Foxglove Brewing",
+    address: "121 Powder Springs St, Marietta",
     window: "5:00pm – 9:00pm",
   },
   {
     id: "s-office",
-    name: "Cumberland Office Park",
-    address: "2500 Cumberland Pkwy SE, Atlanta",
+    name: "Larkspur Office Park",
+    address: "2740 Cumberland Pkwy SE, Atlanta",
     window: "11:30am – 2:00pm",
   },
   {
     id: "s-market",
-    name: "Marietta Square Market",
-    address: "68 Powder Springs St, Marietta",
+    name: "Ninebark Market",
+    address: "240 Whitlock Ave, Marietta",
     window: "12:00pm – 8:00pm",
   },
 ];
@@ -418,7 +457,7 @@ export type WeekStop = { day: string; short: string; spotId: string | null };
 export const TRUCK_WEEK: WeekStop[] = [
   { day: "Monday", short: "Mon", spotId: null },
   { day: "Tuesday", short: "Tue", spotId: "s-office" },
-  { day: "Wednesday", short: "Wed", spotId: "s-x3" },
+  { day: "Wednesday", short: "Wed", spotId: "s-gym" },
   { day: "Thursday", short: "Thu", spotId: "s-office" },
   { day: "Friday", short: "Fri", spotId: "s-brewery" },
   { day: "Saturday", short: "Sat", spotId: "s-market" },
