@@ -3,10 +3,14 @@
 # was working material that is never served — screenshots, PDFs, print assets.
 #
 # Deploy-time only — this does not affect git, and everything listed still runs
-# locally. Two kinds of entry live here: working material that is never served
-# (screenshots, PDFs, print assets), and whole routes deliberately kept off the
-# public site. Anything still imported by a shipped page must NOT be listed —
-# see the note above src/app/explore/content.ts below.
+# locally. Everything here is working material that is never served.
+#
+# There is no longer a "routes kept off the public site" section. Those routes
+# (/studios, /truck, /clahvay, /ai and every /explore variant) were deleted
+# outright on 2026-09-03 — see DECISIONS.md. Hiding a route at deploy time while
+# it still built locally meant the repo and the live site disagreed about what
+# the product was; deleting them settles it in one place. Their prices and copy
+# are transcribed in docs/salvage-2026-09-03.md.
 
 # Reference screenshots + design captures
 explore-shots/
@@ -25,37 +29,42 @@ NOTES.md
 DEPLOY.md
 AGENTS.md
 CLAUDE.md
+DECISIONS.md
+CLAUDE-BUILD-ORDER.md
+foundos-brand-and-site-spec.md
+foundos-system-rulebook.md
 
 # Tooling state
 .serena/
 .claude/
 tsconfig.tsbuildinfo
 
-# ── Routes kept off the public site ───────────────────────────────────────────
-# "One really good site." These all still build and run locally; they just don't
-# become public pages. Only routes that were NOT already live are listed here —
-# aurora / ember / nocturne and the older demos stay deployed so no existing
-# link breaks.
+# Build-time tooling. scripts/capture-work.mjs regenerates the concept-site
+# screenshots in public/work/ — it runs on a machine, never on the server, and
+# the images it produces ARE deployed.
+scripts/
+
+# ── Never serve these ─────────────────────────────────────────────────────────
+# Everything under public/ is served verbatim whether or not a page links to it.
+# Nothing referenced these, which is exactly why nobody noticed they were live.
 #
-# /studios and /truck are the important ones: they are sales pages carrying the
-# full price ladder ($1,200 + $279, $500 + $149). Publishing a price lets a
-# prospect disqualify himself before the diagnosis.
+# public/portfolio/ held 18 screenshots reachable at foundos.ai/portfolio/*.png,
+# among them heirloom.png, clahvay.png, amistad.png, babygirl.png and
+# station11.png — five real businesses that have never hired us. src/lib/contact.ts
+# already names those exact businesses and says why: showing them reads as
+# "client" to a visitor, which is untrue, and it risks a live deal if an owner
+# ever finds their restaurant used as someone else's portfolio piece. A direct
+# URL does that just as effectively as a link on a page.
 #
-# NOTE: src/app/explore/content.ts is deliberately NOT excluded — the homepage
-# imports `services` from it and the build fails without it.
-src/app/studios/
-src/app/truck/
-src/app/clahvay/
-src/app/explore/page.tsx
-src/app/explore/bento/
-src/app/explore/editorial/
-src/app/explore/ledger/
-src/app/explore/midnight/
-src/app/explore/spectrum/
-src/app/explore/velvet/
-src/app/explore/warm/
+# public/josh.jpg is a 320px photo from a music night with another woman's face
+# centred in it and more people behind. She never agreed to appear on a business
+# website. It is not used anywhere and must not be served.
+#
+# Keeping them here rather than deleting them: they are useful working material
+# for pitches. They are just not the public's business.
+public/portfolio/
+public/josh.jpg
 
 # Deployed from its own Vercel project (istanbul-demo-sigma) — not from here.
 src/app/demo/istanbul/
 public/demo/istanbul/
-public/explore-thumbs/

@@ -1,0 +1,7 @@
+<!-- foundos favicon: the dot alone, on white. Two colours, no gradients.
+     The `f` + dot alternative was drawn and rasterised at 16px before this was
+     chosen — it reads, but it never resolves as a mark in a square tile. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" fill="#FFFFFF" />
+  <circle cx="16" cy="16" r="11" fill="#1D9E75" />
+</svg>

@@ -1,474 +1,544 @@
+import Link from 'next/link';
+
 import InstantReport from '@/components/report/InstantReport';
 import {
   CAL,
   DEMO_LINE,
   DEMO_LINE_PRETTY,
-  DEMOS,
+  DESCRIPTION,
+  EMAIL,
+  LOCATION,
   PHONE,
   PHONE_PRETTY,
-} from '@/lib/contact';
+  PRICES,
+  WORDMARK,
+} from '@/config/brand';
+import { DEMOS } from '@/lib/contact';
 
 /**
- * foundos.ai homepage — "the letter" (2026-08-21).
+ * foundos.ai homepage — rebuilt 2026-09-03 to the brand spec (§2.1 → §2.11).
  *
- * The QR on the back of JP's v2 card encodes the bare root, so this page is
- * the after-handshake moment. It is deliberately a page of WORDS: white,
- * unornamented, short lines with room to breathe, the way you'd read a note
- * rather than scan a brochure. Every service the old six-card grid listed is
- * still here, rewritten as a line you can read in one breath.
+ * What this replaced: "the letter" — a splash overlay, five banner bars in the
+ * old accent colour, a component that tinted nine words that same colour, seven
+ * emoji, a glass mobile dock, and 197 lines of inline CSS. All of it is gone.
+ * The page is now black on white, one family, two weights, and the only colour
+ * on it is the dot after the wordmark.
  *
- * ⚠️ The card's back reads "Scan to see exactly what I'd build for your
- * business →". That sentence is kept verbatim as the #report section's H2 —
- * do not reword it while v2 cards are still in circulation.
+ * Order matters and it is not cosmetic. The audit box is the front door of the
+ * business, so it sits third — right after the two lines that name the problem
+ * — instead of below the whole service list where it used to hide. Anything
+ * added later goes *under* it, never above it.
  *
- * ⚠️ JP's photo was deliberately removed on 2026-08-21 at his direction. It
- * previously "confirmed the face they just met" on a card scan; if trust ever
- * reads thin, the 52px avatar is the thing to put back, not the portrait.
+ * Constraints a future editor must not break:
  *
- * Earlier directions are still browsable at /explore/aurora and
- * /explore/nocturne. The WebGL liquid background lives at
- * components/GradientBackground.tsx and is intentionally unused — it gates
- * itself to min-width 768px, so it never runs on the phones prospects hold.
+ *   1. This file stays a SERVER component. There is no client state on the
+ *      page: the sticky header is `position: sticky`, the hero's second button
+ *      is a plain `#report` anchor, and every piece of interactivity lives
+ *      inside InstantReport, which is the client leaf. Adding 'use client'
+ *      here would drag the whole page into the bundle for nothing.
+ *
+ *   2. No hex codes. Colours come from the six `@theme` tokens in globals.css
+ *      (bg-paper, text-ink, text-muted, border-hairline, bg-surface, bg-dot).
+ *      Green appears exactly once per view — the dot — and never on a link, a
+ *      button or an icon.
+ *
+ *   3. No price strings. Both numbers in §2.8 are read from PRICES in
+ *      config/brand.ts so Josh can change a price in one place. If you find
+ *      yourself typing a dollar sign in this file, stop.
+ *
+ *   4. The h1 must outrank every h2 on every screen. This is the constraint
+ *      that replaced "three lines at 375px", and it replaced it because the
+ *      two could not both hold. The headline is 78 characters; the spec asks
+ *      for 36px on mobile and a three-line maximum, and 36px would need 464px
+ *      of column to make three lines. No phone has it.
+ *
+ *      The first attempt kept the three-line rule and clamped the hero to
+ *      ~27px to get it. That fit — and it left the h1 measuring 3% larger than
+ *      the section headings, so a phone showed six headings of equal rank and
+ *      no title. A fresh-eyes review found the page's entry point had become
+ *      the black phone-number button. Hierarchy is worth more than a line.
+ *
+ *      So: 32px over four lines at 390px, 56px at desktop, with the section
+ *      headings down to 22px to get out of the way. Mobile scale is 32 / 26 /
+ *      22 — hero, audit box, everything else. If the copy changes, re-measure
+ *      the wrap, but never at the cost of the h1 outranking the h2s.
+ *
+ *   5. Focus rings are NOT declared here. globals.css sets a black 2px ring on
+ *      `:focus-visible` outside `@layer base` on purpose, so an unlayered rule
+ *      beats any utility a component could add. Don't re-declare it, and never
+ *      add `focus:outline-none`.
+ *
+ *   6. §2.6 ships only what `DEMOS` holds — two concept sites we own outright.
+ *      contact.ts carries the reason in full: a spec build made for a live
+ *      prospect (Williamson, Caribbean Spice, Clahvay, Istanbul) reads as
+ *      "client" to every visitor, which is untrue and risks the deal. A build
+ *      graduates onto this page the day that client pays.
+ *
+ * STANDING CONFLICT, logged in DECISIONS.md: the v2 business cards in
+ * circulation are printed with "See exactly what I'd build for your business
+ * →". The §2.4 heading below says *restaurant*, per the newer spec. A prospect
+ * scanning a card lands on a page that says something slightly different.
+ * Josh's call whether to reprint or to soften the heading — not an accident,
+ * don't quietly "fix" it either way.
  */
 
+/**
+ * The one column the whole page lives in.
+ *
+ * 820px is the narrowest max-width that still holds the desktop hero to three
+ * lines at 56px — at 760px it wraps to four. The 20px mobile gutter is what
+ * keeps characters-per-line sane down to a 360px phone. Measured, not chosen;
+ * don't tighten either without re-measuring the hero wrap.
+ */
+const SHELL = 'mx-auto w-full max-w-[820px] px-5 sm:px-8';
+
+/** Nothing reads past 65 characters. */
+const MEASURE = 'max-w-[65ch]';
+
+/** Body: 18px desktop / 17px mobile, 1.6. Supporting lines are muted, primary lines are black. */
+const PARA = `${MEASURE} text-[17px] leading-[1.6] text-muted sm:text-[18px]`;
+
+/** Section heading: 32px / 26px, weight 600. There are no eyebrow labels above these — sentence case, nothing else. */
+/**
+ * The mobile type scale is 32 / 26 / 22 — hero, audit box, every other section.
+ *
+ * It used to be 27 / 26 / 26, which is not a scale. The hero was clamped down
+ * until it fit the spec's "three lines at 375px" and nothing else moved, so on
+ * a phone the h1 measured 3% larger than the h2s and the page had six headings
+ * of equal rank and no title. The eye had no entry point and landed on the
+ * black button instead.
+ *
+ * The spec asks for a 36px mobile hero AND a three-line maximum, and those two
+ * cannot both hold for a 78-character headline — 36px would need 464px of
+ * column and no phone has it. Something had to give. Giving up type size costs
+ * one extra line; giving up hierarchy costs the reader the top of the page. So
+ * the hero is 32px over four lines, and the section headings drop to 22px to
+ * get out of its way.
+ */
+const H2 = 'text-[22px] font-semibold leading-[1.2] tracking-[-0.01em] text-ink sm:text-[32px]';
+
+/**
+ * Buttons: 8px radius, 48px minimum target. Hover changes colour and nothing
+ * else — no lift, no shadow, no transform.
+ */
+const BTN =
+  'inline-flex min-h-[48px] items-center justify-center rounded-[8px] px-6 text-[16px] font-semibold no-underline transition-colors';
+const BTN_PRIMARY = `${BTN} bg-ink text-paper hover:bg-muted`;
+const BTN_SECONDARY = `${BTN} border border-ink bg-paper text-ink hover:bg-surface`;
+
+/**
+ * The dot is sized in `em` off the mark's own font-size, so the header mark
+ * (20px) and the footer mark (16px) stay in proportion instead of carrying two
+ * hand-tuned pixel values. 9px and 6px at a 20px mark — the numbers live in
+ * brand.ts, this is just the divisor.
+ */
+const MARK_PX = 20;
+const DOT_STYLE = {
+  width: `${WORDMARK.dotSize / MARK_PX}em`,
+  height: `${WORDMARK.dotSize / MARK_PX}em`,
+  marginLeft: `${WORDMARK.dotGap / MARK_PX}em`,
+};
+
+/**
+ * `foundos` and the dot. The dot is decorative — it means "running" — so it is
+ * aria-hidden, which leaves the link's accessible name as the word alone.
+ */
+function Wordmark({ className = '' }: { className?: string }) {
+  return (
+    <span className={`inline-flex items-baseline font-semibold tracking-[-0.02em] text-ink ${className}`}>
+      {WORDMARK.text}
+      <span aria-hidden="true" className="inline-block shrink-0 rounded-full bg-dot" style={DOT_STYLE} />
+    </span>
+  );
+}
+
+/** §2.5. Bold lead-in, plain sentence, no icons — the lead-in does the icon's job. */
+const BUILDS = [
+  {
+    lead: 'A website that actually sells',
+    rest: 'ordering and payments built in, so you stop handing a cut of every ticket to the apps.',
+  },
+  {
+    lead: 'Bookings customers make themselves',
+    rest: 'at midnight, straight into your calendar.',
+  },
+  {
+    lead: 'An AI that answers every call',
+    rest: 'takes the order, books the table. A ringing phone stops being a lost customer.',
+  },
+  {
+    lead: 'Reviews asked for automatically',
+    rest: 'and the regulars who drifted away quietly brought back.',
+  },
+  {
+    lead: 'Your Google listing fixed',
+    rest: "so you're the obvious choice the moment someone searches nearby.",
+  },
+  {
+    lead: 'Every order, call, and dollar on one screen',
+    rest: "so you finally see what's working.",
+  },
+] as const;
+
+/**
+ * Structured data. The spec's section list has no entry for it, so building
+ * strictly to the list would silently drop the whole block — it is carried
+ * forward deliberately. `name` is the mark without ".ai", and the description
+ * is the hero's own sentence from brand.ts so the two can't drift.
+ */
 const SCHEMA = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
-  name: 'foundos.ai',
-  description:
-    'Websites, online ordering, booking systems and AI phone answering for local businesses in Atlanta.',
+  name: WORDMARK.text,
+  description: DESCRIPTION,
   url: 'https://foundos.ai',
   telephone: `+1${PHONE}`,
-  email: 'hello@foundos.ai',
-  areaServed: { '@type': 'City', name: 'Atlanta' },
-  address: { '@type': 'PostalAddress', addressLocality: 'Atlanta', addressRegion: 'GA', addressCountry: 'US' },
+  email: EMAIL,
+  areaServed: { '@type': 'City', name: LOCATION.city },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: LOCATION.city,
+    addressRegion: LOCATION.region,
+    addressCountry: 'US',
+  },
   founder: { '@type': 'Person', name: 'Josh Potesta' },
   sameAs: ['https://instagram.com/josh.potesta'],
 };
 
-/** A violet-weighted word. The accent is the only colour on the page. */
-function V({ children }: { children: React.ReactNode }) {
-  return <em className="lt-v">{children}</em>;
-}
-
 export default function HomePage() {
   return (
-    <div className="lt">
-      <style>{CSS}</style>
+    <div id="top" className="bg-paper text-ink">
+      {/* Escaping `<` is the documented guard against an XSS injection through
+          a stringified payload. Nothing here is user input today; the escape
+          stays so it can't become a hole when something dynamic is added. */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(SCHEMA) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(SCHEMA).replace(/</g, '\\u003c') }}
       />
 
-      {/* ── Splash ────────────────────────────────────────────────────────
-          Purely decorative and purely CSS. Three rules keep it from ever
-          becoming a trap:
-            - aria-hidden, so a screen reader never announces it
-            - pointer-events:none from the first frame, so it cannot swallow a
-              tap even mid-fade
-            - the animation ends at visibility:hidden with fill `both`, so a
-              dropped frame or a paused tab can't leave it stuck over the page
-          The letter underneath is in the DOM the whole time; crawlers and
-          previews never see this. */}
-      <div className="lt-splash" aria-hidden="true">
-        <span className="lt-splash-mark">
-          foundos<span>.ai</span>
-        </span>
-        <span className="lt-splash-track">
-          <span className="lt-splash-fill" />
-        </span>
-      </div>
-
-      {/* ── The mark ──────────────────────────────────────────────────── */}
-      <header className="lt-top" id="top">
-        <a className="lt-mark" href="#top" aria-label="foundos.ai">
-          foundos<span>.ai</span>
-        </a>
-        {/* Banner bars — the one piece of pure colour on a white page. */}
-        <div className="lt-bars" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
+      {/* ── 2.1 Header ─────────────────────────────────────────────────────
+          Sticky with pure CSS. No scroll listener, no client component. */}
+      <header className="sticky top-0 z-50 border-b border-hairline bg-paper">
+        <div className={`${SHELL} flex h-16 items-center justify-between`}>
+          {/* min-h-11 is 44px — the tap-target floor. The header row is already
+              64px, so this costs nothing visually and makes the wordmark and
+              the two links thumb-sized on a phone. */}
+          <a href="#top" className="inline-flex min-h-11 items-center no-underline">
+            <Wordmark className="text-[20px]" />
+          </a>
+          <nav className="flex items-center gap-6 text-[14px]">
+            <a
+              href={`sms:${PHONE}`}
+              className="inline-flex min-h-11 items-center text-muted no-underline hover:text-ink"
+            >
+              Text me
+            </a>
+            {/* Mobile keeps one ask. Calendly is the desktop-only second door. */}
+            <a
+              href={CAL}
+              target="_blank"
+              rel="noreferrer"
+              className="hidden min-h-11 items-center text-muted no-underline hover:text-ink sm:inline-flex"
+            >
+              Book 20 minutes
+            </a>
+          </nav>
         </div>
       </header>
 
-      {/* ── The letter ────────────────────────────────────────────────────
-          Stanzas, not sections. Each <p> is one thought, sized so a phone
-          holds it without scrolling mid-idea. */}
-      <main className="lt-body">
-        <h1 className="lt-lead">
-          I build and run the <V>online side</V> of local businesses in Atlanta.
-        </h1>
+      <main>
+        {/* ── 2.2 Hero ─────────────────────────────────────────────────────
+            Headline, subhead, two buttons. Nothing else above the fold. */}
+        <section className={`${SHELL} pb-12 pt-16 sm:pb-16 sm:pt-24`}>
+          <h1 className="text-balance text-[clamp(2rem,8.2vw,3.5rem)] font-semibold leading-[1.1] tracking-[-0.02em] text-ink">
+            I build and run the online side of restaurants and food businesses in
+            Atlanta.
+          </h1>
 
-        <p>
-          You&apos;re good at what you do.
-          <br />
-          The internet doesn&apos;t show it.
-        </p>
+          <p className={`${PARA} mt-6`}>
+            You&apos;re good at what you do.
+            <br />
+            The internet doesn&apos;t show it.
+          </p>
 
-        <p className="lt-list">
-          Your hours are wrong on Google.
-          <br />
-          Your menu is a photo from three years ago.
-          <br />
-          The phone rings while your hands are full.
-        </p>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <a className={BTN_PRIMARY} href={`sms:${PHONE}`}>
+              Text me — {PHONE_PRETTY}
+            </a>
+            {/* An anchor, not a button — it moves the page, it doesn't act. */}
+            <a className={BTN_SECONDARY} href="#report">
+              See what I&apos;d build for you ↓
+            </a>
+          </div>
+        </section>
 
-        <p className="lt-turn">So I build the part you don&apos;t have time for.</p>
+        {/* ── 2.3 The problem ───────────────────────────────────────────── */}
+        <section className={`${SHELL} pb-16 sm:pb-24`}>
+          <p className={PARA}>
+            Your hours are wrong on Google.
+            <br />
+            Your menu is a photo from three years ago.
+            <br />
+            The phone rings while your hands are full.
+          </p>
+          <p className={`${MEASURE} mt-6 text-[17px] font-semibold leading-[1.6] text-ink sm:text-[18px]`}>
+            So I build the part you don&apos;t have time for.
+          </p>
+        </section>
 
-        <ul className="lt-does">
-          <li>
-            <span aria-hidden="true">🌐</span>
-            <p>
-              A <V>website</V> that actually sells — with ordering and payments built
-              in, so you stop handing a cut of every ticket to the apps.
+        {/* ── 2.4 The audit box ──────────────────────────────────────────────
+            The front door. It stays directly under §2.3 — do not push it below
+            the service list again. `scroll-mt-16` clears the sticky header when
+            the hero button lands here.
+
+            On "it gets the most vertical space of any section": taken literally
+            that is unreachable. Measured at rest, this section is 484px and
+            §2.5 is 906px, because §2.5 has six items of real copy and this one
+            has a heading and an input. Closing a 422px gap with padding means
+            ~400px of empty white, which reads as a broken page, not as
+            emphasis. So the spec's intent is served a different way — this
+            heading is the only h2 on the page that steps above the 26/32
+            section scale, and the section carries the most padding. It should
+            read as the most important thing below the hero, because it is.
+            Everything under it is a reason to come back up here and type. */}
+        <section id="report" className="scroll-mt-16 border-t border-hairline">
+          <div className={`${SHELL} py-24 sm:py-32`}>
+            <h2 className="text-[26px] font-semibold leading-[1.15] tracking-[-0.015em] text-ink sm:text-[40px]">
+              See exactly what I&apos;d build for your restaurant.
+            </h2>
+            <p className={`${PARA} mt-5`}>
+              Type the name. I&apos;ll pull your Google listing and your site and show
+              you what&apos;s costing you customers right now — and what I&apos;d do
+              about it.
             </p>
-          </li>
-          <li>
-            <span aria-hidden="true">📅</span>
-            <p>
-              <V>Bookings</V> customers make themselves, at midnight, straight into your
-              calendar.
-            </p>
-          </li>
-          <li>
-            <span aria-hidden="true">📞</span>
-            <p>
-              An <V>AI that answers every call</V>, takes the order, books the table. A
-              ringing phone stops being a lost customer.
-            </p>
-          </li>
-          <li>
-            <span aria-hidden="true">⭐</span>
-            <p>
-              <V>Reviews</V> asked for automatically — and the regulars who drifted away
-              quietly brought back.
-            </p>
-          </li>
-          <li>
-            <span aria-hidden="true">📍</span>
-            <p>
-              Your <V>Google listing</V>{' '}
-              fixed, so you&apos;re the obvious choice the moment someone searches
-              nearby.
-            </p>
-          </li>
-          <li>
-            <span aria-hidden="true">📊</span>
-            <p>
-              Every order, call and dollar on <V>one screen</V>, so you finally see
-              what&apos;s working.
-            </p>
-          </li>
-        </ul>
+            {/* The widget owns the input, the result panel (the one motion
+                moment on the site), the "Free. About 10 seconds. No email."
+                line, and the phone capture. Nothing about it belongs here. */}
+            <div className="mt-10">
+              <InstantReport />
+            </div>
+          </div>
+        </section>
 
-        <p>
-          Then I <V>run it</V>.
-          <br />
-          Every week.
-          <br />
-          So you never think about it again.
-        </p>
+        {/* ── 2.5 What I build ──────────────────────────────────────────── */}
+        <section className="border-t border-hairline">
+          <div className={`${SHELL} py-14 sm:py-20`}>
+            <h2 className={H2}>What I build.</h2>
 
-        <p>
-          You own all of it. Your domain, your site, your data.
-          <br />
-          If you ever leave, you take it with you.
-        </p>
+            <ul className={`${MEASURE} mt-8 border-t border-hairline`}>
+              {BUILDS.map((item) => (
+                <li
+                  key={item.lead}
+                  className="border-b border-hairline py-4 text-[17px] leading-[1.6] text-muted sm:text-[18px]"
+                >
+                  <strong className="font-semibold text-ink">{item.lead}</strong> —{' '}
+                  {item.rest}
+                </li>
+              ))}
+            </ul>
 
-        <p className="lt-close">
-          One person in Atlanta. <V>Not an agency.</V>
-          <br />
-          You text me, I answer.
-        </p>
+            <p className={`${MEASURE} mt-8 text-[17px] font-semibold leading-[1.6] text-ink sm:text-[18px]`}>
+              Then I run it. Every week. So you never think about it again.
+            </p>
+            <p className={`${PARA} mt-3`}>
+              You own all of it — your domain, your site, your data. If you ever
+              leave, you take it with you.
+            </p>
+          </div>
+        </section>
 
-        <div className="lt-cta">
-          <a className="lt-btn" href={`sms:${PHONE}`}>
-            Text me — {PHONE_PRETTY}
-          </a>
-          <a className="lt-btn-2" href={`tel:${PHONE}`}>
-            Or call
-          </a>
-        </div>
-        <p className="lt-fine">
-          Tell me what business you run and I&apos;ll tell you straight whether I can
-          help.
-        </p>
+        {/* ── 2.6 Open something I've built ──────────────────────────────── */}
+        <section className="border-t border-hairline">
+          <div className={`${SHELL} py-14 sm:py-20`}>
+            <h2 className={H2}>Open something I&apos;ve built.</h2>
+            <p className={`${PARA} mt-4`}>
+              These are concepts — the businesses aren&apos;t real, everything on the
+              sites works. Click around, place a fake order, try the booking.
+            </p>
+
+            <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+              {DEMOS.map((demo) => (
+                <li key={demo.href}>
+                  <Link
+                    href={demo.href}
+                    className="flex h-full flex-col gap-2 border border-hairline bg-surface p-6 no-underline hover:border-ink"
+                  >
+                    <span className="text-[18px] font-semibold text-ink">{demo.label}</span>
+                    <span className="text-[17px] leading-[1.6] text-muted">{demo.note}</span>
+                    <span className="mt-2 text-[14px] font-semibold text-ink">Open →</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-6 text-[14px] leading-[1.6] text-muted">
+              Concept businesses. Built to show you the real thing, not a template.
+            </p>
+          </div>
+        </section>
+
+        {/* ── 2.7 Don't take my word for it ──────────────────────────────── */}
+        <section className="border-t border-hairline">
+          <div className={`${SHELL} py-14 sm:py-20`}>
+            <h2 className={H2}>Don&apos;t take my word for it.</h2>
+            <p className={`${PARA} mt-4`}>
+              Call the AI receptionist and order a slab of ribs out loud. It&apos;ll
+              take the order — and tell you it&apos;s AI.
+            </p>
+            <div className="mt-8">
+              <a className={BTN_PRIMARY} href={`tel:${DEMO_LINE}`}>
+                Call {DEMO_LINE_PRETTY}
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 2.8 What it costs ──────────────────────────────────────────────
+            Owners bounce when they assume an agency quote is coming, so the
+            number is on the page instead of in a call. Every figure below is
+            read from PRICES — there is no price string in this file. */}
+        <section className="border-t border-hairline">
+          <div className={`${SHELL} py-14 sm:py-20`}>
+            <h2 className={H2}>What it costs.</h2>
+
+            <p className={`${PARA} mt-6`}>
+              <strong className="font-semibold text-ink">
+                The site — {PRICES.site.display}, {PRICES.site.cadence}.
+              </strong>{' '}
+              Built from your real menu, photos, and hours. You own it outright.
+            </p>
+
+            <p className={`${PARA} mt-5`}>
+              <strong className="font-semibold text-ink">
+                Running it — {PRICES.running.prefix} {PRICES.running.display}{' '}
+                {PRICES.running.cadence}.
+              </strong>{' '}
+              Hosting, Google listing kept correct, review requests, menu changes, a
+              monthly one-page report. Cancel any time; you keep the site.
+            </p>
+
+            <p className={`${PARA} mt-5`}>
+              <strong className="font-semibold text-ink">
+                Online ordering, bookings, the AI receptionist
+              </strong>{' '}
+              — added when you want them, priced when we talk. Most pay for themselves
+              in saved delivery-app fees the first month.
+            </p>
+
+            <p className={`${PARA} mt-6`}>
+              Free to start: type your name above and I&apos;ll build a sample first.
+              If you don&apos;t like it, you owe nothing and you never hear from me
+              again.
+            </p>
+          </div>
+        </section>
+
+        {/* ── 2.9 Who's building it ──────────────────────────────────────────
+            NO PHOTO, AND THAT IS THE DECISION — not a gap waiting to be filled.
+
+            This ran for a while as a 240px grey square holding a photo's place.
+            A fresh-eyes review put it plainly: a page with no images reads as
+            "I chose type"; a page with a bordered grey box where a face
+            obviously belongs reads as "the photo isn't back from the shoot" —
+            and it re-reads every other restrained thing on the page as unfinished
+            too. The box was worse than no box, in the one section whose entire
+            job is making a stranger believe there's a person here.
+
+            Neither photo in public/ could fill it. josh.jpg is a 320px snapshot
+            at a music night with another woman's face centred in frame and more
+            people behind — nobody in it agreed to appear on a business site.
+            josh.png has him looking down at a laptop, which reads as busy rather
+            than reachable in a section headed "you text me, I answer".
+
+            So the paragraphs carry it alone, and they can: they're the most
+            human writing on the page. When Josh has a portrait he's happy with —
+            facing the lens, plain background — this becomes a two-column row
+            again with a real <Image> and real alt text. Until then, nothing here
+            is missing. */}
+        <section className="border-t border-hairline">
+          <div className={`${SHELL} py-14 sm:py-20`}>
+            <h2 className={H2}>One person. Not an agency.</h2>
+
+            <div className="mt-8 flex flex-col gap-5">
+              <p className={PARA}>
+                I&apos;m Josh. I&apos;m in Atlanta, I work in a gym, and I&apos;ve
+                been building sites for restaurants and food businesses because most
+                of them are getting robbed by delivery apps and a Wix template from
+                2019.
+              </p>
+              <p className={PARA}>
+                You text me, I answer. No account manager, no ticket system.
+              </p>
+              <p className={PARA}>If I can&apos;t help you, I&apos;ll tell you that too.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 2.10 Final call ────────────────────────────────────────────── */}
+        <section className="border-t border-hairline">
+          <div className={`${SHELL} py-14 sm:py-20`}>
+            <p className={`${MEASURE} text-[20px] font-semibold leading-[1.3] tracking-[-0.01em] text-ink sm:text-[24px]`}>
+              Tell me what you run and I&apos;ll tell you straight whether I can help.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a className={BTN_PRIMARY} href={`sms:${PHONE}`}>
+                Text me — {PHONE_PRETTY}
+              </a>
+              <a className={BTN_SECONDARY} href={CAL} target="_blank" rel="noreferrer">
+                Book 20 minutes
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
 
-      {/* ── Instant report ────────────────────────────────────────────────
-          The card's promise, kept verbatim. See the ⚠️ note at the top. */}
-      <section className="lt-sec" id="report">
-        <h2 className="lt-h2">See exactly what I&apos;d build for your business.</h2>
-        <p className="lt-sub">
-          Type your business name. I&apos;ll show you what&apos;s costing you customers
-          right now — and what I&apos;d do about it.
-        </p>
-        <div className="lt-report">
-          <InstantReport />
-        </div>
-      </section>
+      {/* ── 2.11 Footer ──────────────────────────────────────────────────────
+          One line, and one line only down to 360px.
 
-      {/* ── Proof ─────────────────────────────────────────────────────── */}
-      <section className="lt-sec">
-        <h2 className="lt-h2">Don&apos;t take my word for it.</h2>
-        <p className="lt-sub">
-          Call the AI receptionist and order a slab of ribs out loud. It&apos;ll take
-          the order — and tell you it&apos;s AI.
-        </p>
+          Each separator is bound to the item that FOLLOWS it, inside the same
+          flex child. When the row wrapped with the dots as their own children,
+          a phone got "foundos · hello@foundos.ai · Atlanta, GA ·" and then a
+          line break — a dot dangling at the end of the line with nothing after
+          it. Now a separator can only ever wrap down together with its item.
 
-        <a className="lt-phone" href={`tel:${DEMO_LINE}`}>
-          <span aria-hidden="true">📞</span> {DEMO_LINE_PRETTY}
-        </a>
+          The dots are aria-hidden so a screen reader reads four items rather
+          than four middle dots. Both links carry the same 44px tap floor as the
+          header; the row is taller than a pure text line as a result, which is
+          the right trade for the last thing on a 5,000px page. */}
+      <footer className="border-t border-hairline">
+        <div
+          className={`${SHELL} flex flex-wrap items-center gap-x-3 gap-y-1 py-8 text-[14px] leading-[1.6] text-muted`}
+        >
+          <Wordmark className="text-[16px]" />
 
-        <p className="lt-sub lt-sub-tight">Or open something I&apos;ve built:</p>
-        <ul className="lt-demos">
-          {DEMOS.map((b) => (
-            <li key={b.href}>
-              <a
-                href={b.href}
-                {...(b.href.startsWith('http')
-                  ? { target: '_blank', rel: 'noreferrer' }
-                  : {})}
-              >
-                <strong>{b.label}</strong>
-                <span>{b.note}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <footer className="lt-foot">
-        {/* Stacked, not inline — inline footer links can't clear 44px without
-            padding that breaks the line. Three ways to reach one person. */}
-        <ul className="lt-ways">
-          <li>
-            <a href={`sms:${PHONE}`}>Text {PHONE_PRETTY}</a>
-          </li>
-          <li>
-            <a href="mailto:hello@foundos.ai">hello@foundos.ai</a>
-          </li>
-          <li>
-            <a href={CAL} target="_blank" rel="noreferrer">
-              Book 20 minutes
+          <span className="inline-flex items-center gap-x-3">
+            <span aria-hidden="true">·</span>
+            <a
+              href={`mailto:${EMAIL}`}
+              className="inline-flex min-h-11 items-center no-underline hover:text-ink"
+            >
+              {EMAIL}
             </a>
-          </li>
-        </ul>
-        <p className="lt-foot-fine">
-          foundos.ai LLC · Atlanta, GA · <a href="/privacy">Privacy</a>
-        </p>
-      </footer>
+          </span>
 
-      {/* Phone-only dock — the number is never more than a thumb away. */}
-      <div className="lt-dock">
-        <a className="lt-dock-btn" href={`sms:${PHONE}`}>
-          Text me — {PHONE_PRETTY}
-        </a>
-        <a className="lt-dock-call" href={`tel:${PHONE}`} aria-label="Call Josh">
-          Call
-        </a>
-      </div>
+          <span className="inline-flex items-center gap-x-3">
+            <span aria-hidden="true">·</span>
+            <span>
+              {LOCATION.city}, {LOCATION.region}
+            </span>
+          </span>
+
+          <span className="inline-flex items-center gap-x-3">
+            <span aria-hidden="true">·</span>
+            <Link
+              href="/privacy"
+              className="inline-flex min-h-11 items-center no-underline hover:text-ink"
+            >
+              Privacy
+            </Link>
+          </span>
+        </div>
+      </footer>
     </div>
   );
 }
-
-const CSS = `
-.lt { --v:#7433e2; --ink:#15131f; --mut:#4a4760; --dim:#8f8ca3;
-  --line:rgba(21,19,31,.09);
-  --display:var(--font-display), var(--font-inter), system-ui, sans-serif;
-  background:#fff; color:var(--ink);
-  max-width:33rem; margin:0 auto; padding:0 22px; }
-
-.lt a, .lt button { -webkit-tap-highlight-color:transparent; }
-
-/* ── Splash ─────────────────────────────────────────────────────────────
-   Total life is 1.15s. It is never interactive and it always ends hidden.
-   If motion is reduced it never appears at all. */
-.lt-splash { position:fixed; inset:0; z-index:60; display:flex;
-  flex-direction:column; align-items:center; justify-content:center; gap:20px;
-  background:#fff; pointer-events:none;
-  animation:lt-splash-out .4s .75s cubic-bezier(.4,0,.2,1) both; }
-.lt-splash-mark { font-family:var(--display); font-size:1.9rem; font-weight:800;
-  letter-spacing:-.04em; color:var(--v);
-  animation:lt-splash-mark-in .5s cubic-bezier(.22,1,.36,1) both; }
-.lt-splash-mark span { color:var(--ink); }
-.lt-splash-track { width:104px; height:3px; border-radius:999px;
-  background:rgba(116,51,226,.16); overflow:hidden; }
-.lt-splash-fill { display:block; width:100%; height:100%; border-radius:999px;
-  background:var(--v); transform-origin:left center;
-  animation:lt-splash-fill .7s cubic-bezier(.5,0,.2,1) both; }
-@keyframes lt-splash-mark-in {
-  from { opacity:0; transform:translateY(7px) scale(.97); filter:blur(4px); }
-  to   { opacity:1; transform:none; filter:none; }
-}
-@keyframes lt-splash-fill {
-  from { transform:scaleX(0); }
-  to   { transform:scaleX(1); }
-}
-@keyframes lt-splash-out {
-  from { opacity:1; visibility:visible; }
-  99%  { opacity:0; visibility:visible; }
-  to   { opacity:0; visibility:hidden; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .lt-splash { display:none; }
-}
-
-/* ── Banner bars ────────────────────────────────────────────────────────
-   Five violet rules of falling width and weight, sitting under the mark.
-   Transform-only entrance so they cost nothing, staggered so they arrive as
-   a gesture rather than a block. */
-.lt-bars { display:flex; flex-direction:column; gap:5px; margin-top:20px; }
-.lt-bars span { display:block; height:6px; border-radius:999px;
-  background:var(--v); transform-origin:left center; }
-.lt-bars span:nth-child(1) { width:100%;  opacity:1; }
-.lt-bars span:nth-child(2) { width:72%;   opacity:.62; }
-.lt-bars span:nth-child(3) { width:50%;   opacity:.4; }
-.lt-bars span:nth-child(4) { width:31%;   opacity:.24; }
-.lt-bars span:nth-child(5) { width:17%;   opacity:.13; }
-@media (prefers-reduced-motion: no-preference) {
-  .lt-bars span { animation:lt-bar-in .62s cubic-bezier(.22,1,.36,1) both; }
-  .lt-bars span:nth-child(1) { animation-delay:1.14s; }
-  .lt-bars span:nth-child(2) { animation-delay:1.21s; }
-  .lt-bars span:nth-child(3) { animation-delay:1.28s; }
-  .lt-bars span:nth-child(4) { animation-delay:1.35s; }
-  .lt-bars span:nth-child(5) { animation-delay:1.42s; }
-}
-@keyframes lt-bar-in {
-  from { transform:scaleX(0); }
-  to   { transform:scaleX(1); }
-}
-
-/* ── The mark ───────────────────────────────────────────────────────────
-   It arrives before the words do. Opacity is safe to animate here because
-   this element sits above the fold on every screen, so it always plays. */
-.lt-top { padding:52px 0 40px; }
-.lt-mark { font-family:var(--display); font-size:1.34rem; font-weight:800;
-  letter-spacing:-.035em; color:var(--ink); text-decoration:none;
-  display:inline-flex; align-items:center; min-height:44px; }
-.lt-mark span { color:var(--v); }
-@media (prefers-reduced-motion: no-preference) {
-  .lt-mark { animation:lt-in .85s cubic-bezier(.22,1,.36,1) both; }
-  .lt-lead { animation:lt-in .85s .18s cubic-bezier(.22,1,.36,1) both; }
-}
-@keyframes lt-in {
-  from { opacity:0; transform:translateY(9px); filter:blur(5px); }
-  to   { opacity:1; transform:none; filter:none; }
-}
-
-/* ── Stanzas ────────────────────────────────────────────────────────────
-   The whole page is one column of text, so the only real design decisions
-   are measure, leading and the space between thoughts. */
-.lt-body { padding-bottom:8px; }
-.lt-body > p { font-size:1.14rem; line-height:1.62; color:var(--mut);
-  margin:0 0 30px; text-wrap:pretty; }
-.lt-lead { font-family:var(--display); font-size:clamp(1.72rem,7.4vw,2.3rem) !important;
-  font-weight:800; letter-spacing:-.032em; line-height:1.22 !important;
-  color:var(--ink) !important; margin-bottom:38px !important; text-wrap:balance; }
-.lt-list { color:var(--dim) !important; }
-.lt-turn { color:var(--ink) !important; font-weight:600; }
-.lt-close { color:var(--ink) !important; }
-
-/* The accent is the only colour on the page, so it has to stay rare. */
-.lt-v { font-style:normal; font-weight:650; color:var(--v); }
-
-/* ── What I do ──────────────────────────────────────────────────────────
-   Not cards. A list with a glyph in the margin, so it still reads as prose. */
-.lt-does { list-style:none; margin:0 0 34px; padding:0; }
-.lt-does li { display:flex; gap:14px; align-items:flex-start; padding:13px 0;
-  border-bottom:1px solid var(--line); }
-.lt-does li:first-child { border-top:1px solid var(--line); }
-.lt-does li > span { flex:0 0 1.5rem; font-size:1.12rem; line-height:1.6;
-  text-align:center; }
-.lt-does p { font-size:1.02rem; line-height:1.6; color:var(--mut); margin:0;
-  text-wrap:pretty; }
-
-/* ── Buttons ────────────────────────────────────────────────────────── */
-.lt-cta { display:flex; flex-direction:column; gap:10px; margin:4px 0 0; }
-@media (min-width:430px) { .lt-cta { flex-direction:row; } .lt-btn { flex:1 1 auto; } }
-.lt-btn, .lt-btn-2 { display:inline-flex; align-items:center; justify-content:center;
-  min-height:52px; padding:0 24px; font-size:1rem; font-weight:670;
-  border-radius:12px; text-decoration:none; transition:transform .18s, background .18s,
-  border-color .18s, color .18s; }
-.lt-btn { color:#fff; background:var(--ink); }
-.lt-btn-2 { color:var(--ink); background:#fff; border:1.5px solid var(--line); }
-.lt-btn:active, .lt-btn-2:active { transform:scale(.972); transition-duration:.06s; }
-@media (hover: hover) {
-  .lt-btn:hover { background:var(--v); }
-  .lt-btn-2:hover { border-color:var(--v); color:var(--v); }
-}
-.lt-fine { margin:14px 0 0; font-size:.9rem; line-height:1.5; color:var(--dim); }
-
-/* ── Later sections ─────────────────────────────────────────────────── */
-.lt-sec { margin-top:56px; padding-top:44px; border-top:1px solid var(--line); }
-.lt-h2 { font-family:var(--display); font-size:clamp(1.36rem,5.4vw,1.7rem);
-  font-weight:800; letter-spacing:-.028em; line-height:1.24; text-wrap:balance; }
-.lt-sub { margin-top:12px; font-size:1.02rem; line-height:1.58; color:var(--mut);
-  text-wrap:pretty; }
-.lt-sub-tight { margin-top:30px; font-size:.94rem; color:var(--dim); }
-.lt-report { margin-top:22px; }
-
-.lt-phone { display:flex; align-items:center; justify-content:center; gap:10px;
-  margin-top:20px; min-height:60px; padding:0 20px;
-  font-family:var(--display); font-size:clamp(1.4rem,6.4vw,1.75rem); font-weight:800;
-  letter-spacing:-.02em; color:var(--ink); text-decoration:none;
-  border:1.5px solid var(--line); border-radius:12px; transition:all .18s; }
-.lt-phone:active { transform:scale(.985); transition-duration:.06s; }
-@media (hover: hover) { .lt-phone:hover { border-color:var(--v); color:var(--v); } }
-
-.lt-demos { list-style:none; margin:12px 0 0; padding:0; }
-.lt-demos li { border-bottom:1px solid var(--line); }
-.lt-demos li:first-child { border-top:1px solid var(--line); }
-.lt-demos a { display:flex; flex-direction:column; gap:2px; padding:15px 2px;
-  text-decoration:none; }
-.lt-demos strong { font-size:1rem; font-weight:650; color:var(--ink); }
-.lt-demos span { font-size:.9rem; color:var(--dim); }
-.lt-demos a:active { opacity:.55; }
-@media (hover: hover) { .lt-demos a:hover strong { color:var(--v); } }
-
-/* ── Footer ─────────────────────────────────────────────────────────── */
-.lt-foot { margin-top:56px; padding:30px 0 calc(104px + env(safe-area-inset-bottom));
-  border-top:1px solid var(--line); font-size:.92rem; line-height:1.7;
-  color:var(--dim); }
-.lt-foot a { color:var(--mut); text-decoration:none; }
-@media (hover: hover) { .lt-foot a:hover { color:var(--v); } }
-.lt-ways { list-style:none; margin:0; padding:0; }
-.lt-ways a { display:inline-flex; align-items:center; min-height:44px; }
-.lt-foot-fine { margin-top:10px; font-size:.84rem; color:var(--dim); }
-.lt-foot-fine a { display:inline-flex; align-items:center; min-height:44px; }
-
-/* ── Dock ───────────────────────────────────────────────────────────── */
-.lt-dock { position:fixed; left:0; right:0; bottom:0; z-index:30; display:flex; gap:8px;
-  padding:10px 16px calc(10px + env(safe-area-inset-bottom));
-  background:rgba(255,255,255,.92); backdrop-filter:blur(14px);
-  border-top:1px solid var(--line); }
-.lt-dock-btn { flex:1; display:inline-flex; align-items:center; justify-content:center;
-  min-height:48px; padding:0 12px; font-size:.92rem; font-weight:670; color:#fff;
-  white-space:nowrap; background:var(--ink); border-radius:12px; text-decoration:none; }
-.lt-dock-call { display:inline-flex; align-items:center; justify-content:center;
-  min-width:70px; min-height:48px; padding:0 12px; font-size:.92rem; font-weight:650;
-  color:var(--v); background:#fff; border:1.5px solid rgba(116,51,226,.3);
-  border-radius:12px; text-decoration:none; }
-.lt-dock-btn:active, .lt-dock-call:active { transform:scale(.972); }
-@media (prefers-reduced-motion: no-preference) {
-  .lt-dock { animation:lt-dock-in .5s .4s cubic-bezier(.22,1,.36,1) both; }
-}
-@keyframes lt-dock-in {
-  from { transform:translateY(100%); }
-  to   { transform:none; }
-}
-
-/* ── Wider screens ──────────────────────────────────────────────────────
-   Same column, a little more air. A letter doesn't need a desktop layout. */
-@media (min-width:721px) {
-  .lt { max-width:35rem; }
-  .lt-top { padding:76px 0 48px; }
-  .lt-body > p { font-size:1.2rem; }
-  .lt-sec { margin-top:72px; padding-top:56px; }
-  .lt-dock { display:none; }
-  .lt-foot { padding-bottom:44px; }
-}
-`;

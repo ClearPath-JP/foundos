@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import PhoneCapture from '@/components/report/PhoneCapture';
 import { CAL, DEMO_LINE, DEMO_LINE_PRETTY, DEMOS, PHONE } from '@/lib/contact';
 import type {
   BizCategory,
@@ -500,6 +501,13 @@ export default function InstantReport() {
             </div>
           </section>
 
+          {/*
+            Value first, ask second — the capture only ever renders inside the
+            'report' phase, after the findings, the builds and the proof. Agent E
+            owns the component; nothing about its internals is styled here.
+          */}
+          <PhoneCapture report={report} query={query} pain={pain} />
+
           <section className="ir-cta">
             <p className="ir-cta-h">Want me to walk you through it?</p>
             <div className="ir-cta-row">
@@ -538,141 +546,181 @@ export default function InstantReport() {
   );
 }
 
+/**
+ * Scoped styles for the report. Every colour is a token declared once in
+ * globals.css `@theme` — paper, ink, muted, hairline, surface. No hexes live
+ * here, and the brand green never appears: it belongs to the wordmark dot.
+ *
+ * Two type weights only, 400 and 600. Tone on the discovery lines is carried by
+ * a typographic mark and a weight, never by hue, so it survives greyscale.
+ */
 const CSS = `
-.ir { --v:#7433e2; --v2:#8a54f4; --ink:#15131f; --mut:#5b5870; --dim:#8f8ca3;
-  --line:rgba(21,19,31,.10); --soft:#faf9fe; width:100%; }
+.ir { width:100%; }
+.ir :is(a,button,input):focus-visible { outline:2px solid var(--color-ink); outline-offset:2px; }
 
-/* form */
+/* ---- form ---- */
 .ir-form { display:flex; flex-direction:column; gap:8px; }
-.ir-label { font-size:.78rem; font-weight:600; letter-spacing:.02em; color:var(--mut); }
+.ir-label { font-size:14px; font-weight:600; color:var(--color-muted); }
 .ir-row { display:flex; gap:8px; flex-wrap:wrap; }
-.ir-input { flex:1 1 220px; min-width:0; padding:15px 16px; font-size:1rem; color:var(--ink);
-  background:#fff; border:1.5px solid var(--line); border-radius:12px; font-family:inherit; }
-.ir-input:focus { outline:none; border-color:var(--v); box-shadow:0 0 0 4px rgba(124,58,237,.10); }
-.ir-input:disabled { background:var(--soft); color:var(--dim); }
-.ir-go { flex:0 0 auto; padding:15px 22px; font-size:1rem; font-weight:650; color:#fff;
-  background:var(--ink); border:none; border-radius:12px; cursor:pointer; font-family:inherit;
-  transition:background .18s, transform .18s; }
-.ir-go:hover:not(:disabled) { background:var(--v); transform:translateY(-1px); }
+.ir-input { flex:1 1 220px; min-width:0; padding:14px 15px; font-size:17px; font-weight:400;
+  color:var(--color-ink); background:var(--color-paper); border:1px solid var(--color-hairline);
+  border-radius:8px; font-family:inherit; }
+.ir-input::placeholder { color:var(--color-muted); }
+.ir-input:focus { border-color:var(--color-ink); }
+.ir-input:disabled { background:var(--color-surface); color:var(--color-muted); }
+.ir-go { flex:0 0 auto; padding:14px 20px; font-size:17px; font-weight:600; color:var(--color-paper);
+  background:var(--color-ink); border:1px solid var(--color-ink); border-radius:8px; cursor:pointer;
+  font-family:inherit; transition:background .18s, border-color .18s; }
+.ir-go:hover:not(:disabled) { background:var(--color-muted); border-color:var(--color-muted); }
 .ir-go:disabled { opacity:.45; cursor:not-allowed; }
-.ir-go-wide { width:100%; margin-top:4px; }
-.ir-go-link { display:inline-block; text-decoration:none; text-align:center; }
-.ir-fine { font-size:.8rem; color:var(--dim); }
-.ir-notice { font-size:.88rem; color:var(--v); }
+/* Once the row wraps, the button takes the whole line.
+   .ir-input is flex:1 1 220px and .ir-go is flex:0 0 auto, so on a 390px phone
+   the input ate line one and the button dropped to line two at its natural
+   ~140px — leaving ~210px of dead white beside the most important CTA on the
+   page, on a page where every other button is a full-width slab. The layout was
+   quietly arguing for "Text me" over "Show me". It isn't now.
+   (No backticks in this block: the whole stylesheet is a template literal.) */
+@media (max-width: 460px) {
+  .ir-row .ir-go { flex:1 1 100%; }
+}
+.ir-go-wide { align-self:flex-start; margin-top:4px; }
+.ir-go-link { display:inline-block; text-decoration:none; }
+.ir-fine { max-width:65ch; font-size:14px; font-weight:400; line-height:1.6; color:var(--color-muted); }
+.ir-notice { max-width:65ch; font-size:15px; font-weight:400; color:var(--color-ink); }
 
-/* in-flight */
+/* ---- in-flight ---- */
 .ir-live { margin-top:18px; display:flex; flex-direction:column; gap:18px; }
 .ir-steps { display:flex; flex-direction:column; gap:9px; }
-.ir-step { display:flex; align-items:center; gap:10px; font-size:.92rem; color:var(--mut); }
-
-/* what we actually found, revealed one line at a time */
-.ir-found { list-style:none; display:flex; flex-direction:column; gap:8px;
-  margin-top:15px; padding-top:15px; border-top:1px solid #e8e6f0; }
-.ir-found-i { display:flex; align-items:flex-start; gap:10px; font-size:.92rem;
-  line-height:1.45; animation:irFound .3s ease-out both; }
-.ir-found-dot { flex:none; width:6px; height:6px; border-radius:50%; margin-top:.52em; }
-.ir-t-good { color:#2f7d5b; }
-.ir-t-good .ir-found-dot { background:#2f7d5b; }
-.ir-t-bad { color:var(--ink); font-weight:550; }
-.ir-t-bad .ir-found-dot { background:#c9761f; }
-.ir-t-neutral { color:var(--mut); }
-.ir-t-neutral .ir-found-dot { background:var(--dim); }
-@keyframes irFound { from { opacity:0; transform:translateY(-3px); } to { opacity:1; transform:none; } }
-@media (prefers-reduced-motion:reduce) { .ir-found-i { animation:none; } }
-.ir-tick, .ir-spin { width:15px; height:15px; flex:0 0 15px; border-radius:50%; position:relative; }
-.ir-tick { background:var(--v); }
-.ir-tick:after { content:''; position:absolute; left:4px; top:6px; width:6px; height:3px;
-  border-left:1.6px solid #fff; border-bottom:1.6px solid #fff; transform:rotate(-45deg); }
-.ir-spin { border:2px solid rgba(124,58,237,.22); border-top-color:var(--v);
+.ir-step { display:flex; align-items:center; gap:10px; font-size:16px; font-weight:400;
+  color:var(--color-muted); }
+.ir-tick, .ir-spin { width:14px; height:14px; flex:0 0 14px; border-radius:50%; position:relative; }
+.ir-tick { background:var(--color-ink); }
+.ir-tick:after { content:''; position:absolute; left:4px; top:5px; width:5px; height:3px;
+  border-left:1.5px solid var(--color-paper); border-bottom:1.5px solid var(--color-paper);
+  transform:rotate(-45deg); }
+.ir-spin { border:2px solid var(--color-hairline); border-top-color:var(--color-ink);
   animation:ir-rot .7s linear infinite; }
 @keyframes ir-rot { to { transform:rotate(360deg); } }
 
-.ir-ask { padding:16px; background:var(--soft); border:1px solid var(--line); border-radius:14px; }
-.ir-ask-q { font-size:.92rem; font-weight:600; color:var(--ink); margin-bottom:10px; }
-.ir-opt { font-size:.72rem; font-weight:500; color:var(--dim); text-transform:uppercase;
-  letter-spacing:.06em; margin-left:6px; }
-.ir-chips { display:flex; flex-wrap:wrap; gap:8px; }
-.ir-chip { padding:9px 14px; font-size:.88rem; font-weight:550; color:var(--mut); background:#fff;
-  border:1.5px solid var(--line); border-radius:999px; cursor:pointer; font-family:inherit;
-  transition:all .16s; }
-.ir-chip:hover { border-color:var(--v2); color:var(--ink); }
-.ir-chip.is-on { background:var(--v); border-color:var(--v); color:#fff; }
+/* What we actually found, released one line at a time. Tone is a typographic
+   mark plus a weight — never a colour — so it still reads in greyscale. */
+.ir-found { list-style:none; display:flex; flex-direction:column; gap:8px;
+  margin-top:15px; padding-top:15px; border-top:1px solid var(--color-hairline); }
+.ir-found-i { display:flex; align-items:flex-start; gap:10px; max-width:65ch;
+  font-size:16px; line-height:1.5; }
+.ir-found-dot { flex:0 0 auto; width:1ch; font-weight:600; line-height:1.5; }
+.ir-t-good { color:var(--color-ink); font-weight:400; }
+.ir-t-good .ir-found-dot:before { content:'+'; }
+.ir-t-bad { color:var(--color-ink); font-weight:600; }
+.ir-t-bad .ir-found-dot:before { content:'−'; }
+.ir-t-neutral { color:var(--color-muted); font-weight:400; }
+.ir-t-neutral .ir-found-dot:before { content:'·'; }
 
-/* panels */
-.ir-panel { margin-top:4px; padding:20px; background:#fff; border:1.5px solid var(--line);
-  border-radius:16px; display:flex; flex-direction:column; gap:16px; }
-.ir-panel-h { font-size:1rem; font-weight:600; color:var(--ink); line-height:1.45; }
+.ir-ask { padding:16px; background:var(--color-surface); border:1px solid var(--color-hairline);
+  border-radius:8px; }
+.ir-ask-q { font-size:17px; font-weight:600; color:var(--color-ink); margin-bottom:10px; }
+.ir-opt { font-size:14px; font-weight:400; color:var(--color-muted); margin-left:6px; }
+.ir-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.ir-chip { padding:9px 13px; font-size:15px; font-weight:400; color:var(--color-ink);
+  background:var(--color-paper); border:1px solid var(--color-hairline); border-radius:8px;
+  cursor:pointer; font-family:inherit; transition:background .16s, border-color .16s, color .16s; }
+.ir-chip:hover { border-color:var(--color-ink); }
+.ir-chip.is-on { background:var(--color-ink); border-color:var(--color-ink);
+  color:var(--color-paper); font-weight:600; }
+
+/* ---- panels ---- */
+.ir-panel { margin-top:4px; padding:20px; background:var(--color-paper);
+  border:1px solid var(--color-hairline); border-radius:8px;
+  display:flex; flex-direction:column; gap:16px; }
+.ir-panel-h { max-width:65ch; font-size:17px; font-weight:400; line-height:1.6;
+  color:var(--color-ink); }
 .ir-q { display:flex; flex-direction:column; gap:8px; }
-.ir-q-l { font-size:.85rem; font-weight:600; color:var(--mut); }
+.ir-q-l { font-size:15px; font-weight:600; color:var(--color-ink); }
 .ir-cands { display:flex; flex-direction:column; gap:8px; }
 .ir-cand { display:flex; flex-direction:column; gap:3px; align-items:flex-start; text-align:left;
-  padding:13px 15px; background:var(--soft); border:1.5px solid var(--line); border-radius:12px;
-  cursor:pointer; font-family:inherit; transition:all .16s; }
-.ir-cand:hover { border-color:var(--v); background:#fff; }
-.ir-cand strong { font-size:.98rem; color:var(--ink); font-weight:650; }
-.ir-cand span { font-size:.85rem; color:var(--dim); }
-.ir-link { align-self:flex-start; background:none; border:none; padding:6px 0; font-size:.86rem;
-  font-weight:550; color:var(--v); cursor:pointer; text-decoration:underline;
+  padding:13px 15px; background:var(--color-surface); border:1px solid var(--color-hairline);
+  border-radius:8px; cursor:pointer; font-family:inherit;
+  transition:background .16s, border-color .16s; }
+.ir-cand:hover { border-color:var(--color-ink); background:var(--color-paper); }
+.ir-cand strong { font-size:17px; font-weight:600; color:var(--color-ink); }
+.ir-cand span { font-size:14px; font-weight:400; color:var(--color-muted); }
+.ir-link { align-self:flex-start; background:none; border:none; padding:6px 0; font-size:15px;
+  font-weight:400; color:var(--color-ink); cursor:pointer; text-decoration:underline;
   text-underline-offset:3px; font-family:inherit; }
 
-/* report */
+/* ---- report ---- */
+/* The one animation on the whole site. Nothing else moves. */
 .ir-report { margin-top:4px; display:flex; flex-direction:column; gap:26px;
   animation:ir-in .4s cubic-bezier(.2,.8,.2,1); }
 @keyframes ir-in { from { opacity:0; transform:translateY(10px); } }
-.ir-head { padding-bottom:18px; border-bottom:2px solid var(--line); }
-.ir-head h2 { font-size:clamp(1.5rem,6vw,2rem); font-weight:800; letter-spacing:-.03em;
-  line-height:1.1; color:var(--ink); }
-.ir-addr { margin-top:5px; font-size:.9rem; color:var(--mut); }
-.ir-meta { margin-top:11px; display:flex; flex-wrap:wrap; gap:8px; }
-.ir-meta span { padding:5px 11px; font-size:.79rem; font-weight:600; color:var(--mut);
-  background:var(--soft); border:1px solid var(--line); border-radius:999px; }
-.ir-meta .ir-warn { color:#b4256b; background:rgba(219,39,119,.07); border-color:rgba(219,39,119,.2); }
-.ir-meta .ir-ok { color:#5b21b6; background:rgba(124,58,237,.07); border-color:rgba(124,58,237,.2); }
 
-.ir-sec h3 { font-size:.76rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em;
-  color:var(--v); margin-bottom:14px; display:flex; align-items:center; gap:9px; }
-.ir-refine { font-size:.68rem; font-weight:500; text-transform:none; letter-spacing:0;
-  color:var(--dim); }
+.ir-head { padding-bottom:18px; border-bottom:1px solid var(--color-hairline); }
+.ir-head h2 { font-size:clamp(26px,5.5vw,32px); font-weight:600; letter-spacing:-.02em;
+  line-height:1.1; color:var(--color-ink); }
+.ir-addr { max-width:65ch; margin-top:6px; font-size:14px; font-weight:400;
+  color:var(--color-muted); }
+.ir-meta { margin-top:11px; display:flex; flex-wrap:wrap; gap:8px; }
+.ir-meta span { padding:5px 10px; font-size:14px; font-weight:400; color:var(--color-muted);
+  background:var(--color-surface); border:1px solid var(--color-hairline); border-radius:8px; }
+.ir-meta .ir-ok { color:var(--color-muted); }
+.ir-meta .ir-warn { color:var(--color-ink); font-weight:600; background:var(--color-paper);
+  border-color:var(--color-ink); }
+
+.ir-sec h3 { font-size:20px; font-weight:600; letter-spacing:-.01em; color:var(--color-ink);
+  margin-bottom:14px; display:flex; align-items:baseline; flex-wrap:wrap; gap:9px; }
+.ir-refine { font-size:14px; font-weight:400; color:var(--color-muted); }
 
 .ir-finds { list-style:none; display:flex; flex-direction:column; gap:14px; counter-reset:f; }
-.ir-finds li { counter-increment:f; padding:16px 16px 16px 46px; position:relative;
-  background:#fff; border:1.5px solid var(--line); border-radius:14px; }
-.ir-finds li:before { content:counter(f); position:absolute; left:16px; top:16px; width:22px;
-  height:22px; display:grid; place-items:center; font-size:.72rem; font-weight:700; color:#fff;
-  background:var(--ink); border-radius:50%; }
-.ir-finds li:first-child { border-color:rgba(124,58,237,.32); box-shadow:0 3px 18px rgba(124,58,237,.07); }
-.ir-finds li:first-child:before { background:var(--v); }
+.ir-finds li { counter-increment:f; padding:16px 16px 16px 44px; position:relative;
+  background:var(--color-paper); border:1px solid var(--color-hairline); border-radius:8px; }
+.ir-finds li:before { content:counter(f) '.'; position:absolute; left:16px; top:16px;
+  font-size:17px; font-weight:600; line-height:1.5; color:var(--color-ink);
+  font-variant-numeric:tabular-nums; }
+.ir-finds li:first-child { border-color:var(--color-ink); }
 .ir-find-top { display:flex; gap:10px; align-items:flex-start; justify-content:space-between; }
-.ir-find-h { font-size:1rem; font-weight:640; line-height:1.42; color:var(--ink); }
-.ir-impact { flex:0 0 auto; padding:4px 9px; font-size:.71rem; font-weight:700; color:var(--v);
-  background:rgba(124,58,237,.08); border-radius:6px; white-space:nowrap; }
-.ir-find-c { margin-top:7px; font-size:.91rem; line-height:1.5; color:var(--mut); }
+.ir-find-h { max-width:65ch; font-size:18px; font-weight:600; line-height:1.5;
+  color:var(--color-ink); }
+.ir-impact { flex:0 0 auto; padding:4px 8px; font-size:14px; font-weight:600;
+  color:var(--color-ink); background:var(--color-surface); border-radius:8px; white-space:nowrap; }
+.ir-find-c { max-width:65ch; margin-top:7px; font-size:17px; font-weight:400; line-height:1.6;
+  color:var(--color-muted); }
 
 .ir-builds { list-style:none; display:flex; flex-direction:column; gap:11px; }
-.ir-builds li { padding:15px 16px; background:var(--soft); border:1px solid var(--line);
-  border-left:3px solid var(--v); border-radius:0 12px 12px 0; }
-.ir-build-t { font-size:.97rem; font-weight:650; color:var(--ink); }
-.ir-build-w { margin-top:5px; font-size:.89rem; line-height:1.5; color:var(--mut); }
+.ir-builds li { padding:14px 16px; background:var(--color-surface);
+  border:1px solid var(--color-hairline); border-left:2px solid var(--color-ink);
+  border-radius:0 8px 8px 0; }
+.ir-build-t { max-width:65ch; font-size:18px; font-weight:600; color:var(--color-ink); }
+.ir-build-w { max-width:65ch; margin-top:5px; font-size:17px; font-weight:400; line-height:1.6;
+  color:var(--color-muted); }
 
-.ir-proof { padding:20px; background:var(--ink); border-radius:16px; }
-.ir-proof h3 { color:var(--v2); }
-.ir-demo { display:flex; flex-direction:column; gap:3px; padding:16px; text-decoration:none;
-  background:rgba(255,255,255,.05); border:1.5px solid rgba(139,92,246,.32); border-radius:12px;
-  transition:all .18s; }
-.ir-demo:hover { background:rgba(139,92,246,.13); border-color:var(--v2); }
-.ir-demo-l { font-size:.83rem; font-weight:600; color:#c3bfe0; }
-.ir-demo-n { font-size:1.32rem; font-weight:800; letter-spacing:-.02em; color:#fff; }
-.ir-demo-f { font-size:.8rem; color:#9a98ab; }
+.ir-proof { padding:20px; background:var(--color-surface); border:1px solid var(--color-hairline);
+  border-radius:8px; }
+.ir-demo { display:flex; flex-direction:column; gap:4px; padding:16px; text-decoration:none;
+  background:var(--color-paper); border:1px solid var(--color-hairline); border-radius:8px;
+  transition:border-color .18s; }
+.ir-demo:hover { border-color:var(--color-ink); }
+.ir-demo-l { font-size:15px; font-weight:600; color:var(--color-ink); }
+.ir-demo-n { font-size:24px; font-weight:600; letter-spacing:-.02em; color:var(--color-ink); }
+.ir-demo-f { max-width:65ch; font-size:14px; font-weight:400; line-height:1.6;
+  color:var(--color-muted); }
 .ir-links { margin-top:13px; display:flex; flex-wrap:wrap; gap:14px; }
-.ir-links a { font-size:.86rem; font-weight:550; color:#c3bfe0; text-decoration:none; }
-.ir-links a:hover { color:#fff; }
+.ir-links a { font-size:15px; font-weight:400; color:var(--color-ink); text-decoration:underline;
+  text-underline-offset:3px; }
+.ir-links a:hover { color:var(--color-muted); }
 
-.ir-cta { padding-top:22px; border-top:2px solid var(--line); }
-.ir-cta-h { font-size:1.12rem; font-weight:700; letter-spacing:-.02em; color:var(--ink);
+.ir-cta { padding-top:22px; border-top:1px solid var(--color-hairline); }
+.ir-cta-h { font-size:20px; font-weight:600; letter-spacing:-.01em; color:var(--color-ink);
   margin-bottom:13px; }
 .ir-cta-row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
-.ir-alt { font-size:.92rem; font-weight:600; color:var(--v); text-decoration:none;
-  padding:15px 4px; }
-.ir-alt:hover { text-decoration:underline; text-underline-offset:3px; }
+.ir-alt { font-size:17px; font-weight:600; color:var(--color-ink); text-decoration:none;
+  padding:14px 20px; background:var(--color-paper); border:1px solid var(--color-ink);
+  border-radius:8px; }
+.ir-alt:hover { background:var(--color-surface); }
 .ir-cta .ir-fine { margin-top:11px; }
+
+/* Accessibility floor: the one animation, the spinner and every transition stop. */
+@media (prefers-reduced-motion:reduce) {
+  .ir-report, .ir-spin { animation:none; }
+  .ir-go, .ir-chip, .ir-cand, .ir-demo, .ir-input { transition:none; }
+}
 `;
