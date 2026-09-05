@@ -1,12 +1,21 @@
 import type { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Archivo, Chivo, Chivo_Mono } from 'next/font/google';
 
 import MarkReveal from '@/components/MarkReveal';
-import { PresenceDot, PresenceNote } from '@/components/Presence';
-import type { PresenceCopy } from '@/components/Presence';
 import InstantReport from '@/components/report/InstantReport';
+import {
+  LedgerHead,
+  MobileActionBar,
+  NAV,
+  Rule,
+  SHELL,
+  SiteFooter,
+  SiteHeader,
+  TextMeButton,
+  siteCss,
+  siteFontClass,
+} from '@/components/site';
 import {
   CAL,
   DEMO_LINE,
@@ -15,14 +24,41 @@ import {
   EMAIL,
   LOCATION,
   PHONE,
-  PHONE_PRETTY,
   PRICES,
   WORDMARK,
 } from '@/config/brand';
 import { DEMOS } from '@/lib/contact';
+/* The one origin string, and the reason it is imported rather than written out
+   is a note left in that file: "⚠️ page.tsx still writes 'https://foundos.ai'
+   by hand in its JSON-LD block … when it is next opened it should import
+   SITE_URL from here instead." A sitemap, a canonical and a graph `@id` that
+   name three different hosts is the exact class of mistake that makes Google
+   pick the wrong URL. site.ts imports nothing, so this costs the page nothing. */
+import { SITE_URL } from './site';
 
 /**
  * EMBER — /explore/ember. Flat colour, hard type, 1px rules.
+ *
+ * ── WHERE THE PIECES LIVE, BEFORE YOU READ ANY FURTHER ────────────────────
+ *
+ * This comment is still the design brief for the whole system, and every
+ * measurement in it still holds. But the system itself is no longer all in
+ * this file. src/components/site/ now holds everything more than one page
+ * needs — the tokens and the four grounds, the two type voices, the prose
+ * styles, the skim-path mark, Rule, LedgerHead, Wordmark, the section rhythm,
+ * the sticky header, the button slabs, the footer, the phone bar, the three
+ * next/font declarations and shipCss. See src/components/site/index.ts.
+ *
+ * What is left here is what only the homepage draws: the hero field, the cream
+ * order-pad card, the five checks, the four steps, the wood arithmetic band,
+ * the build list, the concept-work cards, the demo line, the ledger table, the
+ * about block and the close — plus every word of copy, which is this page's
+ * argument and nobody else's. Its CSS is PAGE_CSS at the foot of the file, and
+ * it ships AFTER the shared sheet.
+ *
+ * So: where a note below says "the stylesheet", read "css.ts plus PAGE_CSS".
+ * Where it describes a device — the grounds, the rules, the ledger head, the
+ * mark — the rule it is describing is in css.ts now, with the same name.
  *
  * ── WHY THIS EXISTS ───────────────────────────────────────────────────────
  *
@@ -259,54 +295,6 @@ import { DEMOS } from '@/lib/contact';
  * that is gone, because this page is now the site.
  */
 
-/**
- * Three faces, declared here rather than in the root layout so no other route
- * pays for type it doesn't render. next/font scopes a font to the component
- * that loads it; the three `.variable` classes go on the page's root element.
- *
- * Archivo carries a real WIDTH axis (wdth 62–125), which is why it is here
- * instead of a second family: `font-stretch: 86%` gives the hero a genuinely
- * narrower cut so a 78-character sentence can be set enormously without
- * running to seven lines on a phone. One family, two very different voices.
- *
- * Deliberately NOT used: Bebas Neue, Oswald, Montserrat, Poppins, Lato. All
- * free, all the default of every canned restaurant template — which is the
- * exact category this page cannot be mistaken for.
- */
-const display = Archivo({
-  subsets: ['latin'],
-  axes: ['wdth'],
-  display: 'swap',
-  variable: '--font-eb-display',
-});
-
-const body = Chivo({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-eb-body',
-});
-
-const mono = Chivo_Mono({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-eb-mono',
-});
-
-/**
- * The one column. Rules are allowed outside it; nothing else is.
- *
- * ⚠️ 1080, not 1200, and the 120px came off for a measured reason. At 1440 a
- * 1200 shell gave a 1140px content box holding a 720px measure, so 37% of every
- * band was empty and the eyebrow hairline ran 420px past the last word it had
- * anything to do with — a rule pointing at nothing, in an audit's words, and
- * worse at 1920. 1080 puts the measure at 72% of the column instead of 63%.
- * The other half of that fix is in .eb-lh, which now stops at the text column
- * rather than at the screen edge. The full-bleed section dividers stay full
- * bleed: those separate bands, and a divider that stops mid-page reads as a
- * broken rule rather than a considered one.
- */
-const SHELL = 'mx-auto w-full max-w-[1080px] px-5 sm:px-10';
-
 /* ── copy ─────────────────────────────────────────────────────────────────
    All of it lifted verbatim. Held in constants rather than inline JSX so an
    apostrophe never has to be escaped and so a diff shows a copy change as a
@@ -501,40 +489,6 @@ const HOW = {
 };
 
 const CLOSE = "Tell me what you run and I'll tell you straight whether I can help.";
-const NAV = { text: 'Text me', book: 'Book 20 minutes' };
-
-/**
- * The presence line beside the header CTA — the only copy on this page that is
- * not a fixed string, and the only new copy this change introduces.
- *
- * ⚠️ IT EXISTS BECAUSE A BLINKING DOT ON ITS OWN IS DECORATION. The green
- * circle after the wordmark has been on foundos.ai and on the printed cards
- * since brand.ts was written, where its stated meaning is "running" — the
- * visual version of "I run it every week". A dot that pulses and says nothing
- * is just a pulsing dot; the same dot with four words beside it is a reader
- * finding out that the person who wrote all this is awake right now. That is
- * the difference between a decoration and a reason to text, and it is why the
- * line may not be dropped to "save space in the header". If it ever has to go
- * somewhere else, it goes WITH the dot, not instead of it.
- *
- * Both `sr` sentences are what a screen reader actually hears, so they say the
- * window in words rather than leaving a colour to carry it. "You text me, I
- * answer" is lifted from ABOUT — the same promise, not a new one.
- *
- * The 9-to-9 window and the America/New_York clock live in
- * components/Presence.tsx. Nothing here claims he is at a desk; it claims what
- * time it is where he is, which is the only part a page can know.
- */
-const PRESENCE: PresenceCopy = {
-  around: {
-    note: 'Around now',
-    sr: 'It is between 9am and 9pm in Atlanta right now. You text me, I answer.',
-  },
-  away: {
-    note: 'Back in the morning',
-    sr: 'It is outside 9am to 9pm in Atlanta right now. Text me anyway — I answer in the morning.',
-  },
-};
 
 /**
  * §2.5 of page.tsx. Bold lead-in, plain sentence, no icons.
@@ -913,25 +867,197 @@ const WORK = [
   },
 ] as const;
 
-/** Carried forward from page.tsx — the section list has no slot for it, and
- *  building strictly to the list would silently drop the structured data. */
-const SCHEMA = {
-  '@context': 'https://schema.org',
+/* ── structured data ──────────────────────────────────────────────────────
+ *
+ * Carried forward from page.tsx — the section list has no slot for it, and
+ * building strictly to the list would silently drop the structured data.
+ *
+ * ⚠️ ONE SCRIPT TAG, ONE @graph, AND IT STAYS THAT WAY. Two
+ * <script type="application/ld+json"> blocks on one URL is legal and every
+ * consumer reads both, but it also means two places for the next node to go
+ * and no shared `@id` for anything to point at, which is how one page ends up
+ * describing two different businesses. Everything true of foundos.ai/ goes in
+ * the array at the bottom of this block.
+ *
+ * ⚠️ NOTHING HERE MAY CLAIM ANYTHING THE PAGE DOES NOT. Structured data is the
+ * one part of this file a visitor never reads, which is exactly why it is the
+ * easiest place to quietly invent a client, an office or an opening time. Every
+ * field below is either read out of config/brand.ts or is a sentence already
+ * rendered somewhere the reader can see it.
+ */
+
+/**
+ * Where he will drive. Georgia is spelled out rather than taken from
+ * LOCATION.region ('GA') because a bare City node called "Decatur" matches a
+ * town in Illinois just as well as the one twenty minutes from him, and the
+ * whole job of this field is to say which one.
+ */
+const GEORGIA = { '@type': 'State', name: 'Georgia' } as const;
+
+/**
+ * NODE 1 — the business, and the node every other page on this site can point
+ * at once those pages get structured data of their own.
+ *
+ * `@id` is the reason it is written out at all. Without one this is an
+ * anonymous blob that nothing can reference; with one, /online-ordering can
+ * later say "provided by ${SITE_URL}/#business" instead of describing a second
+ * company with the same name. `#business` and not the bare URL, because the URL
+ * identifies the PAGE and this node is the COMPANY — conflating those two is
+ * the most common way a graph ends up contradicting itself.
+ */
+const BUSINESS = {
   '@type': 'ProfessionalService',
+  '@id': `${SITE_URL}/#business`,
   name: WORDMARK.text,
   description: DESCRIPTION,
-  url: 'https://foundos.ai',
+  /* Was the literal 'https://foundos.ai'. site.ts asked, in writing, for this
+     file to import it the next time the block was opened; this is that. */
+  url: SITE_URL,
   telephone: `+1${PHONE}`,
   email: EMAIL,
-  areaServed: { '@type': 'City', name: LOCATION.city },
+  /**
+   * Both point at src/app/opengraph-image.tsx — the 1200x630 share card, drawn
+   * at build time out of the brand, no photography and no asset file. It is a
+   * real route that returns a real PNG, which is the whole test: a structured
+   * data image that 404s is worse than none.
+   *
+   * `logo` gets the same URL rather than the favicon, and that is deliberate.
+   * src/app/icon.svg is the green dot alone on white — correct as a 32px tab
+   * tile, and not a logo: it carries no wordmark, so a consumer that renders it
+   * beside a search result shows a green circle attached to nobody. The card
+   * draws the actual wordmark, dot included. Neither file is a square, branded
+   * PNG of the kind Google's logo guidance really wants; if one is ever drawn,
+   * `logo` is the field that changes and `image` stays here.
+   */
+  image: `${SITE_URL}/opengraph-image`,
+  logo: `${SITE_URL}/opengraph-image`,
+  /**
+   * ⚠️ NOT "$$", and the audit that asked for "$$" is worth arguing with here.
+   * Google's own LocalBusiness documentation defines priceRange as "either a
+   * numerical range or a normalized number of currency signs" — both are
+   * allowed — and this site prints the actual numbers four screens down in §11.
+   * "$$" is a claim nobody can check against anything on the page; a range read
+   * straight out of PRICES cannot drift from the ledger the visitor is looking
+   * at, because it IS the ledger. Renders "$500–$4,900": the floor of the
+   * cheapest build and the floor of the largest one. Both are "from" figures on
+   * the page and the range is a band, not a quote, which is what the field is.
+   */
+  priceRange: `${PRICES.site.display}–${PRICES.system.display}`,
+  /**
+   * ⚠️ SIX TOWNS, AND NOT ONE OF THEM IS A LANDING PAGE. This is the honest way
+   * to state a service area and it is the ONLY place the list appears. The
+   * alternative — a page per town — is a doorway set, named in Google's own
+   * spam policy, and the penalty lands on the whole domain rather than on the
+   * thirty pages. The rule and the reasoning live at the top of
+   * src/components/service/services.ts; this field is what exists instead.
+   *
+   * It is a claim about where he will drive, not a claim to have an office in
+   * six towns. `address` below still says Atlanta and still says nothing else.
+   */
+  areaServed: [
+    LOCATION.city,
+    'Marietta',
+    'Smyrna',
+    'Decatur',
+    'Sandy Springs',
+    'Kennesaw',
+  ].map((name) => ({ '@type': 'City', name, containedInPlace: GEORGIA })),
   address: {
     '@type': 'PostalAddress',
     addressLocality: LOCATION.city,
     addressRegion: LOCATION.region,
     addressCountry: 'US',
   },
+  /**
+   * ⚠️ THIS IS THE PRESENCE LINE IN THE HEADER. IT IS NOT SHOP HOURS AND IT MAY
+   * NOT BE WIDENED, SPLIT BY WEEKDAY, OR "CORRECTED" TO LOOK LIKE A STOREFRONT.
+   *
+   * There is no shop. Josh works a job in a gym and answers his phone, so a
+   * storefront's opening times would be an invention — the same kind of
+   * invention as a testimonial, and it would be the only unverifiable thing on
+   * the page. What IS true, and is already published on every page of this
+   * site, is the window the presence dot runs on: it turns amber outside
+   * 9am–9pm Atlanta time, and the screen-reader sentence beside it says so in
+   * words — "It is between 9am and 9pm in Atlanta right now. You text me, I
+   * answer." This encodes that sentence and not one minute more. A reader can
+   * check it against the header of the page it is embedded in.
+   *
+   * Seven days because the dot makes no distinction between them; it reads the
+   * hour and nothing else.
+   *
+   * ⚠️ TWO HAND-KEPT NUMBERS. OPEN_HOUR (9) and CLOSE_HOUR (21) live in
+   * src/components/Presence.tsx. That file is a 'use client' module, and under
+   * RSC every export of one becomes a client reference — a Server Component
+   * cannot read a plain constant back out of it — so they are duplicated here
+   * rather than imported. Same trap, and the same discipline, as the OG_IMAGE
+   * copy in src/components/service/metadata.ts: if that window changes, change
+   * it here in the SAME COMMIT. Schema that contradicts the header is worse
+   * than no schema at all.
+   */
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ],
+    opens: '09:00',
+    closes: '21:00',
+  },
   founder: { '@type': 'Person', name: 'Josh Potesta' },
   sameAs: ['https://instagram.com/josh.potesta'],
+};
+
+/**
+ * NODE 2 — the five checks, as an FAQPage.
+ *
+ * ⚠️ GENERATED FROM `CHECKS`, NEVER RETYPED, AND THAT IS THE ONLY REASON THIS
+ * NODE IS ALLOWED TO EXIST. Google's policy is that FAQ markup has to be
+ * present on the page as visible content; markup that does not match is a
+ * manual-action category, not a missed opportunity. Building the questions out
+ * of the same constant the <ol> in §05 renders means the two cannot disagree —
+ * a copy edit moves both at once, and there is no second copy of Josh's
+ * sentences anywhere in this file to go stale. If a future edit finds itself
+ * typing a question string in here, the answer is that the question belongs on
+ * the page first.
+ *
+ * `text` is the body and the "Check it:" line joined by a single space, in the
+ * order they are read on screen.
+ *
+ * ⚠️ TWO THINGS THIS DOES NOT BUY, WRITTEN DOWN SO NOBODY MEASURES IT AGAINST
+ * THE WRONG THING:
+ *
+ *   1. It will almost certainly NOT draw an FAQ rich result on Google. Google
+ *      narrowed those to well-known government and health sites in August 2023;
+ *      every other site's FAQ markup is still parsed and then simply not drawn.
+ *      What it is still worth: Bing does draw them, and the answer engines that
+ *      are increasingly how somebody finds a supplier read this block directly.
+ *      Ship it for those, do not promise anybody a Google result from it.
+ *
+ *   2. The five `name` strings are declaratives — "Your menu is a picture." —
+ *      rather than questions, because that is what is on the page, and what is
+ *      on the page wins every time. Rewriting them into questions here would be
+ *      exactly the mismatch point 1's policy is about.
+ */
+const FAQ = {
+  '@type': 'FAQPage',
+  '@id': `${SITE_URL}/#faq`,
+  /** Ties the questions to the company rather than leaving them free-floating. */
+  about: { '@id': `${SITE_URL}/#business` },
+  mainEntity: CHECKS.map((c) => ({
+    '@type': 'Question',
+    name: c.title,
+    acceptedAnswer: { '@type': 'Answer', text: `${c.body} ${c.check}` },
+  })),
+};
+
+const SCHEMA = {
+  '@context': 'https://schema.org',
+  '@graph': [BUSINESS, FAQ],
 };
 
 /* ── the skim path ────────────────────────────────────────────────────────
@@ -1051,77 +1177,82 @@ function Marked({ text, phrases }: { text: string; phrases: readonly string[] })
 }
 
 /**
- * A 1px line, edge to edge.
+ * The same trick as <Marked />, doing the other job: it wraps one verbatim
+ * phrase inside a copy string in a link to one of the four service pages.
  *
- * Normally a sibling of the padded shell, so it reaches both screen edges on
- * its own. `bleed` is for the two rules that have to live INSIDE the shell —
- * the one under the hero headline and the one above the closing buttons —
- * where it pulls the line back out to the gutter with a negative margin. The
- * margin exactly equals the gutter, so the line stops at the viewport edge
- * and the document never gets wider than the screen.
+ * ⚠️ THE PHRASE IS FOUND IN THE COPY AT RENDER, NEVER WRITTEN INTO IT. Every
+ * sentence on this page lives in a constant above so that what ships is
+ * byte-for-byte what Josh wrote and a diff shows a copy change as a copy
+ * change. Threading a <Link> through those strings by hand would mean cutting
+ * each one into three pieces of JSX, and the next copy edit would then have to
+ * be made in two places by somebody who does not know that. So this walks the
+ * string, finds the phrase, and wraps it — and if a copy edit moves the phrase,
+ * the paragraph renders exactly as written and silently loses its link. A
+ * drifted phrase costs a link. It never costs a word and it cannot crash.
+ *
+ * There is no new CSS. `.eb-inline-a` is the style the ads note in §09 already
+ * uses for its link up to the report: inherited colour, a 1px underline at a
+ * 3px offset. Inheriting the colour is what keeps it inside the palette — no
+ * sixth hue, and no link colour to measure against four different grounds. It
+ * also cannot be mistaken for a skim mark, which is the opposite shape:
+ * ember-ish colour and no underline.
  */
-function Rule({ soft = false, bleed = false }: { soft?: boolean; bleed?: boolean }) {
-  const cls = ['eb-rule', soft && 'eb-rule--soft', bleed && 'eb-rule--bleed']
-    .filter(Boolean)
-    .join(' ');
-  return <div aria-hidden="true" className={cls} />;
-}
+function Linked({ text, phrase, href }: { text: string; phrase: string; href: string }) {
+  const at = text.indexOf(phrase);
+  if (at === -1) return <>{text}</>;
 
-/**
- * The ledger head: a tiny mono label, then a hairline that runs from the end
- * of the label out to the screen edge. The single most stealable device on
- * either reference, and it is four lines of CSS.
- *
- * `heading` promotes the label from a decorative <span> to a real <h3>, with
- * no visual change at all — `.eb-lab` sets size, weight and colour outright,
- * and preflight has already zeroed the UA heading margins. It exists for one
- * block: the ads-honesty note in the funnel section, which is the most
- * valuable copy on the site and was the only block there missing from the
- * document outline. A screen-reader user navigating by heading was skipping
- * straight past it while reaching less important h3s. Keep it a heading.
- */
-function LedgerHead({ label, heading = false }: { label: string; heading?: boolean }) {
   return (
-    <div className="eb-lh">
-      {heading ? <h3 className="eb-lab">{label}</h3> : <span className="eb-lab">{label}</span>}
-      <span aria-hidden="true" className="eb-lh-line" />
-    </div>
+    <>
+      {text.slice(0, at)}
+      <Link className="eb-inline-a" href={href}>
+        {phrase}
+      </Link>
+      {text.slice(at + phrase.length)}
+    </>
   );
 }
 
 /**
- * `foundos` and the dot. The dot is decorative, so the link reads as one word.
+ * The four links off this page, and the phrase in Josh's existing copy that
+ * each one hangs on.
  *
- * ⚠️ THE CLASS IS `.eb-wm`, NOT `.eb-mark`, AND THE RENAME WAS NOT COSMETIC.
- * `.eb-mark` is now the skim path — the eight phrases that change colour — see
- * MARKS above and `--mark-fg` in the stylesheet, and the wordmark held that
- * name first. Two things called "mark" in one 2,000-line file is how a logo ends up
- * inline-flex in the middle of a paragraph. If a later edit needs a third
- * "mark", it needs a third word.
+ * ⚠️ FOUR LINKS, ONE PER SERVICE PAGE, EACH IN THE SECTION THAT IS ALREADY
+ * ABOUT IT. Not a "related pages" box, not a row of cards, and not a link on
+ * every mention. Nothing was written to carry a link: every phrase below was
+ * already in the sentence it sits in, which is the test a fifth one would have
+ * to pass too. The four landed where the page's own argument reaches the thing
+ * the other page explains in full:
  *
- * The dot is a client leaf now (components/Presence.tsx) because it is wired
- * to a clock. Its size and gap are still computed here, from brand.ts, because
- * they are the logo's proportions and not the component's business.
+ *   websites  §05, check 05, on "When I check a site". §05 is five of the ten
+ *             checks the report runs; /restaurant-websites is all ten with the
+ *             threshold for each. That is the single most useful "and then?"
+ *             relationship on the site, so it gets the one link in that list.
+ *   ordering  §06, the closing passage, on the sentence that names the thing he
+ *             builds instead of the apps. The whole section is the argument
+ *             /online-ordering picks up with the card-processing arithmetic.
+ *   phone     §10, on "the AI receptionist" — the section is a live number a
+ *             reader can ring, and the page it links to is what happens on the
+ *             call and, at more length, what it gets wrong.
+ *   listing   §09, step 01, on "your Google listing". Step 01 IS the listing
+ *             step; /google-business-profile is what is in each field of it.
+ *
+ * Each phrase must appear EXACTLY ONCE in the string it is matched against, or
+ * the link lands on the first occurrence. Checked for all four.
  */
-function Wordmark({ px }: { px: number }) {
-  return (
-    <span className="eb-wm" style={{ fontSize: `${px}px` }}>
-      {WORDMARK.text}
-      <PresenceDot
-        style={{
-          width: `${WORDMARK.dotSize / px}em`,
-          height: `${WORDMARK.dotSize / px}em`,
-          marginLeft: `${WORDMARK.dotGap / px}em`,
-        }}
-      />
-    </span>
-  );
-}
+const LINKS = {
+  websites: { href: '/restaurant-websites', phrase: 'When I check a site' },
+  ordering: { href: '/online-ordering', phrase: 'Ordering that lives on your own site' },
+  phone: { href: '/ai-phone-answering', phrase: 'the AI receptionist' },
+  listing: { href: '/google-business-profile', phrase: 'your Google listing' },
+} as const;
 
 export default function EmberPage() {
   return (
-    <div className={`eb ${display.variable} ${body.variable} ${mono.variable}`} id="top">
-      <style>{shipCss(CSS)}</style>
+    <div className={`eb ${siteFontClass}`} id="top">
+      {/* The design system first, this page's own bands second — see PAGE_CSS
+          at the foot of this file and src/components/site/css.ts. Both sheets
+          go out with their comments stripped. */}
+      <style>{siteCss(PAGE_CSS)}</style>
 
       {/* Renders nothing. It watches the eight skim-path phrases and decides
           when each one turns colour — see components/MarkReveal.tsx. It sits
@@ -1139,31 +1270,9 @@ export default function EmberPage() {
       />
 
       {/* ── 01 Header ─────────────────────────────────────────────────────
-          Sticky with pure CSS, no scroll listener. It has to survive four
-          grounds, so it carries its own opaque ink background rather than
-          inheriting one. Nav sits in the label voice, which is also the
-          button voice — the page has no third small-type style. */}
-      <header className="eb-head">
-        <div className={`${SHELL} eb-head-row`}>
-          <a href="#top" className="eb-head-mark">
-            <Wordmark px={22} />
-          </a>
-          <nav className="eb-nav">
-            {/* The presence line sits immediately before the CTA it is arguing
-                for, in the label voice, so the row reads left to right as
-                "foundos ● — around now — text me". The dot at the far left and
-                the words at the right are the same 64px bar and one glance. */}
-            <PresenceNote copy={PRESENCE} />
-            <a href={`sms:${PHONE}`} className="eb-nav-a eb-lab">
-              {NAV.text}
-            </a>
-            <a href={CAL} target="_blank" rel="noreferrer" className="eb-nav-a eb-lab eb-nav-a--wide">
-              {NAV.book}
-            </a>
-          </nav>
-        </div>
-        <Rule />
-      </header>
+          The site header, same on every page — wordmark, presence line, the
+          two CTAs. It takes no props on purpose; see components/site. */}
+      <SiteHeader />
 
       <main>
         {/* ── 02 Hero — the ember field ───────────────────────────────────
@@ -1185,26 +1294,12 @@ export default function EmberPage() {
               <br />
               {HERO.subB}
             </p>
-            {/* The number is wrapped so the button's +.06em label tracking does
-                not apply to the parentheses: tracked, "(404)" renders as
-                "( 404 )" because the space is added after the opening bracket
-                and before the closing one. .eb-num turns tracking off for the
-                digits and nothing else. Same span in the closing CTA.
-
-                ⚠️ THE NON-BREAKING SPACE IS LOAD-BEARING AND A PLAIN SPACE DOES
-                NOT WORK HERE. .eb-btn is display:inline-flex, so each run of
-                text becomes an anonymous flex item and CSS strips the leading
-                and trailing whitespace of every one of them. With an ordinary
-                space the run "Text me — " was trimmed to "Text me —" and the
-                button rendered "TEXT ME —(404) 436-3393", measured at 107.9px
-                of lead where 118.8px is one space wider. A no-break space is
-                not white space as far as that trimming is concerned, so it
-                survives — and it also stops a phone number ever being split
-                from the dash that introduces it. */}
+            {/* The number slab and its two typographic traps — the no-break
+                space and the .eb-num tracking opt-out — are in
+                components/site/TextMeButton.tsx, which is where the reasons
+                for both are written down. It is the same button in the close. */}
             <div className="eb-btns">
-              <a className="eb-btn eb-btn--a" href={`sms:${PHONE}`}>
-                {NAV.text} —&nbsp;<span className="eb-num">{PHONE_PRETTY}</span>
-              </a>
+              <TextMeButton />
               <a className="eb-btn eb-btn--b" href="#report">
                 {HERO.cta}
               </a>
@@ -1309,13 +1404,28 @@ export default function EmberPage() {
                   </span>
                   <div className="eb-check-body">
                     <h3 className="eb-h3">{c.title}</h3>
-                    {/* One of the five, and it is the one this whole page is
-                        about. The other four render untouched. */}
+                    {/* Two of the five get something and they never get both,
+                        which is why this is a branch and not a nesting. Check
+                        04 carries the skim mark — it is the one this whole page
+                        is about. Check 05 carries the one link out of §05, to
+                        the page that lists all ten checks and the threshold for
+                        each; §05 is five of those ten. The other three render
+                        untouched, and a mark and a link must never land on the
+                        same sentence: one is colour and one is an underline,
+                        and stacked they read as a third thing. */}
                     <p className="eb-p">
-                      <Marked
-                        text={c.body}
-                        phrases={c.n === '04' ? [MARKS.chicken] : NO_MARKS}
-                      />
+                      {c.n === '05' ? (
+                        <Linked
+                          text={c.body}
+                          phrase={LINKS.websites.phrase}
+                          href={LINKS.websites.href}
+                        />
+                      ) : (
+                        <Marked
+                          text={c.body}
+                          phrases={c.n === '04' ? [MARKS.chicken] : NO_MARKS}
+                        />
+                      )}
                     </p>
                     <p className="eb-do eb-mono">{c.check}</p>
                   </div>
@@ -1447,9 +1557,17 @@ export default function EmberPage() {
                   for this block; it is built entirely from classes the page
                   already had. */}
               <div className="eb-mt">
+                {/* The link to /online-ordering rides the second of these three
+                    paragraphs — the sentence that names the thing he builds
+                    instead of the apps. The other two contain the phrase
+                    nowhere, so <Linked /> returns them exactly as written. */}
                 {APPS_TAIL.paras.map((p) => (
                   <p key={p} className="eb-p">
-                    {p}
+                    <Linked
+                      text={p}
+                      phrase={LINKS.ordering.phrase}
+                      href={LINKS.ordering.href}
+                    />
                   </p>
                 ))}
               </div>
@@ -1580,7 +1698,17 @@ export default function EmberPage() {
                   </span>
                   <div className="eb-check-body">
                     <h3 className="eb-h3">{s.lead}</h3>
-                    <p className="eb-p">{s.para}</p>
+                    {/* Step 01 is the listing step, and its paragraph is the
+                        only one of the four that says "your Google listing" —
+                        so the link lands there and steps 02-04 come back
+                        untouched from the same call. */}
+                    <p className="eb-p">
+                      <Linked
+                        text={s.para}
+                        phrase={LINKS.listing.phrase}
+                        href={LINKS.listing.href}
+                      />
+                    </p>
                   </div>
                 </li>
               ))}
@@ -1614,7 +1742,13 @@ export default function EmberPage() {
           <div className={`${SHELL} eb-sec`}>
             <LedgerHead label={LABELS.proof} />
             <h2 className="eb-d eb-h2">{PROOF.h2}</h2>
-            <p className="eb-stand eb-stand--flush">{PROOF.p}</p>
+            {/* "the AI receptionist" links to the page about it. The standfirst
+                runs on --dim, which is 5.6:1 on the ink spine, so the inherited
+                link colour clears the 4.5:1 floor with the underline doing the
+                affordance — nothing here needed a colour of its own. */}
+            <p className="eb-stand eb-stand--flush">
+              <Linked text={PROOF.p} phrase={LINKS.phone.phrase} href={LINKS.phone.href} />
+            </p>
             {/* Reads "Call (276) 295-1209" — §2.7's button, line-broken so the
                 number can be the largest mono string on the page. */}
             <a className="eb-tel" href={`tel:${DEMO_LINE}`}>
@@ -1748,10 +1882,7 @@ export default function EmberPage() {
             <p className="eb-d eb-h2 eb-close-h">{CLOSE}</p>
             <Rule bleed />
             <div className="eb-btns">
-              {/* The no-break space is required — see the note in the hero. */}
-              <a className="eb-btn eb-btn--a" href={`sms:${PHONE}`}>
-                {NAV.text} —&nbsp;<span className="eb-num">{PHONE_PRETTY}</span>
-              </a>
+              <TextMeButton />
               <a className="eb-btn eb-btn--b" href={CAL} target="_blank" rel="noreferrer">
                 {NAV.book}
               </a>
@@ -1761,529 +1892,48 @@ export default function EmberPage() {
       </main>
 
       {/* ── Footer ────────────────────────────────────────────────────────
-          ⚠️ NO SEPARATOR CHARACTERS. There were interpuncts between the four
-          items, each bound to the item that followed it so a dot could not be
-          orphaned at the end of a wrapped line — and that binding worked, but
-          it only moved the problem: at 375px the last item wrapped and the line
-          it started read "· Privacy", a dot with nothing before it. There is no
-          arrangement of four items and three dots that survives every width.
-          The gap does the separating instead (8px down, 20px across), which
-          cannot wrap wrong at any width because there is nothing left to wrap.
-          Do not put the dots back; if the items ever need stronger separation,
-          widen the column gap. */}
-      <footer>
-        <Rule />
-        <div className={`${SHELL} eb-foot`}>
-          <Wordmark px={16} />
-          <a href={`mailto:${EMAIL}`} className="eb-foot-a">
-            {EMAIL}
-          </a>
-          <span className="eb-foot-s">
-            {LOCATION.city}, {LOCATION.region}
-          </span>
-          <Link href="/privacy" className="eb-foot-a">
-            Privacy
-          </Link>
-        </div>
-      </footer>
+          Mark, email, city, privacy — the same four on every page, and the
+          reason there are no interpuncts between them is written down in
+          components/site/SiteFooter.tsx. */}
+      <SiteFooter />
 
       {/* ── The phone action bar ──────────────────────────────────────────
-          Below 640px only, and it is the single change on this page most
+          Below 640px only, and it is the single element on this page most
           likely to produce a text message. The whole funnel is "text me" and
-          until now the only ways to do it were a header link 19,000px above
+          without it the only ways to do that are a header link 19,000px above
           the fold and two buttons at either end of a 23-screen scroll. In
           between — the five checks, the delivery-app argument, the prices,
-          the seven days — there was nothing to act on.
+          the seven days — there is nothing to act on.
 
-          It never covers content: .eb carries a matching bottom padding, so
-          the last line of the footer clears it at rest.
-
-          THE HIDE IS OPTIONAL AND THAT IS DELIBERATE. The bar's base state is
-          visible. A scroll-driven animation then holds it off-screen over the
-          hero and again over the closing CTA — both places where a duplicate
-          "Text me" would be arguing with a full-size one on screen. Any
-          browser without animation-timeline, and anybody who asked for reduced
-          motion, simply gets the bar the whole way down, which is the correct
-          fallback rather than a broken one. It animates transform and opacity
-          and nothing else. */}
-      <nav className="eb-bar" aria-label="Quick actions">
-        <a className="eb-bar-a eb-bar-a--p" href={`sms:${PHONE}`}>
-          {NAV.text}
-        </a>
-        <a className="eb-bar-a" href="#report">
-          Free report
-        </a>
-      </nav>
+          The second action is this page's to choose, and it points at the one
+          thing here a stranger can do without talking to anybody: the free
+          report in section 04. */}
+      <MobileActionBar secondary={{ href: '#report', label: 'Free report' }} />
     </div>
   );
 }
 
-/* ── the stylesheet ───────────────────────────────────────────────────────
-   Scoped to `.eb`. No backticks anywhere in here — the whole thing is a
-   template literal. Read the file header before changing a value; most of
-   these numbers were chosen against a measurement, not a preference. */
-/**
- * Strips comments and collapses whitespace on the way to the browser.
- *
- * The stylesheet below is heavily commented on purpose — it is the only record
- * of why the tracking is directional, why the ledger numerals are not mono, why
- * the mobile bar uses a scroll-driven animation instead of JS. Those notes are
- * for whoever edits this next and they should stay.
- *
- * They just should not be DOWNLOADED. Measured on the live page: the inline
- * stylesheet was 53.7KB, of which 27.8KB — 99 comments, 52% of the CSS and 15%
- * of the whole HTML document — was prose explaining the CSS to a person who
- * will never read it in a browser. Check 05 on this very page tells an owner to
- * turn wifi off and count while their own site loads. Shipping 27KB of my own
- * commentary to a restaurant owner on two bars in a parking lot is exactly the
- * thing being complained about, on the page doing the complaining.
- *
- * Deliberately conservative: block comments, then runs of whitespace, then the
- * space around the punctuation that cannot be ambiguous. It does NOT touch
- * quoted strings or url() values, and there are no data: URIs in this sheet
- * (checked — a base64 payload containing the comment terminator is the usual
- * way a naive stripper corrupts a stylesheet). If a data URI is ever added
- * here, this needs to become a real minifier rather than four regexes.
- */
-function shipCss(css: string): string {
-  return css
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/\s+/g, ' ')
-    .replace(/\s*([{}:;,>])\s*/g, '$1')
-    .replace(/;}/g, '}')
-    .trim();
-}
+/* ── this page's stylesheet ───────────────────────────────────────────────
+   Scoped to `.eb`, and it is only HALF of what the page ships. The design
+   system — the five values and the token set, the four grounds, the two type
+   voices, prose, the skim-path mark, Rule, LedgerHead, the section rhythm, the
+   sticky header, the button slabs, the footer and the phone bar — lives in
+   src/components/site/css.ts, and `siteCss` emits it BEFORE this. What is left
+   here is what only the homepage draws: the hero field, the cream order-pad
+   card, the five checks, the four steps, the wood arithmetic band, the build
+   list, the concept-work cards, the demo line, the ledger table, the about
+   block and the close.
 
-const CSS = `
-.eb{
-  /* the five values, and nothing else is ever written as a hex below */
-  --ink:#1a1a1a; --ember:#d94f2b; --bone:#f0e7d4; --wood:#b76745; --rich:#231f20;
+   ⚠️ BASE FIRST, PAGE SECOND, ALWAYS — that is the layering `siteCss`
+   enforces and the only reason a rule down here can override one up there at
+   equal specificity. Nothing in the base names a class from this file; where a
+   base rule needed a page-side companion (the bounded ledger heads, the
+   .eb-work-a / .eb-tel hover) the companion is down here with a note saying so.
 
-  /* NOT a sixth palette value — this is the logo. brand.ts defines the dot as
-     a #1D9E75 circle, it is on foundos.ai and on the business cards already in
-     circulation, and the mark is not the page's to redraw. It appears exactly
-     once per view, on the ink spine, and nothing else on the page is green.
-     Radius zero is a rule about the layout; it does not reach the wordmark. */
-  --dot:#1D9E75;
-
-  /* The dot's night state, and the ONLY new colour this page has taken on. It
-     is not a palette value and nothing but .eb-dot may use it. It is warm on
-     purpose — a step yellower than wood, well clear of ember so the two never
-     read as the same thing — because a grey dot reads as broken and a red one
-     reads as an error, and the honest meaning here is only "it is late in
-     Atlanta". 5.9:1 on the ink spine, which is the only ground it appears on. */
-  --dot-away:#c98b2b;
-
-  /* ── THE SKIM COLOUR, PER GROUND ──────────────────────────────────────
-     One role, re-pointed by every ground class below exactly like --fg and
-     --rule, so the eight marked phrases in the copy never have to know which
-     field they landed on.
-
-     ⚠️ THIS USED TO BE A TRANSLUCENT WASH AND IT IS NOW AN OPAQUE TEXT
-     COLOUR. The variable was renamed --mark → --mark-fg for exactly that
-     reason: same name, different KIND of value is how a highlighter ends up
-     painted over a sentence. If you see --mark anywhere, it is stale.
-
-     The dark spine gets ember lightened with bone. Plain ember is not an
-     option and this is the measurement that decided it: #d94f2b on #1a1a1a is
-     4.23:1, which is legal for the 40px demo number in §10 and NOT legal for a
-     17px paragraph. Mixing 30% bone into it gives #e07d5e at 6.00:1 — the same
-     hue, no sixth value, and 1.5x the headroom the floor asks for. The default
-     body colour it replaces is 11.17:1, so the marked phrase is still the
-     lower-contrast text on the line; 6.00 is where that stops mattering.
-
-     It also has to survive the rich field under §12 (#231f20), which the ABOUT
-     mark sits on: 5.62:1 there. Both clear 4.5. */
-  --mark-fg:color-mix(in srgb, var(--ember) 70%, var(--bone));
-
-  --f-display:var(--font-eb-display),var(--font-inter),ui-sans-serif,system-ui,sans-serif;
-  --f-body:var(--font-eb-body),var(--font-inter),ui-sans-serif,system-ui,sans-serif;
-  --f-mono:var(--font-eb-mono),ui-monospace,SFMono-Regular,Menlo,monospace;
-
-  /* ── THE TYPE SCALE: SIX STEPS, DECLARED ONCE ─────────────────────────
-     Every font-size below is one of these tokens or one of the three display
-     clamps. Nothing sets a raw px size, which is the only way a scale claim
-     stays true — an earlier version of this file claimed four sizes while
-     shipping seventeen, because each component stepped itself at its own
-     breakpoint. If you need a size that isn't here, change a token; do not
-     add a seventh. The step is at 640px for all six at once. */
-  --t-label:11px;  /* mono, uppercase, tracked: the ledger heads and Open →   */
-  --t-fine:13px;   /* mono asides: Check it, buttons, the fine print          */
-  --t-body:17px;   /* everything that is a sentence, h3s included             */
-  --t-lede:19px;   /* standfirsts, the arithmetic, the ads note               */
-  --t-lead:21px;   /* the hero subhead and the two section ledes              */
-  --t-num:26px;    /* the 01-05 numerals, the ledger amounts, the app figures */
-
-  /* per-ground roles. Every ground class below re-points these. */
-  --fg:color-mix(in srgb, var(--bone) 88%, var(--ink));
-  --dim:color-mix(in srgb, var(--bone) 58%, var(--ink));
-  /* emphasis text: bold leads, amounts, h3s. It is a ROLE, not a colour —
-     hard-coding var(--bone) here is what made a light ground impossible. */
-  --strong:var(--bone);
-  --rule:var(--bone);
-  --rule-soft:color-mix(in srgb, var(--bone) 26%, var(--ink));
-  --btn-a-bg:var(--bone); --btn-a-fg:var(--ink);
-  --btn-b-bg:transparent; --btn-b-fg:var(--bone); --btn-b-bd:var(--bone);
-
-  /* the six globals.css @theme tokens, re-pointed for the dark spine. This is
-     what makes the unlayered :focus-visible ring in globals.css come out bone
-     instead of an invisible black. Do not replace it with a hand-written ring. */
-  --color-paper:var(--ink);
-  --color-ink:var(--bone);
-  --color-muted:color-mix(in srgb, var(--bone) 58%, var(--ink));
-  --color-hairline:color-mix(in srgb, var(--bone) 26%, var(--ink));
-  --color-surface:var(--rich);
-  --color-dot:var(--dot);
-
-  background:var(--ink);
-  color:var(--bone);
-  font-family:var(--f-body);
-  -webkit-font-smoothing:antialiased;
-}
-/* The one breakpoint the scale steps at. Six values move together, so the
-   page cannot drift into having a tablet size that exists nowhere else. */
-@media (min-width:640px){
-  .eb{--t-fine:14px; --t-body:18px; --t-lede:21px; --t-lead:26px; --t-num:32px;}
-}
-/* Clip on main, not on the root: overflow on an ancestor of the sticky header
-   would give it a scroll container and it would stop sticking. */
-.eb main{overflow-x:clip;}
-
-/* ---- grounds ------------------------------------------------------------ */
-.eb-g-rich{background:var(--rich);}
-/* The one light FIELD (as opposed to the cream card in 04, which is a bordered
-   panel inside the shell). It carries §08, where two dark screenshots need a
-   ground to sit against, and it is the break in the second half's rhythm: the
-   run of unbroken ink from the wood band to the close is otherwise about
-   6,000px, half the page on one colour. Roles are the cream card's, because
-   the constraint is the same one — ink prose on bone, never the reverse.
-   Re-measured at 1440 on 2026-09-04: it cuts the longest single-ground run to
-   4,673px of a 13,702px page. */
-.eb-g-bone{
-  background:var(--bone);
-  color:var(--rich);
-  --fg:color-mix(in srgb, var(--rich) 92%, var(--bone));
-  --dim:color-mix(in srgb, var(--rich) 66%, var(--bone));
-  --strong:var(--rich);
-  --rule:var(--rich);
-  --rule-soft:color-mix(in srgb, var(--rich) 24%, var(--bone));
-  --btn-a-bg:var(--rich); --btn-a-fg:var(--bone);
-  --btn-b-bg:transparent; --btn-b-fg:var(--rich); --btn-b-bd:var(--rich);
-  --color-ink:var(--rich);
-  --color-paper:var(--bone);
-  /* Ember DARKENED with rich, the mirror of the spine's ember lightened with
-     bone. Plain ember on cream is 3.35:1 and would be a contrast regression on
-     the marked sentence; 60/40 gives #903c27 at 5.97:1. No mark lives on this
-     field today (§08 is two screenshots) — the value is here so that one
-     landing here later cannot inherit the spine's light ember onto cream. */
-  --mark-fg:color-mix(in srgb, var(--ember) 60%, var(--rich));
-}
-.eb-g-ember{
-  background:var(--ember);
-  color:var(--ink);
-  --fg:var(--ink);
-  --dim:var(--ink);
-  --strong:var(--ink);
-  --rule:var(--ink);
-  --rule-soft:color-mix(in srgb, var(--ink) 40%, var(--ember));
-  /* ember is 4.24:1 against ink and 3.35:1 against bone, so both buttons are
-     solid slabs — a 13px outlined label here would not clear 4.5:1. */
-  --btn-a-bg:var(--ink); --btn-a-fg:var(--bone);
-  --btn-b-bg:var(--bone); --btn-b-fg:var(--ink); --btn-b-bd:var(--bone);
-  /* the ring: bone clears 3:1 against both the ember field and the ink slab */
-  --color-ink:var(--bone);
-  --color-paper:var(--ember);
-  /* ⚠️ NO MARKED PHRASE MAY LIVE ON EMBER, and now there is no colour that
-     could rescue one. Ink — the colour the copy here is already set in — is
-     4.23:1 on this field, and bone is 3.35:1; there is nothing above the
-     first and the second is worse. So the reveal is pinned to the text colour
-     the ground already uses, which makes it a no-op: a phrase landing here
-     keeps its 700 weight and changes colour by nothing, which is the only
-     honest failure mode. It is not an invitation to put one here. */
-  --mark-fg:var(--ink);
-}
-.eb-g-wood{
-  background:var(--wood);
-  color:var(--ink);
-  --fg:var(--ink);
-  --dim:var(--ink);
-  --strong:var(--ink);
-  --rule:var(--ink);
-  --color-ink:var(--ink);
-  /* ⚠️ SAME NO-OP AS EMBER, AND THIS BAND IS THE HARDER CASE OF THE TWO.
-     A wash could raise the marked line's contrast here and one used to. A
-     colour change can only lower it: measured against wood #b76745, the ink
-     these lines are set in is 4.18:1, rich is 3.91:1, bone is 3.39:1, and pure
-     white — the arithmetic ceiling for anything lighter than the field — is
-     4.17:1. Nothing reaches 4.5:1 on wood, in the palette or out of it. So the
-     reveal is pinned to ink and does nothing, and the band carries no marked
-     phrase. See the fifth rule on MARKS before you try to put one back. */
-  --mark-fg:var(--ink);
-}
-
-/* ---- the two voices ----------------------------------------------------- */
-.eb-d{
-  font-family:var(--f-display);
-  font-weight:700;
-  font-stretch:86%;
-  line-height:.85;
-  letter-spacing:-.035em;
-}
-/* ── THE HERO IS REBALANCED, AND THE RATIO IS THE WHOLE FIX ────────────────
-   This was clamp(2.75rem,10.6vw,8rem): 128px at 1440, 44px at 390. Three
-   things were wrong with that and they were all the same thing.
-   (1) The 128px line is the generic one. "I build and run the online side of
-   restaurants and food businesses in Atlanta" is a job description. The line
-   that actually sells — "You're good at what you do. The internet doesn't show
-   it." — sat 24px underneath it, so the page shouted the boring half and
-   whispered the half that lands. (2) Under a 128px headline, an 11-13px mono
-   button reads as a footnote, not as the thing to do next. (3) At 390 the 44px
-   floor forced the h1 to five lines in a 350px column, which pushed the subhead
-   to 365px and the first button to 456px — most of an iPhone SE screen spent
-   before anything sellable appears.
-   The words did not change. The weight they are given did: the h1 comes down
-   to 96px / 36px, the subhead goes up to 38px / 22px, and the buttons go up a
-   step to body size. 96:38 is a real hierarchy; 128:24 was a shout followed by
-   a mumble. text-wrap:balance stops the h1 leaving a two-word last line.
-   ⚠️ The subhead is ink on ember at 4.24:1, which is legal ONLY above the WCAG
-   large-scale floor (18.66px bold). Its clamp floor is 22px and its weight is
-   700. Do not lower either. */
-.eb-h1{font-size:clamp(2.25rem,9.2vw,6rem);text-wrap:balance;}
-.eb-h2{font-size:clamp(1.625rem,5.4vw,2.75rem);line-height:.88;letter-spacing:-.03em;}
-.eb-lab{
-  font-family:var(--f-mono);
-  font-size:var(--t-label);
-  font-weight:500;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  color:var(--dim);
-}
-.eb-mono{font-family:var(--f-mono);}
-
-/* ── THE SKIM PATH ────────────────────────────────────────────────────────
-   Eight phrases, one span each, and they are NOT decoration. Josh's reason is
-   quoted in full on MARKS in the copy block: a reader going fast should be
-   able to read only the coloured phrases and come away with the argument. The
-   rules for choosing one live there too. This block is only how it paints.
-
-   ⚠️ THE WEIGHT IS PERMANENT AND THE COLOUR IS THE REVEAL, AND THAT SPLIT IS
-   DELIBERATE. Two reasons, and neither is taste.
-   (1) A colour change alone is invisible to a reader with a red-green colour
-   vision deficiency, and this device is a comprehension aid — the one thing on
-   the page that must not depend on hue. 400 → 700 carries the whole skim path
-   with the colour switched off.
-   (2) font-weight is animatable on a variable face and Chivo is one, so it
-   COULD have been part of the reveal. It must not be: interpolating weight
-   re-measures the text every frame, which reflows the paragraph around it, and
-   eight paragraphs twitching as you scroll is a worse bug than no animation.
-   Setting it once, up front, also means the skim path is fully readable before
-   IntersectionObserver has fired and on any browser where it never does.
-   So: color is the only animated property, and it does not affect layout.
-
-   The old build was a translucent wash swept in behind the words with a
-   background gradient. Do not reach for background-size here again — it is not
-   what --mark-fg holds any more, and MarkReveal's stagger is timed to a colour
-   transition.
-
-   --mark-fg is re-pointed by every ground exactly like --fg. Measured, on the
-   grounds these eight phrases actually sit on:
-     ink spine  #e07d5e on #1a1a1a  6.00:1   (five of the eight)
-     rich §12   #e07d5e on #231f20  5.62:1   (tellYou)
-     cream card #903c27 on #f0e7d4  5.97:1   (costingNow; 4.56:1 where the
-                                              card's 1px ruled line crosses)
-   Ember and wood pin --mark-fg to the text colour they already use, so a mark
-   landing on either changes nothing but its weight. See the notes there: on
-   those two fields no colour on earth reaches 4.5:1, which is why neither
-   carries a phrase.
-
-   Under reduced motion the mark is simply painted in its final colour with no
-   transition. Which sentence matters is information, and information is not
-   what a reduced-motion request is asking to have removed. MarkReveal still
-   adds .is-in and it is a no-op here. */
-.eb-mark{
-  font-weight:700;
-  color:inherit;
-}
-.eb-mark.is-in{color:var(--mark-fg);}
-@media (prefers-reduced-motion:no-preference){
-  .eb-mark{transition:color .5s cubic-bezier(.22,.61,.36,1);}
-}
-@media (prefers-reduced-motion:reduce){
-  .eb-mark,.eb-mark.is-in{color:var(--mark-fg);}
-}
-/* The risk paragraph in the cream card is set 700 outright, so a mark inside
-   it would have no weight step left and would be leaning on hue alone. It has
-   no mark today — see the note at that render site — and this rule is what
-   keeps the rule above honest if one is ever put back. Chivo's variable axis
-   runs to 900. */
-.eb-pad-p--risk .eb-mark{font-weight:800;}
-
-/* Body copy and the only sub-heading style. There is no mid-size heading on
-   this page and adding one undoes device 5 — see the file header. */
-.eb-p{font-size:var(--t-body);line-height:1.62;color:var(--fg);max-width:64ch;}
-/* The adjacency has to name the lede as well. In the build tail a paragraph
-   follows .eb-lede--strong, so .eb-p + .eb-p never matched and the two sat at
-   a measured 0px apart, reading as one wrapped block. */
-:is(.eb-p,.eb-lede)+.eb-p{margin-top:14px;}
-.eb-lede+.eb-p{margin-top:18px;}
-.eb-p--wide{max-width:70ch;}
-.eb-h3{font-size:var(--t-body);line-height:1.5;font-weight:700;color:var(--strong);margin-bottom:10px;max-width:62ch;}
-.eb-lede{font-size:var(--t-lead);line-height:1.45;color:var(--fg);max-width:52ch;}
-.eb-lede--strong{margin-top:22px;font-weight:700;color:var(--strong);}
-.eb-stand{font-size:var(--t-lede);line-height:1.5;color:var(--dim);max-width:60ch;margin-bottom:30px;}
-/* The flush variant is the one used where no full-bleed rule separates the h2
-   from its standfirst (08 and 10). Without a top margin the two sat 0px apart
-   — .eb-h2 has no margin-bottom, by design, because everywhere else a rule and
-   64px of section padding do the separating. */
-.eb-stand--flush{margin-top:22px;margin-bottom:24px;}
-.eb-fine{margin-top:18px;font-size:var(--t-fine);line-height:1.6;color:var(--dim);}
-.eb-mt{margin-top:30px;}
-@media (min-width:640px){
-  .eb-stand--flush{margin-top:26px;}
-}
-
-/* ---- rules -------------------------------------------------------------- */
-.eb-rule{height:1px;width:100%;background:var(--rule);}
-.eb-rule--soft{background:var(--rule-soft);}
-/* the inset variant is for rules inside a padded box; it stops at the box */
-.eb-rule--inset{margin:22px 0;}
-/* For a rule that has to sit inside the 1200px shell — under the hero
-   headline, above the closing buttons. calc(50% - 50vw) is measured off the
-   shell's own content box, so the line lands exactly on the viewport edge at
-   every width instead of stopping at the column like the text does. On a
-   desktop with a visible scrollbar 100vw overshoots the layout viewport by the
-   scrollbar's width, which is the literal over-bleed the reference measured
-   (1585px of rule inside a 1502px viewport) — and the overflow-x:clip on main
-   means it costs no horizontal scroll. Verified at 390 and 1440.
-   (Backticks would end this whole stylesheet. There are none in here.) */
-.eb-rule--bleed{width:auto;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);}
-
-/* The default is the SHELL case, and it has to be the default: this device is
-   described three inches above as a hairline that "runs from the end of the
-   label out to the screen edge", and it did not. -40px assumes the shell
-   gutter IS the screen edge, which is only true below about 1280px. Measured
-   at 1440 the line stopped at 1312 while every section rule ran the full
-   width, and the shortfall grows with the window — 360px short at 1920.
-   calc(50% - 50vw) is measured off the column's own content box, the same
-   arithmetic as .eb-rule--bleed, with the same over-bleed by the scrollbar
-   width that main's overflow-x:clip absorbs. */
-.eb-lh{display:flex;align-items:center;gap:14px;margin-bottom:18px;
-  margin-right:calc(50% - 50vw);}
-.eb-lh-line{flex:1 1 auto;height:1px;background:var(--rule);}
-/* ── WHERE THE EYEBROW RULE STOPS, ONCE THE COLUMN STOPS MOVING ───────────
-   Below 1024px the shell gutter IS the screen edge, so running to the viewport
-   is the same thing as running to the column and the device reads as intended.
-   Above it the two come apart, and running to the edge means the hairline
-   travels 300px past the last word of a 64ch measure with nothing on the other
-   side of it. That is the "rule pointing at nothing" an audit found in every
-   band. So at 1024 and up the eyebrow stops where the prose stops. The
-   full-bleed section dividers are untouched: they separate bands, they are not
-   pointing at a column, and a divider that stopped mid-page would read as a
-   rule that failed rather than one that was placed. */
-@media (min-width:1024px){
-  /* 44rem is the same 704px the prose measure resolves to, so the hairline and
-     the right edge of the paragraphs below it land on one line. Not a ch value,
-     for the reason spelled out at .eb-do: this element's own font is 16px Chivo
-     and a ch here means something different from a ch three rules down. */
-  .eb-lh{margin-right:0;max-width:44rem;}
-  /* the two bounded instances keep their own panel-relative behaviour */
-  .eb-pad-in>.eb-lh,.eb-note>.eb-lh{max-width:none;}
-}
-/* The two BOUNDED instances, named rather than inferred. Inside a padded panel
-   the hairline should stop at the panel, so the negative margin equals that
-   panel's own padding — 20px, 40px from 640 up, which is what both of them
-   use. A new ledger head anywhere else inherits the shell behaviour, which is
-   the right default; this list is the exception, and it is two long. */
-.eb-pad-in>.eb-lh,.eb-note>.eb-lh{margin-right:-20px;}
-@media (min-width:640px){.eb-pad-in>.eb-lh,.eb-note>.eb-lh{margin-right:-40px;}}
-
-/* ---- shell rhythm ------------------------------------------------------- */
-/* ⚠️ CUT ~35% FROM EVERY BAND, AND THE PAGE IS BETTER FOR IT, NOT WORSE.
-   At 1440 the document was 15,705px and a scroll-through found the same shape
-   over and over: a heading, a rule, six lines of type, then 200-270px of empty
-   ink before the next rule. That is not restraint, it is a page with nothing in
-   the lower two thirds of most viewports — and it is paid for by the reader,
-   who scrolls a third further to read the same words. The band separations here
-   are doing a job the 1px rules already do on their own.
-   Every number below is the old one times roughly 0.65. If a future edit wants
-   air back, take it in one place that earns it rather than everywhere. */
-.eb-sec{padding-top:44px;padding-bottom:44px;}
-.eb-sec--tight{padding-top:38px;padding-bottom:38px;}
-.eb-sec--after-rule{padding-top:30px;padding-bottom:48px;}
-@media (min-width:640px){
-  .eb-sec{padding-top:62px;padding-bottom:62px;}
-  .eb-sec--tight{padding-top:52px;padding-bottom:52px;}
-  .eb-sec--after-rule{padding-top:42px;padding-bottom:72px;}
-}
-
-/* ---- header ------------------------------------------------------------- */
-.eb-head{position:sticky;top:0;z-index:50;background:var(--ink);}
-.eb-head-row{display:flex;align-items:center;justify-content:space-between;height:64px;}
-.eb-head-mark{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;}
-/* ⚠️ RENAMED FROM .eb-mark. That name now belongs to the skim path, the eight
-   phrases that change colour (see .eb-mark, up in "the two voices"), and the
-   wordmark cannot share it: display:inline-flex plus the display face on a
-   phrase mid-paragraph turns that phrase into an unwrappable bone-coloured
-   box. Two things called "mark" in one file is the bug waiting to happen. */
-.eb-wm{display:inline-flex;align-items:baseline;font-family:var(--f-display);font-weight:700;
-  font-stretch:86%;letter-spacing:-.03em;color:var(--bone);}
-
-/* ── THE PRESENCE DOT ──────────────────────────────────────────────────────
-   The one radius and the one green on the page, and both are correct. This is
-   the mark from brand.ts — a circle, #1D9E75 — the same one on foundos.ai and
-   on the cards already handed out. A square ember dot is a different logo. It
-   sits on the ink spine in the header and the footer, never on ember, so the
-   green has room and clashes with nothing.
-
-   It now breathes, and it now MEANS something: components/Presence.tsx flips
-   data-state to "away" outside 9am-9pm Atlanta time, and PRESENCE puts the
-   words beside it. What the dot must never become is an alarm — 2.4s is slow
-   enough to read as breathing, and anything under about 1.5s reads as an
-   error state on a device somebody is holding.
-
-   THE AMBER IS THE ONE NEW COLOUR ON THE PAGE and it is deliberately inside
-   the warm family, a step yellower than wood, so that a night visitor sees a
-   different state rather than a different brand. It is not a palette value and
-   nothing else may use it. Both states are decorative: the sentence a screen
-   reader hears is in .eb-sr, not in the colour. */
-.eb-dot{
-  --now:var(--dot);
-  display:inline-block;flex:0 0 auto;position:relative;
-  border-radius:50%;background:var(--now);
-}
-.eb-dot[data-state="away"]{--now:var(--dot-away);}
-/* transform and opacity only, and the ring does not exist at all when reduced
-   motion is asked for — no content, no pseudo-element, nothing to stop. */
-@media (prefers-reduced-motion:no-preference){
-  .eb-dot{animation:eb-breathe 2.4s ease-in-out infinite;}
-  .eb-dot::after{
-    content:"";position:absolute;inset:0;border-radius:50%;
-    background:var(--now);opacity:.45;
-    animation:eb-ring 2.4s ease-out infinite;
-  }
-}
-@keyframes eb-breathe{0%,100%{opacity:1} 50%{opacity:.62}}
-@keyframes eb-ring{0%{transform:scale(1);opacity:.45} 70%,100%{transform:scale(2.8);opacity:0}}
-
-/* The line that makes the dot a conversion element instead of a decoration.
-   Label voice, because the page has no third small-type style, and nowrap
-   because a two-line fragment in a 64px header row is worse than a tight one.
-   The 44px min-height matches the nav links either side of it so the row does
-   not shift when the state changes. */
-.eb-presence{display:inline-flex;align-items:center;min-height:44px;}
-.eb-presence-t{white-space:nowrap;}
-/* The screen-reader sentence. Not Tailwind's .sr-only: this page's stylesheet
-   is self-contained inside .eb and does not otherwise depend on a utility
-   surviving a content scan. */
-.eb-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
-  clip-path:inset(50%);white-space:nowrap;border:0;}
-
-.eb-nav{display:flex;align-items:center;gap:22px;}
-.eb-nav-a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;color:var(--dim);}
-.eb-nav-a:hover{color:var(--bone);}
-.eb-nav-a--wide{display:none;}
-@media (min-width:640px){.eb-nav-a--wide{display:inline-flex;}}
-
+   No backticks anywhere in here — the whole thing is a template literal. Read
+   the file header before changing a value; most of these numbers were chosen
+   against a measurement, not a preference. */
+const PAGE_CSS = `
 /* ---- hero --------------------------------------------------------------- */
 .eb-hero{padding-top:32px;padding-bottom:44px;}
 .eb-hero-h{color:var(--bone);margin-bottom:22px;}
@@ -2297,42 +1947,21 @@ const CSS = `
   .eb-hero{padding-top:60px;padding-bottom:64px;}
 }
 
-/* ---- buttons ------------------------------------------------------------ */
-.eb-btns{display:flex;flex-direction:column;gap:12px;margin-top:30px;align-items:stretch;}
-@media (min-width:560px){.eb-btns{flex-direction:row;align-items:flex-start;}}
-/* Body size, not --t-fine. .eb-btn is used in exactly two places — the hero and
-   the close — and at 13px under a display headline both of them read as small
-   print rather than as the next thing to do. This is the other half of the hero
-   rebalance described at .eb-h1. */
-.eb-btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  min-height:58px;padding:0 24px;border-radius:0;border:1px solid transparent;
-  font-family:var(--f-mono);font-size:var(--t-body);font-weight:600;letter-spacing:.06em;
-  text-transform:uppercase;text-decoration:none;text-align:center;cursor:pointer;
-}
-/* ── NUMERALS OPT OUT OF TRACKING ─────────────────────────────────────────
-   +.06em is right for a tracked uppercase label and wrong for every character
-   that is not a letter. Applied to "(404) 436-3393" it puts the added space
-   INSIDE the brackets, so the button reads "( 404 ) 436-3393", and the same
-   tracking on a mono ledger amount opens "$1,500" into "$1 , 500" because a
-   monospaced comma already sits in a full-width advance with the ink in the
-   middle of it. tabular-nums keeps the digits on a common width so a column of
-   amounts still lines up. */
-.eb-num{letter-spacing:normal;font-variant-numeric:tabular-nums;}
-.eb-btn--a{background:var(--btn-a-bg);color:var(--btn-a-fg);border-color:var(--btn-a-bg);}
-.eb-btn--b{background:var(--btn-b-bg);color:var(--btn-b-fg);border-color:var(--btn-b-bd);}
-/* Hover swaps the two treatments. A flat swap keeps every state above 4.5:1,
-   which an opacity or tint hover would not. */
-.eb-btn--a:hover{background:var(--btn-b-bg);color:var(--btn-b-fg);border-color:var(--btn-b-bd);}
-.eb-btn--b:hover{background:var(--btn-a-bg);color:var(--btn-a-fg);border-color:var(--btn-a-bg);}
-/* One exception to "the ground decides the ring". On ember the ring is bone,
-   which is right for the ink-filled button but puts a bone ring around a
-   bone-filled one — readable only through the 2px offset gap. Ink clears 3:1
-   against both the bone slab (13.9) and the ember field (4.24), so this one
-   button gets it. Verified by tabbing the page, not by eye. */
-.eb-g-ember .eb-btn--b:focus-visible{outline-color:var(--ink);}
-@media (prefers-reduced-motion:no-preference){
-  .eb-btn,.eb-nav-a,.eb-work-a,.eb-tel{transition:background-color .15s linear,color .15s linear,border-color .15s linear;}
+/* ---- ledger heads inside this page's two panels ------------------------- */
+/* The BOUNDED instances of LedgerHead, named rather than inferred. Inside a
+   padded panel the hairline should stop at the panel, so the negative margin
+   equals that panel's own padding — 20px, 40px from 640 up, which is what both
+   of them use. A ledger head anywhere else inherits the shell behaviour from
+   css.ts, which is the right default; this list is the exception, and it is
+   two long. It lives in the page because .eb-pad-in and .eb-note are the
+   page's classes — the base is not allowed to reach into them. Both selectors
+   are (0,2,0) against the base's (0,1,0), so they win on specificity and do
+   not depend on being emitted second. */
+.eb-pad-in>.eb-lh,.eb-note>.eb-lh{margin-right:-20px;}
+@media (min-width:640px){.eb-pad-in>.eb-lh,.eb-note>.eb-lh{margin-right:-40px;}}
+@media (min-width:1024px){
+  /* the two bounded instances keep their own panel-relative behaviour */
+  .eb-pad-in>.eb-lh,.eb-note>.eb-lh{max-width:none;}
 }
 
 /* ---- the cream order pad ------------------------------------------------ */
@@ -2384,6 +2013,13 @@ const CSS = `
 .eb-pad-h{color:var(--rich);}
 .eb-pad-p{font-size:var(--t-body);line-height:28px;color:var(--fg);max-width:60ch;}
 .eb-pad-p--risk{font-weight:700;color:var(--rich);}
+/* The risk paragraph is set 700 outright, so a mark inside it would have no
+   weight step left and would be leaning on hue alone. It has no mark today —
+   see the note at that render site — and this rule is what keeps the skim
+   path's weight rule honest if one is ever put back. Chivo's variable axis
+   runs to 900. (Lives here rather than beside .eb-mark in css.ts because
+   .eb-pad-p--risk is this page's class; the base may not name it.) */
+.eb-pad-p--risk .eb-mark{font-weight:800;}
 .eb-pad-widget{margin-top:28px;}
 
 /* Reaching inside <InstantReport />. Its own selectors top out at (0,1,1), so
@@ -2464,8 +2100,18 @@ const CSS = `
   .eb-note{padding:32px 40px;}
 }
 .eb-g-rich .eb-note{background:var(--ink);}
+/* The vertical padding is a tap target, not spacing, and it is free.
+   These sit INSIDE sentences ("When I check a site…", "…the AI receptionist…"),
+   so they measured 20px and 23px tall and dropped the page from 8/8 to 7/8 on
+   the 44px floor the moment the internal links went in. WCAG 2.5.8 exempts a
+   link inside a block of text, but the floor is reachable anyway: on an inline
+   element, padding-block grows the hit box and does NOT grow the line box, so
+   the paragraph around it does not move a pixel. There is no background and no
+   border on these, so nothing about them looks different either.
+   Do not convert them to inline-block chasing the same result — that DOES
+   change the line box, and it would push every paragraph they sit in. */
 .eb-inline-a{color:inherit;text-decoration:underline;text-underline-offset:3px;
-  text-decoration-thickness:1px;}
+  text-decoration-thickness:1px;padding-block:12px;}
 .eb-inline-a:hover{color:var(--strong);}
 
 /* ---- the worked arithmetic, on wood ------------------------------------- */
@@ -2566,6 +2212,15 @@ const CSS = `
   font-weight:700;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;
   color:var(--ember);}
 
+
+/* The other half of the hover transition declared in css.ts. The base rule
+   covers .eb-btn and .eb-nav-a, which are system classes; these two are this
+   page's own — the concept-work cards and the demo-line panel — so they opt
+   in here rather than being named from the base. Same declaration, and it must
+   stay the same: two hover speeds on one page reads as one of them lagging. */
+@media (prefers-reduced-motion:no-preference){
+  .eb-work-a,.eb-tel{transition:background-color .15s linear,color .15s linear,border-color .15s linear;}
+}
 /* ---- the ledger table --------------------------------------------------- */
 .eb-ledger{margin:0;border-top:1px solid var(--rule);}
 .eb-row{padding:26px 0;border-bottom:1px solid var(--rule-soft);}
@@ -2612,52 +2267,4 @@ const CSS = `
    it near the middle instead of filling line one and orphaning the remainder. */
 .eb-close-h{color:var(--ink);margin-bottom:24px;max-width:18ch;text-wrap:balance;}
 @media (min-width:640px){.eb-close{padding-top:66px;padding-bottom:66px;}}
-
-/* ---- footer ------------------------------------------------------------- */
-/* No separator glyphs — see the note on the markup. The row gap is what
-   separates the items, so nothing can be orphaned onto a wrapped line. */
-.eb-foot{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.25rem;padding-top:22px;
-  padding-bottom:22px;font-size:var(--t-fine);line-height:1.6;color:var(--dim);}
-.eb-foot-a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;color:inherit;}
-.eb-foot-a:hover{color:var(--bone);}
-.eb-foot-s{display:inline-flex;align-items:center;min-height:44px;}
-
-/* ---- the phone action bar ----------------------------------------------- */
-/* Hidden by default so no desktop rule has to undo it. Below 640px the header
-   already drops "Book 20 minutes", which is the same breakpoint at which a
-   visitor stops having a persistent way to act at all. */
-.eb-bar{display:none;}
-@media (max-width:639px){
-  .eb-bar{position:fixed;left:0;right:0;bottom:0;z-index:60;
-    display:grid;grid-template-columns:1fr 1fr;gap:1px;
-    background:var(--bone);border-top:1px solid var(--bone);
-    padding-bottom:env(safe-area-inset-bottom);}
-  .eb-bar-a{display:flex;align-items:center;justify-content:center;min-height:56px;padding:0 12px;
-    font-family:var(--f-mono);font-size:var(--t-fine);font-weight:600;letter-spacing:.06em;
-    text-transform:uppercase;text-decoration:none;text-align:center;
-    background:var(--ink);color:var(--bone);}
-  .eb-bar-a--p{background:var(--bone);color:var(--ink);}
-  /* The bar must never sit on top of the last line of the footer. This is the
-     bar's own height plus whatever the device reserves for the home indicator,
-     and it has to move if .eb-bar-a's min-height ever does. */
-  .eb{padding-bottom:calc(57px + env(safe-area-inset-bottom));}
-}
-/* Progressive enhancement, and the base state above is the fallback: a browser
-   without scroll-driven animations, and anybody who asked for reduced motion,
-   gets the bar the whole way down. Where it is supported the bar stays off
-   screen over the hero — where two full-size buttons are already on screen —
-   and again over the closing CTA, for the same reason. Percentages rather than
-   pixels because the document is 15,000px on one phone and 20,000px on
-   another; 4% and 94% of the scroll range land on the two CTA blocks at both.
-   transform and opacity only, which is the whole of what is animated here. */
-@supports (animation-timeline:scroll()){
-  @media (max-width:639px) and (prefers-reduced-motion:no-preference){
-    .eb-bar{animation:eb-bar-peek linear both;animation-timeline:scroll(root block);}
-    @keyframes eb-bar-peek{
-      0%,4%{opacity:0;transform:translateY(100%);}
-      7%,94%{opacity:1;transform:translateY(0);}
-      97%,100%{opacity:0;transform:translateY(100%);}
-    }
-  }
-}
 `;

@@ -9,8 +9,9 @@
  *
  * No trailing slash. Everything downstream appends its own leading slash.
  *
- * ⚠️ page.tsx still writes 'https://foundos.ai' by hand in its JSON-LD block.
- * That file belongs to another pass; when it is next opened it should import
- * SITE_URL from here instead.
+ * Done, 2026-09-05: page.tsx used to write 'https://foundos.ai' by hand in its
+ * JSON-LD block and now imports this. Every origin on the site — the canonical,
+ * robots.txt, the sitemap, the OG card and the graph's `@id` — comes from this
+ * one line. Nothing may hard-code the host again.
  */
 export const SITE_URL = 'https://foundos.ai';

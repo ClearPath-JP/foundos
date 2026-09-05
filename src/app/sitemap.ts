@@ -1,12 +1,28 @@
 import type { MetadataRoute } from 'next';
+/* The LEAF, not the barrel. '@/components/service' re-exports ServicePage,
+   which reaches components/site and therefore next/font — and next/font emits
+   its @font-face CSS and a preload for every route whose module graph touches
+   it. A sitemap route has no glyphs. services.ts imports nothing at all, so
+   this costs the route nothing. Same trap as the Inter note in layout.tsx. */
+import { SERVICES } from '@/components/service/services';
 import { SITE_URL } from './site';
 
 /**
  * /sitemap.xml — a 404 until now.
  *
- * TWO URLS, AND THE LIST IS SHORT ON PURPOSE. The site has more routes than
+ * SIX URLS, AND THE LIST IS SHORT ON PURPOSE. The site has more routes than
  * this. Every omission is a decision, written down here so nobody "completes"
  * the list later without knowing what they would be publishing:
+ *
+ * ── 2026-09-05: the four service pages were added ─────────────────────────
+ *
+ * They come from SERVICES in components/service/services.ts rather than being
+ * retyped, so a slug can never disagree with the route that serves it. ⚠️ THAT
+ * LIST IS ALSO WHERE THE RULE AGAINST GROWING IT LIVES: a page joins it when
+ * there are 400+ words true of that service and of nothing else on the site,
+ * and never as a city variant. Thirty pages that differ by a town name are a
+ * doorway set, and a sitemap is an active request to index every one of them —
+ * which is how that particular penalty gets asked for in writing.
  *
  *   /demo/truckos — OMITTED, and this one overrides the brief that asked for
  *     it. Its own generateMetadata sets `robots: { index: false, follow: false }`
@@ -34,7 +50,8 @@ import { SITE_URL } from './site';
  * last published", which is what the field is for.
  *
  * `priority` is a relative hint within one site, not a score. The homepage is
- * the page being sold; privacy exists to exist.
+ * the page being sold; the four service pages are the next thing anybody
+ * should land on; privacy exists to exist.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
@@ -46,6 +63,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 1,
     },
+    /**
+     * Each slug is a top-level route — src/app/<slug>/page.tsx — so the URL is
+     * the origin plus one segment. `monthly` rather than `weekly` because these
+     * are reference pages: they change when a threshold in the code changes or
+     * when a limit stops being true, not on a publishing schedule.
+     */
+    ...SERVICES.map((s) => ({
+      url: `${SITE_URL}/${s.slug}`,
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
     {
       url: `${SITE_URL}/privacy`,
       lastModified,
