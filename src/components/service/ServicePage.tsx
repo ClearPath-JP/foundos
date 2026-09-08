@@ -26,8 +26,8 @@ import { otherServices, type ServiceSlug } from './services';
  * that could make them different is a page that will. It owns nothing else: the
  * argument, every section, every h2 and every word between the head and the
  * cross-links is the page's own, passed in as children. That split is the whole
- * reason these four pages are allowed to exist — see the note at the top of
- * services.ts on why there are four of them and not thirty.
+ * reason these five pages are allowed to exist — see the note at the top of
+ * services.ts on why there are five of them and not thirty.
  *
  * ⚠️ THE H1 IS HERE, WHICH MEANS A PAGE MUST NOT RENDER ITS OWN. One h1 per
  * page, and `.eb-h1` (36px → 96px) has to keep clearly outranking `.eb-h2`
@@ -50,7 +50,7 @@ import { otherServices, type ServiceSlug } from './services';
  * The report lives at /#report on the homepage — the cream order pad. It is not
  * re-rendered here on purpose: <InstantReport /> is a client component that
  * calls a rate-limited, quota-capped API, and putting a second entry point on
- * four more routes multiplies the ways that quota gets spent by crawlers and
+ * five more routes multiplies the ways that quota gets spent by crawlers and
  * curious visitors without adding a single thing a reader could not get by
  * tapping through.
  */
@@ -65,7 +65,7 @@ const CTA = {
 };
 
 export type ServicePageProps = {
-  /** Which of the four this is. Drives the cross-link block only. */
+  /** Which of the five this is. Drives the cross-link block only. */
   slug: ServiceSlug;
   /** The mono ledger label above the headline. Two or three words. */
   label: string;

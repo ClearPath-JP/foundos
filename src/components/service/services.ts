@@ -1,7 +1,7 @@
 /**
- * The four service pages, in one list.
+ * The five service pages, in one list.
  *
- * ⚠️ WHY THERE ARE FOUR AND NOT THIRTY. The obvious version of this file is a
+ * ⚠️ WHY THERE ARE FIVE AND NOT THIRTY. The obvious version of this file is a
  * matrix — five services times six metro-Atlanta towns — and it is the single
  * worst thing that could be done to this domain. Thirty pages that differ by a
  * town name are a doorway-page set: Google's own spam policy names them, and
@@ -10,8 +10,8 @@
  *
  *   A PAGE GOES IN THIS LIST WHEN THERE ARE 400+ WORDS THAT ARE TRUE OF THAT
  *   SERVICE AND OF NOTHING ELSE ON THE SITE. No city variants, ever. No page
- *   that is another page with the nouns swapped. If the fifth idea can only be
- *   written by rewording one of these four, it is not a fifth page.
+ *   that is another page with the nouns swapped. If the next idea can only be
+ *   written by rewording one of the others, it is not a new page.
  *
  * The service area is handled the honest way instead: it is a sentence in the
  * copy of each page (he is in Atlanta, he drives out) and structured data on
@@ -27,7 +27,8 @@ export type ServiceSlug =
   | 'online-ordering'
   | 'restaurant-websites'
   | 'ai-phone-answering'
-  | 'google-business-profile';
+  | 'google-business-profile'
+  | 'food-truck-location';
 
 export type Service = {
   slug: ServiceSlug;
@@ -57,6 +58,21 @@ export const SERVICES: readonly Service[] = [
     slug: 'google-business-profile',
     label: 'Google listing',
     note: 'Hours, categories, the attributes people filter on, photos and reviews — and the one ranking factor nobody can sell you.',
+  },
+  /**
+   * The fifth, added 2026-09-08, and the first about a business that moves.
+   *
+   * It was checked against the rule above before it went in rather than after:
+   * the text-in loop, the staleness rule, the SMS arithmetic behind the capped
+   * allowance, the 10DLC lead time and collecting a list off a window instead
+   * of a checkout are true of this and of nothing else on the site. It is not
+   * /online-ordering with the nouns swapped — that page argues commission and a
+   * Friday service, and this one says out loud that it does not take orders.
+   */
+  {
+    slug: 'food-truck-location',
+    label: 'Food trucks',
+    note: 'What it costs to run a text list, why a location page has to admit when it is out of date, and when a truck is better off not buying one.',
   },
 ] as const;
 

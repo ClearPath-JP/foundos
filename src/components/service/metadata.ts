@@ -35,7 +35,7 @@ import type { ServiceSlug } from './services';
  * changes, change it here in the same commit — a stale alt string is the kind
  * of thing nobody notices for a year.
  *
- * ⚠️ A ROUTE BUILT FOR A REAL BUSINESS MUST NOT USE THIS. These four pages are
+ * ⚠️ A ROUTE BUILT FOR A REAL BUSINESS MUST NOT USE THIS. These five pages are
  * foundos's own, so foundos's card is the right card. A client demo that
  * inherits it previews a client's link with foundos lead-gen copy on it — see
  * the note in opengraph-image.tsx and what src/app/demo/istanbul/layout.tsx
@@ -91,7 +91,7 @@ export function serviceMetadata({
        * pathname rather than against metadataBase, so this resolves to the page
        * being shared. og:url is how Facebook, WhatsApp and iMessage IDENTIFY a
        * page: two links carrying the same og:url are one object to them and
-       * pool their previews. The bare origin here would make all four of these
+       * pool their previews. The bare origin here would make all five of these
        * pages the homepage. Same reasoning, and the same shape, as layout.tsx.
        */
       url: './',

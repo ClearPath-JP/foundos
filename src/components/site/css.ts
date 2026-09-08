@@ -458,15 +458,29 @@ export const SITE_CSS = `
 .eb-nav-a--wide{display:none;}
 
 /* The service nav — a fixed 44px row that scrolls sideways instead of wrapping.
-   The four labels measure about 310px at 11px mono with 20px gaps, so they sit
-   on one line unscrolled from roughly 360px up; below that the row slides and
-   the header's height does not move. The scrollbar is hidden in all three
-   engines because a visible bar under a 44px row reads as a broken border. */
+   The five labels measure about 342px at 11px mono with 20px gaps, against a
+   350px visible track at 390px, so they sit on one line unscrolled on the
+   narrowest phone worth supporting; below that the row slides and the header's
+   height does not move. ⚠️ THAT MARGIN IS EIGHT PIXELS. A sixth item, or a
+   longer label on any of the five, puts the last one off the screen — which is
+   how a visitor stops being able to see the page he is on. The lengths are
+   held, and reasoned about, in components/site/copy.ts. The scrollbar is
+   hidden in all three engines because a visible bar under a 44px row reads as
+   a broken border. */
 .eb-subnav{display:flex;align-items:center;gap:20px;height:44px;
   overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-ms-overflow-style:none;}
 .eb-subnav::-webkit-scrollbar{display:none;}
 .eb-subnav-a{display:inline-flex;align-items:center;flex:0 0 auto;height:44px;
-  white-space:nowrap;text-decoration:none;color:var(--dim);}
+  white-space:nowrap;text-decoration:none;color:var(--dim);
+  /* Padding out, margin back in by the same amount. The hit box grows to 60px
+     wide; the space the link OCCUPIES does not move, so the row still measures
+     342px and the gaps still read as 20px. This exists because "Google" and
+     "Trucks" are short enough that their boxes were exactly 44 wide — legal to
+     the pixel, and a thumb does not aim to the pixel. The outer edges give
+     back their outside half so the row still lines up with the wordmark. */
+  padding-inline:8px;margin-inline:-8px;}
+.eb-subnav-a:first-child{padding-left:0;margin-left:0;}
+.eb-subnav-a:last-child{padding-right:0;margin-right:0;}
 .eb-subnav-a:hover{color:var(--bone);}
 @media (min-width:640px){.eb-nav-a--wide{display:inline-flex;}}
 /* ---- buttons ------------------------------------------------------------ */

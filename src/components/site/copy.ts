@@ -14,7 +14,7 @@ import type { PresenceCopy } from '@/components/Presence';
 export const NAV = { text: 'Text me', book: 'Book 20 minutes' };
 
 /**
- * The four service pages, as actual navigation.
+ * The five service pages, as actual navigation.
  *
  * ⚠️ THEY WERE LIVE AND UNREACHABLE. Each one shipped with exactly one inbound
  * link, and every one of those links was a phrase set mid-sentence inside a
@@ -25,15 +25,33 @@ export const NAV = { text: 'Text me', book: 'Book 20 minutes' };
  * only way to a page.
  *
  * Labels are nouns, not page titles. A nav is read at a glance in the corner of
- * the eye, so each is the shortest word that could only mean one of the four.
- * The four together fit one 44px row down to about 360px and scroll rather than
- * wrap below that — a wrapped nav changes the header's height mid-scroll.
+ * the eye, so each is the shortest word that could only mean one of the five.
+ *
+ * ⚠️ "GOOGLE LISTING" WAS SHORTENED TO "GOOGLE" TO MAKE ROOM FOR THE FIFTH,
+ * AND THE MEASUREMENT IS THE REASON. The row scrolls sideways rather than
+ * wrapping, because a wrapped nav changes the header's height mid-scroll and
+ * every scroll anchor on the site is offset against that height. But scrolling
+ * has a cost nobody had paid yet: at 390px the visible track is 350px, and
+ * five labels at the old lengths measured 436px — so the fifth item started at
+ * x=376 and was simply off the screen. The page a visitor was ON did not
+ * appear in its own navigation. Shortening two labels takes the row to about
+ * 342px, which fits unscrolled on the narrowest phone worth supporting.
+ *
+ * ⚠️ SO A SIXTH DOES NOT FIT, and the honest thing to do about that is not to
+ * shave another label. It is to ask whether anybody scrolls a nav to find a
+ * page — they do not — and whether the sixth idea should have been a page at
+ * all. That gate lives in components/service/services.ts.
+ *
+ * "Trucks" is the one label that names a customer rather than a service,
+ * because that is what the page is: the other four are things you buy, and
+ * that one is the business it is for. It sits last for the same reason.
  */
 export const SERVICES = [
   { href: '/restaurant-websites', label: 'Websites' },
   { href: '/online-ordering', label: 'Ordering' },
   { href: '/ai-phone-answering', label: 'AI phone' },
-  { href: '/google-business-profile', label: 'Google listing' },
+  { href: '/google-business-profile', label: 'Google' },
+  { href: '/food-truck-location', label: 'Trucks' },
 ] as const;
 
 /**

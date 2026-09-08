@@ -1,5 +1,5 @@
 /**
- * The service-page family — four routes that share chrome, a stylesheet and a
+ * The service-page family — five routes that share chrome, a stylesheet and a
  * next step, and share nothing else.
  *
  * A page is:

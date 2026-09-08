@@ -1,5 +1,5 @@
 /**
- * The service pages' own stylesheet — the second half of what these four routes
+ * The service pages' own stylesheet — the second half of what these five routes
  * ship, after `SITE_CSS` from components/site/css.ts.
  *
  * ── WHAT IS AND IS NOT IN HERE ────────────────────────────────────────────
@@ -125,7 +125,7 @@ export const SERVICE_CSS = `
 
 /* ---- the cross-link block ----------------------------------------------- */
 /* Not cards, not a grid of tiles — the same ruled ledger the rest of the site
-   uses, so the four pages read as chapters of one argument rather than as a
+   uses, so the five pages read as chapters of one argument rather than as a
    services menu. The whole row is the tap target and it clears 44px on its own
    padding at every width. */
 .sv-more{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule);}

@@ -24,6 +24,13 @@ import { SITE_URL } from './site';
  * doorway set, and a sitemap is an active request to index every one of them —
  * which is how that particular penalty gets asked for in writing.
  *
+ * ── 2026-09-08: /food-truck-location joined them, making it five ──────────
+ *
+ * Nothing in this file changed to admit it, which is the property the SERVICES
+ * import was bought for. It was checked against the rule rather than waved
+ * through: the SMS arithmetic, the staleness rule and the 10DLC lead time are
+ * true of that page and of no other route here.
+ *
  *   /demo/truckos — OMITTED, and this one overrides the brief that asked for
  *     it. Its own generateMetadata sets `robots: { index: false, follow: false }`
  *     (src/app/demo/truckos/page.tsx). Submitting a noindex URL in a sitemap is
@@ -50,7 +57,7 @@ import { SITE_URL } from './site';
  * last published", which is what the field is for.
  *
  * `priority` is a relative hint within one site, not a score. The homepage is
- * the page being sold; the four service pages are the next thing anybody
+ * the page being sold; the five service pages are the next thing anybody
  * should land on; privacy exists to exist.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
