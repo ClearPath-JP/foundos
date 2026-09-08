@@ -365,7 +365,7 @@ const JARGON = {
 const ADS = {
   label: 'Where I actually am with ads',
   honesty:
-    "I don't run ads. I'm studying for Meta's media buying certification, the 410-101, and I haven't sat the exam yet. I've never managed a dollar of anybody else's ad spend. When that changes I'll put it on this page.",
+    "I don't run ads. I got certified by Meta in marketing this month, and a certificate is not a track record — I still haven't managed a dollar of anybody else's ad spend. When that changes I'll put it on this page.",
   why: "Here's why I'm telling you instead of quietly leaving it off. An ad is a bill you pay to send people somewhere. If the place you're sending them doesn't open the menu or take an order, the ad just buys you a faster way to lose them. Steps two, three and four are the thing an ad lands on, and that's the part I build. Get those right and step one turns into a decision you make later with real numbers, instead of a guess you pay for every month.",
   /** One sentence, split only so the first half can link back up to the box. */
   pointA: 'The report at the top of this page grades you on the first two steps.',
@@ -516,6 +516,51 @@ const CLOSE = "Tell me what you run and I'll tell you straight whether I can hel
  * he fixes on the listing, and CHECKS 02 is where "somebody searching at 9pm"
  * comes from — so it is his sentence, not a new claim.
  */
+/**
+ * The skim strip, directly under the hero.
+ *
+ * ⚠️ IT IS NOT A SECOND COPY OF `BUILDS`, AND IT MUST NOT GROW INTO ONE.
+ * BUILDS is the argument — six rows, read by someone who has decided to read.
+ * This is the answer to "what does this guy sell", given in four lines to
+ * someone who has decided nothing and is still moving. Every row here is a
+ * link out to the page that argues it at length, which is the other half of
+ * the job: before this existed the four service pages had no navigation at all
+ * and could only be reached through a phrase inside a paragraph.
+ *
+ * Four rows, one line each. If a fifth is ever wanted, the honest move is to
+ * cut one — a skim block with five rows is a list, and a list is read the way
+ * BUILDS is read, which is to say later or not at all.
+ */
+const OFFERS = [
+  {
+    href: '/online-ordering',
+    lead: 'Ordering on your own site',
+    rest: 'Your menu, your prices, your card processing. The money lands in your account instead of the app taking a cut of it.',
+  },
+  {
+    href: '/restaurant-websites',
+    lead: 'A site built for a phone',
+    rest: 'Readable at a red light, and it opens on two bars in a parking lot instead of showing six seconds of white.',
+  },
+  {
+    href: '/ai-phone-answering',
+    lead: 'A phone that gets answered',
+    rest: 'It picks up while your hands are full, takes the order or the booking, and texts you what it heard.',
+  },
+  {
+    href: '/google-business-profile',
+    lead: 'A Google listing that is right',
+    rest: 'Hours, photos and menu where Google reads them, so you come up for the person searching at 9pm.',
+  },
+] as const;
+
+/* Label and heading are never the same words — the label names the section in
+   the ledger voice, the heading is the sentence the section is arguing. Every
+   other section on the page holds that split; this one briefly did not. */
+const OFFERS_LABEL = 'What I build';
+const OFFERS_HEAD = 'Four things. Most places need two.';
+const OFFERS_STAND = 'Tap any one to see what it actually involves.';
+
 const BUILDS = [
   {
     lead: 'A website that takes the order',
@@ -1322,6 +1367,39 @@ export default function EmberPage() {
         </section>
         <Rule />
 
+        {/* ── 02b The skim strip ──────────────────────────────────────────
+            The first thing under the hero, because the page's own evidence said
+            it had to be. Everything below argues; nothing above this line said
+            plainly what is for sale, and a visitor who skims — which is all of
+            them — reached the pricing ledger nine screens down without ever
+            being told what the prices were for.
+
+            Each row is a whole tappable block rather than a link on the lead,
+            so the target is the row on a phone instead of three words in it. */}
+        <section aria-labelledby="offers-h">
+          <div className={`${SHELL} eb-sec eb-sec--tight`}>
+            <LedgerHead label={OFFERS_LABEL} />
+            <h2 className="eb-d eb-h2" id="offers-h">
+              {OFFERS_HEAD}
+            </h2>
+            <p className="eb-stand eb-stand--flush">{OFFERS_STAND}</p>
+            <ul className="eb-offers" role="list">
+              {OFFERS.map((o) => (
+                <li key={o.href}>
+                  <Link href={o.href} className="eb-offer">
+                    <span className="eb-offer-lead">{o.lead}</span>
+                    <span className="eb-offer-rest">{o.rest}</span>
+                    <span className="eb-offer-go eb-lab" aria-hidden="true">
+                      Read more →
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+        <Rule />
+
         {/* ── 03 The problem ───────────────────────────────────────────────
             Three sections on this page carry no heading at all — this one, the
             wood arithmetic band, and the tail of the delivery-apps argument —
@@ -1987,7 +2065,9 @@ const PAGE_CSS = `
    the id selector is here as well because the anchor is what the browser is
    actually scrolling to and a future refactor that drops the class should not
    silently take the margin with it. */
-#report,.eb-report-anchor{scroll-margin-top:88px;}
+/* 64px header row + 1px rule + 44px service nav + 1px rule, plus the same
+   ~22px of air the old 88px allowed under a 64px header. */
+#report,.eb-report-anchor{scroll-margin-top:132px;}
 .eb-pad{
   background:var(--bone);
   background-image:repeating-linear-gradient(to bottom,transparent 0 27px,rgba(35,31,32,.14) 27px 28px);
@@ -2165,6 +2245,27 @@ const PAGE_CSS = `
 }
 
 /* ---- what I build ------------------------------------------------------- */
+/* The skim strip. Rows are links, so the whole block is the tap target; the
+   border sits on the row rather than between rows so the last one closes. */
+.eb-offers{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule);}
+.eb-offer{display:block;padding:18px 0;border-bottom:1px solid var(--rule-soft);
+  text-decoration:none;color:inherit;}
+.eb-offer:hover{background:var(--rich);}
+.eb-offer-lead{display:block;font-size:var(--t-body);font-weight:700;line-height:1.35;
+  color:var(--strong);}
+.eb-offer-rest{display:block;margin-top:5px;font-size:var(--t-body);line-height:1.55;
+  color:var(--fg);max-width:56ch;}
+.eb-offer-go{display:block;margin-top:10px;color:var(--dim);}
+@media (min-width:900px){
+  .eb-offer{display:grid;grid-template-columns:minmax(0,16rem) minmax(0,1fr) auto;
+    gap:28px;align-items:baseline;padding:19px 0;}
+  .eb-offer-rest{margin-top:0;}
+  .eb-offer-go{margin-top:0;}
+}
+@media (prefers-reduced-motion:no-preference){
+  .eb-offer{transition:background-color .15s linear;}
+}
+
 .eb-builds{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule);}
 .eb-build{display:block;padding:18px 0;border-bottom:1px solid var(--rule-soft);max-width:72ch;}
 .eb-build-lead{display:block;font-size:var(--t-body);font-weight:700;line-height:1.35;color:var(--strong);}

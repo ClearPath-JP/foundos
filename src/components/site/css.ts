@@ -456,6 +456,18 @@ export const SITE_CSS = `
 .eb-nav-a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;color:var(--dim);}
 .eb-nav-a:hover{color:var(--bone);}
 .eb-nav-a--wide{display:none;}
+
+/* The service nav — a fixed 44px row that scrolls sideways instead of wrapping.
+   The four labels measure about 310px at 11px mono with 20px gaps, so they sit
+   on one line unscrolled from roughly 360px up; below that the row slides and
+   the header's height does not move. The scrollbar is hidden in all three
+   engines because a visible bar under a 44px row reads as a broken border. */
+.eb-subnav{display:flex;align-items:center;gap:20px;height:44px;
+  overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-ms-overflow-style:none;}
+.eb-subnav::-webkit-scrollbar{display:none;}
+.eb-subnav-a{display:inline-flex;align-items:center;flex:0 0 auto;height:44px;
+  white-space:nowrap;text-decoration:none;color:var(--dim);}
+.eb-subnav-a:hover{color:var(--bone);}
 @media (min-width:640px){.eb-nav-a--wide{display:inline-flex;}}
 /* ---- buttons ------------------------------------------------------------ */
 .eb-btns{display:flex;flex-direction:column;gap:12px;margin-top:30px;align-items:stretch;}

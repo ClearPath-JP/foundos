@@ -1,7 +1,9 @@
+import Link from 'next/link';
+
 import { PresenceNote } from '@/components/Presence';
 import { CAL, PHONE } from '@/config/brand';
 
-import { NAV, PRESENCE } from './copy';
+import { NAV, PRESENCE, SERVICES } from './copy';
 import { Rule } from './Rule';
 import { SHELL } from './shell';
 import { Wordmark } from './Wordmark';
@@ -43,6 +45,26 @@ export function SiteHeader() {
           <a href={CAL} target="_blank" rel="noreferrer" className="eb-nav-a eb-lab eb-nav-a--wide">
             {NAV.book}
           </a>
+        </nav>
+      </div>
+      {/* The second row, and the only navigation on the site.
+
+          ⚠️ IT IS INSIDE THE STICKY HEADER ON PURPOSE. "What do you actually
+          do" is a question a visitor asks halfway down a long page, not at the
+          top, and a nav that has already scrolled away cannot answer it.
+
+          Height is fixed at 44px and the row scrolls sideways rather than
+          wrapping. A wrapping nav would change the sticky header's height under
+          the reader's thumb, and every scroll anchor on the site is offset
+          against that height. */}
+      <Rule soft />
+      <div className={SHELL}>
+        <nav className="eb-subnav" aria-label="What I build">
+          {SERVICES.map((s) => (
+            <Link key={s.href} href={s.href} className="eb-subnav-a eb-lab">
+              {s.label}
+            </Link>
+          ))}
         </nav>
       </div>
       <Rule />

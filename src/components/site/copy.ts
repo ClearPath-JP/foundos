@@ -14,6 +14,29 @@ import type { PresenceCopy } from '@/components/Presence';
 export const NAV = { text: 'Text me', book: 'Book 20 minutes' };
 
 /**
+ * The four service pages, as actual navigation.
+ *
+ * ⚠️ THEY WERE LIVE AND UNREACHABLE. Each one shipped with exactly one inbound
+ * link, and every one of those links was a phrase set mid-sentence inside a
+ * body paragraph — "When I check a site", "the AI receptionist". A visitor who
+ * skimmed, which is every visitor, never saw one. Four pages of real work sat
+ * behind prose nobody was obliged to read. Inline links are for a reader who is
+ * already deep in an argument; they are not navigation, and they cannot be the
+ * only way to a page.
+ *
+ * Labels are nouns, not page titles. A nav is read at a glance in the corner of
+ * the eye, so each is the shortest word that could only mean one of the four.
+ * The four together fit one 44px row down to about 360px and scroll rather than
+ * wrap below that — a wrapped nav changes the header's height mid-scroll.
+ */
+export const SERVICES = [
+  { href: '/restaurant-websites', label: 'Websites' },
+  { href: '/online-ordering', label: 'Ordering' },
+  { href: '/ai-phone-answering', label: 'AI phone' },
+  { href: '/google-business-profile', label: 'Google listing' },
+] as const;
+
+/**
  * The presence line beside the header CTA — the only copy on the site that is
  * not a fixed string.
  *
