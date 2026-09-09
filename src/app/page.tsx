@@ -887,7 +887,7 @@ const COSTS_NOTE =
  */
 const ABOUT = [
   "I'm Josh. I'm in Atlanta, I work in a gym, and I build sites for food businesses — restaurants, trucks, bakeries, caterers — because I keep finding good ones running on a Wix template from 2019 and handing a cut of every ticket to an app.",
-  "I'm a Meta Certified Marketing Associate too — the ads side of this. Which mostly means I can tell you whether ads are worth running before you spend a dollar on them.",
+  "I'm a Meta Certified Digital Marketing Associate too — the ads side of this. Which mostly means I can tell you whether ads are worth running before you spend a dollar on them.",
   'You text me, I answer. No account manager, no ticket system.',
   "If I can't help you, I'll tell you that too.",
 ] as const;
@@ -1063,7 +1063,7 @@ const BUSINESS = {
     name: 'Josh Potesta',
     hasCredential: {
       '@type': 'EducationalOccupationalCredential',
-      name: 'Meta Certified Marketing Associate',
+      name: 'Meta Certified Digital Marketing Associate',
       credentialCategory: 'certification',
       recognizedBy: { '@type': 'Organization', name: 'Meta' },
     },
