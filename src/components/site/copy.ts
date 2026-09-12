@@ -46,11 +46,21 @@ export const NAV = { text: 'Text me', book: 'Book 20 minutes' };
  * because that is what the page is: the other four are things you buy, and
  * that one is the business it is for. It sits last for the same reason.
  */
+/*
+ * ⚠️ 2026-09-11, TWICE. First Systems and Pricing took the slots of Websites
+ * and Google; then, when the homepage became the short front door, Why and
+ * Questions took the slots of Ordering and AI phone. The row is now "what I
+ * sell, what it costs, why it matters, what people ask, and the one customer
+ * with a page of his own". The labels total 7+7+3+9+6 = 32 characters against
+ * the old 36, so it still fits unscrolled at 390px. Every page that left the nav
+ * is one tap from /systems, where each system's card links to its long page,
+ * and from the cross-link block at the foot of every service page.
+ */
 export const SERVICES = [
-  { href: '/restaurant-websites', label: 'Websites' },
-  { href: '/online-ordering', label: 'Ordering' },
-  { href: '/ai-phone-answering', label: 'AI phone' },
-  { href: '/google-business-profile', label: 'Google' },
+  { href: '/systems', label: 'Systems' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/why', label: 'Why' },
+  { href: '/questions', label: 'Questions' },
   { href: '/food-truck-location', label: 'Trucks' },
 ] as const;
 

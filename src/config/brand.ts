@@ -24,6 +24,8 @@ import {
   PHONE_PRETTY,
 } from '@/lib/contact';
 
+import { BASE_MINIMUM_MONTHS, EVERY_SYSTEM, MINIMUM_MONTHS, WEBSITE, quote, usd } from './pricing';
+
 export { CAL, DEMO_LINE, DEMO_LINE_PRETTY, EMAIL, PHONE, PHONE_PRETTY };
 
 /**
@@ -83,58 +85,53 @@ export const WORDMARK = {
 } as const;
 
 /**
- * Prices — a floor per level of build, not a menu.
+ * Prices — the homepage's four-row summary of the price list.
  *
- * Every number here is a "from". They are the honest bottom of what Josh has
- * actually quoted in the field, so a visitor can work out roughly where he
- * lands without the page setting a ceiling the room then has to argue against:
+ * ⚠️ NOTHING HERE IS TYPED IN. Every number is read out of config/pricing.ts,
+ * which is the one price list for the whole site (/systems, /pricing, and this).
+ * To change a price, change it there; this block follows.
  *
- *   site      $500    a page on its own, nothing connected
- *   ordering  $1,500  Taste of Istanbul and Dogos El Sonora were both quoted here
- *   system    $4,900  Williamson Bros, site + ordering across two locations
- *   running   $150    the floor; a two-location build with a phone agent is $549
+ * History, because it has flipped twice: a flat "$500 / from $150" sat 3-10x
+ * under what was said in the room, so on 2026-09-04 it became four "from"
+ * floors ($500 / $1,500 / $4,900 / $150) with the real number made up at the
+ * table. That produced a different price at every door for the same build. On
+ * 2026-09-11 Josh replaced it with a real price list — same price for
+ * everybody, discounts for building several systems at once.
  *
- * This replaced a flat "$500 one time / from $150 a month", which was 3-10x
- * under everything being said out loud in the room. A prospect who reads a
- * number here and hears a bigger one at the table has caught us, and the page
- * has anchored the negotiation against us before anyone opens their mouth.
+ *   site      a site on its own, nothing connected
+ *   ordering  a site that takes its own orders (Restaurant Starter)
+ *   system    every system at one location — the ceiling, so there is one
+ *   running   the lowest monthly: the website alone
  *
- * The real quote is scoped on the call, because what moves it is what gets
- * connected and how much runs through it — one location or three, forty plates
- * a day or four hundred. The page says that in as many words.
- *
- * Change a number here and the homepage follows. `display` is what a visitor
- * reads; `amount` is what Stripe will charge in phase 6.
+ * `display` is what a visitor reads; `amount` is what Stripe will charge later.
  */
+const ORDERING_BUILD = quote(['online-ordering']);
+const EVERY_SYSTEM_ONE_LOCATION = quote(EVERY_SYSTEM.filter((s) => s !== 'second-location'));
+
 export const PRICES = {
-  /** A site on its own. The floor of the whole ladder. */
   site: {
-    amount: 500,
-    display: '$500',
-    cadence: 'one time',
-    prefix: 'from',
+    amount: WEBSITE.setup,
+    display: usd(WEBSITE.setup),
+    monthly: usd(WEBSITE.monthly),
   },
-  /** A site that takes its own orders. */
   ordering: {
-    amount: 1500,
-    display: '$1,500',
-    cadence: 'one time',
-    prefix: 'from',
+    amount: ORDERING_BUILD.price.setup,
+    display: usd(ORDERING_BUILD.price.setup),
+    monthly: usd(ORDERING_BUILD.price.monthly),
   },
-  /** Everything connected and running. */
   system: {
-    amount: 4900,
-    display: '$4,900',
-    cadence: 'one time',
-    prefix: 'from',
+    amount: EVERY_SYSTEM_ONE_LOCATION.price.setup,
+    display: usd(EVERY_SYSTEM_ONE_LOCATION.price.setup),
+    monthly: usd(EVERY_SYSTEM_ONE_LOCATION.price.monthly),
   },
-  /** The business. Moves with what is actually running. */
   running: {
-    amount: 150,
-    display: '$150',
+    amount: WEBSITE.monthly,
+    display: usd(WEBSITE.monthly),
     cadence: 'a month',
-    /** Reads "from $150 a month" — the floor, not the ceiling. */
+    /** Reads "from $97 a month" — the floor, not the ceiling. */
     prefix: 'from',
+    minimumMonths: BASE_MINIMUM_MONTHS,
+    discountMinimumMonths: MINIMUM_MONTHS,
   },
 } as const;
 

@@ -76,7 +76,47 @@ export const SERVICES: readonly Service[] = [
   },
 ] as const;
 
+/**
+ * The two shop pages, added 2026-09-11. They are NOT service pages and do not
+ * go through the 400-word rule above: they do not argue anything, they list and
+ * price what the five pages above explain. Every page's cross-link block leads
+ * with them, because "what does it cost" is the question a reader has once
+ * they have finished any one of the arguments.
+ */
+export type ShopSlug = 'systems' | 'pricing';
+
+/**
+ * The two long-form pages the homepage hands off to, added 2026-09-11 when the
+ * homepage became the short front door: /why holds the argument that used to be
+ * its middle (the five checks, the app arithmetic, the funnel), /questions the
+ * objections. Not in the cross-link block — the header nav and the homepage
+ * lead to them, and ten rows at the foot of every page would be the wall of
+ * words the restructure exists to remove.
+ */
+export type InfoSlug = 'why' | 'questions';
+
+export const INFO_PAGES: readonly { slug: InfoSlug; label: string }[] = [
+  { slug: 'why', label: 'Why it matters' },
+  { slug: 'questions', label: 'Questions' },
+];
+
+/** Any page that renders through ServicePage. */
+export type PageSlug = ServiceSlug | ShopSlug | InfoSlug;
+
+export const SHOP_PAGES: readonly { slug: ShopSlug; label: string; note: string }[] = [
+  {
+    slug: 'systems',
+    label: 'Every system',
+    note: 'Eight systems and the website under them: what each one does, what it needs from you, and its price.',
+  },
+  {
+    slug: 'pricing',
+    label: 'Pricing',
+    note: 'The packages for trucks and restaurants, the discount for building more than one at once, and the terms.',
+  },
+];
+
 /** Everything except the page you are on. Used for the cross-link block. */
-export function otherServices(current: ServiceSlug): readonly Service[] {
+export function otherServices(current: PageSlug): readonly Service[] {
   return SERVICES.filter((s) => s.slug !== current);
 }

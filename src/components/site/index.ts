@@ -47,6 +47,7 @@ export { NAV, PRESENCE } from './copy';
 export { siteFontClass } from './fonts';
 export { SHELL } from './shell';
 export { LedgerHead } from './LedgerHead';
+export { Linked, Marked } from './Marked';
 export { MobileActionBar } from './MobileActionBar';
 export { Rule } from './Rule';
 export { SiteFooter } from './SiteFooter';

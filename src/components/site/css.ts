@@ -470,7 +470,11 @@ export const SITE_CSS = `
 .eb-subnav{display:flex;align-items:center;gap:20px;height:44px;
   overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-ms-overflow-style:none;}
 .eb-subnav::-webkit-scrollbar{display:none;}
-.eb-subnav-a{display:inline-flex;align-items:center;flex:0 0 auto;height:44px;
+/* min-width:44px, added 2026-09-11 for "Why" — three mono characters plus the
+   16px of padding below came to 38px, the first label on the row short enough
+   to fail the floor on its own. The padding/margin pair keeps the space it
+   OCCUPIES at 28px, so the row's measured width barely moves. */
+.eb-subnav-a{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;height:44px;min-width:44px;
   white-space:nowrap;text-decoration:none;color:var(--dim);
   /* Padding out, margin back in by the same amount. The hit box grows to 60px
      wide; the space the link OCCUPIES does not move, so the row still measures

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import type { ServiceSlug } from './services';
+import type { PageSlug } from './services';
 
 /**
  * The metadata for one service page.
@@ -49,7 +49,7 @@ const OG_IMAGE = {
 } as const;
 
 export type ServiceMetadataInput = {
-  slug: ServiceSlug;
+  slug: PageSlug;
   /** The browser tab and the search result. Ends in the wordmark. */
   title: string;
   /** The search snippet. Aim under about 155 characters. */

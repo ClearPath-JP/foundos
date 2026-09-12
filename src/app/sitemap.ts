@@ -4,7 +4,7 @@ import type { MetadataRoute } from 'next';
    its @font-face CSS and a preload for every route whose module graph touches
    it. A sitemap route has no glyphs. services.ts imports nothing at all, so
    this costs the route nothing. Same trap as the Inter note in layout.tsx. */
-import { SERVICES } from '@/components/service/services';
+import { INFO_PAGES, SERVICES, SHOP_PAGES } from '@/components/service/services';
 import { SITE_URL } from './site';
 
 /**
@@ -70,6 +70,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 1,
     },
+    /**
+     * 2026-09-11: /systems and /pricing, the shop. Weekly, because a price or a
+     * system's status changes on a business decision, not a publishing schedule.
+     */
+    ...SHOP_PAGES.map((p) => ({
+      url: `${SITE_URL}/${p.slug}`,
+      lastModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    })),
+    /** /why and /questions — the long argument and the objections, moved off the homepage. */
+    ...INFO_PAGES.map((p) => ({
+      url: `${SITE_URL}/${p.slug}`,
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
     /**
      * Each slug is a top-level route — src/app/<slug>/page.tsx — so the URL is
      * the origin plus one segment. `monthly` rather than `weekly` because these

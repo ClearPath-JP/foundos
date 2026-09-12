@@ -14,7 +14,7 @@ import {
 } from '@/components/site';
 
 import { SERVICE_CSS } from './css';
-import { otherServices, type ServiceSlug } from './services';
+import { SHOP_PAGES, otherServices, type PageSlug } from './services';
 
 /**
  * The scaffolding every service page shares: the ink spine, the sticky header,
@@ -65,8 +65,10 @@ const CTA = {
 };
 
 export type ServicePageProps = {
-  /** Which of the five this is. Drives the cross-link block only. */
-  slug: ServiceSlug;
+  /** Which page this is. Drives the cross-link block only. */
+  slug: PageSlug;
+  /** A page's own stylesheet, shipped after SERVICE_CSS. The shop pages use it. */
+  css?: string;
   /** The mono ledger label above the headline. Two or three words. */
   label: string;
   /** The one h1 on the page. */
@@ -78,8 +80,9 @@ export type ServicePageProps = {
   children: ReactNode;
 };
 
-export function ServicePage({ slug, label, h1, stand, close, children }: ServicePageProps) {
+export function ServicePage({ slug, css = '', label, h1, stand, close, children }: ServicePageProps) {
   const others = otherServices(slug);
+  const shop = SHOP_PAGES.filter((p) => p.slug !== slug);
 
   return (
     <div className={`eb ${siteFontClass}`} id="top">
@@ -87,7 +90,7 @@ export function ServicePage({ slug, label, h1, stand, close, children }: Service
           enforces that order, and it is the only reason a rule in SERVICE_CSS
           can override one in SITE_CSS at equal specificity. Both sheets ship
           with their comments stripped. */}
-      <style>{siteCss(SERVICE_CSS)}</style>
+      <style>{siteCss(`${SERVICE_CSS}${css}`)}</style>
 
       <SiteHeader />
 
@@ -120,6 +123,14 @@ export function ServicePage({ slug, label, h1, stand, close, children }: Service
               {CTA.more}
             </h2>
             <ul className="sv-more" role="list">
+              {shop.map((s) => (
+                <li key={s.slug}>
+                  <Link className="sv-more-a" href={`/${s.slug}`}>
+                    <span className="sv-more-t">{s.label}</span>
+                    <span className="sv-more-n">{s.note}</span>
+                  </Link>
+                </li>
+              ))}
               {others.map((s) => (
                 <li key={s.slug}>
                   <Link className="sv-more-a" href={`/${s.slug}`}>

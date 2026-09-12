@@ -7,7 +7,8 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "capture:work": "node scripts/capture-work.mjs"
+    "capture:work": "node scripts/capture-work.mjs",
+    "test:pricing": "node --test src/config/pricing.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.114.0",
