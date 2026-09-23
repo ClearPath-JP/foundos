@@ -30,7 +30,7 @@ import {
   PRICES,
   WORDMARK,
 } from '@/config/brand';
-import { SYSTEMS, WEBSITE, usd } from '@/config/pricing';
+import { BASE_MINIMUM_MONTHS, SYSTEMS, WEBSITE, usd } from '@/config/pricing';
 import { DEMOS } from '@/lib/contact';
 /* site.ts imports nothing, so the one origin string costs the page nothing. */
 import { SITE_URL } from './site';
@@ -99,7 +99,7 @@ import { SITE_URL } from './site';
  * file is byte-for-byte what he wrote. Keep new copy here for the same reason.
  */
 const HERO = {
-  h1: 'I build and run the online side of restaurants and food businesses in Atlanta.',
+  h1: 'I make websites for Atlanta restaurants and food trucks.',
   subA: "You're good at what you do.",
   subB: "The internet doesn't show it.",
   cta: "See what I'd build for you ↓",
@@ -119,18 +119,18 @@ const AUDIT = {
    * times it is countable — the report runs itself, and the hand-built part is
    * ONE page. Don't widen it back to "a sample", and don't pluralise the page.
    */
-  risk: "Free to start: the report above runs on its own and takes about ten seconds. If it turns up something worth fixing, text me and I'll build one page — your menu, on a real mobile page, with your prices and your photos — and send you the link. No charge, no meeting. If you don't like it, you owe nothing and you never hear from me again.",
+  risk: "Free: text me and I'll build your menu page. Don't like it? You owe nothing.",
 };
 
 const WORK_COPY = {
   h2: "Open something I've built.",
-  p: "These are concepts — the businesses aren't real, everything on the sites works. Click around, place a fake order, try the booking.",
+  p: 'Two sample sites. Tap around and place a test order.',
   fine: 'Concept businesses. Built the same way I would build yours.',
 };
 
 const PROOF = {
   h2: "Don't take my word for it.",
-  p: "Call the AI receptionist and order a slab of ribs out loud. It'll take the order — and tell you it's AI.",
+  p: "Call my phone answering line and order ribs out loud. It takes the order, and tells you it's AI.",
   /** With the number below it this reads "Call (276) 295-1209" — §2.7's button. */
   verb: 'Call',
 };
@@ -154,9 +154,9 @@ const CLOSE = "Tell me what you run and I'll tell you straight whether I can hel
  * Wix-template jab is his, it is specific, and it stays.
  */
 const ABOUT = [
-  "I'm Josh. I'm in Atlanta, I work in a gym, and I build sites for food businesses — restaurants, trucks, bakeries, caterers — because I keep finding good ones running on a Wix template from 2019 and handing a cut of every ticket to an app.",
-  "I'm a Meta Certified Digital Marketing Associate too — the ads side of this. Which mostly means I can tell you whether ads are worth running before you spend a dollar on them.",
-  'You text me, I answer. No account manager, no ticket system.',
+  "I'm Josh, in Atlanta. I make sites for restaurants and food trucks, because I keep finding good ones stuck on an old template and paying DoorDash a cut of every order.",
+  "I'm also a Meta Certified Digital Marketing Associate.",
+  'You text me, I answer.',
   "If I can't help you, I'll tell you that too.",
 ] as const;
 
@@ -191,8 +191,7 @@ const WORK = [
  */
 const LABELS = {
   who: 'Who it is for',
-  systems: 'What I build',
-  costs: 'Prices',
+  systems: 'What I make',
   audit: 'Start here',
   work: 'Two concept builds',
   proof: 'Call it yourself',
@@ -204,8 +203,7 @@ const LABELS = {
 /** Section headings. Deliberately not one shape — `costs` is a question. */
 const HEADINGS = {
   who: 'Food trucks and restaurants. Anyone who cooks.',
-  systems: 'What I build, with the price on it.',
-  costs: 'So what does this cost?',
+  systems: 'What I make, and what it costs.',
   about: 'One person. Not an agency.',
 };
 
@@ -230,7 +228,7 @@ const DOORS = [
   },
 ] as const;
 
-const DOORS_TAIL = 'Bakery, caterer, coffee counter? Same systems. The list is right below.';
+const DOORS_TAIL = 'Bakery, caterer, coffee shop? Same thing.';
 
 /**
  * ⚠️ READ OFF THE PRICE LIST, NEVER TYPED. The rows are the website plus every
@@ -238,67 +236,31 @@ const DOORS_TAIL = 'Bakery, caterer, coffee counter? Same systems. The list is r
  * the day a system is flipped to live it shows up here with its price.
  */
 const READY = SYSTEMS.filter((s) => s.status === 'live' && s.countsTowardDiscount);
-const SOON = SYSTEMS.filter((s) => s.status === 'coming_soon');
 
 const SYSTEM_ROWS = [
   {
     href: '/systems#website',
     name: WEBSITE.name,
     line: WEBSITE_COPY.headline,
-    price: `${usd(WEBSITE.setup)} setup · ${usd(WEBSITE.monthly)} a month`,
+    price: `${usd(WEBSITE.setup)} once, then ${usd(WEBSITE.monthly)} a month`,
   },
   ...READY.map((s) => ({
     href: `/systems#${s.slug}`,
     name: s.name,
     line: SYSTEM_COPY[s.slug].headline,
-    price: `+${usd(s.setup)} setup · +${usd(s.monthly)} a month`,
+    price: `Add ${usd(s.setup)} once, then ${usd(s.monthly)} a month`,
   })),
 ];
 
-const SYSTEMS_STAND = 'Every build starts with the website, and the rest goes on top. Tap one to see how it works.';
-
-/** "A, B and C" — for the one sentence that names what is coming. */
-function andList(items: readonly string[]): string {
-  if (items.length <= 1) return items.join('');
-  return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
-}
-
-const SYSTEMS_SOON = SOON.length
-  ? `${SOON.length} more are priced and coming soon: ${andList(SOON.map((s) => s.name))}.`
-  : '';
-
-const SYSTEMS_CTA = 'Every system';
+const SYSTEMS_STAND = 'Start with the website. Add anything else you want on top.';
 
 /**
- * The ledger, cut to one line a row. The long version of each row is on
- * /pricing, one tap away, so the homepage only has to say the number and what
- * it buys.
+ * The one line of terms under the price list, in words an owner uses. The
+ * ceiling row, the package discount and the second price section were cut
+ * 2026-09-22 after a phone walkthrough: a non-technical owner saw the same
+ * prices twice, hit the all-systems total, and left. /pricing still has all of it.
  */
-const COSTS = [
-  {
-    label: 'A site on its own',
-    amount: PRICES.site.display,
-    body: `Then ${PRICES.site.monthly} a month. Your menu, photos and hours on a page that works on a phone.`,
-  },
-  {
-    label: 'A site that takes orders',
-    amount: PRICES.ordering.display,
-    body: `Then ${PRICES.ordering.monthly} a month. Orders at your own prices, and the customer's number comes to you.`,
-  },
-  {
-    label: 'Every system, one location',
-    amount: PRICES.system.display,
-    body: `Then ${PRICES.system.monthly} a month. Nobody needs all of it. It is the ceiling, so you know there is one.`,
-  },
-  {
-    label: 'Running it every month',
-    amount: `${PRICES.running.prefix} ${PRICES.running.display} ${PRICES.running.cadence}`,
-    body: `Every build has a ${PRICES.running.minimumMonths}-month minimum, ${PRICES.running.discountMinimumMonths} with a package discount. After that, cancel any month and you keep the site.`,
-  },
-] as const;
-
-const COSTS_STAND =
-  'One price list, the same for everybody. The setup drops when you build more than one system at once.';
+const TERMS = `Pay at least ${BASE_MINIMUM_MONTHS} months. After that, cancel any month and you keep the site.`;
 
 const COSTS_CTA = 'Full price list';
 
@@ -314,27 +276,7 @@ const COSTS_CTA = 'Full price list';
  * their own price — and a free-sounding step here contradicted the price list.
  */
 const HOW = {
-  h2: 'From yes to live in seven days.',
-  steps: [
-    {
-      n: '01',
-      para: 'You pay half the setup, and I text you what I need: your menu with the prices on it, photos of the food, and your logo if you have one.',
-    },
-    {
-      n: '02',
-      para: "I build it on your menu, your photos and your hours, and point your domain at it. If you don't have one, I buy it on your card, so it's in your name and not mine.",
-    },
-    {
-      n: '03',
-      para: 'I go through the whole thing on my own phone and place a test order before you ever see it.',
-    },
-    {
-      n: '04',
-      para: 'It goes live, and you get a sixty-second video showing you how to change a menu item yourself.',
-    },
-  ],
   deadline: 'Seven days from your payment to the site being live. Miss it and your first month is free.',
-  late: 'Anything on top of the site rolls out one system at a time after that.',
 };
 
 /** The two pages that hold everything this page no longer says. */
@@ -535,7 +477,7 @@ const MARKS = {
 
 /** The one inline link left on the page: the demo line's sentence, to the page about the AI phone. */
 const LINKS = {
-  phone: { href: '/ai-phone-answering', phrase: 'the AI receptionist' },
+  phone: { href: '/ai-phone-answering', phrase: 'phone answering line' },
 } as const;
 
 export default function HomePage() {
@@ -636,36 +578,7 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
-            {SYSTEMS_SOON && <p className="eb-p eb-mt-s">{SYSTEMS_SOON}</p>}
-            <div className="eb-btns">
-              <Link className="eb-btn eb-btn--a" href="/systems">
-                {SYSTEMS_CTA}
-              </Link>
-            </div>
-          </div>
-        </section>
-        <Rule />
-
-        {/* ── What it costs — the ledger table ──────────────────────────────
-            One line a row now. Every figure comes from PRICES. */}
-        <section aria-labelledby="costs-h" id="prices" className="eb-anchor">
-          <div className={`${SHELL} eb-sec eb-sec--tight`}>
-            <LedgerHead label={LABELS.costs} />
-            <h2 className="eb-d eb-h2" id="costs-h">
-              {HEADINGS.costs}
-            </h2>
-            <p className="eb-stand eb-stand--flush">{COSTS_STAND}</p>
-            <dl className="eb-ledger">
-              {COSTS.map((row) => (
-                <div key={row.label} className="eb-row">
-                  <dt className="eb-row-l">
-                    <span className="eb-lab eb-row-lab">{row.label}</span>
-                    <span className="eb-row-amt">{row.amount}</span>
-                  </dt>
-                  <dd className="eb-row-r">{row.body}</dd>
-                </div>
-              ))}
-            </dl>
+            <p className="eb-p eb-mt-s">{TERMS}</p>
             <div className="eb-btns">
               <Link className="eb-btn eb-btn--a" href="/pricing">
                 {COSTS_CTA}
@@ -752,26 +665,13 @@ export default function HomePage() {
         </section>
         <Rule />
 
-        {/* ── After you say yes — four steps, set as a schedule ───────────── */}
+        {/* ── After you say yes — one promise ───────────────────────────── */}
         <section>
-          <div className={`${SHELL} eb-sec`}>
+          <div className={`${SHELL} eb-sec eb-sec--tight`}>
             <LedgerHead label={LABELS.how} />
-            <h2 className="eb-d eb-h2">{HOW.h2}</h2>
-          </div>
-          <Rule />
-          <div className={`${SHELL} eb-sec--after-rule`}>
-            <ol className="eb-steps eb-steps--4" role="list">
-              {HOW.steps.map((s) => (
-                <li key={s.n} className="eb-step">
-                  <span className="eb-step-n eb-mono">{s.n}</span>
-                  <p className="eb-step-p">{s.para}</p>
-                </li>
-              ))}
-            </ol>
-            <p className="eb-lede eb-lede--strong eb-mt">
+            <p className="eb-lede eb-lede--strong">
               <Marked text={HOW.deadline} phrases={[MARKS.sevenDays]} />
             </p>
-            <p className="eb-p eb-mt-s">{HOW.late}</p>
           </div>
         </section>
         <Rule />

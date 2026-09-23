@@ -115,7 +115,7 @@ export const SYSTEM_COPY: Record<SystemSlug, SystemCopy> = {
     need: 'Your business phone number.',
     faq: [
       {
-        q: 'What if I add the AI Receptionist later?',
+        q: 'What if I add Phone Answering later?',
         a: 'Then every call gets answered, so Text-Back comes off your plan.',
       },
     ],

@@ -129,7 +129,7 @@ export const SYSTEMS: readonly PricedSystem[] = [
   {
     ...STANDARD,
     slug: 'google-boost',
-    name: 'Google Boost',
+    name: 'Show Up on Google Maps',
     setup: 300,
     monthly: 75,
     status: 'live',
@@ -147,7 +147,7 @@ export const SYSTEMS: readonly PricedSystem[] = [
   {
     ...STANDARD,
     slug: 'ai-receptionist',
-    name: 'AI Receptionist',
+    name: 'Phone Answering',
     setup: 600,
     monthly: 150,
     status: 'live',
@@ -166,7 +166,7 @@ export const SYSTEMS: readonly PricedSystem[] = [
     overageCentsPerMinute: 30,
     replaces: {
       slug: 'missed-call-text-back',
-      note: 'AI Receptionist already answers every call, so Missed Call Text-Back was removed.',
+      note: 'Phone Answering already picks up every call, so Missed Call Text-Back was removed.',
     },
   },
   {

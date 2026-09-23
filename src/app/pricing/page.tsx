@@ -105,7 +105,7 @@ const DISCOUNTS = {
     },
     {
       lead: 'Two things never take one',
-      rest: 'The AI Receptionist monthly, because calls cost me by the minute, and the Second Location add-on.',
+      rest: 'The Phone Answering monthly, because calls cost me by the minute, and the Second Location add-on.',
     },
     {
       lead: 'How totals are rounded',
