@@ -17,7 +17,7 @@ import { ImageResponse } from 'next/og';
  * src/app/demo/istanbul/layout.tsx).
  */
 
-export const alt = 'foundos — local technology help in Marietta, GA. Less tech frustration. More time for your business.';
+export const alt = 'foundos — your restaurant’s digital details, taken care of. Managed restaurant websites from $299 a month, Marietta, GA.';
 
 export const size = { width: 1200, height: 630 };
 
@@ -30,13 +30,13 @@ const PURPLE = '#6D28D9';
 const PINK = '#C52E98';
 const LAV = '#EDE5FA';
 
-const LABEL = 'LOCAL TECHNOLOGY HELP · MARIETTA, GA';
-const LINE_A = 'Less tech frustration.';
-const LINE_B = 'More time';
-const LINE_C = ' for your business.';
+const LABEL = 'FOR INDEPENDENT RESTAURANTS · MARIETTA, GA';
+const LINE_A = 'Your restaurant’s digital details,';
+const LINE_B = 'taken care of.';
+const LINE_C = '';
 const MARK = 'foundos';
 const MARK_AI = '.ai';
-const FOOT = 'Josh Potesta · josh@foundos.ai · (404) 436-3393';
+const FOOT = 'From $299 a month · No website setup fee · josh@foundos.ai';
 
 /**
  * Fetch one Google font as a TTF, subset to the glyphs actually drawn.

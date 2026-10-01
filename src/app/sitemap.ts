@@ -4,10 +4,24 @@ import type { MetadataRoute } from 'next';
    its @font-face CSS and a preload for every route whose module graph touches
    it. A sitemap route has no glyphs. services.ts imports nothing at all, so
    this costs the route nothing. Same trap as the Inter note in layout.tsx. */
-import { INFO_PAGES, SERVICES, SHOP_PAGES } from '@/components/service/services';
+import { PLANS } from '@/config/offer';
 import { SITE_URL } from './site';
+import { PROJECT_DETAILS } from './projects/details';
 
 /**
+ * ── 2026-10-01: THE RESTAURANT OFFER REPLACED THE LIST ───────────────────
+ *
+ * The site now sells two monthly plans and a short project catalog
+ * (config/offer.ts). The URLs below are that offer's pages. The 2026-09-11 shop
+ * (/pricing, /systems), /why, /questions and the five service pages were taken
+ * OUT: they still show the old $400 + $97 price list, and a sitemap is an active
+ * request to index two different prices for the same work. Those routes still
+ * exist and still render; nothing was deleted. They come back here, or get
+ * redirected, once Josh decides their fate. offer.ts imports nothing, so this
+ * route still pays nothing for fonts.
+ *
+ * The history below is kept because the reasoning about demos still holds.
+ *
  * /sitemap.xml — a 404 until now.
  *
  * SIX URLS, AND THE LIST IS SHORT ON PURPOSE. The site has more routes than
@@ -62,48 +76,22 @@ import { SITE_URL } from './site';
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
+  const page = (path: string, priority: number, changeFrequency: 'weekly' | 'monthly' | 'yearly') => ({
+    url: `${SITE_URL}${path}`,
+    lastModified,
+    changeFrequency,
+    priority,
+  });
 
   return [
-    {
-      url: SITE_URL,
-      lastModified,
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
-    /**
-     * 2026-09-11: /systems and /pricing, the shop. Weekly, because a price or a
-     * system's status changes on a business decision, not a publishing schedule.
-     */
-    ...SHOP_PAGES.map((p) => ({
-      url: `${SITE_URL}/${p.slug}`,
-      lastModified,
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
-    })),
-    /** /why and /questions — the long argument and the objections, moved off the homepage. */
-    ...INFO_PAGES.map((p) => ({
-      url: `${SITE_URL}/${p.slug}`,
-      lastModified,
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    })),
-    /**
-     * Each slug is a top-level route — src/app/<slug>/page.tsx — so the URL is
-     * the origin plus one segment. `monthly` rather than `weekly` because these
-     * are reference pages: they change when a threshold in the code changes or
-     * when a limit stops being true, not on a publishing schedule.
-     */
-    ...SERVICES.map((s) => ({
-      url: `${SITE_URL}/${s.slug}`,
-      lastModified,
-      changeFrequency: 'monthly' as const,
-      priority: 0.8,
-    })),
-    {
-      url: `${SITE_URL}/privacy`,
-      lastModified,
-      changeFrequency: 'yearly',
-      priority: 0.1,
-    },
+    page('', 1, 'weekly'),
+    page('/plans', 0.9, 'weekly'),
+    ...PLANS.map((p) => page(`/plans/${p.slug}`, 0.9, 'weekly')),
+    page('/projects', 0.8, 'weekly'),
+    ...Object.keys(PROJECT_DETAILS).map((slug) => page(`/projects/${slug}`, 0.8, 'monthly')),
+    page('/work', 0.7, 'monthly'),
+    page('/how-it-works', 0.6, 'monthly'),
+    page('/contact', 0.6, 'yearly'),
+    page('/privacy', 0.1, 'yearly'),
   ];
 }

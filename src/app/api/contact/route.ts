@@ -15,6 +15,15 @@
  * break or inject markup. Submitted URLs are validated, never fetched.
  */
 
+import { interestLabel } from '@/config/offer';
+
+/*
+ * 2026-10-01: also serves the restaurant inquiry form (InquiryForm), which adds
+ * `interest` — a plan or project slug, validated against config/offer.ts. When
+ * a known interest is sent, the free-text `help` field becomes optional. A
+ * request without `interest` (the old CheckupForm) behaves exactly as before.
+ */
+
 const TIMEOUT_MS = 5000;
 
 // ---- rate limit + duplicate protection (per instance, best-effort) --------
@@ -121,13 +130,17 @@ export async function POST(request: Request) {
   const name = str(body.name, MAX.name);
   const business = str(body.business, MAX.business);
   const help = str(body.help, MAX.help);
+  const interestRaw = str(body.interest, 64);
+  const interest = interestRaw ? interestLabel(interestRaw) : null;
+  if (interestRaw && !interest) return fail('Something was wrong with that request.', 400);
+  const picked = interest !== null && interestRaw !== 'not-sure';
   const method = body.method === 'email' ? 'email' : 'text';
   const contactRaw = str(body.contact, method === 'email' ? MAX.email : MAX.phone);
   const website = cleanWebsite(str(body.website, MAX.website));
 
   if (!name) return fail('Please add your name.', 400, 'name');
   if (!business) return fail('Please add your business name.', 400, 'business');
-  if (!help) return fail('Tell me a little about what you’d like help with.', 400, 'help');
+  if (!help && !picked) return fail('Tell me a little about what you’d like help with.', 400, 'help');
   if (website === null) return fail('That link doesn’t look right. Leave it blank if you’re not sure.', 400, 'website');
 
   let contact: string;
@@ -150,7 +163,7 @@ export async function POST(request: Request) {
 
   const when = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
   const text = [
-    '🛠 New tech checkup request',
+    interest ? `🍽 New restaurant inquiry: ${interest}` : '🛠 New tech checkup request',
     `ID ${id.slice(0, 8)} · ${when}`,
     '',
     `Name: ${name}`,
@@ -158,8 +171,8 @@ export async function POST(request: Request) {
     `Website/profile: ${website || '(none)'}`,
     `Reach by ${method === 'text' ? 'TEXT' : 'EMAIL'}: ${contact}`,
     '',
-    'What they want help with:',
-    help,
+    interest ? 'Notes:' : 'What they want help with:',
+    help || '(none)',
   ].join('\n');
 
   const ok = await sendTelegram(text);
