@@ -68,3 +68,10 @@ public/josh.jpg
 # Deployed from its own Vercel project (istanbul-demo-sigma) — not from here.
 src/app/demo/istanbul/
 public/demo/istanbul/
+
+# 2026-10-01: working files that appeared in the folder root. Never served —
+# excluded so the upload stays small and the prospect list never leaves this machine.
+*.docx
+*.zip
+*.csv
+advisor-audit/
