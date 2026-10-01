@@ -6,6 +6,16 @@ One entry per judgment call. Newest phase at the top. If a decision here turns o
 
 ---
 
+## Old pages removed · 2026-10-01
+
+**Josh's call:** "clean pages." Nine routes from before the restaurant-offer rebuild were deleted: `/pricing`, `/systems`, `/why`, `/questions`, `/restaurant-websites`, `/google-business-profile`, `/online-ordering`, `/ai-phone-answering`, `/food-truck-location`.
+
+**Why delete, not keep:** all nine were live and indexable, linked from nothing but each other, out of the sitemap, in the old design, and selling the old food-truck offer at old prices ($1,250, $97/mo). A stranger landing on `/pricing` from Google saw a different price from the homepage's $299.
+
+**Why redirect, not 404:** each URL 301s to the current page covering the same ground (`next.config.ts`): pricing/restaurant-websites → `/plans`; systems/ai-phone-answering/food-truck-location → `/projects`; why/questions → `/how-it-works`; google-business-profile → `/plans/digital-care`; online-ordering → `/projects/direct-ordering-launch`. `/ai-phone-answering` goes to `/projects` because the AI receptionist is by-request and has no page.
+
+**Also removed:** `src/components/service/` and `src/components/shop/`, used only by those pages. **Kept:** `/dashboard` (local-only tool; 404 in production) and every `/demo/*` route — their fate is a separate open decision.
+
 ## Phase 1 — Brand and homepage · 2026-09-03
 
 ### Josh's calls (asked, answered)

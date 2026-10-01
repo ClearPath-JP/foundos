@@ -1,9 +1,7 @@
 import type { MetadataRoute } from 'next';
-/* The LEAF, not the barrel. '@/components/service' re-exports ServicePage,
-   which reaches components/site and therefore next/font — and next/font emits
-   its @font-face CSS and a preload for every route whose module graph touches
-   it. A sitemap route has no glyphs. services.ts imports nothing at all, so
-   this costs the route nothing. Same trap as the Inter note in layout.tsx. */
+/* Leaf config modules only: nothing that reaches next/font, which would emit
+   @font-face CSS and a preload for this glyph-less route. Same trap as the Inter
+   note in layout.tsx. */
 import { PLANS } from '@/config/offer';
 import { SITE_URL } from './site';
 import { PROJECT_DETAILS } from './projects/details';
@@ -15,10 +13,10 @@ import { PROJECT_DETAILS } from './projects/details';
  * (config/offer.ts). The URLs below are that offer's pages. The 2026-09-11 shop
  * (/pricing, /systems), /why, /questions and the five service pages were taken
  * OUT: they still show the old $400 + $97 price list, and a sitemap is an active
- * request to index two different prices for the same work. Those routes still
- * exist and still render; nothing was deleted. They come back here, or get
- * redirected, once Josh decides their fate. offer.ts imports nothing, so this
- * route still pays nothing for fonts.
+ * request to index two different prices for the same work.
+ * Decided the same evening: those nine pages were deleted and each old URL now
+ * 301s to its nearest current page (next.config.ts, DECISIONS.md). offer.ts
+ * imports nothing, so this route still pays nothing for fonts.
  *
  * The history below is kept because the reasoning about demos still holds.
  *
