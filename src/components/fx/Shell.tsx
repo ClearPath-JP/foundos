@@ -36,9 +36,10 @@ export function Shell({ current, children }: { current: NavKey; children: React.
                 {n.label}
               </Link>
             ))}
-            <Link href="/contact" className="fx-btn fx-btn--p fx-btn--sm" aria-current={here('contact')}>
-              Contact
-            </Link>
+            {/* Owners text more than they fill in forms; /contact stays one tap away in the close band. */}
+            <a href={`sms:${CONTACT.phone}`} className="fx-btn fx-btn--p fx-btn--sm">
+              Text Josh<span className="fx-head-num"> · {CONTACT.phonePretty}</span>
+            </a>
           </nav>
         </div>
         <nav className="fx-wrap fx-subnav" aria-label="Main, small screens">

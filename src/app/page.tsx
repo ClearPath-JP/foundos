@@ -17,6 +17,8 @@ import { SITE_URL } from './site';
  * The homepage — managed digital care for restaurants. Rebuilt 2026-10-01 from
  * "FoundOS Website and Offer Implementation" (repo root .docx), §6 page order
  * and §7 copy: hero, what foundos handles, plans, projects, how it works, FAQ.
+ * 2026-10-01 evening: price moved up into the hero, the concept build moved to
+ * second (proof right after the promise), and "Text Josh" is the main button.
  *
  * Keeps the 2026-09-30 purple system (now in components/fx). The previous
  * homepage — general local tech help with the free checkup — is in git at
@@ -123,15 +125,19 @@ export default function HomePage() {
               foundos builds and manages your website, keeps key business information accurate, and helps customer
               inquiries reach the right people.
             </p>
-            <div className="fx-btns">
-              <InteractiveHoverButton href="#plans" className="fx-ihb">
-                Compare monthly plans
+            <p className="fx-price">
+              <span className="fx-price-n">${PLANS[0].monthly}</span>
+              <span className="fx-price-per">/month</span>
+              <span className="fx-price-sub">{PLANS[0].name} plan · Website included · No setup fee</span>
+            </p>
+            <div className="fx-btns fx-btns--tight">
+              <InteractiveHoverButton href={`sms:${CONTACT.phone}`} className="fx-ihb">
+                Text Josh · {CONTACT.phonePretty}
               </InteractiveHoverButton>
-              <a href="#projects" className="fx-btn fx-btn--s fx-btn--lg">
-                Explore one-time projects
+              <a href="#plans" className="fx-btn fx-btn--s fx-btn--lg">
+                Compare plans
               </a>
             </div>
-            <p className="fx-note">From $299 a month. No website setup fee.</p>
           </div>
 
           <div className="fx-card-stage" aria-hidden="true">
@@ -160,8 +166,15 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Work: proof right after the promise. A concept, and it says so. ── */}
+      <section className="fx-sec fx-sec--tint" aria-labelledby="work-h">
+        <div className="fx-wrap">
+          <WorkFeature item={FEATURED_WORK} />
+        </div>
+      </section>
+
       {/* ── What foundos handles ─────────────────────────────────────── */}
-      <section className="fx-sec fx-sec--join" aria-labelledby="handles-h">
+      <section className="fx-sec" aria-labelledby="handles-h">
         <Reveal>
           <div className="fx-wrap">
             <p className="fx-kicker">What foundos handles</p>
@@ -181,15 +194,8 @@ export default function HomePage() {
         </Reveal>
       </section>
 
-      {/* ── Work: proof before price. A concept, and it says so. ───── */}
-      <section className="fx-sec fx-sec--tint" aria-labelledby="work-h">
-        <div className="fx-wrap">
-          <WorkFeature item={FEATURED_WORK} />
-        </div>
-      </section>
-
       {/* ── Plans ────────────────────────────────────────────────────── */}
-      <section className="fx-sec" id="plans" aria-labelledby="plans-h">
+      <section className="fx-sec fx-sec--tint" id="plans" aria-labelledby="plans-h">
         <div className="fx-wrap">
           <p className="fx-kicker">Monthly plans</p>
           <h2 className="fx-h2" id="plans-h">
@@ -209,7 +215,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Projects ─────────────────────────────────────────────────── */}
-      <section className="fx-sec fx-sec--tint" id="projects" aria-labelledby="projects-h">
+      <section className="fx-sec" id="projects" aria-labelledby="projects-h">
         <div className="fx-wrap">
           <p className="fx-kicker">One-time projects</p>
           <h2 className="fx-h2" id="projects-h">
@@ -228,7 +234,7 @@ export default function HomePage() {
       </section>
 
       {/* ── How it works ─────────────────────────────────────────────── */}
-      <section className="fx-sec" aria-labelledby="how-h">
+      <section className="fx-sec fx-sec--tint" aria-labelledby="how-h">
         <Reveal>
           <div className="fx-wrap">
             <p className="fx-kicker">How it works</p>
@@ -248,7 +254,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────────────────── */}
-      <section className="fx-sec fx-sec--tint" aria-labelledby="faq-h">
+      <section className="fx-sec" aria-labelledby="faq-h">
         <div className="fx-wrap">
           <p className="fx-kicker">Questions</p>
           <h2 className="fx-h2" id="faq-h">

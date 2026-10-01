@@ -88,6 +88,15 @@ export const FX_CSS = `
 /* Paper grain, barely there. Masked like the wash so it fades out before the next section. */
 .fx-noise{opacity:.035!important;-webkit-mask-image:linear-gradient(180deg,#000 50%,transparent);mask-image:linear-gradient(180deg,#000 50%,transparent);}
 .fx-note{margin-top:14px;font-size:15px;color:var(--muted);}
+/* Hero price: the offer in one glance, before any button. */
+.fx-price{margin-top:28px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;}
+.fx-price-n{font-size:clamp(40px,5vw,56px);font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--text);}
+.fx-price-per{font-size:18px;font-weight:700;color:var(--muted);margin-left:-6px;}
+.fx-price-sub{flex-basis:100%;font-size:16px;font-weight:600;color:var(--p);}
+.fx-btns--tight{margin-top:24px;}
+/* The header button shows the number only where there is room for it. */
+.fx-head-num{display:none;}
+@media (min-width:1100px){.fx-head-num{display:inline;}}
 
 /* the card */
 .fx-card-stage{display:flex;justify-content:center;}

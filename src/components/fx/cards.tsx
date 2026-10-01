@@ -134,12 +134,12 @@ export function CloseBand({ title, body }: { title: string; body: string }) {
           <p className="fx-p">{body}</p>
         </div>
         <div className="fx-btns">
-          <Link href="/contact" className="fx-btn fx-btn--p fx-btn--lg">
-            Tell me about your restaurant
-          </Link>
-          <a href={`sms:${CONTACT.phone}`} className="fx-btn fx-btn--s fx-btn--lg">
+          <a href={`sms:${CONTACT.phone}`} className="fx-btn fx-btn--p fx-btn--lg">
             Text Josh · {CONTACT.phonePretty}
           </a>
+          <Link href="/contact" className="fx-btn fx-btn--s fx-btn--lg">
+            Or tell me about your restaurant
+          </Link>
         </div>
       </div>
     </section>
