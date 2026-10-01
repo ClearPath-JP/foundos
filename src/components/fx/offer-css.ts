@@ -148,7 +148,7 @@ export const FX_OFFER_CSS = `
   box-shadow:0 1px 2px rgba(23,20,33,.06),0 24px 48px -16px rgba(23,20,33,.22);}
 .fx-browser-bar{display:flex;gap:6px;padding:10px 12px;background:#F1EEF6;border-bottom:1px solid var(--line);}
 .fx-browser-bar span{width:9px;height:9px;border-radius:50%;background:#CFC8DC;}
-.fx-browser img,.fx-phone img,.fx-shot img{display:block;width:100%;height:auto;}
+.fx-browser img,.fx-phone img,.fx-shot img,.fx-browser video,.fx-phone video{display:block;width:100%;height:auto;}
 .fx-phone{position:absolute;right:0;bottom:0;width:34%;min-width:120px;max-width:200px;border-radius:22px;overflow:hidden;
   border:6px solid var(--text);background:var(--text);
   box-shadow:0 2px 4px rgba(23,20,33,.15),0 30px 60px -20px rgba(23,20,33,.45);}

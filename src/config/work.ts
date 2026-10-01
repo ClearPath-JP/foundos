@@ -28,6 +28,11 @@ export type WorkItem = {
     desktop: string;
     detail: string;
   };
+  /** Optional muted scroll-through loops of the live site. `images.desktop`/`images.phone` double as their posters. */
+  videos?: {
+    phone: string;
+    desktop: string;
+  };
 };
 
 export const WORK: readonly WorkItem[] = [
@@ -49,17 +54,25 @@ export const WORK: readonly WorkItem[] = [
         t: 'Online pickup',
         d: 'Pick a dish, choose the protein and heat, add it to the cart and pick a time. Orders wait on a shelf by the door with the customer’s name on them.',
       },
+      {
+        t: 'Catering and story pages',
+        d: 'A catering page with packages and an inquiry form, a visit page with directions and the neighborhood, and an Our Story page starring the mascot as a made-up founder.',
+      },
       { t: 'Built for phones', d: 'Designed on a phone screen first, since that’s where a pickup order gets placed.' },
     ],
     tryIt: [
       'Add a Quick Trip combo and pick your heat',
       'Change the pickup time in the cart',
-      'Read the heat guide and the FAQ',
+      'Fill out the catering form (nothing is sent)',
     ],
     images: {
       phone: '/work/wandering-chile-phone.jpg',
       desktop: '/work/wandering-chile-desktop.jpg',
       detail: '/work/wandering-chile-menu.jpg',
+    },
+    videos: {
+      phone: '/work/wandering-chile-scroll-mobile.mp4',
+      desktop: '/work/wandering-chile-scroll-desktop.mp4',
     },
   },
 ];

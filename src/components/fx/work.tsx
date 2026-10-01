@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { LoopVideo } from '@/components/fx/loop-video';
 import type { WorkItem } from '@/config/work';
 
 /** Opens the live build in a new tab. External, so a plain anchor. */
@@ -23,10 +24,18 @@ export function WorkVisual({ item }: { item: WorkItem }) {
           <span />
           <span />
         </div>
-        <Image src={item.images.desktop} alt="" width={1440} height={900} sizes="(min-width:960px) 560px, 90vw" />
+        {item.videos ? (
+          <LoopVideo src={item.videos.desktop} poster={item.images.desktop} width={1440} height={900} />
+        ) : (
+          <Image src={item.images.desktop} alt="" width={1440} height={900} sizes="(min-width:960px) 560px, 90vw" />
+        )}
       </div>
       <div className="fx-phone">
-        <Image src={item.images.phone} alt="" width={390} height={844} sizes="200px" />
+        {item.videos ? (
+          <LoopVideo src={item.videos.phone} poster={item.images.phone} width={390} height={844} />
+        ) : (
+          <Image src={item.images.phone} alt="" width={390} height={844} sizes="200px" />
+        )}
       </div>
     </div>
   );
