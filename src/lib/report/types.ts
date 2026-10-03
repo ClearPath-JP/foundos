@@ -122,6 +122,26 @@ export type Report = {
   generated: boolean;
   /** Present only on the no-Places fallback path. */
   fallback?: boolean;
+  /** The Growth Score. Only on a looked-up report; the 3-tap path measures nothing. */
+  score?: GrowthScore;
+};
+
+export type ScoreStatus = 'pass' | 'warn' | 'fail' | 'unknown';
+
+export type ScoreArea = {
+  key: string;
+  label: string;
+  status: ScoreStatus;
+  /** One measured line, safe to print verbatim. */
+  note: string;
+};
+
+export type GrowthScore = {
+  /** 0–100, over the areas that could be measured. */
+  score: number;
+  areas: ScoreArea[];
+  /** Measured areas that aren't a pass. */
+  opportunities: number;
 };
 
 /** Input for the 3-tap path used when Places can't help us. */

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withBotId } from "botid/next/config";
 
 /**
  * Pages removed 2026-10-01: nine pre-rebuild pages (old design, the food-truck
@@ -24,4 +25,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+/** withBotId adds the proxy rewrites Vercel BotID needs (see src/instrumentation-client.ts). */
+export default withBotId(nextConfig);

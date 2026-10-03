@@ -134,9 +134,9 @@ export default function HomePage() {
               <InteractiveHoverButton href={`sms:${CONTACT.phone}`} className="fx-ihb">
                 Text Josh · {CONTACT.phonePretty}
               </InteractiveHoverButton>
-              <a href="#plans" className="fx-btn fx-btn--s fx-btn--lg">
-                Compare plans
-              </a>
+              <Link href="/audit" className="fx-btn fx-btn--s fx-btn--lg">
+                Get my free growth audit →
+              </Link>
             </div>
           </div>
 

@@ -8,7 +8,7 @@ import { FX_OFFER_CSS } from './offer-css';
 
 const manrope = Manrope({ subsets: ['latin'], display: 'swap', variable: '--font-manrope' });
 
-export type NavKey = 'plans' | 'projects' | 'work' | 'how' | 'contact' | null;
+export type NavKey = 'plans' | 'projects' | 'work' | 'how' | 'audit' | 'contact' | null;
 
 /** Main navigation, doc §6. "Results" waits for authorized, verifiable examples; "Client login" for a portal. */
 const NAV: readonly { key: Exclude<NavKey, null | 'contact'>; href: string; label: string }[] = [
@@ -16,6 +16,7 @@ const NAV: readonly { key: Exclude<NavKey, null | 'contact'>; href: string; labe
   { key: 'projects', href: '/projects', label: 'Projects' },
   { key: 'work', href: '/work', label: 'Work' },
   { key: 'how', href: '/how-it-works', label: 'How it works' },
+  { key: 'audit', href: '/audit', label: 'Free audit' },
 ];
 
 /** Every page of the restaurant offer: one font, one stylesheet, one header and footer. */

@@ -89,6 +89,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...Object.keys(PROJECT_DETAILS).map((slug) => page(`/projects/${slug}`, 0.8, 'monthly')),
     page('/work', 0.7, 'monthly'),
     page('/how-it-works', 0.6, 'monthly'),
+    page('/audit', 0.8, 'monthly'),
     page('/contact', 0.6, 'yearly'),
     page('/privacy', 0.1, 'yearly'),
   ];

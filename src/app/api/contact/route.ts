@@ -15,6 +15,8 @@
  * break or inject markup. Submitted URLs are validated, never fetched.
  */
 
+import { checkBotId } from 'botid/server';
+
 import { interestLabel } from '@/config/offer';
 
 /*
@@ -109,6 +111,10 @@ async function sendTelegram(text: string): Promise<boolean> {
 }
 
 export async function POST(request: Request) {
+  // Bots never reach Telegram. Vercel BotID; see src/instrumentation-client.ts.
+  const verification = await checkBotId();
+  if (verification.isBot) return fail('Something was wrong with that request.', 403);
+
   let body: Record<string, unknown>;
   try {
     const parsed: unknown = await request.json();

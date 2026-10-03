@@ -4,6 +4,8 @@ import { checkSite } from '@/lib/report/site-checks';
 import { buildHeader, generateReport } from '@/lib/report/generate';
 import { placeDiscoveries, siteDiscoveries } from '@/lib/report/discoveries';
 import { notifyLead } from '@/lib/notify';
+import { growthScore } from '@/lib/report/score';
+import { checkBotId } from 'botid/server';
 import type {
   BizCategory,
   Facts,
@@ -167,6 +169,14 @@ function isCategory(value: unknown): value is BizCategory {
 }
 
 export async function POST(request: Request) {
+  // Bots stop here, before the rate limit, the daily ceiling or any billable
+  // Google call. Vercel BotID; the client side is src/instrumentation-client.ts.
+  // In local dev checkBotId() always passes.
+  const verification = await checkBotId();
+  if (verification.isBot) {
+    return Response.json({ error: 'Access denied.' }, { status: 403 });
+  }
+
   let body: Payload;
   try {
     body = (await request.json()) as Payload;
@@ -351,12 +361,14 @@ export async function POST(request: Request) {
 
         const facts: Facts = { place, site, answers };
         const findings = deriveFindings(facts);
+        const score = growthScore(facts);
 
         send({ type: 'progress', step: 'Working out what it’s costing you' });
 
         // ---- Report ------------------------------------------------------
         let latest: Report | null = null;
-        for await (const report of generateReport(facts, findings)) {
+        for await (const generated of generateReport(facts, findings)) {
+          const report = { ...generated, score };
           latest = report;
           send({ type: 'report', report });
         }
@@ -373,6 +385,7 @@ export async function POST(request: Request) {
               findings: toFallbackFindings(findings),
               builds: toBuilds(findings),
               generated: false,
+              score,
             },
           });
         }
