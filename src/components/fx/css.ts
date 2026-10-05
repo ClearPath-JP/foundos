@@ -176,6 +176,9 @@ export const FX_CSS = `
 /* form */
 .fx-form-grid{display:grid;gap:40px;align-items:start;}
 @media (min-width:960px){.fx-form-grid{grid-template-columns:.9fr 1.1fr;gap:72px;}}
+.ga-layout{display:grid;gap:32px;align-items:start;}
+@media (min-width:960px){.ga-layout{grid-template-columns:.9fr 1.1fr;column-gap:72px;row-gap:8px;}
+  .ga-intro{grid-column:1;grid-row:1;}.ga-checks{grid-column:1;grid-row:2;}.ga-form{grid-column:2;grid-row:1 / span 2;}}
 .fx-next{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px;}
 .fx-next li{position:relative;padding-left:28px;font-weight:600;}
 .fx-next li::before{content:'';position:absolute;left:2px;top:.5em;width:12px;height:7px;

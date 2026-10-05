@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { CloseBand, contactFor, Faq } from '@/components/fx/cards';
 import { PLANS_FAQ } from '@/components/fx/faq';
 import Shell from '@/components/fx/Shell';
+import { LiquidBackground } from '@/components/fx/LiquidBackground';
 import { COMPARISON, PLAN_TERMS, PLANS, TERM_MONTHS, usd } from '@/config/offer';
 
 /**
@@ -70,7 +71,7 @@ export default async function PlanPage({ params }: { params: Promise<{ slug: str
   return (
     <Shell current="plans">
       <section className="fx-phead">
-        <div className="fx-wash" aria-hidden="true" />
+        <LiquidBackground />
         <div className="fx-wrap">
           <p className="fx-crumb">
             <Link href="/plans">Plans</Link> / {plan.name}

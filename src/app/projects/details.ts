@@ -20,58 +20,103 @@ export type ProjectDetail = {
 export const PROJECT_DETAILS: Record<string, ProjectDetail> = {
   'direct-ordering-launch': {
     outcome:
-      'Customers order straight from you, on your website, without a third-party app taking a cut. I set up a supported ordering system, connect it to your site, get the printer working and test it with your team before it goes public.',
+      'Customers order pickup straight from your website, and the ticket lands on a tablet in your kitchen within seconds. No third-party app takes a cut. I enter your menu, set up the kitchen tablet I supply, and run a test service with your team before it goes public.',
     scope: [
-      'One location, one supported ordering provider, and up to 50 menu items with straightforward modifiers, sent in a clean format',
-      'Pickup settings, business hours, help with payment onboarding, and the ordering link or embed on your website',
-      'One compatible printer or device configured, with one install visit up to 2 hours within 25 miles of Marietta',
-      'A test order, payment and refund check where supported, modifier and tax settings confirmed, and a printer routing test',
-      'One staff training session up to 60 minutes, a launch checklist, and 14 days of support for problems with the setup',
+      'One location, pickup ordering on your website, and up to 50 menu items with straightforward options, sent in a clean format',
+      'Your menu, options, prices, prep times, hours and tax rate entered and checked with you',
+      'One kitchen tablet and stand, supplied, set up and signed in to your kitchen screen',
+      'One install visit up to 2 hours within 25 miles of Marietta, with test orders run start to finish',
+      'One staff training session up to 60 minutes: accepting, the 86 list, snoozing orders on a slammed night',
+      '14 days of close support after launch for problems with the setup',
     ],
     excluded: [
-      'Hardware, which is quoted and approved before purchase',
-      'Ordering provider subscriptions, payment processing and delivery fees',
-      'More than 50 items, complex modifiers, travel beyond 25 miles, network repairs, POS migration and custom integrations, which are quoted',
-      'Daily menu syncing and ongoing ordering support, unless quoted separately',
+      'A ticket printer, which is quoted and approved before purchase',
+      'Online card payment and delivery. Customers pay at pickup',
+      'More than 50 items, complex modifiers, travel beyond 25 miles, network repairs and POS integration, which are quoted',
     ],
     process: [
-      'Check compatibility: your POS or provider, location, menu size, pickup or delivery, existing equipment and target date',
-      'I confirm what works and send the fixed scope with every cost listed, including equipment',
-      'You pay half the service fee plus approved equipment to get on the schedule',
-      'I set it up, install it and test it with your team',
-      'You approve it, pay the remaining balance, and it goes public',
+      'A quick fit check: your menu size, how you take orders today, and your target date',
+      'I send the fixed scope, with any extra equipment listed and priced',
+      'You pay half to get on the schedule. That is when the tablet is ordered',
+      'I enter your menu, install the kitchen screen and test it with your team',
+      'You approve it, pay the remaining balance, and it goes live on your website',
     ],
-    timeline:
-      'Usually 10 to 15 business days after I have access, the approved menu, the equipment and merchant approval. Delays at the ordering provider move the date.',
+    timeline: 'Usually 10 to 15 business days after I have the approved menu, prices and tax settings.',
     supply: [
-      'Your menu with prices, modifiers and allergens',
-      'Access to your POS or ordering provider account',
-      'Your tax settings, hours and pickup rules',
+      'Your menu with prices, options and allergens',
+      'Your hours, prep times and tax rate',
+      'Wi-Fi at the pickup counter or kitchen',
       'Someone on your team for the test and training',
     ],
     costs:
-      'Hardware is separate from the $1,500 service fee and is quoted before you pay anything. A receipt printer is typically a few hundred dollars. Payment processing, provider subscriptions and any delivery fees come from the provider, not from me.',
+      'The kitchen tablet and stand are inside the setup price. A ticket printer, if you want paper tickets, is quoted before you pay anything. The Growth plan covers the monthly running of the system.',
     payment:
-      'Half the service fee plus approved equipment to schedule, and the rest after you approve the test and before it goes public. You own the provider account and the money goes straight to you. I never store card details.',
+      'Half to schedule, and the rest after you approve the test service and before it goes public. Customers pay you at pickup, so I never touch your money or card details.',
     faq: [
       {
         q: 'Do you take a percentage of my orders?',
-        a: 'No. You pay the one-time service fee. The ordering provider charges its own fees, and you see them before you agree to anything.',
+        a: 'No. You pay the one-time setup and the monthly plan. There is no commission and no per-order fee.',
       },
       {
         q: 'Will this replace my POS?',
-        a: 'No. It uses a supported ordering system that works with your setup. If your POS can’t support it, I’ll tell you before you pay.',
+        a: 'No. Online orders show on their own kitchen screen next to whatever you use today. Ring them in at pickup like any order.',
       },
       {
-        q: 'Does my monthly plan cover ordering?',
-        a: 'Your plan keeps the ordering link on your website working. Equipment, ordering software and day-to-day ordering support are separate.',
+        q: 'Who owns the tablet?',
+        a: 'You do. It’s included in the setup price and stays at your restaurant.',
       },
     ],
-    buy: [
-      'Hardware and provider fees separate, and shown before you pay',
-      'Half to schedule, the rest after you approve the test',
-      'No percentage of your orders',
+    buy: ['Kitchen tablet and stand included', 'Half to schedule, the rest after you approve the test', 'No percentage of your orders'],
+  },
+  'booking-launch': {
+    outcome:
+      'Guests book a table on your website and only see times that are really open. Your host runs the night from a tablet showing your actual dining room. I draw your floor plan into the system by hand, supply and set up the host-stand tablet, and run a test service with your staff.',
+    scope: [
+      'One location and one dining room, plus a patio or bar area if you seat it',
+      'Your floor plan built by hand from a walk-through or photos: every table, its seat count, and which tables push together for bigger parties',
+      'Your rules set up: hours, party sizes, how long a table is held, and how many guests can arrive in any 15 minutes',
+      'One host-stand tablet and stand, supplied, set up and signed in',
+      'Booking added to your website, with Book buttons where guests look for them',
+      'One staff training session up to 60 minutes: seating, walk-ins, the waitlist, closing a date',
+      '14 days of close support after launch',
     ],
+    excluded: [
+      'Deposits, card holds and no-show fees',
+      'Text and email reminders, which need a messaging provider billed separately',
+      'Extra tablets or a second dining room, which are quoted',
+    ],
+    process: [
+      'A walk-through of your room, or photos and a rough sketch if that’s easier',
+      'I draw the floor plan and send it back. You fix anything I got wrong',
+      'You pay half to get on the schedule. That is when the tablet is ordered',
+      'I set up your rules, install the host stand and run test bookings with your staff',
+      'You approve it, pay the remaining balance, and booking goes live on your website',
+    ],
+    timeline: 'Usually 7 to 10 business days after the walk-through.',
+    supply: [
+      'A walk-through or photos of your dining room',
+      'Your hours, party-size limits and how long a table usually turns',
+      'Wi-Fi at the host stand',
+      'Your host or manager for the test and training',
+    ],
+    costs:
+      'The host-stand tablet and stand are inside the setup price. The Growth plan covers the monthly running of the system. There are no per-cover or per-booking fees.',
+    payment: 'Half to schedule, and the rest after you approve the test service and before it goes public.',
+    faq: [
+      {
+        q: 'Why is there a setup fee?',
+        a: 'Because your floor plan is built by hand, table by table, and the tablet at your host stand is bought for you and set up before your first service.',
+      },
+      {
+        q: 'What if we move tables around?',
+        a: 'Send me a photo. Moving or adding tables comes out of your monthly update time.',
+      },
+      {
+        q: 'Who owns the tablet?',
+        a: 'You do. It’s included in the setup price and stays at your restaurant.',
+      },
+    ],
+    buy: ['Host-stand tablet and stand included', 'Your real floor plan, built by hand', 'No per-cover or per-booking fees'],
   },
   'social-profile-cleanup': {
     outcome:

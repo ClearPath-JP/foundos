@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import InquiryForm from '@/components/contact/InquiryForm';
 import Shell from '@/components/fx/Shell';
+import { LiquidBackground } from '@/components/fx/LiquidBackground';
 import { CONTACT, interestLabel } from '@/config/offer';
 
 const TITLE = 'Contact | foundos';
@@ -30,7 +31,8 @@ export default async function ContactPage({
 
   return (
     <Shell current="contact">
-      <section className="fx-sec fx-sec--tint" style={{ paddingTop: 56 }}>
+      <section className="fx-sec fx-lhead" style={{ paddingTop: 56 }}>
+        <LiquidBackground />
         <div className="fx-wrap fx-form-grid">
           <div>
             <p className="fx-eyebrow">Contact</p>

@@ -1,13 +1,18 @@
 import { promises as dns } from 'node:dns';
 import net from 'node:net';
-import type { SiteFacts } from './types';
+import { failureKindForStatus } from './site-status.ts';
+import type { SiteFacts, SiteFailureKind } from './types';
 
 /**
  * Deterministic checks against the business's own site.
  *
  * Plain fetch + HTML string matching — no headless browser (see spec §6). Every
- * value returned here is measured. A failed fetch is itself a finding, not an
- * error, so this function never throws.
+ * value returned here is measured. A failed fetch is recorded with its kind
+ * (site-status.ts decides whether that proves anything), never thrown.
+ *
+ * 2026-10-04: an error response (403, 500…) is no longer parsed as if it were
+ * the homepage, and a page we can't read (built by JavaScript) reports
+ * "not found" checks as null, not false.
  */
 
 const TIMEOUT_MS = 8000;
@@ -73,16 +78,25 @@ function emptySite(overrides: Partial<SiteFacts> = {}): SiteFacts {
     ttfbMs: null,
     totalMs: null,
     bytes: null,
+    readable: null,
     hasViewportMeta: null,
     hasTelLink: null,
     hasLocalBusinessSchema: null,
     menuIsPdfOrImage: null,
+    hasOrderButton: null,
     marketplaceLinks: [],
     directOrderingLinks: [],
     bookingLinks: [],
     hasEcommerce: null,
     copyrightYear: null,
+    lastModifiedYear: null,
+    photoCount: null,
+    stockPhotoHosts: [],
+    deadLinks: [],
+    scriptCount: null,
+    linkCount: null,
     failureReason: null,
+    failureKind: null,
     ...overrides,
   };
 }
@@ -176,26 +190,30 @@ function isBlockedAddress(ip: string): boolean {
   return true; // not an address we can reason about — refuse it
 }
 
-/** null when the URL is safe to fetch, otherwise a visitor-safe reason. */
-async function unsafeReason(url: URL): Promise<string | null> {
+type Unsafe = { kind: SiteFailureKind; reason: string };
+
+const NO_SUCH_SITE = 'The website address on your Google listing doesn’t lead to a website.';
+
+/** null when the URL is safe to fetch, otherwise why not, in visitor-safe words. */
+async function unsafeReason(url: URL): Promise<Unsafe | null> {
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    return 'That website address is not a normal web address.';
+    return { kind: 'malformed', reason: 'That website address is not a normal web address.' };
   }
 
   const host = url.hostname.replace(/^\[|\]$/g, '');
   if (net.isIP(host)) {
-    return isBlockedAddress(host) ? 'That website address points somewhere private.' : null;
+    return isBlockedAddress(host) ? { kind: 'unsafe', reason: 'That website address points somewhere private.' } : null;
   }
 
   let addresses: Array<{ address: string }>;
   try {
     addresses = await dns.lookup(host, { all: true });
   } catch {
-    return "I couldn't find that website address.";
+    return { kind: 'dns', reason: NO_SUCH_SITE };
   }
-  if (addresses.length === 0) return "I couldn't find that website address.";
+  if (addresses.length === 0) return { kind: 'dns', reason: NO_SUCH_SITE };
   if (addresses.some((a) => isBlockedAddress(a.address))) {
-    return 'That website address points somewhere private.';
+    return { kind: 'unsafe', reason: 'That website address points somewhere private.' };
   }
   return null;
 }
@@ -207,7 +225,7 @@ export async function checkSite(rawUrl: string | null): Promise<SiteFacts> {
   try {
     url = new URL(rawUrl);
   } catch {
-    return emptySite({ checked: true, failureReason: 'The listed website address is malformed.' });
+    return emptySite({ checked: true, failureKind: 'malformed', failureReason: 'The listed website address is malformed.' });
   }
 
   const started = Date.now();
@@ -216,13 +234,14 @@ export async function checkSite(rawUrl: string | null): Promise<SiteFacts> {
 
   try {
     for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
-      const reason = await unsafeReason(current);
-      if (reason) {
+      const unsafe = await unsafeReason(current);
+      if (unsafe) {
         return emptySite({
           checked: true,
           reachable: false,
           https: current.protocol === 'https:',
-          failureReason: reason,
+          failureKind: unsafe.kind,
+          failureReason: unsafe.reason,
         });
       }
 
@@ -243,7 +262,8 @@ export async function checkSite(rawUrl: string | null): Promise<SiteFacts> {
             checked: true,
             reachable: false,
             https: current.protocol === 'https:',
-            failureReason: 'Your site redirects too many times to follow.',
+            failureKind: 'redirects',
+            failureReason: 'Your site redirected our checker too many times to follow.',
           });
         }
         try {
@@ -253,6 +273,7 @@ export async function checkSite(rawUrl: string | null): Promise<SiteFacts> {
             checked: true,
             reachable: false,
             https: current.protocol === 'https:',
+            failureKind: 'malformed',
             failureReason: 'Your site redirects to a malformed address.',
           });
         }
@@ -268,9 +289,10 @@ export async function checkSite(rawUrl: string | null): Promise<SiteFacts> {
       checked: true,
       reachable: false,
       https: current.protocol === 'https:',
+      failureKind: timedOut ? 'timeout' : 'network',
       failureReason: timedOut
-        ? `Your site didn't finish loading within ${TIMEOUT_MS / 1000} seconds.`
-        : "Your site didn't respond when I tried to load it.",
+        ? `Your site didn't finish loading for our checker within ${TIMEOUT_MS / 1000} seconds.`
+        : "Your site didn't respond to our checker.",
     });
   }
 
@@ -279,11 +301,34 @@ export async function checkSite(rawUrl: string | null): Promise<SiteFacts> {
       checked: true,
       reachable: false,
       https: current.protocol === 'https:',
-      failureReason: "Your site didn't respond when I tried to load it.",
+      failureKind: 'network',
+      failureReason: "Your site didn't respond to our checker.",
     });
   }
 
   const ttfbMs = Date.now() - started;
+
+  // An error response is the server's error page, not the homepage. Reading it as the homepage is what produced
+  // "no tap-to-call, no ordering, not mobile-ready" for a site that had all three.
+  if (!res.ok) {
+    await res.body?.cancel().catch(() => {});
+    const kind = failureKindForStatus(res.status);
+    return emptySite({
+      checked: true,
+      reachable: false,
+      finalUrl: current.toString(),
+      https: current.protocol === 'https:',
+      status: res.status,
+      ttfbMs,
+      failureKind: kind,
+      failureReason:
+        kind === 'not_found'
+          ? 'The homepage on your Google listing returns “page not found.”'
+          : kind === 'blocked'
+            ? `Your site turned away our automated check (it answered ${res.status}).`
+            : `Your site answered our checker with a ${res.status} error.`,
+    });
+  }
   const { text: html, bytes } = await readCapped(res);
   const totalMs = Date.now() - started;
   const finalUrl = current.toString();
@@ -293,29 +338,177 @@ export async function checkSite(rawUrl: string | null): Promise<SiteFacts> {
     /(?:©|&copy;|copyright)\s*(?:\d{4}\s*[–—-]\s*)?(20\d{2})/i
   );
 
+  const pageText = html
+    .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  // A page built by JavaScript shows almost nothing in its raw HTML. Counting photos or buttons on it would lie.
+  const readable = pageText.length >= 300;
+  const lastModified = Date.parse(res.headers.get('last-modified') ?? '');
+  /** Found = true. Not found on a readable page = false. Not found on a page we can't read = unknown. */
+  const seen = (found: boolean): boolean | null => (found ? true : readable ? false : null);
+
   const menuPdf =
-    /<a[^>]+href="[^"]*\.pdf"[^>]*>[^<]*menu|menu[^<]*<\/a>/i.test(html) ||
-    /href="[^"]*menu[^"]*\.pdf"/i.test(html) ||
+    // A PDF link whose text mentions the menu. (The old pattern's bare "menu…</a>" branch flagged every Menu link.)
+    /<a[^>]*href=["'][^"']*\.pdf(?:[?#][^"']*)?["'][^>]*>(?:(?!<\/a>)[\s\S]){0,200}?menu/i.test(html) ||
+    /href=["'][^"']*menu[^"']*\.pdf/i.test(html) ||
     /<img[^>]+(?:src|alt)="[^"]*menu[^"]*\.(?:jpe?g|png|webp)"/i.test(html);
 
   return {
     checked: true,
-    reachable: res.ok,
+    reachable: true,
     finalUrl,
     https: finalUrl.startsWith('https:'),
     status: res.status,
     ttfbMs,
     totalMs,
     bytes,
+    readable,
+    // The viewport tag lives in <head> even on JavaScript-built pages, so its absence is real.
     hasViewportMeta: /<meta[^>]+name=["']viewport["']/i.test(html),
-    hasTelLink: /href=["']tel:/i.test(html),
-    hasLocalBusinessSchema: SCHEMA_TYPES.test(html),
-    menuIsPdfOrImage: menuPdf,
+    hasTelLink: seen(/href=["']tel:/i.test(html)),
+    hasLocalBusinessSchema: seen(SCHEMA_TYPES.test(html)),
+    menuIsPdfOrImage: menuPdf ? true : readable ? false : null,
+    hasOrderButton: seen(hasOrderButton(html)),
     marketplaceLinks: matchHosts(lower, MARKETPLACE_HOSTS),
     directOrderingLinks: matchHosts(lower, DIRECT_ORDER_HOSTS),
     bookingLinks: matchHosts(lower, BOOKING_HOSTS),
     hasEcommerce: ECOM_MARKERS.some((m) => lower.includes(m)),
     copyrightYear: copyrightMatch ? Number(copyrightMatch[1]) : null,
-    failureReason: res.ok ? null : `Your site returned a ${res.status} error.`,
+    lastModifiedYear: Number.isNaN(lastModified) ? null : new Date(lastModified).getUTCFullYear(),
+    photoCount: readable ? countPhotos(html) : null,
+    stockPhotoHosts: matchHosts(lower, STOCK_HOSTS),
+    deadLinks: readable ? [...deadButtons(html), ...(await brokenLinks(html, current))].slice(0, 4) : [],
+    scriptCount: (html.match(/<script\b/gi) ?? []).length,
+    linkCount: new Set([...html.matchAll(/<a\b[^>]*href=["']([^"'#]+)["']/gi)].map((m) => m[1])).size,
+    failureReason: null,
+    failureKind: null,
   };
+}
+
+// ---- Photos, dead buttons, broken links ------------------------------------
+
+const STOCK_HOSTS: Record<string, string> = {
+  'unsplash.com': 'Unsplash',
+  'shutterstock.com': 'Shutterstock',
+  'istockphoto.com': 'iStock',
+  'gettyimages.com': 'Getty Images',
+  'pexels.com': 'Pexels',
+  'pixabay.com': 'Pixabay',
+  'stock.adobe.com': 'Adobe Stock',
+  'depositphotos.com': 'Depositphotos',
+  'dreamstime.com': 'Dreamstime',
+};
+
+/** Words on the buttons a customer actually needs. A dead one of these is a lost order or booking. */
+const ACTION_WORDS = /\b(order|menu|book|reserv|catering|gift|delivery|pickup|pick up|directions|call|contact)/i;
+
+/** Images that are not photos: logos, icons, sprites, tracking pixels. */
+const NOT_A_PHOTO = /logo|icon|sprite|favicon|badge|pixel|spacer|blank|placeholder|\.svg|\.gif|data:image/i;
+
+function countPhotos(html: string): number {
+  let n = 0;
+  for (const m of html.matchAll(/<img\b[^>]*>/gi)) {
+    const tag = m[0];
+    const src = tag.match(/\b(?:data-src|src|srcset)=["']([^"']+)["']/i)?.[1] ?? '';
+    const width = Number(tag.match(/\bwidth=["']?(\d+)/i)?.[1] ?? 0);
+    if (!src || NOT_A_PHOTO.test(src) || (width > 0 && width < 80)) continue;
+    n++;
+  }
+  for (const m of html.matchAll(/background(?:-image)?\s*:[^;"']*url\(\s*['"]?([^)'"]+)/gi)) {
+    if (/\.(jpe?g|png|webp|avif)/i.test(m[1]) && !NOT_A_PHOTO.test(m[1])) n++;
+  }
+  return n;
+}
+
+/** Words on a link or button that mean "order food here". */
+const ORDER_WORDS = /\b(order|pick ?up|take ?out|delivery|delivered)\b/i;
+
+function hasOrderButton(html: string): boolean {
+  for (const m of html.matchAll(/<(a|button)\b[^>]*>([\s\S]*?)<\/\1>/gi)) {
+    if (ORDER_WORDS.test(stripTags(m[2]).slice(0, 60))) return true;
+  }
+  return false;
+}
+
+const stripTags = (s: string) => s.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+
+/** "Order Online" buttons whose link is empty, "#" or javascript:. Menu toggles and modals are skipped. */
+function deadButtons(html: string) {
+  const out: { label: string; reason: string }[] = [];
+  for (const m of html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+    const attrs = m[1];
+    const href = attrs.match(/\bhref=["']([^"']*)["']/i);
+    const dead = !href || href[1].trim() === '' || href[1].trim() === '#' || /^javascript:/i.test(href[1].trim());
+    if (!dead) continue;
+    // Toggles, popups and tabs legitimately use "#".
+    if (/\b(?:role=["']button|aria-controls|aria-expanded|aria-haspopup|data-(?:toggle|bs-toggle|target|modal|popup)|onclick)/i.test(attrs)) continue;
+    // The phone hamburger: an icon link labelled "Menu" that opens the navigation, not the food menu.
+    if (
+      /\baria-label=["'][^"']*(?:menu|nav)/i.test(attrs) ||
+      /\bclass=["'][^"']*(?:burger|toggle|mobile-menu|dropdown)/i.test(attrs)
+    )
+      continue;
+    const label = stripTags(m[2]).slice(0, 40);
+    if (!label || !ACTION_WORDS.test(label)) continue;
+    if (out.some((o) => o.label.toLowerCase() === label.toLowerCase())) continue;
+    out.push({ label, reason: 'goes nowhere when tapped' });
+  }
+  return out.slice(0, 3);
+}
+
+/**
+ * Follow the homepage's own links, plus outside links on order/menu/book buttons, and report the ones that
+ * error. Each URL passes the same SSRF guard as the homepage. HEAD first; a server that refuses HEAD gets a GET.
+ */
+async function brokenLinks(html: string, base: URL) {
+  const seen = new Set<string>();
+  const internal: { url: URL; label: string }[] = [];
+  const external: { url: URL; label: string }[] = [];
+
+  for (const m of html.matchAll(/<a\b[^>]*href=["']([^"'#][^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
+    let url: URL;
+    try {
+      url = new URL(m[1], base);
+    } catch {
+      continue;
+    }
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') continue;
+    url.hash = '';
+    const key = url.toString();
+    if (seen.has(key) || key === base.toString()) continue;
+    seen.add(key);
+    const label = stripTags(m[2]).slice(0, 40) || url.pathname;
+    if (url.hostname === base.hostname) internal.push({ url, label });
+    else if (ACTION_WORDS.test(label)) external.push({ url, label });
+  }
+
+  // Customer-path links first, so a capped check still covers the menu and order pages.
+  const byAction = (a: { label: string }, b: { label: string }) => Number(ACTION_WORDS.test(b.label)) - Number(ACTION_WORDS.test(a.label));
+  const targets = [...internal.sort(byAction).slice(0, 6), ...external.slice(0, 2)];
+
+  const results = await Promise.all(
+    targets.map(async ({ url, label }) => {
+      if (await unsafeReason(url)) return null;
+      const opts = {
+        redirect: 'manual' as const,
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; foundos-report/1.0; +https://foundos.ai)' },
+      };
+      try {
+        let r = await fetch(url, { ...opts, method: 'HEAD', signal: AbortSignal.timeout(4000) });
+        if (r.status === 405 || r.status === 403 || r.status === 501) {
+          r = await fetch(url, { ...opts, method: 'GET', signal: AbortSignal.timeout(4000) });
+          await r.body?.cancel().catch(() => {});
+        }
+        if (r.status === 404 || r.status === 410 || r.status >= 500) {
+          return { label, reason: r.status === 404 || r.status === 410 ? 'leads to a “page not found”' : `returns a ${r.status} error` };
+        }
+      } catch {
+        /* A slow or refused link is not proof it's broken. Say nothing. */
+      }
+      return null;
+    })
+  );
+  return results.filter((r): r is { label: string; reason: string } => r !== null).slice(0, 3);
 }

@@ -1,8 +1,8 @@
 'use client';
 
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 
-import type { Discovery, GrowthScore, PlaceCandidate, Report, ReportEvent, ScoreStatus } from '@/lib/report/types';
+import type { Discovery, GrowthScore, PlaceCandidate, Report, ReportEvent, ReportFinding, ScoreStatus } from '@/lib/report/types';
 
 /**
  * The Free Growth Audit — added 2026-10-03.
@@ -10,7 +10,10 @@ import type { Discovery, GrowthScore, PlaceCandidate, Report, ReportEvent, Score
  * Two halves on one page:
  *   1. The instant scan. Reuses POST /api/report (Google listing + a fetch of
  *      the site) and shows the Growth Score from lib/report/score.ts. Every
- *      line on the score card is a measured fact.
+ *      line on the score card is a measured fact, or says plainly that it
+ *      couldn't be verified. When too little was verified the number is
+ *      withheld (2026-10-04), and the card splits "checked" from "Josh
+ *      reviews by hand".
  *   2. The full-audit request. The questions from the audit brief, sent through
  *      POST /api/contact so it lands in Telegram like every other inquiry.
  *
@@ -32,10 +35,13 @@ const PRIORITIES = [
 
 const MARK: Record<ScoreStatus, { sym: string; word: string }> = {
   pass: { sym: '✓', word: 'Looks good' },
-  warn: { sym: '!', word: 'Needs work' },
-  fail: { sym: '✕', word: 'Missing' },
-  unknown: { sym: '?', word: 'Not checked' },
+  warn: { sym: '!', word: 'Could be better' },
+  fail: { sym: '✕', word: 'Problem found' },
+  unknown: { sym: '?', word: 'Unable to verify' },
+  manual: { sym: '…', word: 'Josh reviews by hand' },
 };
+
+const VERIFIED: ReadonlySet<ScoreStatus> = new Set(['pass', 'warn', 'fail']);
 
 async function* readNdjson(body: ReadableStream<Uint8Array>): AsyncGenerator<ReportEvent> {
   const reader = body.getReader();
@@ -62,9 +68,20 @@ async function* readNdjson(body: ReadableStream<Uint8Array>): AsyncGenerator<Rep
   }
 }
 
-export default function GrowthAudit({ phone, phonePretty, email }: { phone: string; phonePretty: string; email: string }) {
+export default function GrowthAudit({
+  phone,
+  phonePretty,
+  email,
+  initialQuery = '',
+}: {
+  phone: string;
+  phonePretty: string;
+  email: string;
+  /** From the homepage hero (/audit?q=…): the scan starts straight away. */
+  initialQuery?: string;
+}) {
   const [phase, setPhase] = useState<Phase>('idle');
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialQuery);
   const [step, setStep] = useState('');
   const [found, setFound] = useState<Discovery[]>([]);
   const [candidates, setCandidates] = useState<PlaceCandidate[]>([]);
@@ -97,7 +114,7 @@ export default function GrowthAudit({ phone, phonePretty, email }: { phone: stri
         } else if (ev.type === 'notice') {
           setNotice(
             ev.message === 'needs_tap_fallback'
-              ? 'We couldn’t look that one up automatically. Send the details below and Josh will run the audit by hand.'
+              ? 'I couldn’t look that one up automatically. Send the details below and Josh will run the audit by hand.'
               : ev.message
           );
           setPhase('manual');
@@ -115,10 +132,20 @@ export default function GrowthAudit({ phone, phonePretty, email }: { phone: stri
 
     if (latest?.score) setPhase('done');
     else {
-      setNotice('We couldn’t score that one automatically. Send the details below and Josh will run the audit by hand.');
+      setNotice('I couldn’t score that one automatically. Send the details below and Josh will run the audit by hand.');
       setPhase('manual');
     }
   }
+
+  // Started from the homepage hero: run once, not again on a dev-mode double mount.
+  const autoRan = useRef(false);
+  useEffect(() => {
+    const q = initialQuery.trim();
+    if (autoRan.current || q.length < 2) return;
+    autoRan.current = true;
+    void run({ mode: 'search', query: q });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, on mount
+  }, []);
 
   function onScan(e: FormEvent) {
     e.preventDefault();
@@ -154,7 +181,7 @@ export default function GrowthAudit({ phone, phonePretty, email }: { phone: stri
               disabled={phase === 'running'}
             />
             <button type="submit" className="fx-btn fx-btn--p" disabled={phase === 'running'}>
-              {phase === 'running' ? 'Scanning…' : 'Run my growth scan →'}
+              {phase === 'running' ? 'Checking…' : 'Check my restaurant →'}
             </button>
           </div>
           <p className="fx-hint">Free. About 15 seconds. No email needed to see your score.</p>
@@ -187,7 +214,7 @@ export default function GrowthAudit({ phone, phonePretty, email }: { phone: stri
 
       {phase === 'candidates' && (
         <div className="ga-cands">
-          <p className="ga-h">We found a few. Which one is yours?</p>
+          <p className="ga-h">I found a few. Which one is yours?</p>
           {candidates.map((c) => (
             <button key={c.id} type="button" className="ga-cand" onClick={() => void run({ mode: 'place', placeId: c.id })}>
               <strong>{c.name}</strong>
@@ -200,13 +227,15 @@ export default function GrowthAudit({ phone, phonePretty, email }: { phone: stri
         </div>
       )}
 
-      {phase === 'done' && report && score && <ScoreCard name={report.header.name} score={score} />}
+      {phase === 'done' && report && score && (
+        <ScoreCard name={report.header.name} score={score} findings={report.fallback ? [] : report.findings} />
+      )}
 
       {/* ── 2. The full-audit request ───────────────────────────────── */}
       {(phase === 'done' || phase === 'manual') && (
         <div className="fx-panel ga-req">
           {phase === 'manual' && notice && <p className="ga-notice">{notice}</p>}
-          <p className="ga-h">{phase === 'done' ? 'Get your full audit' : 'Request your free growth audit'}</p>
+          <p className="ga-h">{phase === 'done' ? 'Get your full audit' : 'Request your free digital audit'}</p>
           <p className="fx-hint" style={{ marginBottom: 20 }}>
             {phase === 'done'
               ? 'Josh goes through each item by hand, adds what a scan can’t see, and sends you the fixes in plain English. Free, and no obligation.'
@@ -226,40 +255,85 @@ export default function GrowthAudit({ phone, phonePretty, email }: { phone: stri
   );
 }
 
-function ScoreCard({ name, score }: { name: string; score: GrowthScore }) {
+function AreaList({ areas }: { areas: GrowthScore['areas'] }) {
+  return (
+    <ul className="ga-areas" role="list">
+      {areas.map((a) => (
+        <li key={a.key} className={`ga-a ga-a--${a.status}`}>
+          <span className="ga-mark" aria-hidden="true">
+            {MARK[a.status].sym}
+          </span>
+          <div>
+            <p className="ga-a-t">
+              {a.label} <span className="ga-a-w">· {MARK[a.status].word}</span>
+            </p>
+            <p className="ga-a-d">{a.note}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function ScoreCard({ name, score, findings }: { name: string; score: GrowthScore; findings: readonly ReportFinding[] }) {
+  const checked = score.areas.filter((a) => VERIFIED.has(a.status));
+  const byHand = score.areas.filter((a) => !VERIFIED.has(a.status));
   return (
     <section className="ga-card" aria-labelledby="ga-score-h">
-      <p className="fx-kicker">Your foundos Growth Score</p>
+      <p className="fx-kicker">{score.score === null ? 'Your scan' : 'Your score'}</p>
       <h2 className="ga-name" id="ga-score-h">
         {name}
       </h2>
-      <p className="ga-num">
-        <span className="ga-n">{score.score}</span>
-        <span className="ga-of">/ 100</span>
-      </p>
-      <ul className="ga-areas" role="list">
-        {score.areas.map((a) => (
-          <li key={a.key} className={`ga-a ga-a--${a.status}`}>
-            <span className="ga-mark" aria-hidden="true">
-              {MARK[a.status].sym}
-            </span>
-            <div>
-              <p className="ga-a-t">
-                {a.label} <span className="ga-a-w">· {MARK[a.status].word}</span>
-              </p>
-              <p className="ga-a-d">{a.note}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {score.score === null ? (
+        <p className="ga-withheld">
+          <strong>No score this time.</strong> {score.withheldReason}
+        </p>
+      ) : (
+        <p className="ga-num">
+          <span className="ga-n">{score.score}</span>
+          <span className="ga-of">/ 100</span>
+          <span className="ga-cov">
+            from {score.verified} of {score.total} areas we could verify
+          </span>
+        </p>
+      )}
+      {checked.length > 0 && (
+        <>
+          <p className="ga-sub">What we checked</p>
+          <AreaList areas={checked} />
+        </>
+      )}
+      {byHand.length > 0 && (
+        <>
+          <p className="ga-sub">What Josh checks by hand</p>
+          <AreaList areas={byHand} />
+        </>
+      )}
+      {findings.length > 0 && (
+        <div className="ga-what">
+          <p className="ga-what-h">What I found, in plain English</p>
+          <ol className="ga-what-list" role="list">
+            {findings.map((f) => (
+              <li key={f.code}>
+                <p className="ga-what-t">
+                  {f.headline}
+                  {f.impact && <span className="ga-what-m">{f.impact}</span>}
+                </p>
+                <p className="ga-what-d">{f.consequence}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
       <p className="ga-opps">
         {score.opportunities === 0
-          ? 'No gaps a scan can see. The full audit looks at what it can’t.'
-          : `${score.opportunities} growth ${score.opportunities === 1 ? 'opportunity' : 'opportunities'} found.`}
+          ? 'Nothing to fix in what we could check. The full audit covers the rest.'
+          : `${score.opportunities} ${score.opportunities === 1 ? 'thing' : 'things'} worth fixing in what we could check.`}
       </p>
       <p className="fx-hint">
-        A quick outside check of public information, scored evenly across the areas we could measure. It isn’t a
-        Google ranking.
+        A quick automated check of public information. Areas we couldn’t verify are left out of the number, never
+        counted against you. It isn’t a Google ranking, and an automated check can be turned away by sites that
+        customers open fine.
       </p>
     </section>
   );
@@ -299,10 +373,13 @@ function AuditRequestForm({
       `Biggest priority: ${priority}`,
       `Takes direct online orders: ${ordering}`,
       score
-        ? `Scan score: ${score.score}/100 · ${score.areas
-            .filter((a) => a.status === 'warn' || a.status === 'fail')
-            .map((a) => a.label)
-            .join(', ') || 'no gaps'}`
+        ? [
+            score.score === null
+              ? `Scan: score withheld (${score.verified}/${score.total} verified)`
+              : `Scan score: ${score.score}/100 (${score.verified}/${score.total} verified)`,
+            `Problems: ${score.areas.filter((a) => a.status === 'warn' || a.status === 'fail').map((a) => a.label).join(', ') || 'none found'}`,
+            `Check by hand: ${score.areas.filter((a) => a.status === 'unknown' || a.status === 'manual').map((a) => a.label).join(', ') || 'nothing'}`,
+          ].join(' · ')
         : 'Scan: not run or not found',
     ].join('\n');
 
@@ -416,7 +493,7 @@ function AuditRequestForm({
       </div>
 
       <fieldset className="fx-radios">
-        <legend>Where should we send your audit?</legend>
+        <legend>Where should I send your audit?</legend>
         {(['text', 'email'] as const).map((m) => (
           <label key={m} className="fx-radio">
             <input
@@ -470,7 +547,7 @@ function AuditRequestForm({
       )}
 
       <button type="submit" className="fx-btn fx-btn--p" disabled={state.kind === 'sending'}>
-        {state.kind === 'sending' ? 'Sending…' : 'Get my free growth audit →'}
+        {state.kind === 'sending' ? 'Sending…' : 'Get my free digital audit →'}
       </button>
     </form>
   );
@@ -481,7 +558,7 @@ const CSS = `
 .ga-scan{display:grid;gap:10px;}
 .ga-row{display:flex;flex-direction:column;gap:10px;}
 @media (min-width:640px){.ga-row{flex-direction:row;}.ga-row .fx-in{flex:1;}.ga-row .fx-btn{flex:0 0 auto;}}
-.ga-link{justify-self:start;background:none;border:0;padding:4px 0;font:inherit;font-size:16px;color:var(--p);
+.ga-link{justify-self:start;background:none;border:0;padding:4px 0;min-height:44px;font:inherit;font-size:16px;color:var(--p);
   text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
 .ga-live{display:grid;gap:14px;}
 .ga-step{display:flex;align-items:center;gap:12px;font-weight:700;}
@@ -514,10 +591,22 @@ const CSS = `
 .ga-a--pass .ga-mark{background:var(--lav);color:var(--p);}
 .ga-a--warn .ga-mark{background:#FDF0D5;color:#8A5300;}
 .ga-a--fail .ga-mark{background:#FBE3F1;color:#A3207A;}
+.ga-a--unknown .ga-mark,.ga-a--manual .ga-mark{background:#EEEDF2;color:#4A4558;}
+.ga-sub{margin:22px 0 4px!important;font-weight:800;font-size:15px;color:var(--text);}
+.ga-cov{flex-basis:100%;font-size:15px;color:var(--muted);font-weight:600;}
+.ga-num{flex-wrap:wrap;}
+.ga-withheld{margin:14px 0 8px;padding:14px 16px;border-left:3px solid var(--p);background:#F6F3FC;font-size:16px;line-height:1.5;}
 .ga-a--unknown .ga-mark{background:#F0EEF3;color:var(--muted);}
 .ga-a-t{font-weight:700;}
 .ga-a-w{font-weight:500;color:var(--muted);font-size:15px;}
 .ga-a-d{font-size:16px;color:var(--muted);}
+.ga-what{margin-top:22px;padding-top:18px;border-top:2px solid var(--line);}
+.ga-what-h{font-weight:800;font-size:18px;margin-bottom:10px;}
+.ga-what-list{margin:0;padding-left:22px;display:grid;gap:14px;}
+.ga-what-t{font-weight:700;line-height:1.4;}
+.ga-what-m{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:#FBE3F1;color:#A3207A;
+  font-size:13px;font-weight:700;vertical-align:2px;}
+.ga-what-d{font-size:16px;color:var(--muted);margin-top:2px;}
 .ga-opps{margin:18px 0 8px;font-size:20px;font-weight:800;color:var(--p);}
 .ga-pick{display:grid;gap:8px;border:0;padding:0;margin:0;}
 @media (min-width:640px){.ga-pick{grid-template-columns:1fr 1fr;}}

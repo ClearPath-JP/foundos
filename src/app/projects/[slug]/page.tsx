@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { CloseBand, contactFor, Faq } from '@/components/fx/cards';
+import { CloseBand, contactFor, Faq, needsGrowth } from '@/components/fx/cards';
 import Shell from '@/components/fx/Shell';
+import { LiquidBackground } from '@/components/fx/LiquidBackground';
 import { LIVE_PROJECTS, usd } from '@/config/offer';
 
 import { PROJECT_DETAILS } from '../details';
@@ -53,12 +54,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const { project, detail } = found;
 
   return (
-    <Shell current="projects">
+    <Shell current="plans">
       <section className="fx-phead">
-        <div className="fx-wash" aria-hidden="true" />
+        <LiquidBackground />
         <div className="fx-wrap">
           <p className="fx-crumb">
-            <Link href="/projects">Projects</Link> / {project.name}
+            <Link href="/plans#projects">Pricing</Link> / {project.name}
           </p>
           <h1 className="fx-h1" style={{ marginTop: 14 }}>
             {project.name}
@@ -73,7 +74,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <p className="fx-price">
             {project.from && <span className="fx-price-from">From</span>}
             <span className="fx-price-n">{usd(project.price)}</span>
-            <span className="fx-price-u">one time</span>
+            <span className="fx-price-u">{needsGrowth(project.slug) ? 'one time, plus the Growth plan' : 'one time'}</span>
           </p>
           <ul className="fx-buy-lines" role="list">
             {detail.buy.map((b) => (

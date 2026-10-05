@@ -2,7 +2,7 @@
 export const FX_OFFER_CSS = `
 /* nav: links inline from 640px; below that, a second scrolling row */
 .fx-nav-a[aria-current="page"]{color:var(--p)!important;}
-.fx-subnav{display:flex;gap:4px;overflow-x:auto;border-top:1px solid var(--line);scrollbar-width:none;}
+.fx-subnav{display:flex;justify-content:space-between;gap:4px;border-top:1px solid var(--line);}
 .fx-subnav::-webkit-scrollbar{display:none;}
 .fx-subnav a{flex:none;display:inline-flex;align-items:center;min-height:44px;padding:0 12px;font-weight:700;font-size:15px;
   text-decoration:none;color:var(--text)!important;}
@@ -67,6 +67,7 @@ export const FX_OFFER_CSS = `
 @media (min-width:640px){.fx-project{padding:36px;}}
 .fx-project--lead{background:var(--text);color:#fff;border-color:var(--text);}
 .fx-project--lead .fx-plan-name{color:#C4B0F5;}
+.fx-project--lead .fx-price-n{color:#fff;}
 .fx-project--lead .fx-plan-for,.fx-project--lead .fx-plan-term,.fx-project--lead .fx-price-u,.fx-project--lead .fx-price-from{color:#C9C3D6;}
 .fx-project--lead .fx-plan-term{border-color:#37304A;}
 .fx-project--lead .fx-checks li::before{border-color:#C4B0F5;}
@@ -155,4 +156,48 @@ export const FX_OFFER_CSS = `
 .fx-shot{margin:56px 0 0;}
 .fx-shot img{border-radius:12px;border:1px solid var(--line);box-shadow:0 24px 48px -28px rgba(23,20,33,.25);}
 .fx-shot figcaption{margin-top:12px;font-size:15px;color:var(--muted);}
+
+/* 2026-10-03 pricing consolidation: on-page jump links, the three-way offer ladder, fine print */
+.fx-jump{display:flex;flex-wrap:wrap;gap:4px 20px;margin-top:28px;}
+.fx-jump a{display:inline-flex;align-items:center;min-height:44px;font-weight:700;color:var(--p);text-decoration:none;}
+.fx-jump a:hover{text-decoration:underline;}
+.fx-ladder{list-style:none;padding:0;margin:40px 0 0;display:grid;gap:20px;}
+@media (min-width:900px){.fx-ladder{grid-template-columns:repeat(3,1fr);gap:24px;}}
+.fx-rung{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px 24px;}
+.fx-rung--ordering{border-color:var(--p);box-shadow:0 0 0 1px var(--p);}
+.fx-rung-step{margin:0;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--p);}
+.fx-rung-t{margin:10px 0 0;font-size:24px;line-height:1.2;font-weight:800;letter-spacing:-.02em;}
+.fx-rung-price{margin:16px 0 0;display:flex;align-items:baseline;gap:6px;}
+.fx-rung-setup{margin:4px 0 0;font-weight:700;}
+.fx-rung-setup span{font-weight:500;color:var(--muted);}
+.fx-rung-line{margin:18px 0 0;}
+.fx-rung-fits{margin:10px 0 0;color:var(--muted);font-size:15px;}
+.fx-rung-cta{margin-top:auto;padding-top:24px;display:flex;flex-direction:column;gap:6px;}
+.fx-rung-cta .fx-btn{width:100%;}
+.fx-fine{margin:8px 0 0;}
+.fx-fine dt{font-weight:800;margin-top:20px;}
+.fx-fine dd{margin:6px 0 0;color:var(--muted);max-width:44em;}
+.fx-req-h{margin-top:56px;}
+.fx-after-h{margin-top:56px;}
+.fx-subnav a{padding:0 4px;}
+
+/* commission math (homepage + /restaurant-systems) */
+.fx-cm-grid{display:grid;gap:16px;margin-top:36px;}
+@media (min-width:760px){.fx-cm-grid{grid-template-columns:1fr 1fr;gap:20px;}}
+.fx-cm-card{border-radius:16px;padding:24px;border:1px solid var(--line);background:#fff;}
+.fx-cm-card--app{background:var(--tint);}
+.fx-cm-card--you{border-color:var(--p);box-shadow:0 0 0 1px var(--p);}
+.fx-cm-label{margin:0;font-size:14px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+.fx-cm-card--you .fx-cm-label{color:var(--p);}
+.fx-cm-big{margin:8px 0 0;font-size:clamp(44px,6vw,64px);font-weight:800;letter-spacing:-.04em;line-height:1;}
+.fx-cm-card--app .fx-cm-big{text-decoration:line-through;text-decoration-thickness:3px;text-decoration-color:rgba(23,20,33,.35);}
+.fx-cm-sub{margin:10px 0 0;color:var(--muted);}
+.fx-cm-even{margin:20px 0 0;font-size:18px;}
+.fx-cm-table{margin-top:36px;}
+.fx-cm-cap{caption-side:top;text-align:left;font-weight:800;padding-bottom:12px;}
+.fx-cm-row-you th,.fx-cm-row-you td{color:var(--p)!important;font-weight:800;}
+.fx-cm-honest{margin-top:32px;padding:24px;border-left:4px solid var(--p);background:var(--tint);border-radius:0 12px 12px 0;}
+.fx-cm-honest-t{margin:0 0 6px;font-weight:800;}
+.fx-cm-honest p{margin-top:0;}
+@media (max-width:759px){.fx-cm-table td::before{content:attr(data-label) ': ';}}
 `;

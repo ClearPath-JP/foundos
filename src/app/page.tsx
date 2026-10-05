@@ -1,33 +1,29 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 
-import Reveal from '@/components/contact/Reveal';
-import { CloseBand, Faq, PlanCards, ProjectCards } from '@/components/fx/cards';
-import { HOME_FAQ } from '@/components/fx/faq';
+import { CloseBand } from '@/components/fx/cards';
+import { LiquidBackground } from '@/components/fx/LiquidBackground';
 import Shell from '@/components/fx/Shell';
-import { WorkFeature } from '@/components/fx/work';
-import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
-import { NoiseTexture } from '@/components/ui/noise-texture';
-import { CONTACT, PLANS } from '@/config/offer';
-import { FEATURED_WORK } from '@/config/work';
+import { CONTACT, LIVE_PROJECTS, PLANS, TERM_MONTHS, usd } from '@/config/offer';
+import { WORK } from '@/config/work';
 
 import { SITE_URL } from './site';
 
 /**
- * The homepage — managed digital care for restaurants. Rebuilt 2026-10-01 from
- * "FoundOS Website and Offer Implementation" (repo root .docx), §6 page order
- * and §7 copy: hero, what foundos handles, plans, projects, how it works, FAQ.
- * 2026-10-01 evening: price moved up into the hero, the concept build moved to
- * second (proof right after the promise), and "Text Josh" is the main button.
+ * The homepage — the business-card front door. An owner scans the card on their phone. The first screen gives
+ * them one concrete promise ("kept right"), the price with its term, and two buttons: Text Josh and the demos.
+ * 2026-10-04 conversion review: the automated audit is no longer the hero (a blocked scan must not be the first
+ * thing an owner sees); it stays one link away. The concept work sits directly under the hero as proof.
+ * Everything else lives behind those links, so this page stays short (feedback memo "homepage = short front door").
  *
- * Keeps the 2026-09-30 purple system (now in components/fx). The previous
- * homepage — general local tech help with the free checkup — is in git at
- * 2026fb1; its form component (CheckupForm) is untouched.
+ * Replaces the 2026-10-01 long homepage (hero sheet, handles, ladder, commission math, steps, FAQ); that version is
+ * in git at 696e4b9. The ladder, commission math and FAQ still live on /plans and /restaurant-systems.
  */
 
-const TITLE = 'foundos | Restaurant websites, managed for you';
+const TITLE = 'foundos | Restaurant websites, ordering and booking, brought to a 2026 standard';
 const DESCRIPTION =
-  'foundos builds and manages your restaurant’s website, keeps your Google profile accurate and helps inquiries reach your team. From $299 a month, no setup fee.';
+  'Restaurant websites, online ordering and table booking, built and kept up for you by Josh in Marietta. From $299 a month, no cut of your sales. Get a free digital audit of your restaurant.';
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -35,6 +31,13 @@ export const metadata: Metadata = {
   /* Page-level openGraph replaces layout.tsx's whole block, so every field is restated. */
   openGraph: { title: TITLE, description: DESCRIPTION, url: './', siteName: 'foundos', type: 'website', locale: 'en_US' },
 };
+
+const [care, growth] = PLANS;
+/** The two one-time system setups, named in the price list so neither is a surprise later. */
+const bookingSetup = LIVE_PROJECTS.find((p) => p.slug === 'booking-launch');
+const orderingSetup = LIVE_PROJECTS.find((p) => p.slug === 'direct-ordering-launch');
+/** The desktop hero mockup: the booking concept on a phone. */
+const heroWork = WORK.find((w) => w.slug === 'cinder-and-fig') ?? WORK[0];
 
 /** Only verified facts: no street address, no ratings, no hours. */
 const SCHEMA = {
@@ -47,60 +50,47 @@ const SCHEMA = {
   founder: { '@type': 'Person', name: 'Josh Potesta' },
   address: { '@type': 'PostalAddress', addressLocality: 'Marietta', addressRegion: 'GA', addressCountry: 'US' },
   areaServed: { '@type': 'City', name: 'Marietta' },
-  description: 'Managed websites and digital upkeep for independent restaurants.',
+  description: 'Managed websites, online ordering and table booking for independent restaurants.',
   makesOffer: PLANS.map((p) => ({
     '@type': 'Offer',
     name: p.name,
-    priceSpecification: {
-      '@type': 'UnitPriceSpecification',
-      price: p.monthly,
-      priceCurrency: 'USD',
-      unitText: 'MONTH',
-    },
+    priceSpecification: { '@type': 'UnitPriceSpecification', price: p.monthly, priceCurrency: 'USD', unitText: 'MONTH' },
   })),
 };
 
-/** What foundos handles, doc §6 — in owner language, each with the moment it matters. */
-const HANDLES = [
-  {
-    t: 'Your website',
-    d: 'Built for you, hosted, kept fast and kept up to date.',
-    e: 'The menu online still has last year’s prices.',
-  },
-  {
-    t: 'Your business information',
-    d: 'Hours, links and details kept right on your site and Google.',
-    e: 'Google says you close at 5. You close at 9.',
-  },
-  {
-    t: 'Your forms',
-    d: 'Catering and event inquiries land with the right person.',
-    e: 'A catering request sat in an inbox nobody checks.',
-  },
-  {
-    t: 'Your follow-up',
-    d: 'Customers hear back, and you get reminded when they haven’t.',
-    e: 'The party of 40 booked somewhere that answered first.',
-  },
+/** Where to go after the audit. Same names as the header. */
+const DOORS = [
+  { href: '/work', t: 'See my work', d: 'Two restaurants built end to end. Open them and try them.' },
+  { href: '/restaurant-systems', t: 'Systems', d: 'Online ordering and table booking, with the staff screens.' },
+  { href: '/plans', t: 'Plans & pricing', d: `${care.name} ${usd(care.monthly)}/mo · ${growth.name} ${usd(growth.monthly)}/mo` },
 ] as const;
 
-/**
- * The hero visual: what an owner receives each month, drawn as a sheet. An
- * example of the kinds of work, not a report from any real restaurant — no
- * names and no numbers.
- */
-const UPDATE = [
-  { t: 'Holiday hours updated on your website and Google' },
-  { t: 'Three menu prices changed' },
-  { t: 'Catering inquiry sent to you, and the customer got a reply', tag: 'Growth' },
-  { t: 'Monthly summary: visits, calls and form sends', bars: true },
-] as const;
-
-const STEPS = [
-  { t: 'Choose a plan or project', d: 'Tell me about your restaurant. I’ll confirm it fits before anything is billed.' },
-  { t: 'Send what I need', d: 'Your menu, prices, logo, photos and access to your accounts.' },
-  { t: 'Approve the work', d: 'You see the site before it goes live. Two rounds of changes are included.' },
-  { t: 'I keep it right', d: 'Send changes any time. You get a short summary every month.' },
+/** What "a 2026 standard" means, in owner language: what customers expect now, and what it replaces. */
+const STANDARD = [
+  {
+    t: 'Built for the phone in their hand',
+    d: 'Menu, call and directions in one tap each. Most people look you up on a phone, often standing outside.',
+  },
+  {
+    t: 'A menu that’s easy on a phone',
+    d: 'Real text on a real page instead of a PDF or a photo of the printed menu: easier to read and scroll on a phone, and quick to update when a price changes.',
+  },
+  {
+    t: 'Your own food, photographed well',
+    d: 'Real dishes and your real room, not stock photos or three blurry pictures from 2019. People eat with their eyes first.',
+  },
+  {
+    t: 'Order or book without calling',
+    d: 'Pickup orders and table bookings straight from your site, landing on a tablet your staff already watch. No app taking a cut.',
+  },
+  {
+    t: 'Google says what your door says',
+    d: 'Hours, photos, takeout and your link set up on your Google Business Profile, and matching your website.',
+  },
+  {
+    t: 'Every button works, and it stays current',
+    d: 'No dead “Order Online” links, no 2021 in the footer. Holiday hours and new prices changed when you text me.',
+  },
 ] as const;
 
 export default function HomePage() {
@@ -111,162 +101,180 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(SCHEMA).replace(/</g, '\\u003c') }}
       />
 
-      {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="fx-hero">
-        <div className="fx-wash" aria-hidden="true" />
-        <NoiseTexture className="fx-noise" aria-hidden="true" frequency={0.65} noiseOpacity={1} />
-        <div className="fx-wrap fx-hero-grid">
-          <div>
-            <p className="fx-eyebrow">For independent restaurants · Marietta &amp; metro Atlanta</p>
-            <h1 className="fx-h1">
-              Your restaurant’s digital details, <span className="fx-accent">taken care of.</span>
+      {/* ── Hero: the promise, the price, Text Josh, the demos ─────────── */}
+      <section className="fx-hero hm-hero">
+        <LiquidBackground />
+        <div className="fx-wrap hm-hero-grid">
+          <div className="hm-hero-copy">
+            <p className="fx-eyebrow">Restaurants in Marietta &amp; metro Atlanta</p>
+            <h1 className="fx-h1 hm-h1">
+              Your restaurant’s website, <span className="fx-accent">kept right.</span>
             </h1>
-            <p className="fx-lede">
-              foundos builds and manages your website, keeps key business information accurate, and helps customer
-              inquiries reach the right people.
+            <p className="fx-lede hm-lede">
+              I build and manage restaurant websites for Marietta and metro Atlanta, so customers can find your menu,
+              check your hours, and reach you easily. When you need pickup ordering or table booking, I set that up with
+              your staff.
             </p>
-            <p className="fx-price">
-              <span className="fx-price-n">${PLANS[0].monthly}</span>
-              <span className="fx-price-per">/month</span>
-              <span className="fx-price-sub">{PLANS[0].name} plan · Website included · No setup fee</span>
+            <p className="hm-price">
+              <strong>{usd(care.monthly)} a month</strong> for a managed website. No website setup fee, a{' '}
+              {TERM_MONTHS}-month first term, and never a cut of your sales.
             </p>
-            <div className="fx-btns fx-btns--tight">
-              <InteractiveHoverButton href={`sms:${CONTACT.phone}`} className="fx-ihb">
-                Text Josh · {CONTACT.phonePretty}
-              </InteractiveHoverButton>
-              <Link href="/audit" className="fx-btn fx-btn--s fx-btn--lg">
-                Get my free growth audit →
+
+            <div className="fx-btns hm-ctas">
+              <a href={`sms:${CONTACT.phone}`} className="fx-btn fx-btn--p fx-btn--lg">
+                Text Josh your restaurant’s name
+              </a>
+              <Link href="/work" className="fx-btn fx-btn--s fx-btn--lg">
+                See the restaurant demos
               </Link>
             </div>
+
+            <p className="hm-josh">
+              <Image src="/josh-face.jpg" alt="Josh Potesta" width={52} height={52} className="hm-josh-img" priority />
+              <span>
+                Josh · <a href={`sms:${CONTACT.phone}`}>{CONTACT.phonePretty}</a> ·{' '}
+                <Link href="/audit">Or run a free website check</Link>
+              </span>
+            </p>
           </div>
 
-          <div className="fx-card-stage" aria-hidden="true">
-            <div className="fx-sheet">
-              <p className="fx-sheet-k">Example monthly update</p>
-              <p className="fx-sheet-h">What got done for your restaurant this month</p>
-              <ol className="fx-sheet-list">
-                {UPDATE.map((row, i) => (
-                  <li key={row.t}>
-                    <span className="fx-sheet-n">{i + 1}</span>
-                    <div>
-                      <p className="fx-sheet-t">{row.t}</p>
-                      {'bars' in row && (
-                        <>
-                          <span className="fx-bar" style={{ width: '86%' }} />
-                          <span className="fx-bar fx-bar--short" />
-                        </>
-                      )}
-                      {'tag' in row && <span className="fx-tag">{row.tag}</span>}
-                    </div>
-                  </li>
-                ))}
-              </ol>
+          <div className="hm-hero-art" aria-hidden="true">
+            <div className="hm-phone">
+              <Image src={heroWork.images.phone} alt="" width={390} height={844} sizes="300px" priority />
             </div>
+            <p className="hm-hero-cap">{heroWork.name} · concept build</p>
           </div>
         </div>
-      </section>
 
-      {/* ── Work: proof right after the promise. A concept, and it says so. ── */}
-      <section className="fx-sec fx-sec--tint" aria-labelledby="work-h">
         <div className="fx-wrap">
-          <WorkFeature item={FEATURED_WORK} />
-        </div>
-      </section>
-
-      {/* ── What foundos handles ─────────────────────────────────────── */}
-      <section className="fx-sec" aria-labelledby="handles-h">
-        <Reveal>
-          <div className="fx-wrap">
-            <p className="fx-kicker">What foundos handles</p>
-            <h2 className="fx-h2" id="handles-h">
-              The details customers notice when they’re wrong.
-            </h2>
-            <ul className="fx-handles" role="list">
-              {HANDLES.map((h) => (
-                <li key={h.t} className="fx-help-item">
-                  <p className="fx-help-t">{h.t}</p>
-                  <p className="fx-help-d">{h.d}</p>
-                  <p className="fx-help-e">“{h.e}”</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* ── Plans ────────────────────────────────────────────────────── */}
-      <section className="fx-sec fx-sec--tint" id="plans" aria-labelledby="plans-h">
-        <div className="fx-wrap">
-          <p className="fx-kicker">Monthly plans</p>
-          <h2 className="fx-h2" id="plans-h">
-            One price a month. The website is included.
-          </h2>
-          <p className="fx-p">
-            Both plans include building your website, so there is no setup fee. Digital Care keeps everything accurate.
-            Growth adds follow-up, for restaurants with catering or events worth chasing.
-          </p>
-          <PlanCards />
-          <p className="fx-p">
-            <Link href="/plans" className="fx-more">
-              Compare the plans line by line
-            </Link>
-          </p>
-        </div>
-      </section>
-
-      {/* ── Projects ─────────────────────────────────────────────────── */}
-      <section className="fx-sec" id="projects" aria-labelledby="projects-h">
-        <div className="fx-wrap">
-          <p className="fx-kicker">One-time projects</p>
-          <h2 className="fx-h2" id="projects-h">
-            Need one thing done? Buy just that.
-          </h2>
-          <p className="fx-p">
-            Projects are paid once, and you don’t need a monthly plan to buy one.
-          </p>
-          <ProjectCards />
-          <p className="fx-p">
-            <Link href="/projects" className="fx-more">
-              See every project, including the ones by request
-            </Link>
-          </p>
-        </div>
-      </section>
-
-      {/* ── How it works ─────────────────────────────────────────────── */}
-      <section className="fx-sec fx-sec--tint" aria-labelledby="how-h">
-        <Reveal>
-          <div className="fx-wrap">
-            <p className="fx-kicker">How it works</p>
-            <h2 className="fx-h2" id="how-h">
-              You run the restaurant. I keep the rest right.
-            </h2>
-            <ol className="fx-steps" role="list">
-              {STEPS.map((s) => (
-                <li key={s.t}>
-                  <p className="fx-step-t">{s.t}</p>
-                  <p className="fx-step-d">{s.d}</p>
+          <nav aria-label="Or look around">
+            <ol className="hm-doors" role="list">
+              {DOORS.map((d) => (
+                <li key={d.href}>
+                  <Link href={d.href} className="hm-door">
+                    <span className="hm-door-t">{d.t}</span>
+                    <span className="hm-door-d">{d.d}</span>
+                    <span className="hm-door-go" aria-hidden="true">
+                      →
+                    </span>
+                  </Link>
                 </li>
               ))}
             </ol>
-          </div>
-        </Reveal>
+          </nav>
+        </div>
       </section>
 
-      {/* ── FAQ ──────────────────────────────────────────────────────── */}
-      <section className="fx-sec" aria-labelledby="faq-h">
+      {/* ── Work: phone screenshots on a phone, desktop ones on a desktop ── */}
+      <section className="fx-sec fx-lsec" aria-labelledby="work-h">
+        <LiquidBackground className="fx-liquid--bottom" />
         <div className="fx-wrap">
-          <p className="fx-kicker">Questions</p>
-          <h2 className="fx-h2" id="faq-h">
-            What owners ask first
+          <h2 className="fx-h2 fx-h2--first" id="work-h">
+            My work. Open them, place an order, book a table.
           </h2>
-          <Faq items={HOME_FAQ} />
+          <ul className="fx-work-grid hm-work" role="list">
+            {WORK.map((item) => (
+              <li key={item.slug}>
+                <Link href={`/work/${item.slug}`} className="fx-wcard" aria-label={`${item.name}: ${item.type}. See the project`}>
+                  <span className="fx-wcard-img">
+                    <Image className="wc-desk" src={item.images.desktop} alt="" width={1440} height={900} sizes="(min-width:760px) 45vw, 1px" />
+                    <Image className="wc-phone" src={item.images.phone} alt="" width={390} height={844} sizes="(max-width:759px) 92vw, 1px" />
+                  </span>
+                  <span className="fx-wcard-body">
+                    <span className="fx-wcard-tags">
+                      <span className="fx-wcard-tag">{item.kind === 'concept' ? 'Concept' : 'Client'}</span>
+                    </span>
+                    <span className="fx-wcard-name">{item.name}</span>
+                    <span className="fx-wcard-sys">{item.systemLabel}</span>
+                    <span className="fx-wcard-more">See how I built it</span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="fx-note">Both are concept restaurants, built to show the whole job. They’re labelled that way everywhere.</p>
+        </div>
+      </section>
+
+      {/* ── What a 2026 standard means ───────────────────────────────── */}
+      <section className="fx-sec fx-sec--tint" aria-labelledby="std-h">
+        <div className="fx-wrap">
+          <h2 className="fx-h2 fx-h2--first" id="std-h">
+            What “a 2026 standard” means
+          </h2>
+          <p className="fx-p">
+            Most restaurant websites were built once and left alone. Customers notice. These six are what a site has to
+            do now. The free website check looks at the parts a computer can test, and I go through the rest by hand.
+          </p>
+          <ol className="hm-std" role="list">
+            {STANDARD.map((s, i) => (
+              <li key={s.t}>
+                <p className="hm-std-t">
+                  <span className="hm-std-n">{i + 1}.</span> {s.t}
+                </p>
+                <p className="hm-std-d">{s.d}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="fx-btns">
+            <Link href="/audit" className="fx-btn fx-btn--p fx-btn--lg">
+              See how your restaurant measures up
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Prices as a menu ─────────────────────────────────────────── */}
+      <section className="fx-sec fx-sec--tint" aria-labelledby="price-h">
+        <div className="fx-wrap">
+          <h2 className="fx-h2 fx-h2--first" id="price-h">
+            Two plans. No cut of your sales.
+          </h2>
+          <ul className="hm-menu" role="list">
+            <li>
+              <Link href="/plans/digital-care" className="hm-menu-row">
+                <span className="hm-menu-t">{care.name}</span>
+                <span className="hm-menu-dots" aria-hidden="true" />
+                <span className="hm-menu-n">
+                  {usd(care.monthly)}
+                  <small>/mo</small>
+                </span>
+              </Link>
+              <p className="hm-menu-d">
+                Your website, managed: built, hosted and kept up to date. Menu, hours, photos, Google. No website setup
+                fee, {TERM_MONTHS}-month first term.
+              </p>
+            </li>
+            <li>
+              <Link href="/plans/growth" className="hm-menu-row">
+                <span className="hm-menu-t">{growth.name}</span>
+                <span className="hm-menu-dots" aria-hidden="true" />
+                <span className="hm-menu-n">
+                  {usd(growth.monthly)}
+                  <small>/mo</small>
+                </span>
+              </Link>
+              <p className="hm-menu-d">
+                Everything in {care.name}, plus pickup ordering or table booking on a tablet your staff watch.{' '}
+                {TERM_MONTHS}-month first term, plus a one-time setup with the tablet and stand included
+                {bookingSetup && orderingSetup
+                  ? `: ${usd(bookingSetup.price)} for booking, ${orderingSetup.from ? 'from ' : ''}${usd(orderingSetup.price)} for ordering`
+                  : ''}
+                .
+              </p>
+            </li>
+          </ul>
+          <p className="fx-p">
+            <Link href="/plans" className="fx-more">
+              See everything that’s included, and the fine print
+            </Link>
+          </p>
         </div>
       </section>
 
       <CloseBand
         title="You’ll work directly with Josh."
-        body="I’m Josh Potesta, the founder of foundos, based in Marietta. Tell me about your restaurant and I’ll tell you which plan fits, or that neither does."
+        body="I’m Josh Potesta, based in Marietta. Text me your restaurant’s name and I’ll tell you what I’d fix first, or that you’re already in good shape."
       />
     </Shell>
   );

@@ -9,17 +9,17 @@ import type { Qa } from './cards';
  */
 const DIFFERENCE: Qa = {
   q: 'What’s the difference between the plans?',
-  a: 'Digital Care keeps your website and core digital information maintained. Growth adds more update time and up to two standard follow-up workflows, such as catering inquiries or review requests.',
+  a: 'Digital Care keeps your website and core digital information maintained. Growth adds twice the update time and one working system: table booking with a host stand, online ordering with a kitchen screen, or catering and event follow-up.',
 };
 
 const SETUP_FEE: Qa = {
-  q: 'Why is there no setup fee?',
-  a: `The website build is paid for over the first ${TERM_MONTHS} months of the plan instead of up front. After that first term, the plan continues month to month and you can cancel with 30 days’ notice.`,
+  q: 'Is there a setup fee?',
+  a: `Not for the website. The build is paid for over the first ${TERM_MONTHS} months of the plan instead of up front, then the plan continues month to month with 30 days’ notice to cancel. Booking and ordering are the exceptions. Each has a one-time setup that includes the staff tablet and stand: the Booking Launch builds your real floor plan into the system, and the Direct Ordering Launch enters your menu and sets up the kitchen screen. Both include training your team.`,
 };
 
 const ORDERING: Qa = {
-  q: 'Does direct ordering come with my monthly plan?',
-  a: 'Direct Ordering Launch is a separate project. Your monthly plan keeps the ordering link on your website working, but equipment, ordering software and day-to-day ordering support are separate.',
+  q: 'How does online ordering work, and what does it cost?',
+  a: 'Ordering runs on the Growth plan, plus the one-time Direct Ordering Launch: your menu and tax set up, a kitchen tablet and stand supplied, and your team trained. Customers order pickup from your website and pay at pickup. There is no commission or per-order fee. Delivery and online card payment aren’t included.',
 };
 
 const GUARANTEE: Qa = {
@@ -40,6 +40,7 @@ export const HOME_FAQ: readonly Qa[] = [DIFFERENCE, SETUP_FEE, ORDERING, GUARANT
 
 export const PLANS_FAQ: readonly Qa[] = [
   DIFFERENCE,
+  ORDERING,
   SETUP_FEE,
   { q: 'When do I pay, and when does billing start?', a: PLAN_TERMS.firstPayment },
   OWNERSHIP,

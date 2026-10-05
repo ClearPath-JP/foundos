@@ -1,3 +1,4 @@
+import { siteConfirmedDown, siteInspected } from './site-status.ts';
 import type {
   DeterministicFinding,
   Facts,
@@ -13,6 +14,12 @@ import type {
  * downstream may re-rank and re-phrase, but it is given these facts as its only
  * source of figures (spec §5.4). If the model call fails we render these
  * directly, which is why each one is already readable on its own.
+ *
+ * 2026-10-04 accuracy pass: a site our checker couldn't open (403, timeout,
+ * server error) produces no finding at all, because that isn't proof customers
+ * can't open it. "Not found" claims only fire on a page we could actually read.
+ * Claims the code can't measure (Google can't read PDFs, a dated footer means
+ * closed, X% of visitors are on phones) are gone.
  */
 
 const SLOW_MS = 3000;
@@ -33,16 +40,18 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
       fact: 'Your Google listing has no website on it.',
       metric: 'No site',
     });
-  } else if (site.checked && !site.reachable) {
+  } else if (siteConfirmedDown(site)) {
     out.push({
       code: 'site_unreachable',
       weight: 95,
-      fact: site.failureReason ?? "Your site didn't load when I tried it.",
-      metric: site.status ? `HTTP ${site.status}` : 'No response',
+      fact: site.failureReason ?? 'The website on your Google listing doesn’t open.',
+      metric: site.status ? `HTTP ${site.status}` : 'Doesn’t open',
     });
   }
 
-  const siteUp = Boolean(place.website) && site.reachable;
+  const siteUp = Boolean(place.website) && siteInspected(site);
+  /** The page's own text was readable, so "we didn't find X" means X isn't there. */
+  const readable = siteUp && site.readable === true;
 
   if (siteUp) {
     if (site.https === false) {
@@ -57,7 +66,7 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
       out.push({
         code: 'no_viewport',
         weight: 65,
-        fact: 'Your site has no mobile viewport set, so it renders zoomed-out and unusable on a phone.',
+        fact: 'Your site isn’t set up for phone screens, so on a phone it shows zoomed out and visitors have to pinch to read it.',
         metric: 'Not mobile-ready',
       });
     }
@@ -65,7 +74,7 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
       out.push({
         code: 'no_tel',
         weight: 60,
-        fact: 'There is no tap-to-call link anywhere on your site, so a visitor on a phone has to copy your number by hand.',
+        fact: 'We didn’t find a tap-to-call link on your homepage, so a visitor on a phone has to copy your number by hand.',
         metric: 'No tap-to-call',
       });
     }
@@ -73,7 +82,7 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
       out.push({
         code: 'slow',
         weight: 50,
-        fact: `Your site took ${(site.totalMs / 1000).toFixed(1)} seconds to load for me.`,
+        fact: `Your site took ${(site.totalMs / 1000).toFixed(1)} seconds to load for our checker.`,
         metric: `${(site.totalMs / 1000).toFixed(1)}s load`,
       });
     }
@@ -81,7 +90,7 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
       out.push({
         code: 'no_schema',
         weight: 30,
-        fact: 'Your site has no business markup, so Google has to guess at your hours, address, and category.',
+        fact: 'Your homepage doesn’t spell out your hours, address and type of business in the format search engines read.',
         metric: 'No markup',
       });
     }
@@ -89,17 +98,84 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
       out.push({
         code: 'stale',
         weight: 25,
-        fact: `The footer on your site still says ${site.copyrightYear}, which reads as abandoned to a first-time visitor.`,
+        fact: `The footer on your site still says © ${site.copyrightYear}.`,
         metric: `© ${site.copyrightYear}`,
       });
+    } else if (site.lastModifiedYear !== null && site.lastModifiedYear < currentYear - 1) {
+      out.push({
+        code: 'stale',
+        weight: 25,
+        fact: `Your homepage was last changed in ${site.lastModifiedYear}, according to your own web server.`,
+        metric: `Updated ${site.lastModifiedYear}`,
+      });
     }
+    if (site.deadLinks.length > 0) {
+      const d = site.deadLinks[0];
+      const more = site.deadLinks.length - 1;
+      out.push({
+        code: 'dead_buttons',
+        weight: 75,
+        fact: `Your “${d.label}” button ${d.reason}${more > 0 ? `, and ${more} more link${more === 1 ? '' : 's'} on your homepage ${more === 1 ? 'is' : 'are'} broken too` : ''}.`,
+        metric: `${site.deadLinks.length} broken`,
+      });
+    }
+    if (readable && site.photoCount !== null && site.photoCount < 3) {
+      out.push({
+        code: 'few_photos',
+        weight: 52,
+        fact:
+          site.photoCount === 0
+            ? 'We didn’t find any photos on your homepage.'
+            : `We found only ${site.photoCount} photo${site.photoCount === 1 ? '' : 's'} on your homepage.`,
+        metric: `${site.photoCount} photo${site.photoCount === 1 ? '' : 's'}`,
+      });
+    } else if (site.stockPhotoHosts.length > 0) {
+      out.push({
+        code: 'stock_photos',
+        weight: 40,
+        fact: `Some images on your site come from ${listAnd(site.stockPhotoHosts)}, a stock-photo library.`,
+        metric: 'Stock photos',
+      });
+    }
+    const heavy = (site.bytes ?? 0) >= 1_200_000 || (site.scriptCount ?? 0) >= 35;
+    if (heavy) {
+      const parts = [
+        (site.bytes ?? 0) >= 1_200_000 ? `${(site.bytes! / 1_000_000).toFixed(1)} MB of code` : null,
+        (site.scriptCount ?? 0) >= 35 ? `${site.scriptCount} separate scripts` : null,
+      ].filter(Boolean);
+      out.push({
+        code: 'too_complex',
+        weight: 34,
+        fact: `Your homepage loads ${parts.join(' and ')}. That’s a lot for a phone on cell signal.`,
+        metric: parts.length === 2 ? 'Heavy page' : (parts[0] ?? 'Heavy page'),
+      });
+    } else if ((site.linkCount ?? 0) >= 80) {
+      out.push({
+        code: 'too_complex',
+        weight: 30,
+        fact: `Your homepage has ${site.linkCount} different links, so the menu and the phone number compete with a lot else.`,
+        metric: `${site.linkCount} links`,
+      });
+    }
+  }
+
+  if (place.googlePhotoCount !== null && place.googlePhotoCount < 5) {
+    out.push({
+      code: 'few_google_photos',
+      weight: 44,
+      fact:
+        place.googlePhotoCount === 0
+          ? 'Your Google listing has no photos.'
+          : `Your Google listing has only ${place.googlePhotoCount} photo${place.googlePhotoCount === 1 ? '' : 's'}.`,
+      metric: `${place.googlePhotoCount} on Google`,
+    });
   }
 
   if (!place.hoursSet) {
     out.push({
       code: 'no_hours',
       weight: 45,
-      fact: 'Your Google listing has no opening hours set, and Google ranks incomplete profiles lower.',
+      fact: 'Your Google listing has no opening hours set, so people can’t see when you’re open.',
       metric: 'Hours missing',
     });
   }
@@ -108,7 +184,7 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
     out.push({
       code: 'low_rating',
       weight: 42,
-      fact: `Your Google rating is ${place.rating.toFixed(1)}, and below about 4.3 people start scrolling past.`,
+      fact: `Your Google rating is ${place.rating.toFixed(1)}.`,
       metric: `${place.rating.toFixed(1)} ★`,
     });
   }
@@ -117,7 +193,7 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
     out.push({
       code: 'few_reviews',
       weight: 40,
-      fact: `You have ${place.reviewCount} Google review${place.reviewCount === 1 ? '' : 's'}, which is not enough for you to rank against busier competitors nearby.`,
+      fact: `You have ${place.reviewCount} Google review${place.reviewCount === 1 ? '' : 's'}.`,
       metric: `${place.reviewCount} reviews`,
     });
   }
@@ -128,11 +204,11 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
     const apps = site.marketplaceLinks;
     const hasDirect = site.directOrderingLinks.length > 0;
 
-    if (apps.length > 0 && !hasDirect) {
+    if (siteUp && apps.length > 0 && !hasDirect) {
       out.push({
         code: 'marketplace_only',
         weight: 98,
-        fact: `Your site sends orders to ${listAnd(apps)} and has no direct ordering of its own, so a cut of every one of those tickets leaves the building.`,
+        fact: `Your site’s order links go to ${listAnd(apps)}, and we didn’t find ordering of your own. Those apps charge a commission on each order.`,
         metric: `${apps.length} app${apps.length === 1 ? '' : 's'}`,
       });
     } else if (!place.website && (place.delivery || place.takeout)) {
@@ -142,11 +218,11 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
         fact: 'Google shows you doing takeout or delivery, but you have no site of your own to take those orders on.',
         metric: 'Apps only',
       });
-    } else if (siteUp && !hasDirect && apps.length === 0) {
+    } else if (readable && !hasDirect && apps.length === 0 && site.hasOrderButton === false) {
       out.push({
         code: 'no_ordering_at_all',
         weight: 88,
-        fact: 'There is no way to place an order from your site, so every order has to come through the phone.',
+        fact: 'We didn’t find any way to order on your homepage, so orders have to come by phone or in person.',
         metric: 'Phone only',
       });
     }
@@ -155,8 +231,8 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
       out.push({
         code: 'menu_not_readable',
         weight: 55,
-        fact: 'Your menu is published as a PDF or an image, which Google cannot read and which is painful to pinch-zoom on a phone.',
-        metric: 'Menu unreadable',
+        fact: 'Your menu is posted as a PDF or a picture. On a phone that means pinching and zooming to read it.',
+        metric: 'PDF menu',
       });
     }
 
@@ -164,7 +240,7 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
       out.push({
         code: 'listing_flags_missing',
         weight: 35,
-        fact: 'Your listing does not say whether you do takeout or delivery, so you get filtered out when people search for either.',
+        fact: 'Your Google listing doesn’t say whether you do takeout or delivery.',
         metric: 'Flags unset',
       });
     }
@@ -173,7 +249,8 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
   // ---- Studios, salons, services -----------------------------------------
 
   if (place.category === 'studio' || place.category === 'service') {
-    if (site.bookingLinks.length === 0) {
+    // Only claim "no booking" when there's no site, or a site we could actually read.
+    if (site.bookingLinks.length === 0 && (!place.website || readable)) {
       out.push({
         code: 'no_booking',
         weight: 85,
@@ -195,7 +272,7 @@ export function deriveFindings(facts: Facts): DeterministicFinding[] {
 
   // ---- Shops --------------------------------------------------------------
 
-  if (place.category === 'shop' && site.hasEcommerce !== true) {
+  if (place.category === 'shop' && site.hasEcommerce !== true && (!place.website || readable)) {
     out.push({
       code: 'no_online_store',
       weight: 80,
@@ -236,24 +313,29 @@ function listAnd(items: string[]): string {
 
 const CONSEQUENCE: Record<string, string> = {
   no_website: 'Everyone who looks you up lands on someone else’s page instead of yours.',
-  site_unreachable: 'A customer who taps your link gives up and taps a competitor.',
+  site_unreachable: 'A customer who taps the website link on your listing gets nothing.',
   no_https: 'Visitors get warned away before they ever see your name.',
-  no_viewport: 'Most of your traffic is on a phone, and that is exactly where it breaks.',
+  no_viewport: 'Anyone who opens it on a phone has to work to read it.',
   no_tel: 'The easiest thing a customer can do — call you — takes work.',
-  slow: 'Every extra second loses a share of the people who tapped through.',
-  no_schema: 'Google shows you less often because it is not sure what you are.',
-  stale: 'People assume you may have closed.',
-  no_hours: 'You drop out of "open now" searches.',
-  low_rating: 'People compare you side by side on Maps and pick the higher number.',
-  few_reviews: 'You look newer and less proven than you actually are.',
-  marketplace_only: 'You are renting your own customers back from the apps.',
-  no_direct_ordering: 'Every online order carries a commission you never see.',
-  no_ordering_at_all: 'Orders that ring busy during a rush simply walk away.',
-  menu_not_readable: 'People who cannot read your menu do not order from it.',
-  listing_flags_missing: 'You are invisible in the filters people actually use.',
+  slow: 'On a phone with weak signal it will feel slower still.',
+  no_schema: 'Search engines have to piece your details together instead of reading them straight off your site.',
+  stale: 'It’s a small detail, but dated details make a site look less looked-after.',
+  no_hours: 'When people filter for places open now, Google has no hours to go on.',
+  low_rating: 'On Maps, people see your rating right next to everyone else’s.',
+  few_reviews: 'More recent reviews give a first-time customer more to go on.',
+  marketplace_only: 'Regulars who order through an app pay you less per order than if they ordered from you.',
+  no_direct_ordering: 'Orders placed through the apps carry their commission.',
+  no_ordering_at_all: 'When the phone is busy during a rush, some callers give up.',
+  menu_not_readable: 'A menu page that reads well on a phone is easier for customers to use, and easier for you to keep up to date.',
+  listing_flags_missing: 'People who filter Maps for takeout or delivery may not see you.',
   no_booking: 'Anyone who finds you after hours has no way to commit.',
   not_reservable: 'The one-tap booking path on Maps never appears for you.',
   no_online_store: 'You are limited to whoever physically walks in.',
+  dead_buttons: 'A customer who taps it gets nothing and has to find another way to reach you.',
+  few_photos: 'Photos of your food and your room help a first-time visitor decide.',
+  stock_photos: 'Your own photos show customers your actual food and your actual room.',
+  too_complex: 'Heavy pages take longer to show the menu on a phone.',
+  few_google_photos: 'Your listing is often the first thing people see, and photos help them decide.',
 };
 
 const SERVICE_MAP: Record<string, ReportBuild> = {
@@ -262,12 +344,12 @@ const SERVICE_MAP: Record<string, ReportBuild> = {
     why: 'Built around how you actually run, on your own domain, and you own all of it.',
   },
   site_unreachable: {
-    title: 'A site that stays up, and I watch it',
-    why: 'Hosting and uptime monitoring are part of the monthly, so a dead link never costs you a customer again.',
+    title: 'A site that opens, on hosting I manage',
+    why: 'Hosting is part of the monthly plan, and a broken site has an urgent route to me.',
   },
   no_viewport: {
     title: 'A mobile-first rebuild',
-    why: 'Roughly 4 in 5 of your visitors are on a phone. That is the version I design first.',
+    why: 'Designed for the phone first, then the desktop.',
   },
   no_tel: {
     title: 'Tap-to-call on every screen',
@@ -278,16 +360,16 @@ const SERVICE_MAP: Record<string, ReportBuild> = {
     why: 'The same order, minus the app’s cut, and you keep the customer’s details.',
   },
   no_direct_ordering: {
-    title: 'Direct online ordering, printed to your kitchen',
-    why: 'Runs alongside your current setup. No POS change, no commission.',
+    title: 'Pickup ordering on your own site, to a kitchen tablet',
+    why: 'Runs alongside your current setup, pay at pickup, and no commission to me.',
   },
   no_ordering_at_all: {
     title: 'Online ordering so the phone stops being the bottleneck',
     why: 'Orders arrive while your staff keep working the line.',
   },
   menu_not_readable: {
-    title: 'A real menu page Google can read',
-    why: 'Every dish becomes its own searchable item instead of a flat image.',
+    title: 'A menu page that reads well on a phone',
+    why: 'Easy to scroll on a phone, and easy to update when prices change.',
   },
   no_booking: {
     title: 'Online booking that runs itself',
@@ -302,12 +384,12 @@ const SERVICE_MAP: Record<string, ReportBuild> = {
     why: 'Sell past closing time and past the front door.',
   },
   few_reviews: {
-    title: 'An automatic review engine',
-    why: 'Happy customers get asked at the right moment, so your rating keeps climbing on its own.',
+    title: 'A simple way to ask for reviews',
+    why: 'Happy customers get a direct link to leave a review, at the right moment.',
   },
   low_rating: {
-    title: 'An automatic review engine',
-    why: 'Steady new reviews from happy customers is the only thing that moves that number.',
+    title: 'A simple way to ask for reviews',
+    why: 'Steady new reviews from happy customers give people more to go on.',
   },
   no_hours: {
     title: 'Your Google profile cleaned up and kept current',
@@ -315,19 +397,39 @@ const SERVICE_MAP: Record<string, ReportBuild> = {
   },
   no_schema: {
     title: 'Your Google profile cleaned up and kept current',
-    why: 'Proper markup so Google knows exactly what you are and shows you more often.',
+    why: 'Your hours, address and type of business spelled out so search engines read them correctly.',
   },
   listing_flags_missing: {
     title: 'Your Google profile cleaned up and kept current',
-    why: 'The filters people search with will actually include you.',
+    why: 'Takeout, delivery and the other basics set on your listing.',
   },
   slow: {
-    title: 'A fast, lightweight rebuild',
-    why: 'Built to load in under two seconds on cell service.',
+    title: 'A lighter, faster site',
+    why: 'Built lean, so it loads quickly on cell service.',
   },
   stale: {
     title: 'Ongoing upkeep, included',
-    why: 'Prices, hours, and specials change when you text me — not five days later.',
+    why: 'Send me prices, hours and specials, and I update them inside your plan’s update time.',
+  },
+  dead_buttons: {
+    title: 'Every button checked and working',
+    why: 'Order, menu, book and call all go where they say, checked before launch.',
+  },
+  few_photos: {
+    title: 'Real photos of your food, front and center',
+    why: 'Your own dishes and your room on the homepage, so people are hungry before they reach the menu.',
+  },
+  stock_photos: {
+    title: 'Real photos of your food, front and center',
+    why: 'Your own dishes and your room, not a stock library everyone else uses too.',
+  },
+  too_complex: {
+    title: 'A simpler, faster site',
+    why: 'Menu, hours, order and call in one tap each, and nothing else in the way on a phone.',
+  },
+  few_google_photos: {
+    title: 'Your Google profile cleaned up and kept current',
+    why: 'Fresh food and room photos on your listing, where people decide before they ever click.',
   },
   no_https: {
     title: 'A secure site on your own domain',

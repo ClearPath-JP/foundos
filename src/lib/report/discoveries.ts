@@ -1,3 +1,4 @@
+import { inconclusiveNote, siteConfirmedDown } from './site-status.ts';
 import type { Discovery, PlaceFacts, SiteFacts } from './types';
 
 /**
@@ -61,7 +62,14 @@ export function placeDiscoveries(place: PlaceFacts): Discovery[] {
   }
 
   if (!place.hoursSet) {
-    out.push({ text: "Your hours aren't set, so you drop out of “open now” searches", tone: 'bad' });
+    out.push({ text: 'No opening hours on your Google listing', tone: 'bad' });
+  }
+
+  if (place.googlePhotoCount !== null && place.googlePhotoCount < 5) {
+    out.push({
+      text: place.googlePhotoCount === 0 ? 'No photos on your Google listing' : `Only ${place.googlePhotoCount} photo${place.googlePhotoCount === 1 ? '' : 's'} on your Google listing`,
+      tone: 'bad',
+    });
   }
 
   if (!place.phone) {
@@ -78,17 +86,19 @@ export function siteDiscoveries(site: SiteFacts): Discovery[] {
   if (!site.checked) return out;
 
   if (!site.reachable) {
-    out.push({
-      text: site.failureReason ?? "Your site didn't load when I opened it",
-      tone: 'bad',
-    });
+    // Only a failure that would hit a customer too is bad news. A 403 or a timeout to our checker is just unknown.
+    out.push(
+      siteConfirmedDown(site)
+        ? { text: site.failureReason ?? 'The website on your listing doesn’t open', tone: 'bad' }
+        : { text: inconclusiveNote(site), tone: 'neutral' }
+    );
     return out;
   }
 
   if (site.totalMs !== null) {
     const secs = (site.totalMs / 1000).toFixed(1);
     if (site.totalMs > SLOW_MS) {
-      out.push({ text: `Your site took ${secs}s to load — that's slow`, tone: 'bad' });
+      out.push({ text: `Your site took ${secs}s to load for our checker`, tone: 'bad' });
     } else if (site.totalMs < FAST_MS) {
       out.push({ text: `Your site loaded in ${secs}s — that part's fine`, tone: 'good' });
     }
@@ -103,16 +113,16 @@ export function siteDiscoveries(site: SiteFacts): Discovery[] {
   }
 
   if (site.hasTelLink === false) {
-    out.push({ text: 'Nowhere on the site can someone tap to call you', tone: 'bad' });
+    out.push({ text: 'No tap-to-call link on your homepage', tone: 'bad' });
   }
 
   if (site.menuIsPdfOrImage) {
-    out.push({ text: 'Your menu is a PDF — Google can’t read it', tone: 'bad' });
+    out.push({ text: 'Your menu is a PDF or a picture: pinch-and-zoom on a phone', tone: 'bad' });
   }
 
   if (site.marketplaceLinks.length > 0) {
     out.push({
-      text: `Orders go out to ${listAnd(site.marketplaceLinks)}`,
+      text: `Order links go to ${listAnd(site.marketplaceLinks)}`,
       tone: 'bad',
     });
   }
@@ -129,14 +139,30 @@ export function siteDiscoveries(site: SiteFacts): Discovery[] {
     const currentYear = new Date().getFullYear();
     if (site.copyrightYear < currentYear - 1) {
       out.push({
-        text: `Footer still says ${site.copyrightYear} — reads as abandoned`,
+        text: `Footer still says © ${site.copyrightYear}`,
         tone: 'bad',
       });
     }
   }
 
+  if (site.deadLinks.length > 0) {
+    out.push({ text: `Your “${site.deadLinks[0].label}” button ${site.deadLinks[0].reason}`, tone: 'bad' });
+  }
+
+  if (site.photoCount !== null) {
+    if (site.photoCount < 3) {
+      out.push({ text: site.photoCount === 0 ? 'We didn’t find photos on your homepage' : `We found only ${site.photoCount} photo${site.photoCount === 1 ? '' : 's'} on your homepage`, tone: 'bad' });
+    } else if (site.stockPhotoHosts.length === 0) {
+      out.push({ text: `${site.photoCount} photos on your homepage`, tone: 'good' });
+    }
+  }
+
+  if (site.stockPhotoHosts.length > 0) {
+    out.push({ text: `Some images come from ${listAnd(site.stockPhotoHosts)}, a stock-photo library`, tone: 'bad' });
+  }
+
   if (site.hasLocalBusinessSchema === false) {
-    out.push({ text: 'No business markup, so Google guesses at your details', tone: 'bad' });
+    out.push({ text: 'Your business details aren’t spelled out for search engines', tone: 'bad' });
   }
 
   return out;

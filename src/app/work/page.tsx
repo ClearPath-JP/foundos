@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { CloseBand } from '@/components/fx/cards';
 import Shell from '@/components/fx/Shell';
-import { TryLink, WorkVisual } from '@/components/fx/work';
+import { LiquidBackground } from '@/components/fx/LiquidBackground';
 import { WORK } from '@/config/work';
 
 const TITLE = 'Work | foundos';
 const DESCRIPTION =
-  'The Wandering Chile: a concept restaurant built from scratch by foundos, with a name, logo, menu and online pickup ordering you can try.';
+  'Concept restaurants built end to end by foundos: The Wandering Chile with online pickup ordering, and Cinder & Fig with table booking and a live staff screen you can try.';
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -16,103 +17,57 @@ export const metadata: Metadata = {
   openGraph: { title: TITLE, description: DESCRIPTION, url: './work', siteName: 'foundos', type: 'website', locale: 'en_US' },
 };
 
+/** The portfolio at a glance: one card per project, each opening its own page. */
 export default function WorkPage() {
   return (
     <Shell current="work">
       <section className="fx-phead">
-        <div className="fx-wash" aria-hidden="true" />
+        <LiquidBackground />
         <div className="fx-wrap">
           <p className="fx-eyebrow">Work</p>
           <h1 className="fx-h1">See what you’d get before you pay for it.</h1>
           <p className="fx-lede">
-            Real client work goes here once those restaurants have agreed to be shown. Until then, this is a concept
-            built end to end, and labelled as one.
+            Each one is built end to end: the website, and the system the staff run it with. Real client work joins
+            these once those restaurants agree to be shown. Until then, concepts are labelled as concepts.
           </p>
         </div>
       </section>
 
-      {WORK.map((item) => (
-        <article key={item.slug} aria-labelledby={`w-${item.slug}`}>
-          <section className="fx-sec fx-sec--join">
-            <div className="fx-wrap fx-split">
-              <div>
-                <span className="fx-badge">{item.kind === 'concept' ? 'Concept build' : 'Client'}</span>
-                <h2 className="fx-h2" id={`w-${item.slug}`}>
-                  {item.name}
-                </h2>
-                <p className="fx-plan-for" style={{ marginTop: 8 }}>
-                  {item.type}
-                </p>
-                <p className="fx-p">{item.summary}</p>
-                <div className="fx-btns">
-                  <TryLink item={item} className="fx-btn fx-btn--p fx-btn--lg">
-                    Open the live site
-                  </TryLink>
-                </div>
-                {item.kind === 'concept' && (
-                  <p className="fx-note">
-                    The restaurant, address, hours and menu are made up. Ordering is a working demo: nothing is charged
-                    and no order is sent.
-                  </p>
-                )}
-              </div>
-              <WorkVisual item={item} />
-            </div>
-          </section>
-
-          <section className="fx-sec fx-sec--tint" aria-label={`What was made for ${item.name}`}>
-            <div className="fx-wrap">
-              <p className="fx-kicker">What I made</p>
-              <h3 className="fx-h2">Not just a website.</h3>
-              <ul className="fx-handles" role="list">
-                {item.made.map((m) => (
-                  <li key={m.t} className="fx-help-item">
-                    <p className="fx-help-t">{m.t}</p>
-                    <p className="fx-help-d">{m.d}</p>
-                  </li>
-                ))}
-              </ul>
-              <figure className="fx-shot">
-                <Image
-                  src={item.images.detail}
-                  alt={`${item.name} menu: meal deals with prices and Add to Order buttons, then the taco section.`}
-                  width={1440}
-                  height={900}
-                  sizes="(min-width:1120px) 1040px, 92vw"
-                />
-                <figcaption>The meal deals and menu, each item one tap from the cart.</figcaption>
-              </figure>
-            </div>
-          </section>
-
-          <section className="fx-sec" aria-label="Try it yourself">
-            <div className="fx-wrap fx-split fx-split--top">
-              <div>
-                <p className="fx-kicker">Try it yourself</p>
-                <h3 className="fx-h2">Place an order. It takes a minute.</h3>
-              </div>
-              <div>
-                <ol className="fx-steps fx-steps--list" role="list">
-                  {item.tryIt.map((t) => (
-                    <li key={t}>
-                      <p className="fx-step-d">{t}</p>
-                    </li>
-                  ))}
-                </ol>
-                <div className="fx-btns">
-                  <TryLink item={item} className="fx-btn fx-btn--p fx-btn--lg">
-                    Try the ordering demo
-                  </TryLink>
-                </div>
-              </div>
-            </div>
-          </section>
-        </article>
-      ))}
+      <section className="fx-sec fx-sec--join fx-lsec" aria-labelledby="work-list-h">
+        <LiquidBackground className="fx-liquid--bottom" />
+        <div className="fx-wrap">
+          <h2 className="fx-sr" id="work-list-h">
+            Projects
+          </h2>
+          <ul className="fx-work-grid" role="list">
+            {WORK.map((item) => {
+              return (
+                <li key={item.slug}>
+                  <Link href={`/work/${item.slug}`} className="fx-wcard" aria-label={`${item.name}: ${item.type}. Read more`}>
+                    <span className="fx-wcard-img">
+                      <Image className="wc-desk" src={item.images.desktop} alt="" width={1440} height={900} sizes="(min-width:760px) 45vw, 1px" />
+                      <Image className="wc-phone" src={item.images.phone} alt="" width={390} height={844} sizes="(max-width:759px) 92vw, 1px" />
+                    </span>
+                    <span className="fx-wcard-body">
+                      <span className="fx-wcard-tags">
+                        <span className="fx-wcard-tag">{item.kind === 'concept' ? 'Concept' : 'Client'}</span>
+                      </span>
+                      <span className="fx-wcard-name">{item.name}</span>
+                      <span className="fx-wcard-type">{item.type}</span>
+                      <span className="fx-wcard-sys">{item.systemLabel}</span>
+                      <span className="fx-wcard-more">See the project</span>
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
 
       <CloseBand
         title="Want this for your restaurant?"
-        body="Built the same way, with your real name, menu and photos. The website comes with either monthly plan. Online ordering is its own project on a supported ordering system, and logo work is quoted separately."
+        body="Built the same way, with your real name, menu and photos. A website alone is Digital Care. Booking, follow-up or other systems are Growth, and online ordering adds a one-time setup. Logo work is quoted separately."
       />
     </Shell>
   );

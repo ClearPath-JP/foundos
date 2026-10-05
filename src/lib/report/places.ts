@@ -36,6 +36,8 @@ const DETAILS_MASK = [
   'dineIn',
   'reservable',
   'curbsidePickup',
+  // Pro-tier field; the mask is already billed at Enterprise for rating, so this adds no cost tier.
+  'photos',
 ].join(',');
 
 export class PlacesUnavailableError extends Error {}
@@ -57,6 +59,7 @@ type RawPlace = {
   dineIn?: boolean;
   reservable?: boolean;
   curbsidePickup?: boolean;
+  photos?: unknown[];
 };
 
 function apiKey(): string {
@@ -148,5 +151,6 @@ export async function placeDetails(placeId: string): Promise<PlaceFacts> {
     dineIn: p.dineIn ?? null,
     reservable: p.reservable ?? null,
     curbsidePickup: p.curbsidePickup ?? null,
+    googlePhotoCount: Array.isArray(p.photos) ? p.photos.length : 0,
   };
 }

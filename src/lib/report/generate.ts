@@ -9,6 +9,7 @@ import type {
   ReportFinding,
   ReportHeader,
 } from './types';
+import { siteConfirmedDown, siteInspected } from './site-status.ts';
 
 /**
  * Turns measured facts into owner-language findings.
@@ -123,6 +124,7 @@ Absolute rules:
 - Return only the finding codes you were given. Never invent a code.
 - If a fact has a metric, copy it verbatim into impact. If it has none, use null.
 - Rank most expensive to the owner first.
+- Never claim Google can't read a PDF, that a dated footer means the business is closed, or that a fix will bring a specific result. Describe what was measured and the plain consequence.
 
 Voice: plain, direct, owner-to-owner. Like a contractor pointing at a problem, not a consultant presenting. Second person ("your site", "you"). No jargon — never say SEO, schema, conversion, funnel, or optimize. Short sentences. No hype, no exclamation marks, no emoji.
 
@@ -141,7 +143,13 @@ function factsPrompt(facts: Facts, findings: DeterministicFinding[]): string {
       ? `Google review count: ${place.reviewCount}`
       : 'Google review count: not reported',
     `Website on listing: ${place.website ?? 'none'}`,
-    site.checked ? `Site reachable: ${site.reachable ? 'yes' : 'no'}` : null,
+    !site.checked
+      ? null
+      : siteInspected(site)
+        ? 'Site check: opened normally'
+        : siteConfirmedDown(site)
+          ? `Site check: does not open for anyone (${site.failureReason ?? 'failed'})`
+          : 'Site check: INCONCLUSIVE. Our automated checker was turned away or timed out. Customers may open it fine. Do not say or imply the site is down, broken or unreachable.',
     site.marketplaceLinks.length
       ? `Delivery apps linked from their site: ${site.marketplaceLinks.join(', ')}`
       : null,
