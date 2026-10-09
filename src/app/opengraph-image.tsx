@@ -17,7 +17,7 @@ import { ImageResponse } from 'next/og';
  * src/app/demo/istanbul/layout.tsx).
  */
 
-export const alt = 'foundos — your restaurant’s digital details, taken care of. Managed restaurant websites from $299 a month, Marietta, GA.';
+export const alt = 'FoundOS — Your next inquiry should have a clear next step. Free 3-point digital growth audit, reviewed by Josh.';
 
 export const size = { width: 1200, height: 630 };
 
@@ -30,13 +30,13 @@ const PURPLE = '#6D28D9';
 const PINK = '#C52E98';
 const LAV = '#EDE5FA';
 
-const LABEL = 'FOR INDEPENDENT RESTAURANTS · MARIETTA, GA';
-const LINE_A = 'Your restaurant’s digital details,';
-const LINE_B = 'taken care of.';
+const LABEL = 'FREE 3-POINT DIGITAL GROWTH AUDIT';
+const LINE_A = 'Your next inquiry should have a';
+const LINE_B = 'clear next step.';
 const LINE_C = '';
-const MARK = 'foundos';
-const MARK_AI = '.ai';
-const FOOT = 'From $299 a month · No website setup fee · josh@foundos.ai';
+const MARK = 'Found';
+const MARK_AI = 'OS';
+const FOOT = 'Free · Reviewed by Josh · foundos.ai';
 
 /**
  * Fetch one Google font as a TTF, subset to the glyphs actually drawn.

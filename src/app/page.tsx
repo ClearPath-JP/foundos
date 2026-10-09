@@ -2,280 +2,172 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { CloseBand } from '@/components/fx/cards';
 import { LiquidBackground } from '@/components/fx/LiquidBackground';
-import Shell from '@/components/fx/Shell';
-import { CONTACT, LIVE_PROJECTS, PLANS, TERM_MONTHS, usd } from '@/config/offer';
-import { WORK } from '@/config/work';
-
-import { SITE_URL } from './site';
+import { AuditForm } from '@/components/landing/AuditForm';
+import { LandingShell } from '@/components/landing/LandingShell';
 
 /**
- * The homepage — the business-card front door. An owner scans the card on their phone. The first screen gives
- * them one concrete promise ("kept right"), the price with its term, and two buttons: Text Josh and the demos.
- * 2026-10-04 conversion review: the automated audit is no longer the hero (a blocked scan must not be the first
- * thing an owner sees); it stays one link away. The concept work sits directly under the hero as proof.
- * Everything else lives behind those links, so this page stays short (feedback memo "homepage = short front door").
+ * foundos.ai is one landing page (2026-10-09, launch pack `foundos-launch-pack/01-PRODUCT-PAGE-FORM.md`):
+ * a free 3-point digital growth audit for service businesses, reviewed by Josh by hand.
+ * Reel → comment AUDIT → DM → this page → Tally form → Josh emails the audit.
  *
- * Replaces the 2026-10-01 long homepage (hero sheet, handles, ladder, commission math, steps, FAQ); that version is
- * in git at 696e4b9. The ladder, commission math and FAQ still live on /plans and /restaurant-systems.
+ * Copy is the pack's, verbatim. No prices, no portfolio, no nav: the old restaurant-offer homepage is in git at
+ * 918db3a, and its pages redirect here (next.config.ts).
  */
 
-const TITLE = 'foundos | Restaurant websites, ordering and booking, brought to a 2026 standard';
+const TITLE = 'Free 3-Point Digital Growth Audit | FoundOS';
 const DESCRIPTION =
-  'Restaurant websites, online ordering and table booking, built and kept up for you by Josh in Marietta. From $299 a month, no cut of your sales. Get a free digital audit of your restaurant.';
+  'Request a free review from Josh at FoundOS. Get three practical improvements for your service business’s website, lead capture, and follow-up.';
 
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  /* Page-level openGraph replaces layout.tsx's whole block, so every field is restated. */
-  openGraph: { title: TITLE, description: DESCRIPTION, url: './', siteName: 'foundos', type: 'website', locale: 'en_US' },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: './', siteName: 'FoundOS', type: 'website', locale: 'en_US' },
 };
 
-const [care, growth] = PLANS;
-/** The two one-time system setups, named in the price list so neither is a surprise later. */
-const bookingSetup = LIVE_PROJECTS.find((p) => p.slug === 'booking-launch');
-const orderingSetup = LIVE_PROJECTS.find((p) => p.slug === 'direct-ordering-launch');
-/** The desktop hero mockup: the booking concept on a phone. */
-const heroWork = WORK.find((w) => w.slug === 'cinder-and-fig') ?? WORK[0];
-
-/** Only verified facts: no street address, no ratings, no hours. */
-const SCHEMA = {
-  '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
-  name: 'foundos',
-  url: SITE_URL,
-  email: CONTACT.email,
-  telephone: '+1-404-436-3393',
-  founder: { '@type': 'Person', name: 'Josh Potesta' },
-  address: { '@type': 'PostalAddress', addressLocality: 'Marietta', addressRegion: 'GA', addressCountry: 'US' },
-  areaServed: { '@type': 'City', name: 'Marietta' },
-  description: 'Managed websites, online ordering and table booking for independent restaurants.',
-  makesOffer: PLANS.map((p) => ({
-    '@type': 'Offer',
-    name: p.name,
-    priceSpecification: { '@type': 'UnitPriceSpecification', price: p.monthly, priceCurrency: 'USD', unitText: 'MONTH' },
-  })),
-};
-
-/** Where to go after the audit. Same names as the header. */
-const DOORS = [
-  { href: '/work', t: 'See my work', d: 'Two restaurants built end to end. Open them and try them.' },
-  { href: '/restaurant-systems', t: 'Systems', d: 'Online ordering and table booking, with the staff screens.' },
-  { href: '/plans', t: 'Plans & pricing', d: `${care.name} ${usd(care.monthly)}/mo · ${growth.name} ${usd(growth.monthly)}/mo` },
+/** The three checks. `looks` is what I actually open and test, so the row reads as work, not a slogan. */
+const CHECKS = [
+  {
+    t: 'Make the offer clear',
+    d: 'Can someone quickly understand what you do, who you help, and how to get started? I’ll look for confusing wording and missing next steps.',
+    looks: ['Your first screen', 'Headline & wording', 'The next step'],
+  },
+  {
+    t: 'Make it easy to inquire',
+    d: 'I’ll check your links, calls to action, and request process for friction that could stop an interested visitor from reaching you.',
+    looks: ['Buttons & links', 'Forms on a phone', 'Contact options'],
+  },
+  {
+    t: 'Give each inquiry a next step',
+    d: 'I’ll review what happens after someone reaches out, using what’s visible and the details you share. You’ll get a practical suggestion for your follow-up process.',
+    looks: ['What visitors are told', 'Response expectations', 'What you share'],
+  },
 ] as const;
 
-/** What "a 2026 standard" means, in owner language: what customers expect now, and what it replaces. */
-const STANDARD = [
+const FAQ = [
   {
-    t: 'Built for the phone in their hand',
-    d: 'Menu, call and directions in one tap each. Most people look you up on a phone, often standing outside.',
+    q: 'What will I receive?',
+    a: 'A short Loom video or PDF with three practical improvements and the change I’d tackle first, sent to your email and your Instagram DM. I review every business personally.',
   },
   {
-    t: 'A menu that’s easy on a phone',
-    d: 'Real text on a real page instead of a PDF or a photo of the printed menu: easier to read and scroll on a phone, and quick to update when a price changes.',
+    q: 'Do I need a website?',
+    a: 'No. Share your Instagram, Google Business Profile, or another public business page instead.',
   },
   {
-    t: 'Your own food, photographed well',
-    d: 'Real dishes and your real room, not stock photos or three blurry pictures from 2019. People eat with their eyes first.',
+    q: 'Is this really free?',
+    a: 'Yes. The review is free, and you don’t need to book a call or buy anything to receive it.',
   },
   {
-    t: 'Order or book without calling',
-    d: 'Pickup orders and table bookings straight from your site, landing on a tablet your staff already watch. No app taking a cut.',
-  },
-  {
-    t: 'Google says what your door says',
-    d: 'Hours, photos, takeout and your link set up on your Google Business Profile, and matching your website.',
-  },
-  {
-    t: 'Every button works, and it stays current',
-    d: 'No dead “Order Online” links, no 2021 in the footer. Holiday hours and new prices changed when you text me.',
+    q: 'Will you need my passwords?',
+    a: 'No. This audit uses your public pages and the information you choose to share.',
   },
 ] as const;
 
 export default function HomePage() {
   return (
-    <Shell current={null}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(SCHEMA).replace(/</g, '\\u003c') }}
-      />
-
-      {/* ── Hero: the promise, the price, Text Josh, the demos ─────────── */}
-      <section className="fx-hero hm-hero">
+    <LandingShell>
+      {/* ── Hero: the promise on the left, the live form on the right (stacked on a phone) ── */}
+      <section className="lp-hero" id="request" aria-labelledby="hero-h">
         <LiquidBackground />
-        <div className="fx-wrap hm-hero-grid">
-          <div className="hm-hero-copy">
-            <p className="fx-eyebrow">Restaurants in Marietta &amp; metro Atlanta</p>
-            <h1 className="fx-h1 hm-h1">
-              Your restaurant’s website, <span className="fx-accent">kept right.</span>
+        <div className="fx-wrap lp-hero-grid">
+          <div className="lp-hero-copy">
+            <p className="fx-eyebrow">Free 3-point digital growth audit</p>
+            <h1 className="lp-h1" id="hero-h">
+              Your next inquiry should have a <span className="lp-grad">clear next step.</span>
             </h1>
-            <p className="fx-lede hm-lede">
-              I build and manage restaurant websites for Marietta and metro Atlanta, so customers can find your menu,
-              check your hours, and reach you easily. When you need pickup ordering or table booking, I set that up with
-              your staff.
+            <p className="lp-lede">
+              I’m Josh, founder of FoundOS. I’ll personally review your website or business profile and send you a short
+              Loom video or PDF with three practical ways to make your offer clearer, capture inquiries, and improve
+              follow-up, by email and Instagram DM.
             </p>
-            <p className="hm-price">
-              <strong>{usd(care.monthly)} a month</strong> for a managed website. No website setup fee, a{' '}
-              {TERM_MONTHS}-month first term, and never a cut of your sales.
-            </p>
-
-            <div className="fx-btns hm-ctas">
-              <a href={`sms:${CONTACT.phone}`} className="fx-btn fx-btn--p fx-btn--lg">
-                Text Josh your restaurant’s name
-              </a>
-              <Link href="/work" className="fx-btn fx-btn--s fx-btn--lg">
-                See the restaurant demos
-              </Link>
-            </div>
-
-            <p className="hm-josh">
-              <Image src="/josh-face.jpg" alt="Josh Potesta" width={52} height={52} className="hm-josh-img" priority />
-              <span>
-                Josh · <a href={`sms:${CONTACT.phone}`}>{CONTACT.phonePretty}</a> ·{' '}
-                <Link href="/audit">Or run a free website check</Link>
-              </span>
-            </p>
+            <ul className="lp-ticks" role="list">
+              <li>Free. Reviewed personally by Josh.</li>
+              <li>No obligation to buy.</li>
+            </ul>
           </div>
 
-          <div className="hm-hero-art" aria-hidden="true">
-            <div className="hm-phone">
-              <Image src={heroWork.images.phone} alt="" width={390} height={844} sizes="300px" priority />
-            </div>
-            <p className="hm-hero-cap">{heroWork.name} · concept build</p>
+          <div className="lp-form-card">
+            <h2 className="lp-form-h">Request your free audit</h2>
+            <p className="lp-form-intro">
+              Share your website or business profile and a little context. I’ll send your audit to the email and
+              Instagram account you give me, and ask there if I need anything else.{' '}
+              <Link href="/privacy">Privacy notice</Link>.
+            </p>
+            <AuditForm />
           </div>
-        </div>
-
-        <div className="fx-wrap">
-          <nav aria-label="Or look around">
-            <ol className="hm-doors" role="list">
-              {DOORS.map((d) => (
-                <li key={d.href}>
-                  <Link href={d.href} className="hm-door">
-                    <span className="hm-door-t">{d.t}</span>
-                    <span className="hm-door-d">{d.d}</span>
-                    <span className="hm-door-go" aria-hidden="true">
-                      →
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ol>
-          </nav>
         </div>
       </section>
 
-      {/* ── Work: phone screenshots on a phone, desktop ones on a desktop ── */}
-      <section className="fx-sec fx-lsec" aria-labelledby="work-h">
-        <LiquidBackground className="fx-liquid--bottom" />
+      {/* ── The three checks: a dark band, three numbered columns joined by a rail ── */}
+      <section className="lp-checks" aria-labelledby="checks-h">
         <div className="fx-wrap">
-          <h2 className="fx-h2 fx-h2--first" id="work-h">
-            My work. Open them, place an order, book a table.
+          <p className="lp-checks-kicker">What I review</p>
+          <h2 className="lp-h2 lp-h2--light" id="checks-h">
+            Three checks. Three practical next steps.
           </h2>
-          <ul className="fx-work-grid hm-work" role="list">
-            {WORK.map((item) => (
-              <li key={item.slug}>
-                <Link href={`/work/${item.slug}`} className="fx-wcard" aria-label={`${item.name}: ${item.type}. See the project`}>
-                  <span className="fx-wcard-img">
-                    <Image className="wc-desk" src={item.images.desktop} alt="" width={1440} height={900} sizes="(min-width:760px) 45vw, 1px" />
-                    <Image className="wc-phone" src={item.images.phone} alt="" width={390} height={844} sizes="(max-width:759px) 92vw, 1px" />
-                  </span>
-                  <span className="fx-wcard-body">
-                    <span className="fx-wcard-tags">
-                      <span className="fx-wcard-tag">{item.kind === 'concept' ? 'Concept' : 'Client'}</span>
-                    </span>
-                    <span className="fx-wcard-name">{item.name}</span>
-                    <span className="fx-wcard-sys">{item.systemLabel}</span>
-                    <span className="fx-wcard-more">See how I built it</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <p className="fx-note">Both are concept restaurants, built to show the whole job. They’re labelled that way everywhere.</p>
-        </div>
-      </section>
-
-      {/* ── What a 2026 standard means ───────────────────────────────── */}
-      <section className="fx-sec fx-sec--tint" aria-labelledby="std-h">
-        <div className="fx-wrap">
-          <h2 className="fx-h2 fx-h2--first" id="std-h">
-            What “a 2026 standard” means
-          </h2>
-          <p className="fx-p">
-            Most restaurant websites were built once and left alone. Customers notice. These six are what a site has to
-            do now. The free website check looks at the parts a computer can test, and I go through the rest by hand.
-          </p>
-          <ol className="hm-std" role="list">
-            {STANDARD.map((s, i) => (
-              <li key={s.t}>
-                <p className="hm-std-t">
-                  <span className="hm-std-n">{i + 1}.</span> {s.t}
-                </p>
-                <p className="hm-std-d">{s.d}</p>
+          <ol className="lp-steps" role="list">
+            {CHECKS.map((c, i) => (
+              <li key={c.t} className="lp-step">
+                <span className="lp-step-n" aria-hidden="true">
+                  0{i + 1}
+                </span>
+                <h3 className="lp-step-t">{c.t}</h3>
+                <p className="lp-step-d">{c.d}</p>
+                <ul className="lp-step-looks" role="list" aria-label="What I look at">
+                  {c.looks.map((l) => (
+                    <li key={l}>{l}</li>
+                  ))}
+                </ul>
               </li>
             ))}
           </ol>
-          <div className="fx-btns">
-            <Link href="/audit" className="fx-btn fx-btn--p fx-btn--lg">
-              See how your restaurant measures up
-            </Link>
+        </div>
+      </section>
+
+      {/* ── Founder ──────────────────────────────────────────────────── */}
+      <section className="lp-sec" aria-labelledby="founder-h">
+        <div className="fx-wrap lp-founder">
+          <figure className="lp-portrait">
+            <Image
+              src="/josh-portrait.jpg"
+              alt="Josh, founder of FoundOS, working on a laptop"
+              width={760}
+              height={950}
+              sizes="(min-width:860px) 420px, 92vw"
+            />
+          </figure>
+          <div>
+            <h2 className="lp-h2" id="founder-h">
+              A practical review from the person behind FoundOS.
+            </h2>
+            <p className="fx-p">
+              I’m Josh. FoundOS helps service businesses with websites, lead capture, marketing automation, and
+              follow-up. For this audit, I’ll focus on three useful improvements you can understand and act on.
+            </p>
+            <p className="lp-sign">— Josh</p>
+            <a href="#request" className="fx-btn fx-btn--p fx-btn--lg lp-again">
+              Get my free audit <span aria-hidden="true">↑</span>
+            </a>
           </div>
         </div>
       </section>
 
-      {/* ── Prices as a menu ─────────────────────────────────────────── */}
-      <section className="fx-sec fx-sec--tint" aria-labelledby="price-h">
+      {/* ── FAQ ──────────────────────────────────────────────────────── */}
+      <section className="lp-sec lp-faq-sec" aria-labelledby="faq-h">
         <div className="fx-wrap">
-          <h2 className="fx-h2 fx-h2--first" id="price-h">
-            Two plans. No cut of your sales.
+          <h2 className="lp-h2" id="faq-h">
+            Questions
           </h2>
-          <ul className="hm-menu" role="list">
-            <li>
-              <Link href="/plans/digital-care" className="hm-menu-row">
-                <span className="hm-menu-t">{care.name}</span>
-                <span className="hm-menu-dots" aria-hidden="true" />
-                <span className="hm-menu-n">
-                  {usd(care.monthly)}
-                  <small>/mo</small>
-                </span>
-              </Link>
-              <p className="hm-menu-d">
-                Your website, managed: built, hosted and kept up to date. Menu, hours, photos, Google. No website setup
-                fee, {TERM_MONTHS}-month first term.
-              </p>
-            </li>
-            <li>
-              <Link href="/plans/growth" className="hm-menu-row">
-                <span className="hm-menu-t">{growth.name}</span>
-                <span className="hm-menu-dots" aria-hidden="true" />
-                <span className="hm-menu-n">
-                  {usd(growth.monthly)}
-                  <small>/mo</small>
-                </span>
-              </Link>
-              <p className="hm-menu-d">
-                Everything in {care.name}, plus pickup ordering or table booking on a tablet your staff watch.{' '}
-                {TERM_MONTHS}-month first term, plus a one-time setup with the tablet and stand included
-                {bookingSetup && orderingSetup
-                  ? `: ${usd(bookingSetup.price)} for booking, ${orderingSetup.from ? 'from ' : ''}${usd(orderingSetup.price)} for ordering`
-                  : ''}
-                .
-              </p>
-            </li>
-          </ul>
-          <p className="fx-p">
-            <Link href="/plans" className="fx-more">
-              See everything that’s included, and the fine print
-            </Link>
-          </p>
+          <div className="lp-faq">
+            {FAQ.map((f) => (
+              <details key={f.q}>
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
-
-      <CloseBand
-        title="You’ll work directly with Josh."
-        body="I’m Josh Potesta, based in Marietta. Text me your restaurant’s name and I’ll tell you what I’d fix first, or that you’re already in good shape."
-      />
-    </Shell>
+    </LandingShell>
   );
 }

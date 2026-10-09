@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { LOCATION, WORDMARK } from "@/config/brand";
+
 import { SITE_URL } from "./site";
 import "./globals.css";
 
@@ -43,7 +43,8 @@ const inter = Inter({
  * the tab title starts with the mark, not the domain. Mark and city both come
  * from config/brand.ts so a change there can't leave a stale copy sitting here.
  */
-const TITLE = `${WORDMARK.text} — the online side of restaurants and food businesses in ${LOCATION.city}`;
+/* 2026-10-09: the site is the free-audit landing page; these are the defaults every route inherits. */
+const TITLE = 'Free 3-Point Digital Growth Audit | FoundOS';
 
 /**
  * The meta description, and it is NOT the h1 any more.
@@ -65,7 +66,7 @@ const TITLE = `${WORDMARK.text} — the online side of restaurants and food busi
  * string with a different job.
  */
 const META_DESCRIPTION =
-  "Websites, online ordering, booking and an AI phone line for Atlanta restaurants and food trucks. Free report on your site and your Google listing.";
+  "Request a free review from Josh at FoundOS. Get three practical improvements for your service business’s website, lead capture, and follow-up.";
 
 export const metadata: Metadata = {
   /**
@@ -125,7 +126,7 @@ export const metadata: Metadata = {
      * The two fields need two different shapes to mean the same thing.
      */
     url: "./",
-    siteName: WORDMARK.text,
+    siteName: "FoundOS",
     type: "website",
     locale: "en_US",
   },

@@ -2,11 +2,14 @@ import type { MetadataRoute } from 'next';
 /* Leaf config modules only: nothing that reaches next/font, which would emit
    @font-face CSS and a preload for this glyph-less route. Same trap as the Inter
    note in layout.tsx. */
-import { PLANS } from '@/config/offer';
 import { SITE_URL } from './site';
-import { PROJECT_DETAILS } from './projects/details';
 
 /**
+ * ── 2026-10-09: ONE LANDING PAGE ──────────────────────────────────────────
+ * foundos.ai is the free-audit landing page and its privacy notice. Every
+ * other offer page redirects home (next.config.ts), and a sitemap must not
+ * list redirecting URLs. The history below is kept for the demo reasoning.
+ *
  * ── 2026-10-01: THE RESTAURANT OFFER REPLACED THE LIST ───────────────────
  *
  * The site now sells two monthly plans and a short project catalog
@@ -81,15 +84,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority,
   });
 
-  return [
-    page('', 1, 'weekly'),
-    page('/plans', 0.9, 'weekly'),
-    page('/restaurant-systems', 0.8, 'monthly'),
-    ...PLANS.map((p) => page(`/plans/${p.slug}`, 0.9, 'weekly')),
-    ...Object.keys(PROJECT_DETAILS).map((slug) => page(`/projects/${slug}`, 0.8, 'monthly')),
-    page('/work', 0.7, 'monthly'),
-    page('/audit', 0.8, 'monthly'),
-    page('/contact', 0.6, 'yearly'),
-    page('/privacy', 0.1, 'yearly'),
-  ];
+  return [page('', 1, 'weekly'), page('/privacy', 0.1, 'yearly')];
 }

@@ -22,9 +22,29 @@ const REMOVED_PAGES: { source: string; destination: string }[] = [
   { source: "/how-it-works", destination: "/plans#how-it-works" },
 ];
 
+/**
+ * 2026-10-09: foundos.ai became one landing page (the free 3-point audit). The restaurant-offer pages (plans,
+ * systems, work, the instant-report /audit, contact) are not deleted — their files are still in src/app — they
+ * just send visitors home. Temporary (307) on purpose: easy to undo, nothing cached forever.
+ * The 2026-10-01 removals above now point home too, so nothing chains through a redirected page.
+ */
+const LANDING_ONLY = [
+  "/plans",
+  "/plans/:path*",
+  "/restaurant-systems",
+  "/work",
+  "/work/:path*",
+  "/projects/:path*",
+  "/audit",
+  "/contact",
+];
+
 const nextConfig: NextConfig = {
   async redirects() {
-    return REMOVED_PAGES.map((r) => ({ ...r, permanent: true }));
+    return [
+      ...REMOVED_PAGES.map((r) => ({ source: r.source, destination: "/", permanent: true })),
+      ...LANDING_ONLY.map((source) => ({ source, destination: "/", permanent: false })),
+    ];
   },
 };
 
