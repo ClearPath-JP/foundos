@@ -12,7 +12,7 @@ import { LandingShell } from '@/components/landing/LandingShell';
  *   - Audits are delivered by email (Josh's Google Workspace inbox) AND Instagram DM, as a short Loom video or PDF
  *     (v2 offer, 2026-10-09). Owner alerts reach Josh's Gmail. The instant AI first look was removed the same day.
  *   - No analytics, no tracking pixel, no newsletter, no Google Sheet sync (not enabled).
- * ⚠️ Add Manychat here the day the Instagram automation goes live, and nothing else that isn't running.
+ * Manychat added 2026-10-09 for the Instagram DM automation. List only providers that are actually running.
  * ⚠️ The 90-day cleanup is a promise: it only stays true if Josh actually does the monthly cleanup.
  *
  * The previous policy (instant report, phone capture, Telegram) is in git at 918db3a.
@@ -31,6 +31,11 @@ const PROVIDERS = [
   { name: 'Google Workspace and Gmail', role: 'the email I use to receive requests and send your audit', href: 'https://policies.google.com/privacy' },
   { name: 'Instagram (Meta)', role: 'our DM conversation and delivery of your audit there', href: 'https://privacycenter.instagram.com/policy' },
   { name: 'Loom', role: 'when your audit is sent as a video', href: 'https://www.atlassian.com/legal/privacy-policy' },
+  {
+    name: 'Manychat',
+    role: 'sends automatic Instagram replies and helps me manage audit-related DM conversations, including your Instagram username and messages',
+    href: 'https://manychat.com/legal/privacy-14082026',
+  },
 ] as const;
 
 export default function PrivacyPage() {
