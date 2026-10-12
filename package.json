@@ -9,7 +9,8 @@
     "lint": "eslint",
     "capture:work": "node scripts/capture-work.mjs",
     "test:pricing": "node --test src/config/pricing.test.ts",
-    "test:report": "node --test src/lib/report/report.test.ts"
+    "test:report": "node --test src/lib/report/report.test.ts",
+    "test:services": "node --test src/config/services.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

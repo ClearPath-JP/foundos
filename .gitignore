@@ -49,3 +49,7 @@ inspo1/
 
 .vercel
 .env*
+
+# 2026-10-11: VSL masters are copied from editing/ (source of truth) and deployed from this folder.
+# Too large for git; never commit them.
+public/vsl/*.mp4

@@ -18,9 +18,15 @@ import { LandingShell } from '@/components/landing/LandingShell';
  * The previous policy (instant report, phone capture, Telegram) is in git at 918db3a.
  */
 
+/*
+ * DRAFT — NOT APPROVED FOR PUBLIC USE (Phase 1 audit alignment, 2026-10-10): the description, the Instagram and Loom
+ * provider roles, the intro's audit name, and the "How I use it" paragraph (Loom only, no PDF; "our" → "with me").
+ * NOT changed on purpose: the retention paragraph (the 90-day promise is UNRESOLVED; Josh must adopt and carry out
+ * the cleanup, or approve new wording) and EFFECTIVE (update it only when Josh approves publishing this wording).
+ */
 export const metadata: Metadata = {
   title: 'Privacy notice | FoundOS',
-  description: 'How FoundOS handles the information you share when you request a free 3-point digital growth audit.',
+  description: 'How FoundOS handles the information you share when you request a Free Digital Experience Audit.',
 };
 
 const EFFECTIVE = 'October 9, 2026';
@@ -29,8 +35,8 @@ const PROVIDERS = [
   { name: 'Tally', role: 'the request form and its stored responses', href: 'https://tally.so/help/privacy-policy' },
   { name: 'Vercel', role: 'hosting for this website', href: 'https://vercel.com/legal/privacy-policy' },
   { name: 'Google Workspace and Gmail', role: 'the email I use to receive requests and send your audit', href: 'https://policies.google.com/privacy' },
-  { name: 'Instagram (Meta)', role: 'our DM conversation and delivery of your audit there', href: 'https://privacycenter.instagram.com/policy' },
-  { name: 'Loom', role: 'when your audit is sent as a video', href: 'https://www.atlassian.com/legal/privacy-policy' },
+  { name: 'Instagram (Meta)', role: 'your DM conversation with me and delivery of your audit link there', href: 'https://privacycenter.instagram.com/policy' },
+  { name: 'Loom', role: 'recording your audit video and sharing it as a private link', href: 'https://www.atlassian.com/legal/privacy-policy' },
   {
     name: 'Manychat',
     role: 'sends automatic Instagram replies and helps me manage audit-related DM conversations, including your Instagram username and messages',
@@ -49,8 +55,8 @@ export default function PrivacyPage() {
           <p className="fx-p">Effective {EFFECTIVE}</p>
 
           <p className="fx-p">
-            FoundOS, run by Josh, collects the details you submit to prepare and deliver your requested digital growth
-            audit. This can include your name, email, business name, public page links or handles, service category,
+            FoundOS, run by Josh, collects the details you submit to prepare and deliver your requested Free Digital
+            Experience Audit. This can include your name, email, business name, public page links or handles, service category,
             the Instagram username you message me from, and the context you choose to share.
           </p>
 
@@ -58,9 +64,10 @@ export default function PrivacyPage() {
             How I use it
           </h2>
           <p className="fx-p">
-            I personally review your public business presence and send your audit, a short Loom video or PDF, to the
-            email address and Instagram account you provide. I may contact you there with questions needed to complete
-            it. I also use your Instagram username to match your request to our Instagram conversation, and I track
+            I personally review your public business presence and send your audit, a personalized Loom video shared as a
+            private link, to the email address and Instagram account you provide. I may contact you there with questions
+            needed to complete it. I also use your Instagram username to match your request to your Instagram
+            conversation with me, and I track
             whether requests were completed. Submitting an audit request does not subscribe you to marketing emails.
           </p>
 

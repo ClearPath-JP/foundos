@@ -64,46 +64,70 @@ export default async function TasteOfIstanbulPage({
   return (
     <main className="min-h-screen bg-[var(--cream)]">
       {/* ── hero ──────────────────────────────────────────────────────────
-          Bon Me's move: a real photo, with a hard-bordered box sitting on it
-          carrying the name at maximum scale.                               */}
-      <header className="relative">
-        {/* Capped in vh on desktop. At 720px fixed, a 801px-tall laptop saw
-            nothing but photo above the fold — no name, no hours, no CTA. */}
-        <div className="relative h-[300px] sm:h-[380px] lg:h-[52vh] lg:max-h-[560px] lg:min-h-[360px]">
-          <Image
-            src="/demo/istanbul/optimized/truck-night.jpg"
-            alt="The Taste of Istanbul food truck at night, staff serving from the window in Marietta, Georgia"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[38%_38%]"
-          />
-        </div>
+          The mark leads, on the truck's own red, at the size a business that
+          has been here for years puts its name. Photo beside it on desktop,
+          under it on a phone.
 
-        <div className="relative mx-auto -mt-14 w-full max-w-[620px] px-4 sm:px-6 lg:max-w-[1180px] lg:px-8">
-          <div className="card p-5 sm:p-7 lg:max-w-[720px]">
-            <div className="mb-3">
-              <OpenNow />
+          This replaced Bon Me's move — a photo with a bordered box on it —
+          because that put their painted truck sign and a cut-out copy of the
+          same badge within 150px of each other, and the copy, an upscale of a
+          phone photo, lost every time.                                     */}
+      <header>
+        <div className="hero-band px-4 pt-10 sm:px-6 sm:pt-14 lg:px-8 lg:pb-14">
+          <div className="mx-auto w-full max-w-[620px] lg:grid lg:max-w-[1180px] lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)] lg:items-center lg:gap-14">
+            <div className="text-center lg:text-left">
+              {/* The alt text is the h1's accessible name. */}
+              <h1 className="mx-auto w-[240px] sm:w-[290px] lg:mx-0 lg:w-[340px]">
+                <Image
+                  src="/demo/istanbul/logo.png"
+                  alt={BIZ.name}
+                  width={900}
+                  height={694}
+                  priority
+                  sizes="(min-width: 1024px) 340px, (min-width: 640px) 290px, 240px"
+                  className="h-auto w-full"
+                />
+              </h1>
+
+              <div className="mt-6 flex justify-center lg:justify-start">
+                <OpenNow onDark />
+              </div>
+
+              <p className="mx-auto mt-3 max-w-[34ch] text-[1.06rem] font-light leading-relaxed text-[rgba(253,246,236,0.92)] lg:mx-0">
+                {BIZ.tagline}
+              </p>
+
+              <a
+                href="#menu"
+                className="btn btn-cream mx-auto mt-6 flex w-full max-w-[380px] items-center justify-center lg:mx-0"
+              >
+                See the menu
+              </a>
             </div>
 
-            {/* aria-label because the <br/> between the two spans produces no
-                word boundary in the accessible name — screen readers and Google
-                were both being handed "Taste ofIstanbul" as one word. */}
-            <h1
-              aria-label={BIZ.name}
-              className="display display-hero text-[3.5rem] text-[var(--ink)] sm:text-[5rem]"
-            >
-              Taste of
-              <br />
-              <span className="text-[var(--truck)]">Istanbul</span>
-            </h1>
-
-            <p className="body-lg mt-4 max-w-[36ch]">{BIZ.tagline}</p>
-
-            <a href="#menu" className="btn btn-primary mt-5 flex w-full items-center justify-center">
-              See the menu
-            </a>
+            {/* One photo, two jobs: full-bleed under the badge on a phone,
+                framed beside it on desktop. The red runs down into it on a
+                wave rather than a ruled edge — the same join the gold and
+                green fields use further down. */}
+            <div className="hero-photo relative -mx-4 mt-10 h-[300px] sm:-mx-6 sm:h-[380px] lg:mx-0 lg:mt-0 lg:h-[460px]">
+              <Image
+                src="/demo/istanbul/optimized/shawarma-bowl.png"
+                alt="A chicken shawarma bowl held up at the Taste of Istanbul truck window in Marietta, Georgia"
+                fill
+                priority
+                sizes="(min-width: 1024px) 640px, 100vw"
+                className="object-cover object-[50%_88%]"
+              />
+              <div className="absolute inset-x-0 top-0 rotate-180 text-[var(--truck)] lg:hidden">
+                <Wave />
+              </div>
+            </div>
           </div>
+        </div>
+
+        {/* On desktop the band ends on the same wave the phone gets inside it. */}
+        <div className="hidden rotate-180 text-[var(--truck)] lg:block">
+          <Wave />
         </div>
       </header>
 
@@ -398,10 +422,15 @@ export default async function TasteOfIstanbulPage({
               </div>
             </dl>
 
+            {/* ⚠️ This used to say the food photographs were "taken at the truck
+                the same day". They weren't — they are the truck's own pictures,
+                pulled from their Instagram and listings (the hero bowl is
+                `brand/instagram-originals/istanbul 6.png`). The owner is the one
+                person who would know that on sight, and she is the one person
+                who gets shown this page. Say it accurately, or shoot them. */}
             <p className="mt-8 text-[0.84rem] font-light leading-relaxed text-[rgba(253,246,236,0.6)]">
               Menu, prices and dish descriptions taken from the truck&rsquo;s own
-              printed menu, 18 August 2026. Food photographs taken at the truck
-              the same day.
+              printed menu, 18 August 2026. Photographs are the truck&rsquo;s own.
             </p>
           </div>
         </div>

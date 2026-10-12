@@ -1,7 +1,7 @@
 import { Bricolage_Grotesque, Inter_Tight } from 'next/font/google';
 import Link from 'next/link';
 
-import { INSTAGRAM } from '@/config/audit';
+import { AUDIT_EMAIL } from '@/config/audit';
 import { FX_CSS } from '@/components/fx/css';
 import { FX_HOME_CSS } from '@/components/fx/home-css';
 
@@ -15,11 +15,13 @@ const display = Bricolage_Grotesque({ subsets: ['latin'], display: 'swap', varia
 /**
  * The landing-page frame (2026-10-09): same brand tokens, fonts and liquid as the old site, but no navigation.
  * The page has one job, so the header is just the wordmark and "By Josh".
+ * 2026-10-11: /work reuses this frame (passing its old page CSS as `extraCss`) so it shows only the verified
+ * contact routes, not the old Shell's unverified phone number and redirected nav.
  */
-export function LandingShell({ children }: { children: React.ReactNode }) {
+export function LandingShell({ children, extraCss = '' }: { children: React.ReactNode; extraCss?: string }) {
   return (
     <div className={`fx ${body.variable} ${display.variable}`} id="top">
-      <style>{FX_CSS + FX_HOME_CSS + LANDING_CSS}</style>
+      <style>{FX_CSS + FX_HOME_CSS + extraCss + LANDING_CSS}</style>
 
       <header className="fx-head lp-head">
         <div className="fx-wrap fx-head-row">
@@ -36,9 +38,8 @@ export function LandingShell({ children }: { children: React.ReactNode }) {
         <div className="fx-wrap lp-foot-row">
           <span>FoundOS</span>
           <span>By Josh</span>
-          <a href={INSTAGRAM.url} target="_blank" rel="noopener">
-            @{INSTAGRAM.handle}
-          </a>
+          {/* Josh, 2026-10-12: email, not Instagram, until he's posting content. */}
+          <a href={`mailto:${AUDIT_EMAIL}`}>{AUDIT_EMAIL}</a>
           <Link href="/privacy">Privacy</Link>
         </div>
       </footer>

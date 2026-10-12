@@ -1,5 +1,8 @@
 /**
- * foundos pricing — the one source of truth for every price on the site.
+ * ⚠️ RETIRED 2026-10-12 — NOT the price source. The old $400 + $97 system list, kept only because retired pages
+ * (all redirected home) still import it. The live price source is services.ts. Never un-redirect a page that reads this.
+ *
+ * foundos pricing (historical header follows).
  *
  * Spec: foundos/pricing/01-pricing.md (the numbers, in words) and
  * foundos/pricing/04-shop-and-cart-spec.md (the cart rules). If this file and

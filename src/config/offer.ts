@@ -19,6 +19,13 @@
  * and that terms need counsel review before checkout goes live.
  */
 
+import { PRICES } from './services';
+
+/**
+ * ⚠️ 2026-10-12: RETIRED. Every page that reads this file redirects home (next.config.ts). The live price source is
+ * services.ts; the numbers below are read from it so the two can't drift. TERM_MONTHS is the old proposed term,
+ * NOT approved: Josh hasn't finalized a minimum term, so none of these pages may be un-redirected until it is.
+ */
 export const TERM_MONTHS = 12;
 
 /**
@@ -48,7 +55,7 @@ export const PLANS: readonly [Plan, Plan] = [
   {
     slug: 'digital-care',
     name: 'Digital Care',
-    monthly: 299,
+    monthly: PRICES.care,
     pitch: 'A managed website and dependable digital upkeep for your restaurant.',
     forWho: 'For restaurants that want an accurate website and someone keeping the details right.',
     highlights: [
@@ -61,7 +68,7 @@ export const PLANS: readonly [Plan, Plan] = [
   {
     slug: 'growth',
     name: 'Growth',
-    monthly: 499,
+    monthly: PRICES.growth,
     pitch: 'Digital Care plus one working system: table booking, online ordering, or catering follow-up. No cut of your sales.',
     forWho: 'For restaurants that take reservations, pickup orders, or catering and event inquiries, and want them handled, not just listed.',
     highlights: [
@@ -238,7 +245,7 @@ export const PROJECTS: readonly Project[] = [
     slug: 'direct-ordering-launch',
     name: 'Direct Ordering Launch',
     status: 'live',
-    price: 1500,
+    price: PRICES.orderingFrom,
     from: true,
     pitch:
       'Your own pickup ordering on your website, going straight to a kitchen screen. I set it up, enter your menu and train your team.',

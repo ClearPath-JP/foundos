@@ -32,8 +32,7 @@ const LANDING_ONLY = [
   "/plans",
   "/plans/:path*",
   "/restaurant-systems",
-  "/work",
-  "/work/:path*",
+  // 2026-10-11 (Josh approved): /work and /work/:slug are back, showing the two labelled concept builds.
   "/projects/:path*",
   "/audit",
   "/contact",

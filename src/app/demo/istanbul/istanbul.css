@@ -72,9 +72,7 @@
   font-weight: 400;
   /* 0.95, NOT 0.8. Anton has a tall ascender, so at 0.8 the second line of any
      wrapped title crashes into the first — which on a 390px phone is nearly
-     every menu item ("CHICKEN / SHAWARMA PLATE", "CLASSIC / BEEF BURGER"). The
-     tight single-line look is only safe where the text cannot wrap; see
-     .display-hero for the one place that's true. */
+     every menu item ("CHICKEN / SHAWARMA PLATE", "CLASSIC / BEEF BURGER"). */
   line-height: 0.95;
   /* The Ñ in TEQUEÑOS: its tilde sits above the cap height and was being cut
      off by overflow-hidden ancestors. */
@@ -84,10 +82,6 @@
   /* Even line lengths instead of one long line and one orphan word. */
   text-wrap: balance;
 }
-
-/* The hero lockup only — "Taste of / Istanbul" is a hand-set two-line lockup
-   that never reflows, so it can carry the tight stack safely. */
-.istanbul .display-hero { line-height: 0.85; }
 
 .istanbul .display-md {
   font-family: var(--font-display), "Arial Black", sans-serif;
@@ -210,6 +204,39 @@
 /* Gold field section, Gorilla-style: a solid colour block, not a tinted dark. */
 .istanbul .field-gold  { background: var(--gold); color: var(--ink); }
 .istanbul .field-green { background: var(--green-deep); color: var(--cream); }
+
+/* ── the hero band ────────────────────────────────────────────────────────
+   The badge on the truck's red, because that is what it was drawn for — the
+   white outline in their artwork exists to hold it off this exact colour. On
+   the deep green the badge's own green field sank into the background and the
+   outline read as a cutout halo. Same tile lattice as the page body, in gold
+   so it survives on a dark field. */
+.istanbul .hero-band {
+  background-color: var(--truck);
+  background-image:
+    repeating-linear-gradient(45deg,  transparent 0 17px, rgba(233, 167, 51, .06) 17px 18px),
+    repeating-linear-gradient(-45deg, transparent 0 17px, rgba(27, 18, 16, .05) 17px 18px);
+  color: var(--cream);
+}
+/* The eyebrow's red is invisible here, so it takes the gold — as it does on
+   every other coloured field on this page. */
+.istanbul .hero-band .eyebrow { color: var(--gold); }
+.istanbul .hero-band .pulse { background: var(--gold); }
+
+/* Full-bleed under the badge on a phone; a framed object beside it on desktop,
+   where a phone-width column stranded in 1440px of flat colour reads as a
+   link-in-bio splash rather than a restaurant's front page. */
+@media (min-width: 1024px) {
+  .istanbul .hero-photo {
+    border: 2px solid var(--ink);
+    border-radius: var(--r-card);
+    overflow: hidden;
+  }
+}
+
+/* The CTA on the red band: btn-primary is red-on-red there. */
+.istanbul .btn-cream { background: var(--cream); color: var(--ink); }
+.istanbul .btn-cream:hover { background: var(--cream-2); }
 
 /* Organic edge instead of a straight rule. */
 .istanbul .wave-top {

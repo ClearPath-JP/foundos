@@ -17,7 +17,8 @@ import { ImageResponse } from 'next/og';
  * src/app/demo/istanbul/layout.tsx).
  */
 
-export const alt = 'FoundOS — Your next inquiry should have a clear next step. Free 3-point digital growth audit, reviewed by Josh.';
+/* DRAFT — NOT APPROVED FOR PUBLIC USE (2026-10-10): `alt` and LABEL use the proposed audit name. */
+export const alt = 'FoundOS — Your next inquiry should have a clear next step. Free Digital Experience Audit, reviewed by Josh.';
 
 export const size = { width: 1200, height: 630 };
 
@@ -30,7 +31,7 @@ const PURPLE = '#6D28D9';
 const PINK = '#C52E98';
 const LAV = '#EDE5FA';
 
-const LABEL = 'FREE 3-POINT DIGITAL GROWTH AUDIT';
+const LABEL = 'FREE DIGITAL EXPERIENCE AUDIT';
 const LINE_A = 'Your next inquiry should have a';
 const LINE_B = 'clear next step.';
 const LINE_C = '';

@@ -30,7 +30,8 @@ export const FORWARDED_PARAMS = [
 ] as const;
 
 /** Bump when the authorization notice wording changes, in the Tally form AND here. */
-export const CONSENT_VERSION = 'audit-request-v2';
+/* v3 (2026-10-12): Instagram made optional, a required "Contact consent" checkbox added, notice reworded. */
+export const CONSENT_VERSION = 'audit-request-v3';
 
 export const INSTAGRAM = { handle: 'josh.systems', url: 'https://www.instagram.com/josh.systems/' } as const;
 

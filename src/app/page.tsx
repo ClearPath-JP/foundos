@@ -5,19 +5,32 @@ import Link from 'next/link';
 import { LiquidBackground } from '@/components/fx/LiquidBackground';
 import { AuditForm } from '@/components/landing/AuditForm';
 import { LandingShell } from '@/components/landing/LandingShell';
+import {
+  ContactSection,
+  NextSteps,
+  ServiceCards,
+  WhyMonthly,
+  WorkConcepts,
+} from '@/components/landing/Services';
+import { PRICES, usd } from '@/config/services';
+import { StoryChapters } from '@/components/landing/StoryChapters';
 
 /**
- * foundos.ai is one landing page (2026-10-09, launch pack `foundos-launch-pack/01-PRODUCT-PAGE-FORM.md`):
- * a free 3-point digital growth audit for service businesses, reviewed by Josh by hand.
- * Reel → comment AUDIT → DM → this page → Tally form → Josh emails the audit.
+ * foundos.ai is one landing page. 2026-10-09: a free audit page (launch pack `foundos-launch-pack/01-PRODUCT-PAGE-FORM.md`).
+ * 2026-10-11: it also sells FoundOS's services with founding-client prices (src/config/services.ts, DRAFT).
+ * The audit route is unchanged: Reel → comment AUDIT → DM → this page → Tally form (#request) → Josh sends the audit.
  *
  * Copy is the pack's, verbatim. No prices, no portfolio, no nav: the old restaurant-offer homepage is in git at
  * 918db3a, and its pages redirect here (next.config.ts).
  */
 
-const TITLE = 'Free 3-Point Digital Growth Audit | FoundOS';
+/* DRAFT — NOT APPROVED FOR PUBLIC USE (2026-10-11 services page): TITLE and DESCRIPTION.
+   The 2026-10-10 audit-page versions were: 'Free Digital Experience Audit | FoundOS' /
+   'Request a Free Digital Experience Audit from Josh at FoundOS: a personalized Loom video on your offer, how easy you
+   are to reach, and your follow-up.' */
+const TITLE = 'FoundOS | Custom websites for Marietta restaurants and local businesses';
 const DESCRIPTION =
-  'Request a free review from Josh at FoundOS. Get three practical improvements for your service business’s website, lead capture, and follow-up.';
+  'Custom websites built around your business and looked after every month: $299/month with no upfront setup fee. Hosting, updates, local SEO and a local point of contact. Free website audit available.';
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -44,10 +57,23 @@ const CHECKS = [
   },
 ] as const;
 
+/* DRAFT — NOT APPROVED FOR PUBLIC USE (2026-10-10): the first, fifth and sixth answers are new or rewritten. */
 const FAQ = [
   {
-    q: 'What will I receive?',
-    a: 'A short Loom video or PDF with three practical improvements and the change I’d tackle first, sent to your email and your Instagram DM. I review every business personally.',
+    q: 'Do I have to switch my POS or ordering system?',
+    a: 'Usually not. If you already use Square, Toast, Clover or a booking tool, your website links to it. New direct-ordering setups and complex POS migrations are quoted separately and aren’t part of the $299 plan.',
+  },
+  {
+    q: 'Will this get me to the top of Google?',
+    a: 'No one can honestly promise that. Every site gets basic local SEO and AEO, which means clear page structure and business details that search engines and AI assistants can read. That gives you a solid foundation, not a guaranteed ranking.',
+  },
+  {
+    q: 'What’s the difference between $299 and $499?',
+    a: 'At $299 a month you get the website, hosting, maintenance and two small updates a month. Growth is $499 a month in total, not on top, and adds one system we scope together, like automatic follow-up for inquiries or Instagram DM replies.',
+  },
+  {
+    q: 'What will I receive from the free audit?',
+    a: 'A personalized Loom video walking through your offer, how easy it is to reach you, and what’s visible about how you respond and follow up, plus the change I’d tackle first. The length depends on what I find. I’ll send the private link by email, and by Instagram DM if you share your handle.',
   },
   {
     q: 'Do I need a website?',
@@ -61,40 +87,117 @@ const FAQ = [
     q: 'Will you need my passwords?',
     a: 'No. This audit uses your public pages and the information you choose to share.',
   },
+  {
+    q: 'How long does it take?',
+    a: 'My goal is five business days from your request. It’s a goal, not a guarantee. Requests are handled in a queue, and if I’m running behind, I’ll message you with an updated time.',
+  },
+  {
+    q: 'Will you follow up?',
+    a: 'Once. A few days after you get the video, I’ll check in personally to see if you have questions. No automated sales emails.',
+  },
 ] as const;
 
 export default function HomePage() {
   return (
     <LandingShell>
-      {/* ── Hero: the promise on the left, the live form on the right (stacked on a phone) ── */}
-      <section className="lp-hero" id="request" aria-labelledby="hero-h">
+      {/* ── 1. Hero (2026-10-11 services page). DRAFT — NOT APPROVED FOR PUBLIC USE: eyebrow, headline, lede, buttons.
+           The audit link stays visible here so the Reel → DM → page → form route keeps working. ── */}
+      <section className="lp-hero" aria-labelledby="hero-h">
         <LiquidBackground />
         <div className="fx-wrap lp-hero-grid">
           <div className="lp-hero-copy">
-            <p className="fx-eyebrow">Free 3-point digital growth audit</p>
+            <p className="fx-eyebrow">FoundOS · Marietta, GA</p>
             <h1 className="lp-h1" id="hero-h">
-              Your next inquiry should have a <span className="lp-grad">clear next step.</span>
+              Your business, <span className="lp-grad">online the way it feels in person.</span>
             </h1>
             <p className="lp-lede">
-              I’m Josh, founder of FoundOS. I’ll personally review your website or business profile and send you a short
-              Loom video or PDF with three practical ways to make your offer clearer, capture inquiries, and improve
-              follow-up, by email and Instagram DM.
+              I’m Josh, founder of FoundOS. I build custom websites for restaurants and local service businesses,
+              designed around your atmosphere, your hospitality and how you actually run, then host and look after
+              them every month. You keep the POS and tools you already use.
             </p>
-            <ul className="lp-ticks" role="list">
-              <li>Free. Reviewed personally by Josh.</li>
-              <li>No obligation to buy.</li>
-            </ul>
+            <p className="lp-hero-price">
+              <strong>{usd(PRICES.care)}/month.</strong> No upfront setup fee for a standard website.
+            </p>
+            <div className="lp-hero-btns">
+              <a href="#services" className="fx-btn fx-btn--p fx-btn--lg">
+                See pricing <span aria-hidden="true">↓</span>
+              </a>
+              <a href="#request" className="fx-btn fx-btn--s fx-btn--lg">
+                Get a website
+              </a>
+            </div>
+            <p className="lp-hero-audit">
+              Or start with a <a href="#request">Free Digital Experience Audit</a>.
+            </p>
           </div>
+        </div>
+      </section>
 
-          <div className="lp-form-card">
-            <h2 className="lp-form-h">Request your free audit</h2>
-            <p className="lp-form-intro">
-              Share your website or business profile and a little context. I’ll send your audit to the email and
-              Instagram account you give me, and ask there if I need anything else.{' '}
-              <Link href="/privacy">Privacy notice</Link>.
+      {/* ── 2. Pricing straight after the hero (Josh, 2026-10-12: "sees the pricing, easily understand what's offered"),
+           then why the monthly price is worth it. Prices: src/config/services.ts. ── */}
+      <ServiceCards />
+      <WhyMonthly />
+
+      {/* ── 3. Philosophy + the customer journey: Ch 1–2 of the story. ── */}
+      <StoryChapters only={[1, 2]} />
+      <NextSteps />
+
+      {/* ── 6. How it connects and how I work: Ch 3–4 of the story (Ch 4 published 2026-10-12). ── */}
+      <StoryChapters only={[3, 4]} />
+
+      {/* ── 7. Concept work. ── */}
+      <WorkConcepts />
+
+      {/* ── Founder ──────────────────────────────────────────────────── */}
+      <section className="lp-sec" aria-labelledby="founder-h">
+        <div className="fx-wrap lp-founder">
+          <figure className="lp-portrait">
+            <Image
+              src="/josh-portrait.jpg"
+              alt="Josh, founder of FoundOS, working on a laptop"
+              width={760}
+              height={950}
+              sizes="(min-width:860px) 420px, 92vw"
+            />
+          </figure>
+          <div>
+            <h2 className="lp-h2" id="founder-h">
+              Local, founder-led, and hands-on.
+            </h2>
+            <p className="fx-p">
+              I’m Josh, and I’m based in the Marietta area. FoundOS is new, so I won’t pretend to have a wall of
+              client logos. What I do have is the time to learn how your business works, build a website that feels
+              like it, and stay the person you call when something needs changing.
             </p>
-            <AuditForm />
+            <p className="lp-sign">— Josh</p>
+            <a href="#request" className="fx-btn fx-btn--p fx-btn--lg lp-again">
+              Get started <span aria-hidden="true">↓</span>
+            </a>
           </div>
+        </div>
+      </section>
+
+      {/* ── 8. The Free Digital Experience Audit. The existing audit copy (DRAFT, 2026-10-10), moved down from the hero
+           word for word, then what I review, then the live form, unchanged. ⚠️ Consent checkbox and offer wording are
+           still open; see docs/founder-approval-review-2026-10-11.md and docs/tally-consent-checkbox-guide-DRAFT.md. ── */}
+      <section className="lp-sec lp-audit-intro" aria-labelledby="audit-h">
+        <div className="fx-wrap">
+          {/* DRAFT — NOT APPROVED FOR PUBLIC USE (2026-10-10): eyebrow, lede and the third tick. Headline unchanged. */}
+          <p className="fx-eyebrow">Free Digital Experience Audit</p>
+          <h2 className="lp-h2" id="audit-h">
+            Your next inquiry should have a <span className="lp-grad">clear next step.</span>
+          </h2>
+          <p className="lp-lede">
+            I’m Josh, founder of FoundOS. I’ll personally review your website or business profile and record a Loom
+            video walking you through what I see: how clearly your offer comes across, how easy it is to take the
+            next step, and what a customer can see about how you respond and follow up. I’ll send the private link by
+            email, and by Instagram DM if you share your handle.
+          </p>
+          <ul className="lp-ticks" role="list">
+            <li>Free. Reviewed personally by Josh.</li>
+            <li>No obligation to buy.</li>
+            <li>My goal is five business days, not a guarantee. If there’s a wait, I’ll tell you.</li>
+          </ul>
         </div>
       </section>
 
@@ -124,33 +227,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Founder ──────────────────────────────────────────────────── */}
-      <section className="lp-sec" aria-labelledby="founder-h">
-        <div className="fx-wrap lp-founder">
-          <figure className="lp-portrait">
-            <Image
-              src="/josh-portrait.jpg"
-              alt="Josh, founder of FoundOS, working on a laptop"
-              width={760}
-              height={950}
-              sizes="(min-width:860px) 420px, 92vw"
-            />
-          </figure>
-          <div>
-            <h2 className="lp-h2" id="founder-h">
-              A practical review from the person behind FoundOS.
+      {/* ── The form: the same card and live Tally embed that sat in the hero until 2026-10-11, moved, not changed.
+           #request is the anchor every CTA (and any shared link) points at. ── */}
+      <section className="lp-sec lp-request" id="request" aria-labelledby="request-h">
+        <LiquidBackground />
+        <div className="fx-wrap lp-request-wrap">
+          <div className="lp-form-card">
+            <h2 className="lp-form-h" id="request-h">
+              Get your free audit, or start your website
             </h2>
-            <p className="fx-p">
-              I’m Josh. FoundOS helps service businesses with websites, lead capture, marketing automation, and
-              follow-up. For this audit, I’ll focus on three useful improvements you can understand and act on.
+            <p className="lp-form-intro">
+              Share your website or business profile and a little context. It comes straight to my inbox. I’ll send
+              your audit, and if you’re interested in a website, say so in the form and I’ll include a price.{' '}
+              <Link href="/privacy">Privacy notice</Link>.
             </p>
-            <p className="lp-sign">— Josh</p>
-            <a href="#request" className="fx-btn fx-btn--p fx-btn--lg lp-again">
-              Get my free audit <span aria-hidden="true">↑</span>
-            </a>
+            <AuditForm />
           </div>
         </div>
       </section>
+
+      {/* ── 10. Contact, then FAQ. ── */}
+      <ContactSection />
 
       {/* ── FAQ ──────────────────────────────────────────────────────── */}
       <section className="lp-sec lp-faq-sec" aria-labelledby="faq-h">

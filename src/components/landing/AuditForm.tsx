@@ -81,6 +81,10 @@ export function AuditForm() {
             height="900"
             title="Free audit request form"
             className="lp-iframe"
+            /* 2026-10-11 (Josh approved): the form sits at the end of the page and its iframe is ~800 KB, so the
+               browser fetches it as the visitor nears it. URL, params, embed.js resizing and the submit message
+               are unchanged. */
+            loading="lazy"
           />
         ) : (
           <div className="lp-iframe lp-iframe--wait" aria-hidden="true" />

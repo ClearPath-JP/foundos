@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
  * Renders the closed state until mounted so the server HTML and the first
  * client paint agree — otherwise React hydration mismatches on every load.
  */
-export default function OpenNow() {
+export default function OpenNow({ onDark = false }: { onDark?: boolean }) {
   const [hour, setHour] = useState<number | null>(null);
 
   useEffect(() => {
@@ -36,8 +36,12 @@ export default function OpenNow() {
       {/* items-start, not center. The eyebrow wraps to two lines at 390px, and
           centring left the dot stranded in the gutter between them rather than
           reading as a bullet against the first line. */}
+      {/* The closed dot is ink on cream, which disappears on the hero's deep
+          green — every hour between midnight and 11am. */}
       <span
-        className={`mt-[0.32rem] block h-2.5 w-2.5 shrink-0 rounded-full ${open ? "pulse" : "bg-[var(--ink-faint)]"}`}
+        className={`mt-[0.32rem] block h-2.5 w-2.5 shrink-0 rounded-full ${
+          open ? "pulse" : onDark ? "bg-[rgba(253,246,236,0.5)]" : "bg-[var(--ink-faint)]"
+        }`}
       />
       <span className="eyebrow">
         {open ? "Open now · till midnight" : "Opens at 11am · open till midnight, every day"}

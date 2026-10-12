@@ -4,8 +4,10 @@
  * so a number never goes stale in one spot and not another.
  */
 
-export const CAL = 'https://calendly.com/josh-potesta';
-export const EMAIL = 'hello@foundos.ai';
+/** 2026-10-12: the Calendly link 404s and hello@ was never verified. Both now point at josh@foundos.ai, the one
+ *  verified address. Only the retired pages (all redirected home) still read these. */
+export const EMAIL = 'josh@foundos.ai';
+export const CAL = `mailto:${EMAIL}?subject=${encodeURIComponent('Book a call')}`;
 
 /** JP's cell, for `sms:` and `tel:`. */
 export const PHONE = '4044363393';

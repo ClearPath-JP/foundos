@@ -3,8 +3,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { CloseBand } from '@/components/fx/cards';
-import Shell from '@/components/fx/Shell';
+import { FX_FLAT_CSS } from '@/components/fx/flat-css';
+import { FX_OFFER_CSS } from '@/components/fx/offer-css';
+import { FX_PORTFOLIO_CSS } from '@/components/fx/portfolio-css';
+import { FX_SYSTEMS_CSS } from '@/components/fx/systems-css';
+import { LandingShell } from '@/components/landing/LandingShell';
+import { ContactSection } from '@/components/landing/Services';
 import { LiquidBackground } from '@/components/fx/LiquidBackground';
 import { TryLink, WorkVisual } from '@/components/fx/work';
 import { WORK } from '@/config/work';
@@ -33,7 +37,7 @@ export default async function WorkItemPage({ params }: { params: Promise<{ slug:
   if (!item) notFound();
 
   return (
-    <Shell current="work">
+    <LandingShell extraCss={FX_OFFER_CSS + FX_PORTFOLIO_CSS + FX_SYSTEMS_CSS + FX_FLAT_CSS}>
       <article aria-labelledby="w-title">
         <section className="fx-phead">
           <LiquidBackground />
@@ -132,8 +136,8 @@ export default async function WorkItemPage({ params }: { params: Promise<{ slug:
                   {item.tryCta}
                 </TryLink>
                 {item.staff ? (
-                  <Link href="/restaurant-systems" className="fx-btn fx-btn--s fx-btn--lg">
-                    How the system works
+                  <Link href="/#services" className="fx-btn fx-btn--s fx-btn--lg">
+                    See pricing
                   </Link>
                 ) : (
                   <Link href="/work" className="fx-btn fx-btn--s fx-btn--lg">
@@ -146,10 +150,8 @@ export default async function WorkItemPage({ params }: { params: Promise<{ slug:
         </section>
       </article>
 
-      <CloseBand
-        title="Want this for your restaurant?"
-        body="Built the same way, with your real name, menu and photos. A website alone is Digital Care. Booking, follow-up or other systems are Growth, and online ordering adds a one-time setup. Logo work is quoted separately."
-      />
-    </Shell>
+      {/* 2026-10-11: the old close band quoted the retired plans and a phone number. */}
+      <ContactSection />
+    </LandingShell>
   );
 }

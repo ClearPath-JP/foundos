@@ -44,7 +44,8 @@ const inter = Inter({
  * from config/brand.ts so a change there can't leave a stale copy sitting here.
  */
 /* 2026-10-09: the site is the free-audit landing page; these are the defaults every route inherits. */
-const TITLE = 'Free 3-Point Digital Growth Audit | FoundOS';
+/* DRAFT — NOT APPROVED FOR PUBLIC USE (2026-10-10): TITLE and META_DESCRIPTION. */
+const TITLE = 'Free Digital Experience Audit | FoundOS';
 
 /**
  * The meta description, and it is NOT the h1 any more.
@@ -66,7 +67,7 @@ const TITLE = 'Free 3-Point Digital Growth Audit | FoundOS';
  * string with a different job.
  */
 const META_DESCRIPTION =
-  "Request a free review from Josh at FoundOS. Get three practical improvements for your service business’s website, lead capture, and follow-up.";
+  "Request a Free Digital Experience Audit from Josh at FoundOS: a personalized Loom video on your offer, how easy you are to reach, and your follow-up.";
 
 export const metadata: Metadata = {
   /**

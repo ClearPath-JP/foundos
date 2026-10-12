@@ -2,8 +2,12 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { CloseBand } from '@/components/fx/cards';
-import Shell from '@/components/fx/Shell';
+import { FX_FLAT_CSS } from '@/components/fx/flat-css';
+import { FX_OFFER_CSS } from '@/components/fx/offer-css';
+import { FX_PORTFOLIO_CSS } from '@/components/fx/portfolio-css';
+import { FX_SYSTEMS_CSS } from '@/components/fx/systems-css';
+import { LandingShell } from '@/components/landing/LandingShell';
+import { ContactSection } from '@/components/landing/Services';
 import { LiquidBackground } from '@/components/fx/LiquidBackground';
 import { WORK } from '@/config/work';
 
@@ -20,7 +24,7 @@ export const metadata: Metadata = {
 /** The portfolio at a glance: one card per project, each opening its own page. */
 export default function WorkPage() {
   return (
-    <Shell current="work">
+    <LandingShell extraCss={FX_OFFER_CSS + FX_PORTFOLIO_CSS + FX_SYSTEMS_CSS + FX_FLAT_CSS}>
       <section className="fx-phead">
         <LiquidBackground />
         <div className="fx-wrap">
@@ -65,10 +69,8 @@ export default function WorkPage() {
         </div>
       </section>
 
-      <CloseBand
-        title="Want this for your restaurant?"
-        body="Built the same way, with your real name, menu and photos. A website alone is Digital Care. Booking, follow-up or other systems are Growth, and online ordering adds a one-time setup. Logo work is quoted separately."
-      />
-    </Shell>
+      {/* 2026-10-11: the old close band quoted the retired Digital Care / Growth plans and a phone number. */}
+      <ContactSection />
+    </LandingShell>
   );
 }
